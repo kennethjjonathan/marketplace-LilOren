@@ -1,11 +1,11 @@
-import { render, screen } from "@testing-library/react";
-import Home from "@/pages/index";
+import { render, screen } from '@testing-library/react';
+import Home from '@/pages/index';
 
-describe("Home", () => {
-  it("should have Docs text", () => {
+describe('Home', () => {
+  it('should have Docs text', () => {
     render(<Home />); //ARRANGE
 
-    const myElem = screen.getByText("Docs"); //ACT
+    const myElem = screen.getByText('Docs'); //ACT
     expect(myElem).toBeInTheDocument(); //ASSERT
   });
 
@@ -16,11 +16,11 @@ describe("Home", () => {
     expect(myElem).toBeInTheDocument(); //ASSERT
   });
 
-  it("should have a heading", () => {
+  it('should have a heading', () => {
     render(<Home />); //ARRANGE
 
-    const myElem = screen.getByRole("heading", {
-      name: "Learn",
+    const myElem = screen.getByRole('heading', {
+      name: 'Learn',
     }); //ACT
     expect(myElem).toBeInTheDocument(); //ASSERT
   });
