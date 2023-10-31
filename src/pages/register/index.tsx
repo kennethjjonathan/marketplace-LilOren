@@ -4,11 +4,19 @@ import { UserPlus } from 'lucide-react';
 import AsyncButton from '@/components/asyncButton/AsyncButton';
 import axios from 'axios';
 import CONSTANTS from '@/constants/constants';
-import { signIn, useSession } from 'next-auth/react';
+import { signIn, getProviders, getCsrfToken } from 'next-auth/react';
+import { GetServerSideProps } from 'next';
+import { LiteralUnion, ClientSafeProvider } from 'next-auth/react';
+import { BuiltInProviderType } from 'next-auth/providers/index';
+import GoogleButton from '@/components/googleButton/GoogleButton';
+import Link from 'next/link';
 
-function Register() {
-  const { data: session } = useSession();
-  console.log(session);
+interface IRegisterProps {
+  providers: Record<LiteralUnion<BuiltInProviderType>, ClientSafeProvider>;
+}
+
+function Register({ providers }: IRegisterProps) {
+  console.log(providers);
   const [registerData, setRegisterData] = useState({
     username: '',
     email: '',
@@ -187,10 +195,27 @@ function Register() {
           <p className="text-sm text-[#CCCCCC] font-normal">OR</p>
           <div className="w-full h-px bg-[#CCCCCC]" />
         </div>
-        <AsyncButton onClick={signIn}>Test</AsyncButton>
+        <div className="w-full mt-2">
+          <GoogleButton onClick={() => signIn(providers.google.id)} />
+        </div>
       </div>
+      <p className="font-extralight mt-3 w-full text-center text-base">
+        Already have an account?{' '}
+        <Link href="/signin" className="font-normal underline">
+          Sign in
+        </Link>
+      </p>
     </section>
   );
 }
 
 export default Register;
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  return {
+    props: {
+      providers: await getProviders(),
+      csrfToken: await getCsrfToken(),
+    },
+  };
+};
