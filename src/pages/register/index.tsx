@@ -18,6 +18,10 @@ function Register() {
     setRegisterData({ ...registerData, [key]: e.target.value });
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+  };
+
   return (
     <section className="container pb-16 pt-6 flex flex-col items-center justify-center gap-5 bg-primary-foreground">
       <h1 className="font-bold text-2xl text-primary">LOGO</h1>
@@ -28,7 +32,10 @@ function Register() {
           checkout process faster, view and track your orders in your account
           and more.
         </p>
-        <form className="mt-5 flex flex-col gap-3 w-full">
+        <form
+          className="mt-5 flex flex-col gap-3 w-full"
+          onSubmit={handleSubmit}
+        >
           <InputWithLabel
             type="text"
             label="Username"
@@ -37,13 +44,14 @@ function Register() {
             value={registerData.username}
             labelStyling="font-light"
             onChange={(e) => handleRegisterData(e, 'username')}
-            // pattern="[a-zA-Z]"
+            pattern="[a-zA-Z0-9]{8,}"
+            validation="Username must consist of 8 alphanumeric characters minimum"
           />
           <InputWithLabel
             type="email"
             label="Email"
             id="email-input"
-            required={true}
+            required
             labelStyling="font-light"
             value={registerData.email}
             onChange={(e) => handleRegisterData(e, 'email')}
@@ -52,7 +60,7 @@ function Register() {
             type="password"
             label="Password"
             id="password-input"
-            required={true}
+            required
             labelStyling="font-light"
             value={registerData.password}
             onChange={(e) => handleRegisterData(e, 'password')}
@@ -61,7 +69,7 @@ function Register() {
             type="password"
             label="Confirm Password"
             id="confirm-password-input"
-            required={true}
+            required
             labelStyling="font-light"
             value={registerData.confirmPassword}
             onChange={(e) => handleRegisterData(e, 'confirmPassword')}
