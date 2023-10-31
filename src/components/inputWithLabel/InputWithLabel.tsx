@@ -11,6 +11,7 @@ interface InputWithLabelProps
   inputStyling?: string;
   labelStyling?: string;
   validation?: string;
+  isValid?: boolean;
 }
 
 export function InputWithLabel({
@@ -23,6 +24,7 @@ export function InputWithLabel({
   labelStyling = '',
   validation = '',
   pattern,
+  isValid,
   ...props
 }: InputWithLabelProps) {
   return (
@@ -38,10 +40,11 @@ export function InputWithLabel({
         className={inputStyling + 'peer'}
         required={required}
         pattern={pattern}
+        isValid={isValid}
         {...props}
       />
-      {validation !== '' && (
-        <p className="mt-1 w-full text-justify hidden text-xs text-destructive peer-[&:not(:placeholder-shown):invalid]:block">
+      {isValid === false && validation !== '' && (
+        <p className="mt-1 w-full text-justify text-xs text-destructive">
           {validation}
         </p>
       )}

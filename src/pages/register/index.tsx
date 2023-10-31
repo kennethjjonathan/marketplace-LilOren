@@ -1,15 +1,27 @@
 import { InputWithLabel } from '@/components/inputWithLabel/InputWithLabel';
-import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { UserPlus } from 'lucide-react';
+import AsyncButton from '@/components/asyncButton/AsyncButton';
+import axios from 'axios';
+import CONSTANTS from '@/constants/constants';
+import { signIn, useSession } from 'next-auth/react';
 
 function Register() {
+  const { data: session } = useSession();
+  console.log(session);
   const [registerData, setRegisterData] = useState({
     username: '',
     email: '',
     password: '',
     confirmPassword: '',
   });
+  const [isDataValid, setIsDataValid] = useState({
+    username: true,
+    email: true,
+    password: true,
+    confirmPassword: true,
+  });
+  const [passwordMessage, setPasswordMessage] = useState<string>('');
 
   const handleRegisterData = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -18,8 +30,93 @@ function Register() {
     setRegisterData({ ...registerData, [key]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const validateUsername = (): boolean => {
+    const usernameRegex = /[a-zA-Z0-9]{8,}/gi;
+    if (!usernameRegex.test(registerData.username)) {
+      setIsDataValid({ ...isDataValid, username: false });
+      return false;
+    }
+    setIsDataValid({ ...isDataValid, username: true });
+    return true;
+  };
+
+  const validateEmail = (): boolean => {
+    const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/gi;
+    if (!emailRegex.test(registerData.email)) {
+      setIsDataValid({ ...isDataValid, email: false });
+      return false;
+    }
+    setIsDataValid({ ...isDataValid, email: true });
+    return true;
+  };
+
+  const validatePassword = (): boolean => {
+    const passwordRegex =
+      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm;
+    if (!passwordRegex.test(registerData.password)) {
+      setIsDataValid({ ...isDataValid, password: false });
+      setPasswordMessage(
+        'Password must contain at least 1 lowercase letter, 1 uppercase letter, 1 number, and with a minimum of 8 characters',
+      );
+      return false;
+    }
+    if (
+      registerData.password
+        .toLowerCase()
+        .includes(registerData.username.toLowerCase())
+    ) {
+      setIsDataValid({ ...isDataValid, password: false });
+      setPasswordMessage('Password cannot contain username');
+      return false;
+    }
+    setIsDataValid({ ...isDataValid, password: true });
+    setPasswordMessage('');
+    return true;
+  };
+
+  const validateConfirmPassword = (): boolean => {
+    if (registerData.password !== registerData.confirmPassword) {
+      setIsDataValid({ ...isDataValid, confirmPassword: false });
+      return false;
+    }
+    setIsDataValid({ ...isDataValid, confirmPassword: true });
+    return true;
+  };
+
+  const validateAll = (): boolean => {
+    let isContinue: boolean = true;
+    if (!validateUsername()) {
+      isContinue = false;
+    }
+    if (!validateEmail()) {
+      isContinue = false;
+    }
+    if (!validatePassword()) {
+      isContinue = false;
+    }
+    if (!validateConfirmPassword()) {
+      isContinue = false;
+    }
+    return isContinue;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+    if (!validateAll()) return;
+    try {
+      const response = await axios.post(
+        `${CONSTANTS.BASEURL}/users`,
+        registerData,
+      );
+      console.log('Berhasil');
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -40,50 +137,57 @@ function Register() {
             type="text"
             label="Username"
             id="username-input"
-            required
             value={registerData.username}
             labelStyling="font-light"
             onChange={(e) => handleRegisterData(e, 'username')}
-            pattern="[a-zA-Z0-9]{8,}"
+            onBlur={validateUsername}
+            isValid={isDataValid.username}
             validation="Username must consist of 8 alphanumeric characters minimum"
           />
           <InputWithLabel
             type="email"
             label="Email"
             id="email-input"
-            required
             labelStyling="font-light"
             value={registerData.email}
             onChange={(e) => handleRegisterData(e, 'email')}
+            isValid={isDataValid.email}
+            onBlur={validateEmail}
+            validation="Please put in a valid email"
           />
           <InputWithLabel
             type="password"
             label="Password"
             id="password-input"
-            required
             labelStyling="font-light"
             value={registerData.password}
+            onBlur={validatePassword}
             onChange={(e) => handleRegisterData(e, 'password')}
+            isValid={isDataValid.password}
+            validation={passwordMessage}
           />
           <InputWithLabel
             type="password"
             label="Confirm Password"
             id="confirm-password-input"
-            required
             labelStyling="font-light"
             value={registerData.confirmPassword}
             onChange={(e) => handleRegisterData(e, 'confirmPassword')}
+            onBlur={validateConfirmPassword}
+            isValid={isDataValid.confirmPassword}
+            validation="Must be the same with password"
           />
-          <Button className="text-sm" type="submit">
+          <AsyncButton className="text-sm" type="submit" isLoading={false}>
             <UserPlus className="mr-2 h-4 w-4" />
             Register
-          </Button>
+          </AsyncButton>
         </form>
         <div className="flex items-center w-full justify-between gap-3 mt-2">
           <div className="w-full h-px bg-[#CCCCCC]" />
           <p className="text-sm text-[#CCCCCC] font-normal">OR</p>
           <div className="w-full h-px bg-[#CCCCCC]" />
         </div>
+        <AsyncButton onClick={signIn}>Test</AsyncButton>
       </div>
     </section>
   );
