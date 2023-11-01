@@ -91,9 +91,11 @@ const Navigation = () => {
 
   return (
     <div className={styles.navigation}>
-      <div className='lg:hidden md:w-[75vw] text-right pb-2'>
-        <Button variant={'link'}>{'Login'}</Button>
-        <Button variant={'link'} className='text-muted-foreground'>{'Register'}</Button>
+      <div className="lg:hidden md:w-[75vw] text-right pb-2">
+        <ButtonWithIcon variant={'link'} href={'/login'}>{'Login'}</ButtonWithIcon>
+        <ButtonWithIcon variant={'link'} href={'/register'} className="text-muted-foreground">
+          {'Register'}
+        </ButtonWithIcon>
       </div>
       <div className={styles.navigationContent}>
         <div className={styles.logo}>LOGO</div>
