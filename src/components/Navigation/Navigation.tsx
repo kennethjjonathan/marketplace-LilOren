@@ -1,6 +1,8 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { Button } from '../ui/button';
+import { Utils } from '@/utils';
 
 import { cn } from '@/lib/utils';
 import {
@@ -13,8 +15,6 @@ import {
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
 import { Search, ShoppingCart, User2 } from 'lucide-react';
-import { Utils } from '@/utils';
-import { Button } from '../ui/button';
 import ButtonWithIcon from '../ButtonWithIcon/ButtonWithIcon';
 import styles from './Navigation.module.scss';
 import EmptyCart from '../EmptyCart/EmptyCart';
@@ -45,7 +45,7 @@ const user: {
   firstName: string;
   lastName: string;
 } = {
-  firstName: '',
+  firstName: 'Endriyani',
   lastName: 'Rahayu',
 };
 
@@ -82,19 +82,20 @@ const products: {
 ];
 
 const Navigation = () => {
+  const [searchKey, setSearchKey] = useState<string>('');
+
+  const handleSearchProduct = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  };
+
   return (
     <div className={styles.navigation}>
-      <div className="px-3 flex flex-row justify-between items-center md:w-[75vw] gap-2 md:gap-[50px]">
-        <div className="hidden md:block font-bold text-primary md:text-[24px]">
-          LOGO
-        </div>
-        <div className="SearchInput relative w-full">
-          <form action="">
+      <div className={styles.navigationContent}>
+        <div className={styles.logo}>LOGO</div>
+        <div className={styles.searchInput}>
+          <form onSubmit={handleSearchProduct}>
             <Search className="absolute text-primary top-[8px] left-[12px]" />
-            <input
-              className="py-2 pl-[50px] pr-2 w-full rounded-[10px] focus:outline-primary"
-              placeholder="Cari produk"
-            />
+            <input className={styles.inputField} placeholder="Cari produk" />
           </form>
         </div>
         <NavigationMenu>
@@ -108,9 +109,11 @@ const Navigation = () => {
               </NavigationMenuTrigger>
               <NavigationMenuContent>
                 {user.firstName ? (
-                  <div className="Cart hidden sm:block">
-                    <div className="flex flex-row justify-between items-center px-5 pt-5">
-                      <p className="totalCartItems text-[10px] sm:text-[12px] md:text-[14px]">{`Cart (${products.length})`}</p>
+                  <div className={styles.cart}>
+                    <div className={styles.cartHeader}>
+                      <p
+                        className={styles.totalCartItems}
+                      >{`Cart (${products.length})`}</p>
                       <Button
                         variant={'link'}
                         className="p-0 text-[10px] sm:text-[12px] md:text-[14px]"
@@ -118,7 +121,7 @@ const Navigation = () => {
                         <Link href="/cart">See My Cart</Link>
                       </Button>
                     </div>
-                    <ul className="grid gap-3 p-2 sm:w-[200px] md:w-[200px] lg:w-[290px] lg:grid-rows-[.75fr_1fr]">
+                    <ul className={styles.cartItemsWrapper}>
                       {products.length !== 0 ? (
                         products.map((product) => (
                           <ListItem
@@ -191,7 +194,7 @@ const Navigation = () => {
   );
 };
 
-const ListItem = React.forwardRef<
+export const ListItem = React.forwardRef<
   React.ElementRef<'a'>,
   React.ComponentPropsWithoutRef<'a'>
 >(({ className, title, children, ...props }, ref) => {
