@@ -20,9 +20,11 @@
   "dependencies": {
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-slot": "^1.0.2",
+    "@types/jsonwebtoken": "^9.0.4",
     "axios": "^1.6.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
+    "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.290.0",
     "next": "14.0.0",
     "next-auth": "^4.24.4",

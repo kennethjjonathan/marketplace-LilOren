@@ -16,7 +16,6 @@ interface IRegisterProps {
 }
 
 function Register({ providers }: IRegisterProps) {
-  console.log(providers);
   const [registerData, setRegisterData] = useState({
     username: '',
     email: '',
