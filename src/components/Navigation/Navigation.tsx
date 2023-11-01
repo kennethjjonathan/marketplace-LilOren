@@ -116,19 +116,17 @@ const Navigation = () => {
             {/* Cart */}
             <NavigationMenuItem>
               <NavigationMenuTrigger>
-                  <div className='cartWrapper relative w-full'>
-                {user.firstName && products.length !== 0 &&
-
-                    <div className='absolute right-0 w-[18px] h-[18px] pb-[19px] border-white bg-destructive text-white font-bold text-[10px] text-center rounded-full'>
+                <div className="cartWrapper relative w-full">
+                  {user.firstName && products.length !== 0 && (
+                    <div className="absolute right-0 w-[18px] h-[18px] pb-[19px] border-white bg-destructive text-white font-bold text-[10px] text-center rounded-full">
                       {products.length}
                     </div>
-                }
+                  )}
 
-                    <ButtonWithIcon href="/cart" variant={'ghost'}>
-                      <ShoppingCart />
-                    </ButtonWithIcon>
-                  </div>
-                
+                  <ButtonWithIcon href="/cart" variant={'ghost'}>
+                    <ShoppingCart />
+                  </ButtonWithIcon>
+                </div>
               </NavigationMenuTrigger>
               <NavigationMenuContent>
                 {user.firstName ? (
