@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { InputWithLabel } from '@/components/inputWithLabel/InputWithLabel';
-import AsyncButton from '@/components/asyncButton/AsyncButton';
+import { InputWithLabel } from '@/components/InputWithLabel/InputWithLabel';
+import AsyncButton from '@/components/AsyncButton/AsyncButton';
 import { LogIn } from 'lucide-react';
-import GoogleButton from '@/components/googleButton/GoogleButton';
+import GoogleButton from '@/components/GoogleButton/GoogleButton';
 import { GetServerSideProps } from 'next';
 import { signIn, getProviders } from 'next-auth/react';
 import { LiteralUnion, ClientSafeProvider } from 'next-auth/react';
