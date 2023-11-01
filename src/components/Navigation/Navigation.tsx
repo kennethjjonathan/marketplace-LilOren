@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 import { cn } from '@/lib/utils';
 import {
@@ -12,10 +13,11 @@ import {
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
 import { Search, ShoppingCart, User2 } from 'lucide-react';
-import styles from './Navigation.module.scss';
+import { Utils } from '@/utils';
 import { Button } from '../ui/button';
 import ButtonWithIcon from '../ButtonWithIcon/ButtonWithIcon';
-import { Utils } from '@/utils';
+import styles from './Navigation.module.scss';
+import EmptyCart from '../../../public/empty-cart.svg';
 
 // For Empty Cart or if user is not logged in
 const emptyCart: {
@@ -52,7 +54,7 @@ const user: {
   firstName: string;
   lastName: string;
 } = {
-  firstName: 'Endriyani',
+  firstName: '',
   lastName: 'Rahayu',
 };
 
@@ -62,29 +64,29 @@ const products: {
   quantity: number;
 }[] = [
   {
-    name: 'Bantal tidur silikon Restking',
-    price: 0,
-    quantity: 0,
+    name: 'Bantal tidur silikon Restking Bantal tidur silikon Restking',
+    price: 100000,
+    quantity: 1,
   },
   {
     name: 'Bantal tidur silikon Restking',
-    price: 0,
-    quantity: 0,
+    price: 100000,
+    quantity: 12,
   },
   {
     name: 'Bantal tidur silikon Restking',
-    price: 0,
-    quantity: 0,
+    price: 100000,
+    quantity: 3,
   },
   {
     name: 'Bantal tidur silikon Restking',
-    price: 0,
-    quantity: 0,
+    price: 100000,
+    quantity: 4,
   },
   {
     name: 'Bantal tidur silikon Restking',
-    price: 0,
-    quantity: 0,
+    price: 100000,
+    quantity: 5,
   },
 ];
 
@@ -109,63 +111,85 @@ const Navigation = () => {
             {/* Cart */}
             <NavigationMenuItem>
               <NavigationMenuTrigger>
-                <ShoppingCart />
+                <ButtonWithIcon href="/cart" variant={'ghost'}>
+                  <ShoppingCart />
+                </ButtonWithIcon>
               </NavigationMenuTrigger>
               <NavigationMenuContent>
                 {user.firstName ? (
-                  <ul className="grid gap-3 p-6 sm:w-[200px] md:w-[200px] lg:w-[290px] lg:grid-rows-[.75fr_1fr]">
-                    {products.map((product) => (
-                      <ListItem
-                        key={`key:${product.name}`}
-                        href="/cart"
-                        title={product.name}
+                  <div className="Cart hidden sm:block">
+                    <div className="flex flex-row justify-between items-center px-5 pt-5">
+                      <p className="totalCartItems text-[10px] sm:text-[12px] md:text-[14px]">{`Cart (${products.length})`}</p>
+                      <Button
+                        variant={'link'}
+                        className="p-0 text-[10px] sm:text-[12px] md:text-[14px]"
                       >
-                        <div className="flex justify-between items-center">
-                          <p className="quantityinCart"></p>
-                          <p className="priceInCart">
-                            {Utils.convertPrice(product.price)}
-                          </p>
-                        </div>
-                      </ListItem>
-                    ))}
-                  </ul>
+                        <Link href="/cart">See My Cart</Link>
+                      </Button>
+                    </div>
+                    <ul className="grid gap-3 p-2 sm:w-[200px] md:w-[200px] lg:w-[290px] lg:grid-rows-[.75fr_1fr]">
+                      {products.map((product) => (
+                        <ListItem
+                          key={`key:${product.name}`}
+                          href="/cart"
+                          title={product.name}
+                        >
+                          <div className="flex justify-between items-center pt-1">
+                            <p className="quantityinCart text-[10px] sm:text-[12px] md:text-[14px]">
+                              {`${product.quantity} ${
+                                product.quantity > 1 ? 'items' : 'item'
+                              }`}
+                            </p>
+                            <p className="priceInCart text-primary text-[10px] sm:text-[12px] md:text-[14px]">
+                              {Utils.convertPrice(product.price)}
+                            </p>
+                          </div>
+                        </ListItem>
+                      ))}
+                    </ul>
+                  </div>
                 ) : (
-                  <div className="grid gap-3 p-6 md:w-[200px] lg:w-[300px] lg:grid-rows-[.75fr_1fr]">
-                    <p>{emptyCart.title}</p>
+                  // Empty Cart
+                  <div className="flex flex-col gap-4 p-6 md:w-[200px] lg:w-[300px] justify-center items-center">
+                    <Image
+                      alt="empty-cart"
+                      src={EmptyCart}
+                      width={500}
+                      height={500}
+                      className='w-[100px] h-[100px]'
+                    />
+                    <p className="text-muted-foreground text-center lg:text-[14px]">
+                      {emptyCart.title}
+                    </p>
+                    <ButtonWithIcon href={'/'}>{'Shop Now'}</ButtonWithIcon>
                   </div>
                 )}
               </NavigationMenuContent>
             </NavigationMenuItem>
             {/* My Account */}
             <NavigationMenuItem>
-              {user.firstName || components.length !== 0 ? (
+              {/* check if user is logged in or not */}
+              {user.firstName !== '' ? (
                 <NavigationMenuTrigger>
                   <div className="flex md:flex-row md:gap-3 items-center">
-                    <User2 />
-                    <div className="hidden md:hidden lg:flex flex-col justify-start items-start">
-                      <p className="hidden md:hidden lg:block font-light">
-                        {'Endriyani'}
+                    <ButtonWithIcon href="/profile" variant={'ghost'}>
+                      <User2 />
+                      <p className="hidden md:hidden lg:block font-light pl-3">
+                        {user.firstName}
                       </p>
-                    </div>
+                    </ButtonWithIcon>
                   </div>
                 </NavigationMenuTrigger>
               ) : (
-                <>
-                  <div className="lg:hidden">
-                    <ButtonWithIcon variant={'ghost'} href={'/register'}>
-                      <User2 />
-                    </ButtonWithIcon>
-                  </div>
-                  <div className="hidden lg:flex flex-row gap-2">
-                    <ButtonWithIcon href={'/login'}>{'Login'}</ButtonWithIcon>
-                    <ButtonWithIcon variant={'outline'} href={'/register'}>
-                      {'Register'}
-                    </ButtonWithIcon>
-                  </div>
-                </>
+                <div className="hidden lg:flex flex-row gap-2">
+                  <ButtonWithIcon href={'/login'}>{'Login'}</ButtonWithIcon>
+                  <ButtonWithIcon variant={'outline'} href={'/register'}>
+                    {'Register'}
+                  </ButtonWithIcon>
+                </div>
               )}
               <NavigationMenuContent>
-                <ul className="grid gap-3 p-6 sm:w-[200px] md:w-[200px] lg:w-[290px] lg:grid-rows-[.75fr_1fr] ">
+                <ul className="grid hidden sm:grid gap-3 p-6 sm:w-[200px] md:w-[200px] lg:w-[290px] lg:grid-rows-[.75fr_1fr] ">
                   {components.map((component) => (
                     <ListItem
                       key={component.title}
@@ -190,7 +214,7 @@ const ListItem = React.forwardRef<
   React.ComponentPropsWithoutRef<'a'>
 >(({ className, title, children, ...props }, ref) => {
   return (
-    <li>
+    <li className="border-b-[1px]">
       <NavigationMenuLink asChild>
         <a
           ref={ref}
@@ -200,7 +224,9 @@ const ListItem = React.forwardRef<
           )}
           {...props}
         >
-          <div className="text-sm font-medium leading-none">{title}</div>
+          <div className="font-medium leading-none whitespace-nowrap overflow-hidden text-ellipsis w-[100px] sm:w-[150px] md:w-[120px] lg:w-[230px] text-[10px] sm:text-[12px] md:text-[14px]">
+            {title}
+          </div>
           <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
             {children}
           </p>
