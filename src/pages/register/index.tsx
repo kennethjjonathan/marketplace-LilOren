@@ -12,11 +12,11 @@ import GoogleButton from '@/components/googleButton/GoogleButton';
 import Link from 'next/link';
 import Image from 'next/image';
 
-interface IRegisterProps {
+interface RegisterProps {
   providers: Record<LiteralUnion<BuiltInProviderType>, ClientSafeProvider>;
 }
 
-function Register({ providers }: IRegisterProps) {
+function Register({ providers }: RegisterProps) {
   const [registerData, setRegisterData] = useState({
     username: '',
     email: '',

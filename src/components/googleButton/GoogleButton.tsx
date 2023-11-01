@@ -1,10 +1,10 @@
 import React from 'react';
 import Image from 'next/image';
 
-interface IGoogleButtonProps
+interface GoogleButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
 
-function GoogleButton({ ...props }: IGoogleButtonProps) {
+function GoogleButton({ ...props }: GoogleButtonProps) {
   return (
     <button
       className="flex items-center justify-center rounded-md border-2 w-full py-2 px-10 gap-3 duration-300 bg-white hover:bg-gray-100 cursor-pointer"
