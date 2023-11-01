@@ -7,4 +7,8 @@ export class Utils {
       .format(price)
       .slice(0, -3);
   };
+
+  static isEmpty = (data: any) => {
+    return data.length === 0 || data === '' || data === 0;
+  };
 }
