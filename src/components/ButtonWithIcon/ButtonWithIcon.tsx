@@ -6,7 +6,15 @@ interface ButtonWithIconIconProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children?: ReactNode;
   href?: string;
-  variant?: string;
+  variant?:
+    | 'default'
+    | 'link'
+    | 'destructive'
+    | 'outline'
+    | 'secondary'
+    | 'ghost'
+    | null
+    | undefined;
 }
 
 const ButtonWithIcon: React.FC<ButtonWithIconIconProps> = ({

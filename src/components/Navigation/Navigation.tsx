@@ -26,7 +26,6 @@ const emptyCart: {
   icon: <ShoppingCart />,
 };
 
-
 const components: {
   title: string;
   href: string;
@@ -57,37 +56,37 @@ const user: {
   lastName: 'Rahayu',
 };
 
-const products : {
-  name:string;
-  price:number;
-  quantity:number
-} [] = [
+const products: {
+  name: string;
+  price: number;
+  quantity: number;
+}[] = [
   {
-    name:'Bantal tidur silikon Restking',
-    price:0,
-    quantity:0
+    name: 'Bantal tidur silikon Restking',
+    price: 0,
+    quantity: 0,
   },
   {
-    name:'Bantal tidur silikon Restking',
-    price:0,
-    quantity:0
+    name: 'Bantal tidur silikon Restking',
+    price: 0,
+    quantity: 0,
   },
   {
-    name:'Bantal tidur silikon Restking',
-    price:0,
-    quantity:0
+    name: 'Bantal tidur silikon Restking',
+    price: 0,
+    quantity: 0,
   },
   {
-    name:'Bantal tidur silikon Restking',
-    price:0,
-    quantity:0
+    name: 'Bantal tidur silikon Restking',
+    price: 0,
+    quantity: 0,
   },
   {
-    name:'Bantal tidur silikon Restking',
-    price:0,
-    quantity:0
-  }
-]
+    name: 'Bantal tidur silikon Restking',
+    price: 0,
+    quantity: 0,
+  },
+];
 
 const Navigation = () => {
   return (
@@ -110,29 +109,31 @@ const Navigation = () => {
             {/* Cart */}
             <NavigationMenuItem>
               <NavigationMenuTrigger>
-                <ShoppingCart/>
+                <ShoppingCart />
               </NavigationMenuTrigger>
               <NavigationMenuContent>
-                {user.firstName ? 
+                {user.firstName ? (
                   <ul className="grid gap-3 p-6 sm:w-[200px] md:w-[200px] lg:w-[290px] lg:grid-rows-[.75fr_1fr]">
-                    {products.map((product) =>
-                      <ListItem key={`key:${product.name}`} href="/cart" title={product.name}>
-                        <div className='flex justify-between items-center'>
-                          <p className='quantityinCart'>
-
-                          </p>
-                          <p className='priceInCart'>
-                              {Utils.convertPrice(product.price)}
+                    {products.map((product) => (
+                      <ListItem
+                        key={`key:${product.name}`}
+                        href="/cart"
+                        title={product.name}
+                      >
+                        <div className="flex justify-between items-center">
+                          <p className="quantityinCart"></p>
+                          <p className="priceInCart">
+                            {Utils.convertPrice(product.price)}
                           </p>
                         </div>
                       </ListItem>
-                    )}
+                    ))}
                   </ul>
-                :
-                <div className="grid gap-3 p-6 md:w-[200px] lg:w-[300px] lg:grid-rows-[.75fr_1fr]">
-                  <p>{emptyCart.title}</p>
-                </div>
-              }
+                ) : (
+                  <div className="grid gap-3 p-6 md:w-[200px] lg:w-[300px] lg:grid-rows-[.75fr_1fr]">
+                    <p>{emptyCart.title}</p>
+                  </div>
+                )}
               </NavigationMenuContent>
             </NavigationMenuItem>
             {/* My Account */}
