@@ -1,14 +1,14 @@
-import { InputWithLabel } from '@/components/inputWithLabel/InputWithLabel';
+import { InputWithLabel } from '@/components/InputWithLabel/InputWithLabel';
 import React, { useState } from 'react';
 import { UserPlus } from 'lucide-react';
-import AsyncButton from '@/components/asyncButton/AsyncButton';
+import AsyncButton from '@/components/AsyncButton/AsyncButton';
 import axios from 'axios';
 import CONSTANTS from '@/constants/constants';
 import { signIn, getProviders, getCsrfToken } from 'next-auth/react';
 import { GetServerSideProps } from 'next';
 import { LiteralUnion, ClientSafeProvider } from 'next-auth/react';
 import { BuiltInProviderType } from 'next-auth/providers/index';
-import GoogleButton from '@/components/googleButton/GoogleButton';
+import GoogleButton from '@/components/GoogleButton/GoogleButton';
 import Link from 'next/link';
 import Image from 'next/image';
 
