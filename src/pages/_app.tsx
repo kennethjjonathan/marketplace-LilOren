@@ -1,15 +1,27 @@
 import '@/styles/globals.css';
+import type { ReactElement, ReactNode } from 'react';
 import { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
+import type { NextPage } from 'next';
 import type { AppProps } from 'next/app';
 
-export default function App({
+export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: ReactElement) => ReactNode;
+};
+
+type AppPropsWithLayout<P> = AppProps<P> & {
+  Component: NextPageWithLayout;
+};
+
+export default function MyApp({
   Component,
-  pageProps,
-}: AppProps<{ session: Session }>) {
+  pageProps: { session, ...pageProps },
+}: AppPropsWithLayout<{ session: Session | null }>) {
+  const getLayout = Component.getLayout ?? ((page) => page);
+
   return (
-    <SessionProvider session={pageProps.session}>
-      <Component {...pageProps} />
+    <SessionProvider session={session}>
+      {getLayout(<Component {...pageProps} />)}
     </SessionProvider>
   );
 }
