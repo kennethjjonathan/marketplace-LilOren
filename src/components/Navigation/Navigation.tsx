@@ -17,16 +17,7 @@ import { Utils } from '@/utils';
 import { Button } from '../ui/button';
 import ButtonWithIcon from '../ButtonWithIcon/ButtonWithIcon';
 import styles from './Navigation.module.scss';
-import EmptyCart from '../../../public/empty-cart.svg';
-
-// For Empty Cart or if user is not logged in
-const emptyCart: {
-  title: string;
-  icon: React.ReactNode;
-} = {
-  title: 'An order must have at least one item. Your order is empty.',
-  icon: <ShoppingCart />,
-};
+import EmptyCart from '../EmptyCart/EmptyCart';
 
 const components: {
   title: string;
@@ -128,41 +119,32 @@ const Navigation = () => {
                       </Button>
                     </div>
                     <ul className="grid gap-3 p-2 sm:w-[200px] md:w-[200px] lg:w-[290px] lg:grid-rows-[.75fr_1fr]">
-                      {products.map((product) => (
-                        <ListItem
-                          key={`key:${product.name}`}
-                          href="/cart"
-                          title={product.name}
-                        >
-                          <div className="flex justify-between items-center pt-1">
-                            <p className="quantityinCart text-[10px] sm:text-[12px] md:text-[14px]">
-                              {`${product.quantity} ${
-                                product.quantity > 1 ? 'items' : 'item'
-                              }`}
-                            </p>
-                            <p className="priceInCart text-primary text-[10px] sm:text-[12px] md:text-[14px]">
-                              {Utils.convertPrice(product.price)}
-                            </p>
-                          </div>
-                        </ListItem>
-                      ))}
+                      {products.length !== 0 ? (
+                        products.map((product) => (
+                          <ListItem
+                            key={`key:${product.name}`}
+                            href="/cart"
+                            title={product.name}
+                          >
+                            <div className="flex justify-between items-center pt-1">
+                              <p className="quantityinCart text-[10px] sm:text-[12px] md:text-[14px]">
+                                {`${product.quantity} ${
+                                  product.quantity > 1 ? 'items' : 'item'
+                                }`}
+                              </p>
+                              <p className="priceInCart text-primary text-[10px] sm:text-[12px] md:text-[14px]">
+                                {Utils.convertPrice(product.price)}
+                              </p>
+                            </div>
+                          </ListItem>
+                        ))
+                      ) : (
+                        <EmptyCart />
+                      )}
                     </ul>
                   </div>
                 ) : (
-                  // Empty Cart
-                  <div className="flex flex-col gap-4 p-6 md:w-[200px] lg:w-[300px] justify-center items-center">
-                    <Image
-                      alt="empty-cart"
-                      src={EmptyCart}
-                      width={500}
-                      height={500}
-                      className='w-[100px] h-[100px]'
-                    />
-                    <p className="text-muted-foreground text-center lg:text-[14px]">
-                      {emptyCart.title}
-                    </p>
-                    <ButtonWithIcon href={'/'}>{'Shop Now'}</ButtonWithIcon>
-                  </div>
+                  <EmptyCart />
                 )}
               </NavigationMenuContent>
             </NavigationMenuItem>
@@ -189,7 +171,7 @@ const Navigation = () => {
                 </div>
               )}
               <NavigationMenuContent>
-                <ul className="grid hidden sm:grid gap-3 p-6 sm:w-[200px] md:w-[200px] lg:w-[290px] lg:grid-rows-[.75fr_1fr] ">
+                <ul className="hidden sm:grid gap-3 p-6 sm:w-[200px] md:w-[200px] lg:w-[290px] lg:grid-rows-[.75fr_1fr] ">
                   {components.map((component) => (
                     <ListItem
                       key={component.title}

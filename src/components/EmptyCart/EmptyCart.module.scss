@@ -1,0 +1,7 @@
+.emptyCart {
+  @apply flex flex-col gap-4 p-6 md:w-[200px] lg:w-[300px] justify-center items-center;
+}
+
+.EmptyCartText {
+  @apply text-muted-foreground text-center lg:text-[14px];
+}
