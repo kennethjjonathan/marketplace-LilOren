@@ -1,53 +1,37 @@
-import { InputWithLabel } from '@/components/inputWithLabel/InputWithLabel';
 import React, { useState } from 'react';
-import { UserPlus } from 'lucide-react';
+import Image from 'next/image';
+import { InputWithLabel } from '@/components/inputWithLabel/InputWithLabel';
 import AsyncButton from '@/components/asyncButton/AsyncButton';
-import axios from 'axios';
-import CONSTANTS from '@/constants/constants';
-import { signIn, getProviders } from 'next-auth/react';
+import { LogIn } from 'lucide-react';
+import GoogleButton from '@/components/googleButton/GoogleButton';
 import { GetServerSideProps } from 'next';
+import { signIn, getProviders } from 'next-auth/react';
 import { LiteralUnion, ClientSafeProvider } from 'next-auth/react';
 import { BuiltInProviderType } from 'next-auth/providers/index';
-import GoogleButton from '@/components/googleButton/GoogleButton';
 import Link from 'next/link';
-import Image from 'next/image';
+import axios from 'axios';
+import CONSTANTS from '@/constants/constants';
 
-interface RegisterPageProps {
+interface SignInPageProps {
   providers: Record<LiteralUnion<BuiltInProviderType>, ClientSafeProvider>;
 }
 
-function RegisterPage({ providers }: RegisterPageProps) {
+function SignInPage({ providers }: SignInPageProps) {
   const [registerData, setRegisterData] = useState({
-    username: '',
     email: '',
     password: '',
-    confirmPassword: '',
   });
   const [isDataValid, setIsDataValid] = useState({
-    username: true,
     email: true,
     password: true,
-    confirmPassword: true,
   });
-  const [passwordMessage, setPasswordMessage] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleRegisterData = (
     e: React.ChangeEvent<HTMLInputElement>,
     key: string,
   ) => {
     setRegisterData({ ...registerData, [key]: e.target.value });
-  };
-
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const validateUsername = (): boolean => {
-    const usernameRegex = /[a-zA-Z0-9]{3,}/gi;
-    if (!usernameRegex.test(registerData.username)) {
-      setIsDataValid({ ...isDataValid, username: false });
-      return false;
-    }
-    setIsDataValid({ ...isDataValid, username: true });
-    return true;
   };
 
   const validateEmail = (): boolean => {
@@ -61,50 +45,20 @@ function RegisterPage({ providers }: RegisterPageProps) {
   };
 
   const validatePassword = (): boolean => {
-    const passwordRegex =
-      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm;
-    if (!passwordRegex.test(registerData.password)) {
+    if (registerData.password.length === 0) {
       setIsDataValid({ ...isDataValid, password: false });
-      setPasswordMessage(
-        'Password must contain at least 1 lowercase letter, 1 uppercase letter, 1 number, and with a minimum of 8 characters',
-      );
-      return false;
-    }
-    if (
-      registerData.password
-        .toLowerCase()
-        .includes(registerData.username.toLowerCase())
-    ) {
-      setIsDataValid({ ...isDataValid, password: false });
-      setPasswordMessage('Password cannot contain username');
       return false;
     }
     setIsDataValid({ ...isDataValid, password: true });
-    setPasswordMessage('');
-    return true;
-  };
-
-  const validateConfirmPassword = (): boolean => {
-    if (registerData.password !== registerData.confirmPassword) {
-      setIsDataValid({ ...isDataValid, confirmPassword: false });
-      return false;
-    }
-    setIsDataValid({ ...isDataValid, confirmPassword: true });
     return true;
   };
 
   const validateAll = (): boolean => {
     let isContinue: boolean = true;
-    if (!validateUsername()) {
-      isContinue = false;
-    }
     if (!validateEmail()) {
       isContinue = false;
     }
     if (!validatePassword()) {
-      isContinue = false;
-    }
-    if (!validateConfirmPassword()) {
       isContinue = false;
     }
     return isContinue;
@@ -141,7 +95,7 @@ function RegisterPage({ providers }: RegisterPageProps) {
         <h1 className="font-bold text-3xl text-primary-foreground lg:text-4xl xl:w-full xl:text-left">
           LOGO
         </h1>
-        <div className="hidden relative w-[424px] h-[424px] xl:block">
+        <div className="hidden relative w-[424px] h-[424px] xl:block my-auto">
           <Image src={'/google.svg'} alt="Google's logo" fill sizes="40vw" />
         </div>
       </div>
@@ -149,29 +103,12 @@ function RegisterPage({ providers }: RegisterPageProps) {
         <h1 className="font-bold text-2xl text-primary sm:hidden">LOGO</h1>
         <div className="rounded-lg w-full flex flex-col items-baseline justify-center">
           <h1 className="font-light text-xl w-full text-left lg:text-2xl">
-            Register
+            Sign In
           </h1>
-          <p className="font-light text-sm w-full text-justify mt-2 lg:text-base">
-            By creating an account with us, you will be able to move through the
-            checkout process faster, view and track your orders in your account
-            and more.
-          </p>
           <form
             className="mt-5 flex flex-col gap-3 w-full"
             onSubmit={handleSubmit}
           >
-            <InputWithLabel
-              type="text"
-              label="Username"
-              id="username-input"
-              value={registerData.username}
-              labelStyling="font-light"
-              onChange={(e) => handleRegisterData(e, 'username')}
-              onBlur={validateUsername}
-              isValid={isDataValid.username}
-              validation="Must consist of 3 alphanumeric characters minimum"
-              required
-            />
             <InputWithLabel
               type="email"
               label="Email"
@@ -190,22 +127,10 @@ function RegisterPage({ providers }: RegisterPageProps) {
               id="password-input"
               labelStyling="font-light"
               value={registerData.password}
-              onBlur={validatePassword}
               onChange={(e) => handleRegisterData(e, 'password')}
               isValid={isDataValid.password}
-              validation={passwordMessage}
-              required
-            />
-            <InputWithLabel
-              type="password"
-              label="Confirm Password"
-              id="confirm-password-input"
-              labelStyling="font-light"
-              value={registerData.confirmPassword}
-              onChange={(e) => handleRegisterData(e, 'confirmPassword')}
-              onBlur={validateConfirmPassword}
-              isValid={isDataValid.confirmPassword}
-              validation="Must be the same with password"
+              onBlur={validatePassword}
+              validation="Please put in your password"
               required
             />
             <AsyncButton
@@ -213,8 +138,8 @@ function RegisterPage({ providers }: RegisterPageProps) {
               type="submit"
               isLoading={isLoading}
             >
-              <UserPlus className="mr-2 h-4 w-4" />
-              Register
+              <LogIn className="mr-2 h-4 w-4" />
+              Sign In
             </AsyncButton>
           </form>
           <div className="flex items-center w-full justify-between gap-3 mt-2">
@@ -227,9 +152,9 @@ function RegisterPage({ providers }: RegisterPageProps) {
           </div>
         </div>
         <p className="font-extralight mt-3 w-full text-center text-base lg:text-lg">
-          Already have an account?{' '}
-          <Link href="/signin" className="font-normal underline">
-            Sign in
+          Don&apos;t have an account?{' '}
+          <Link href="/register" className="font-normal underline">
+            Register
           </Link>
         </p>
       </div>
@@ -237,7 +162,7 @@ function RegisterPage({ providers }: RegisterPageProps) {
   );
 }
 
-export default RegisterPage;
+export default SignInPage;
 
 export const getServerSideProps: GetServerSideProps = async () => {
   return {
