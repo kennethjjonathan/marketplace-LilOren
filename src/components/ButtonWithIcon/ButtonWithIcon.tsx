@@ -7,7 +7,7 @@ interface ButtonWithIconIconProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children?: ReactNode;
   href?: string;
-  className?:string;
+  className?: string;
   variant?:
     | 'default'
     | 'link'

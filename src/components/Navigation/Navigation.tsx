@@ -46,7 +46,7 @@ const user: {
   firstName: string;
   lastName: string;
 } = {
-  firstName: '',
+  firstName: 'Endriyani',
   lastName: 'Rahayu',
 };
 
@@ -92,8 +92,14 @@ const Navigation = () => {
   return (
     <div className={styles.navigation}>
       <div className="lg:hidden md:w-[75vw] text-right pb-2">
-        <ButtonWithIcon variant={'link'} href={'/login'}>{'Login'}</ButtonWithIcon>
-        <ButtonWithIcon variant={'link'} href={'/register'} className="text-muted-foreground">
+        <ButtonWithIcon variant={'link'} href={'/login'}>
+          {'Login'}
+        </ButtonWithIcon>
+        <ButtonWithIcon
+          variant={'link'}
+          href={'/register'}
+          className="text-muted-foreground"
+        >
           {'Register'}
         </ButtonWithIcon>
       </div>
@@ -110,9 +116,19 @@ const Navigation = () => {
             {/* Cart */}
             <NavigationMenuItem>
               <NavigationMenuTrigger>
-                <ButtonWithIcon href="/cart" variant={'ghost'}>
-                  <ShoppingCart />
-                </ButtonWithIcon>
+                  <div className='cartWrapper relative w-full'>
+                {user.firstName && products.length !== 0 &&
+
+                    <div className='absolute right-0 w-[18px] h-[18px] pb-[19px] border-white bg-destructive text-white font-bold text-[10px] text-center rounded-full'>
+                      {products.length}
+                    </div>
+                }
+
+                    <ButtonWithIcon href="/cart" variant={'ghost'}>
+                      <ShoppingCart />
+                    </ButtonWithIcon>
+                  </div>
+                
               </NavigationMenuTrigger>
               <NavigationMenuContent>
                 {user.firstName ? (
@@ -173,7 +189,7 @@ const Navigation = () => {
                   </div>
                 </NavigationMenuTrigger>
               ) : (
-                <div className="hidden lg:flex flex-row gap-2">
+                <div className="hidden lg:flex flex-row gap-2 pl-2">
                   <ButtonWithIcon href={'/login'}>{'Login'}</ButtonWithIcon>
                   <ButtonWithIcon variant={'outline'} href={'/register'}>
                     {'Register'}
