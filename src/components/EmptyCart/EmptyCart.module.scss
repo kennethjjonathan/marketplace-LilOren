@@ -1,7 +1,7 @@
 .emptyCart {
-  @apply flex flex-col gap-4 p-6 md:w-[200px] lg:w-[300px] justify-center items-center;
+  @apply hidden sm:flex sm:flex-col gap-4 p-6 sm:w-[150px] md:w-[160px] lg:w-[300px] justify-center items-center;
 }
 
 .EmptyCartText {
-  @apply text-muted-foreground text-center lg:text-[14px];
+  @apply text-muted-foreground text-center text-[10px] md:text-[12px] lg:text-[14px];
 }

@@ -18,6 +18,7 @@ import { Search, ShoppingCart, User2 } from 'lucide-react';
 import ButtonWithIcon from '../ButtonWithIcon/ButtonWithIcon';
 import styles from './Navigation.module.scss';
 import EmptyCart from '../EmptyCart/EmptyCart';
+import { className } from '../../../node_modules/@sinonjs/commons/types/index.d';
 
 const components: {
   title: string;
@@ -45,7 +46,7 @@ const user: {
   firstName: string;
   lastName: string;
 } = {
-  firstName: 'Endriyani',
+  firstName: '',
   lastName: 'Rahayu',
 };
 
@@ -90,6 +91,10 @@ const Navigation = () => {
 
   return (
     <div className={styles.navigation}>
+      <div className='lg:hidden md:w-[75vw] text-right pb-2'>
+        <Button variant={'link'}>{'Login'}</Button>
+        <Button variant={'link'} className='text-muted-foreground'>{'Register'}</Button>
+      </div>
       <div className={styles.navigationContent}>
         <div className={styles.logo}>LOGO</div>
         <div className={styles.searchInput}>

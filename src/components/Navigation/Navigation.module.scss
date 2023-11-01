@@ -1,5 +1,5 @@
 .navigation {
-  @apply bg-primary-foreground md:w-full flex justify-center h-[75px] items-center;
+  @apply bg-primary-foreground md:w-full flex flex-col justify-center h-fit py-4 items-center;
 }
 
 .navigationContent {

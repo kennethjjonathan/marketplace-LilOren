@@ -1,9 +1,9 @@
 import React from 'react';
-import Link from "next/link";
+import Link from 'next/link';
 import { Utils } from '@/utils';
 import { Button } from '../ui/button';
 import { ListItem } from '../Navigation/Navigation';
-import EmptyCart from "../EmptyCart/EmptyCart";
+import EmptyCart from '../EmptyCart/EmptyCart';
 import styles from './Cart.module.scss';
 
 interface Product {
