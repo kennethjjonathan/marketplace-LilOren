@@ -6,8 +6,10 @@ import PromotionCarousel from '@/components/PromotionCarousel/PromotionCarousel'
 const Home: NextPageWithLayout = () => {
   return (
     <div className="flex flex-col justify-center items-center">
-      <main>
-        <PromotionCarousel />
+      <main className="w-full md:w-[75vw]">
+        <PromotionCarousel
+          imageArray={['/banner-1.jpg', '/banner-1.jpg', '/banner-1.jpg']}
+        />
       </main>
     </div>
   );
