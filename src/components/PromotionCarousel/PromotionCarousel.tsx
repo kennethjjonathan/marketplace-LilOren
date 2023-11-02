@@ -38,9 +38,7 @@ function PromotionCarousel({
           key={index}
           className="min-w-full min-h-full transition-transform linear duration-300"
           style={{ transform: `translateX(-${current * 100}%)` }}
-        >
-
-        </div>
+        ></div>
       ))}
     </div>
   );
