@@ -3,6 +3,9 @@ import { NextPageWithLayout } from './_app';
 import { ReactElement } from 'react';
 import PromotionCarousel from '@/components/PromotionCarousel/PromotionCarousel';
 import RecommendedProductCard from '@/components/RecommendedProductCard/RecommendedProductCard';
+import ButtonWithIcon from '@/components/ButtonWithIcon/ButtonWithIcon';
+import Link from 'next/link';
+import { ChevronRight } from 'lucide-react';
 
 const recommendationProducts: {
   image: string;
@@ -163,9 +166,18 @@ const Home: NextPageWithLayout = () => {
           ]}
         />
         <section className="recommendedProductList flex flex-col justify-center items-center w-full">
-          <div className="w-full md:w-[75vw] bg-accent text-left text-primary py-3 pl-2 text-[12px] md:border-b-[5px] md:border-b-primary md:text-center md:text-[16px] md:bg-white md:mb-2">
-            {'RECOMMENDED'}
+          <div className='flex flex-row justify-between w-full'>
+            <div className="w-full md:w-[75vw] bg-accent text-left text-primary py-3 pl-2 text-[12px] md:border-b-[5px] md:border-b-primary md:text-center md:text-[16px] md:bg-white md:mb-2">
+              {'RECOMMENDED'}
+            </div>
+
+              <div className="w-full md:w-[75vw] bg-accent text-right text-muted-foreground py-3 pr-2 text-[12px] md:hidden">
+              <Link href={"/"} className='justify-end items-center flex flex-row w-full'>
+                {'See More'} <ChevronRight size={20} />
+            </Link>
+              </div>
           </div>
+          
           <div className="productsWrapper grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 ">
             {recommendationProducts.map((product) => (
               <RecommendedProductCard
@@ -178,6 +190,13 @@ const Home: NextPageWithLayout = () => {
               />
             ))}
           </div>
+          <ButtonWithIcon 
+            variant={"outline"}
+            href='/'
+            className='mt-5'
+          >
+            {"See More"}
+          </ButtonWithIcon>
         </section>
       </main>
     </div>
