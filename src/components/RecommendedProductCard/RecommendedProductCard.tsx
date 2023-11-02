@@ -51,7 +51,9 @@ const RecommendedProductCard = ({
             </div>
           </div>
           <div className="mb-2 last:mb-0 min-h-[15px]">
-            <div className={styles.lilOren_itemcard__promotion_label_container}></div>
+            <div
+              className={styles.lilOren_itemcard__promotion_label_container}
+            ></div>
           </div>
           <div className="mb-2 last:mb-0 min-h-[20px]">
             <div className="flex items-center justify-between w-full">

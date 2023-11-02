@@ -45,16 +45,16 @@ const recommendationProducts: {
       'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//112/MTA-55497289/apple_usb-c_to_lightning_cable_-2m-_full01_qlaofs1z.jpg',
     name: 'USB-C to Lightning Cable (2m)',
     price: 609000,
-    discount:13,
-    totalSold:100
+    discount: 13,
+    totalSold: 100,
   },
   {
     image:
       'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//95/MTA-55432616/apple_ipad_pro_5th_gen_12-9-inch_full01_n557vk6l.jpg',
     name: 'iPad Pro 12,9 inci (generasi ke-5)',
     price: 18499000,
-    discount:4,
-    totalSold:100
+    discount: 4,
+    totalSold: 100,
   },
   {
     image:
@@ -91,16 +91,16 @@ const recommendationProducts: {
       'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//112/MTA-55497289/apple_usb-c_to_lightning_cable_-2m-_full01_qlaofs1z.jpg',
     name: 'USB-C to Lightning Cable (2m)',
     price: 609000,
-    discount:13,
-    totalSold:100
+    discount: 13,
+    totalSold: 100,
   },
   {
     image:
       'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//95/MTA-55432616/apple_ipad_pro_5th_gen_12-9-inch_full01_n557vk6l.jpg',
     name: 'iPad Pro 12,9 inci (generasi ke-5)',
     price: 18499000,
-    discount:4,
-    totalSold:100
+    discount: 4,
+    totalSold: 100,
   },
   {
     image:
@@ -137,16 +137,16 @@ const recommendationProducts: {
       'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//112/MTA-55497289/apple_usb-c_to_lightning_cable_-2m-_full01_qlaofs1z.jpg',
     name: 'USB-C to Lightning Cable (2m)',
     price: 609000,
-    discount:13,
-    totalSold:100
+    discount: 13,
+    totalSold: 100,
   },
   {
     image:
       'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//95/MTA-55432616/apple_ipad_pro_5th_gen_12-9-inch_full01_n557vk6l.jpg',
     name: 'iPad Pro 12,9 inci (generasi ke-5)',
     price: 18499000,
-    discount:4,
-    totalSold:100
+    discount: 4,
+    totalSold: 100,
   },
 ];
 
@@ -156,7 +156,7 @@ const Home: NextPageWithLayout = () => {
       <main className="w-full md:w-[75vw]">
         <section className="recommendedProductList flex flex-col justify-center items-center w-full">
           <div className="w-full md:w-[75vw] bg-accent text-left text-primary py-3 pl-2 text-[12px] md:border-b-[5px] md:border-b-primary md:text-center md:text-[16px] md:bg-white md:mb-2">
-            {"RECOMMENDED"}
+            {'RECOMMENDED'}
           </div>
           <div className="productsWrapper grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 ">
             {recommendationProducts.map((product) => (
