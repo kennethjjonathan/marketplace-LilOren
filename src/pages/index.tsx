@@ -153,7 +153,7 @@ const recommendationProducts: {
 
 const Home: NextPageWithLayout = () => {
   return (
-    <div className="flex flex-col justify-center items-center w-full px-1 bg-primary-foreground md:bg-white">
+    <div className="flex flex-col justify-center items-center w-full bg-primary-foreground md:bg-white">
       <main className="w-full md:w-[75vw]">
         <PromotionCarousel
           imageArray={['/banner-1.jpg', '/banner-1.jpg', '/banner-1.jpg']}
