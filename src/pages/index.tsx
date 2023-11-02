@@ -1,6 +1,7 @@
 import Layout from '@/components/Layout/Layout';
 import { NextPageWithLayout } from './_app';
 import { ReactElement } from 'react';
+import PromotionCarousel from '@/components/PromotionCarousel/PromotionCarousel';
 import RecommendedProductCard from '@/components/RecommendedProductCard/RecommendedProductCard';
 
 const recommendationProducts: {
@@ -154,6 +155,9 @@ const Home: NextPageWithLayout = () => {
   return (
     <div className="flex flex-col justify-center items-center w-full px-1 bg-primary-foreground md:bg-white">
       <main className="w-full md:w-[75vw]">
+        <PromotionCarousel
+          imageArray={['/banner-1.jpg', '/banner-1.jpg', '/banner-1.jpg']}
+        />
         <section className="recommendedProductList flex flex-col justify-center items-center w-full">
           <div className="w-full md:w-[75vw] bg-accent text-left text-primary py-3 pl-2 text-[12px] md:border-b-[5px] md:border-b-primary md:text-center md:text-[16px] md:bg-white md:mb-2">
             {'RECOMMENDED'}
