@@ -46,7 +46,7 @@ function PromotionCarousel({
             height={500}
             width={500}
             style={{ objectFit: 'fill' }}
-            className="w-full h-60 sm:h-80"
+            className="w-full"
           />
         </div>
       ))}

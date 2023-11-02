@@ -156,7 +156,11 @@ const Home: NextPageWithLayout = () => {
     <div className="flex flex-col justify-center items-center w-full px-1 bg-primary-foreground md:bg-white">
       <main className="w-full md:w-[75vw]">
         <PromotionCarousel
-          imageArray={['/banner-1.jpg', '/banner-1.jpg', '/banner-1.jpg']}
+          imageArray={[
+            'https://down-id.img.susercontent.com/file/id-50009109-af0948f69bef33259d862b058bc82b84',
+            'https://down-id.img.susercontent.com/file/id-50009109-af0948f69bef33259d862b058bc82b84',
+            'https://down-id.img.susercontent.com/file/id-50009109-af0948f69bef33259d862b058bc82b84',
+          ]}
         />
         <section className="recommendedProductList flex flex-col justify-center items-center w-full">
           <div className="w-full md:w-[75vw] bg-accent text-left text-primary py-3 pl-2 text-[12px] md:border-b-[5px] md:border-b-primary md:text-center md:text-[16px] md:bg-white md:mb-2">

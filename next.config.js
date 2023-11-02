@@ -7,6 +7,10 @@ const nextConfig = {
         hostname: 'www.static-src.com',
         port: '',
       },
+      {
+        hostname: 'down-id.img.susercontent.com',
+        port: '',
+      },
     ],
   },
 };
