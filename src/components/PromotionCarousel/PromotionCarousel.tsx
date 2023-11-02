@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 interface PromotionCarouselProps {
-  imageArray: string[];
+  imageArray?: string[];
   autoSlide?: boolean;
   slideInterval?: number;
 }
 
 function PromotionCarousel({
-  imageArray = [],
+  imageArray = ['/banner-1.jpg', '/banner-1.jpg', '/banner-1.jpg'],
   autoSlide = false,
   slideInterval = 4000,
 }: PromotionCarouselProps) {
@@ -25,20 +26,28 @@ function PromotionCarousel({
     );
   };
 
-  useEffect(() => {
-    if (!autoSlide) return;
-    const slide = setTimeout(goToNext, slideInterval);
-    return () => clearTimeout(slide);
-  }, [current]);
+  // useEffect(() => {
+  //   if (!autoSlide) return;
+  //   const slide = setTimeout(goToNext, slideInterval);
+  //   return () => clearTimeout(slide);
+  // }, [current]);
 
   return (
-    <div className="w-full flex overflow-hidden relative">
+    <div className="w-full flex overflow-x-auto relative">
       {imageArray.map((image, index) => (
         <div
           key={index}
-          className="min-w-full min-h-full transition-transform linear duration-300"
+          className="min-w-full h-96 transition-transform linear duration-300 relative"
           style={{ transform: `translateX(-${current * 100}%)` }}
-        ></div>
+        >
+          <Image
+            src={image}
+            alt={`promotion ${index + 1}`}
+            height={500}
+            width={500}
+            style={{ objectFit: 'cover' }}
+          />
+        </div>
       ))}
     </div>
   );
