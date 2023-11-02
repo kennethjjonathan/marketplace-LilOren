@@ -91,7 +91,7 @@ const Navigation = () => {
 
   return (
     <div className={styles.navigation}>
-      <div className="lg:hidden md:w-[75vw] text-right pb-2">
+      <div className="lg:hidden md:w-[80vw] text-right pb-2">
         <ButtonWithIcon variant={'link'} href={'/login'}>
           {'Login'}
         </ButtonWithIcon>
