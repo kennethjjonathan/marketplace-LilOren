@@ -11,9 +11,6 @@ module.exports = {
     container: {
       center: true,
       padding: '0.75rem',
-      screens: {
-        '2xl': '1400px',
-      },
     },
     extend: {
       colors: {
