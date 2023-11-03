@@ -6,6 +6,7 @@ import RecommendedProductCard from '@/components/RecommendedProductCard/Recommen
 import ButtonWithIcon from '@/components/ButtonWithIcon/ButtonWithIcon';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
+import HomeCategoryList from '@/components/HomeCategoryList/HomeCategoryList';
 
 const recommendationProducts: {
   image: string;
@@ -156,8 +157,8 @@ const recommendationProducts: {
 
 const Home: NextPageWithLayout = () => {
   return (
-    <div className="flex flex-col justify-center items-center w-full px-1 bg-primary-foreground md:bg-white">
-      <main className="w-full md:w-[75vw]">
+    <div className="flex flex-col justify-center items-center w-full bg-primary-foreground">
+      <main className="w-full flex flex-col justify-center items-center">
         <PromotionCarousel
           imageArray={[
             'https://down-id.img.susercontent.com/file/id-50009109-af0948f69bef33259d862b058bc82b84',
@@ -165,13 +166,16 @@ const Home: NextPageWithLayout = () => {
             'https://down-id.img.susercontent.com/file/id-50009109-af0948f69bef33259d862b058bc82b84',
           ]}
         />
-        <section className="recommendedProductList flex flex-col justify-center items-center w-full">
+        <section className="home-category-list bg-white mt-3 lg:mt-5 md:w-[75vw]">
+          <HomeCategoryList />
+        </section>
+        <section className="recommendedProductList flex flex-col justify-center items-center w-full mt-3 lg:mt-5 md:w-[75vw]">
           <div className="flex flex-row justify-between w-full">
-            <div className="w-full md:w-[75vw] bg-accent text-left text-primary py-3 pl-2 text-[12px] md:border-b-[5px] md:border-b-primary md:text-center md:text-[16px] md:bg-white md:mb-2">
+            <div className="w-full md:w-[75vw] bg-white text-left text-primary py-3 pl-2 md:border-b-[5px] md:border-b-primary md:text-center md:text-[16px] md:bg-white md:mb-2 text-[14px] px-[10px]">
               {'RECOMMENDED'}
             </div>
 
-            <div className="w-full md:w-[75vw] bg-accent text-right text-muted-foreground py-3 pr-2 text-[12px] md:hidden">
+            <div className="w-full md:w-[75vw] bg-white text-right text-muted-foreground py-3 pr-2 text-[12px] md:hidden">
               <Link
                 href={'/'}
                 className="justify-end items-center flex flex-row w-full"
