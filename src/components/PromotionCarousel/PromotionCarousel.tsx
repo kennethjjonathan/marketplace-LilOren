@@ -20,7 +20,6 @@ function PromotionCarousel({
     );
   };
   const goToNext = () => {
-    console.log('Kepanggil');
     setCurrent((current) =>
       current === imageArray.length - 1 ? 0 : current + 1,
     );
@@ -79,6 +78,7 @@ function PromotionCarousel({
           </button>
         ))}
       </div>
+      
     </div>
   );
 }
