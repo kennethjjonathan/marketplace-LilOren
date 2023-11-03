@@ -78,7 +78,6 @@ function PromotionCarousel({
           </button>
         ))}
       </div>
-      
     </div>
   );
 }

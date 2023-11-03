@@ -180,7 +180,6 @@ function ProductPage() {
         <div className="px-2 w-full my-4">
           <Separator className="h-0.5 rounded-md" />
         </div>
-        
       </section>
     </div>
   );
