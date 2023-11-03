@@ -1,11 +1,11 @@
-import Layout from '@/components/Layout/Layout';
-import { NextPageWithLayout } from './_app';
 import { ReactElement } from 'react';
+import Link from 'next/link';
+import { ChevronRight } from 'lucide-react';
+import { NextPageWithLayout } from './_app';
+import Layout from '@/components/Layout/Layout';
 import PromotionCarousel from '@/components/PromotionCarousel/PromotionCarousel';
 import RecommendedProductCard from '@/components/RecommendedProductCard/RecommendedProductCard';
 import ButtonWithIcon from '@/components/ButtonWithIcon/ButtonWithIcon';
-import Link from 'next/link';
-import { ChevronRight } from 'lucide-react';
 import HomeCategoryList from '@/components/HomeCategoryList/HomeCategoryList';
 
 const recommendationProducts: {
