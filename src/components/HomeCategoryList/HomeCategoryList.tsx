@@ -24,7 +24,7 @@ const HomeCategoryList = () => {
         </Link>
       </div>
       <div className="grid-list-wrapper overflow-auto h-fit border-b-[1px] border-t-[1px]">
-        <div className="grid-list hide-scrollbar h-[274px] p-0 w-[100%] flex flex-col flex-wrap overflow-x-scroll overflow-y-hidden scrolling-touch ">
+        <div className="grid-list hide-scrollbar h-[290px] p-0 w-[100%] flex flex-col flex-wrap overflow-x-scroll overflow-y-hidden scrolling-touch ">
           {CONSTANTS.CATEGORY_LIST.map((category) => (
             <div
               key={`key:${category.title}`}
