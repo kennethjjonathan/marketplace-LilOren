@@ -5,7 +5,7 @@ import { Pencil, PlusCircle, Store } from 'lucide-react';
 import { NextPageWithLayout } from '../_app';
 import Layout from '@/components/Layout/Layout';
 import { Button } from '@/components/ui/button';
-import styles from './User.module.scss'
+import styles from './User.module.scss';
 
 const User: NextPageWithLayout = () => {
   return (
@@ -78,9 +78,7 @@ const UserSetting = () => {
       >
         <Store />
         <div className={styles.list__item__container}>
-          <p className={styles.list__item__title}>
-            My Address
-          </p>
+          <p className={styles.list__item__title}>My Address</p>
           <p className={styles.list__item__desc}>
             Atur alamat pengiriman belanjaan
           </p>
