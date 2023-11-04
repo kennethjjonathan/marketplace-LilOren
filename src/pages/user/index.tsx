@@ -1,25 +1,42 @@
-import React, { ReactElement } from 'react';
+import React, { Fragment, ReactElement, useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { Pencil, PlusCircle, Store } from 'lucide-react';
 import { NextPageWithLayout } from '../_app';
 import Layout from '@/components/Layout/Layout';
 import { Button } from '@/components/ui/button';
+import AddAddressModal from '../../components/AddAddressModal/AddAddressModal';
 import styles from './User.module.scss';
 
 const User: NextPageWithLayout = () => {
+  const [showSetAddressModal, setshowSetAddressModal] =
+    useState<boolean>(false);
+  const handleLogout = () => {
+    console.log('logout');
+  };
+
   return (
-    <div className="bg-accent md:w-[75vw] flex flex-col justify-center">
-      <UserPresentation />
-      <div className="lilOren__user__setting pt-[17px] bg-white">
-        <span id="account-setting-section" className="font-bold px-4">
-          {'Account Settings'}
-        </span>
-        <ul className="lilOren__user__account__setting__list mt-[5px]">
-          <UserSetting />
-        </ul>
+    <Fragment>
+      <div className="bg-accent flex flex-col justify-start h-[100vh]">
+        <UserPresentation />
+        <div className="lilOren__user__setting pt-[17px] bg-white">
+          <span id="account-setting-section" className="font-bold px-4">
+            {'Account Settings'}
+          </span>
+          <ul className="lilOren__user__account__setting__list mt-[5px]">
+            <UserSetting setShow={() => setshowSetAddressModal(true)} />
+          </ul>
+        </div>
+        <div className="lilOren__user__logout w-full flex justify-center items-center pt-[17px]">
+          <Button variant={'outline'} onClick={() => handleLogout()}>
+            {'Logout'}
+          </Button>
+        </div>
       </div>
-    </div>
+      <AddAddressModal
+        isVisible={showSetAddressModal}
+        onClose={() => setshowSetAddressModal(false)}
+      />
+    </Fragment>
   );
 };
 
@@ -69,21 +86,29 @@ const UserInfo = () => {
   );
 };
 
-const UserSetting = () => {
+interface UserSettingProps {
+  setShow: () => void;
+}
+
+const UserSetting = ({ setShow }: UserSettingProps) => {
   return (
-    <li className={styles.list__item}>
-      <Link
+    <li
+      className={styles.list__item}
+      onClick={() => setShow()}
+      onKeyDown={() => setShow()}
+    >
+      {/* <Link
         href={'/user/settings'}
         className="flex flex-row relative py-[12px] px-[16px] items-center w-full"
-      >
-        <Store />
-        <div className={styles.list__item__container}>
-          <p className={styles.list__item__title}>My Address</p>
-          <p className={styles.list__item__desc}>
-            Atur alamat pengiriman belanjaan
-          </p>
-        </div>
-      </Link>
+      > */}
+      <Store />
+      <div className={styles.list__item__container}>
+        <p className={styles.list__item__title}>My Address</p>
+        <p className={styles.list__item__desc}>
+          Atur alamat pengiriman belanjaan
+        </p>
+      </div>
+      {/* </Link> */}
     </li>
   );
 };

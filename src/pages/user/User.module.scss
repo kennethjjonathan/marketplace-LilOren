@@ -23,7 +23,7 @@
 }
 
 .list__item {
-  @apply flex py-[12px] px-[16px] items-center w-full;
+  @apply flex py-[12px] px-[16px] items-center w-full hover:cursor-pointer;
 }
 
 .list__item__container {
