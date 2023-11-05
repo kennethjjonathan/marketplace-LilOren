@@ -69,7 +69,6 @@ const UserAddressCreate = () => {
     subSubDistrict: '',
     zipCode: '',
     fullAddress: '',
-
   });
 
   const [isDataValid, setIsDataValid] = useState({
@@ -81,7 +80,7 @@ const UserAddressCreate = () => {
     subDistrict: true,
     subSubDistrict: true,
     zipCode: true,
-    fullAddress:true,
+    fullAddress: true,
   });
 
   const fetchProvince = async () => {
@@ -129,7 +128,10 @@ const UserAddressCreate = () => {
     }
   };
 
-  const validateData = (key: string, pattern: RegExp): boolean => {
+  const validateData = (
+    key: keyof typeof addAddressData,
+    pattern: RegExp,
+  ): boolean => {
     const dataRegex = pattern;
     if (!dataRegex.test(addAddressData[key])) {
       setIsDataValid({ ...isDataValid, [key]: false });
