@@ -1,50 +1,98 @@
 import React, { Fragment, ReactElement, useState } from 'react';
 import Image from 'next/image';
-import { Pencil, PlusCircle, Store } from 'lucide-react';
+import { ArrowLeft, Pencil, PlusCircle, Store } from 'lucide-react';
+import { useRouter } from 'next/router';
 import { NextPageWithLayout } from '../_app';
-import Layout from '@/components/Layout/Layout';
 import { Button } from '@/components/ui/button';
 import AddAddressModal from '../../components/AddAddressModal/AddAddressModal';
+import Navigation from '@/components/Navigation/Navigation';
+import BackButton from '@/components/BackButton/BackButton';
+import UserSettingsLayout from '@/components/UserSettingsLayout/UserSettingsLayout';
 import styles from './User.module.scss';
+import Head from 'next/head';
 
 const User: NextPageWithLayout = () => {
-  const [showSetAddressModal, setshowSetAddressModal] =
+  const router = useRouter();
+  const [showSetAddressModal, setShowSetAddressModal] =
     useState<boolean>(false);
   const handleLogout = () => {
     console.log('logout');
   };
 
   return (
-    <Fragment>
-      <div className="bg-accent flex flex-col justify-start h-[100vh]">
-        <UserPresentation />
-        <div className="lilOren__user__setting pt-[17px] bg-white">
-          <span id="account-setting-section" className="font-bold px-4">
-            {'Account Settings'}
-          </span>
-          <ul className="lilOren__user__account__setting__list mt-[5px]">
-            <UserSetting setShow={() => setshowSetAddressModal(true)} />
-          </ul>
+    <>
+      <Head>
+        <title>Jual Beli Online Aman dan Nyaman | LilOren</title>
+        <meta
+          data-rh="true"
+          name="viewport"
+          content="initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=no, width=device-width"
+        />
+        <meta data-rh="true" property="site_name" content="LilOren" />
+        <meta
+          data-rh="true"
+          property="title"
+          content="Jual Beli Online Aman dan Nyaman | LilOren"
+        />
+        <meta
+          data-rh="true"
+          name="description"
+          content="Mal online terbesar Indonesia, tempat berkumpulnya toko / online shop terpercaya se Indonesia. Jual beli online semakin aman dan nyaman di LilOren."
+        ></meta>
+      </Head>
+      <Fragment>
+        <div className="bg-accent flex flex-col justify-start h-[100vh]">
+          <UserPresentation />
+          <div className="lilOren__user__setting pt-[17px] bg-white">
+            <span id="account-setting-section" className="font-bold px-4">
+              {'Account Settings'}
+            </span>
+            <ul className="lilOren__user__account__setting__list mt-[5px]">
+              <UserSetting
+                onClick={() => router.push('/user/settings/address')}
+              />
+            </ul>
+          </div>
+          <div className="lilOren__user__logout w-full flex justify-center items-center pt-[17px]">
+            <Button variant={'outline'} onClick={() => handleLogout()}>
+              {'Logout'}
+            </Button>
+          </div>
         </div>
-        <div className="lilOren__user__logout w-full flex justify-center items-center pt-[17px]">
-          <Button variant={'outline'} onClick={() => handleLogout()}>
-            {'Logout'}
-          </Button>
-        </div>
-      </div>
-      <AddAddressModal
-        isVisible={showSetAddressModal}
-        onClose={() => setshowSetAddressModal(false)}
-      />
-    </Fragment>
+        <AddAddressModal
+          isVisible={showSetAddressModal}
+          onClose={() => setShowSetAddressModal(false)}
+        />
+      </Fragment>
+    </>
   );
 };
 
 User.getLayout = function getLayout(page: ReactElement) {
-  return <Layout>{page}</Layout>;
+  return (
+    <UserSettingsLayout component={<UserHeading />}>{page}</UserSettingsLayout>
+  );
 };
 
 export default User;
+
+const UserHeading = () => {
+  const router = useRouter();
+
+  return (
+    <div className="lg:hidden UserSettingsAddress__navbar w-[100%] min-w-auto flex items-center top-0 h-[52px] border-b-[1px] sticky bg-white">
+      <BackButton
+        icon={<ArrowLeft size={24} />}
+        onClick={() => router.push('/')}
+      />
+      <div>
+        <p className="user__address__heading block relative font-medium m-0 text-[16px]">
+          {'My Profile'}
+        </p>
+      </div>
+    </div>
+  );
+};
 
 const UserPresentation = () => {
   return (
@@ -87,20 +135,16 @@ const UserInfo = () => {
 };
 
 interface UserSettingProps {
-  setShow: () => void;
+  onClick: () => void;
 }
 
-const UserSetting = ({ setShow }: UserSettingProps) => {
+const UserSetting = ({ onClick }: UserSettingProps) => {
   return (
     <li
       className={styles.list__item}
-      onClick={() => setShow()}
-      onKeyDown={() => setShow()}
+      onClick={() => onClick()}
+      onKeyDown={() => onClick()}
     >
-      {/* <Link
-        href={'/user/settings'}
-        className="flex flex-row relative py-[12px] px-[16px] items-center w-full"
-      > */}
       <Store />
       <div className={styles.list__item__container}>
         <p className={styles.list__item__title}>My Address</p>
@@ -108,7 +152,6 @@ const UserSetting = ({ setShow }: UserSettingProps) => {
           Atur alamat pengiriman belanjaan
         </p>
       </div>
-      {/* </Link> */}
     </li>
   );
 };

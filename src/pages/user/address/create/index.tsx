@@ -20,14 +20,15 @@ import DotsLoading from '@/components/DotsLoading/DotsLoading';
 import SkeletonSelect from '@/components/SkeletonSelect/SkeletonSelect';
 import { Button } from '@/components/ui/button';
 import TextAreaWithLabel from '@/components/TextAreaWithLabel/TextAreaWithLabel';
-import Modal from '@/components/Modal/Modal';
+import Head from 'next/head';
 
 const RECEIVER_NAME = 'Receiver Name';
-const PHONE_NUMBER = 'Receiver Name';
-const ADDRESS_LABEL = 'Receiver Name';
-const PROVINCE_NAME = 'Receiver Name';
-const CITY_NAME = 'Receiver Name';
-const DISTRICT_NAME = 'Receiver Name';
+const PHONE_NUMBER = 'Phone Number';
+const ADDRESS_LABEL = 'Address Label';
+const PROVINCE_NAME = 'Province';
+const CITY_NAME = 'City';
+const SUB_DISTRICT_NAME = 'Sub District';
+const SUB_FROM_SUB_DISTRICT_NAME = 'Sub from Sub District';
 
 interface IAddAddressData {
   receiverName: string;
@@ -108,9 +109,7 @@ const UserAddressCreate = () => {
       method: 'GET',
       url: `/api/rajaongkir/${e}`,
     });
-    const cities: ICity[] = response.data.data.rajaongkir.results;
-    setCities(cities);
-    setAddAddressData({ ...addAddressData, ['province_id']: e });
+
     setLoadingFetchCity(false);
   };
 
@@ -155,7 +154,8 @@ const UserAddressCreate = () => {
 
   useEffect(() => {
     setLoadingFetchProvince(true);
-    fetchProvince();
+    // fetchProvince();
+    setLoadingFetchProvince(false);
   }, []);
 
   return (
@@ -184,7 +184,7 @@ const UserAddressCreate = () => {
             />
             <InputWithLabel
               type="tel"
-              label="Phone Number"
+              label={PHONE_NUMBER}
               id="phone-number"
               labelStyling="font-light"
               value={addAddressData.phoneNumber}
@@ -202,7 +202,7 @@ const UserAddressCreate = () => {
           <div className="mb-6 mt-6 px-[14px] flex flex-col gap-4">
             <InputWithLabel
               type="text"
-              label="Address Label"
+              label={ADDRESS_LABEL}
               id="address-label"
               labelStyling="font-light"
               value={addAddressData.addressLabel}
@@ -216,7 +216,7 @@ const UserAddressCreate = () => {
             />
             {/* Province */}
             <Label className="font-light w-full md:text-base">
-              {'Province'}
+              {PROVINCE_NAME}
               <span className="text-primary">{' *'}</span>
             </Label>
             <Select required onValueChange={(e) => handleChangeProvince(e)}>
@@ -244,7 +244,7 @@ const UserAddressCreate = () => {
               cities.length !== 0 && (
                 <>
                   <Label className="font-light w-full md:text-base">
-                    {'City'}
+                    {CITY_NAME}
                     <span className="text-primary">{' *'}</span>
                   </Label>
                   <Select required onValueChange={(e) => handleChangeCity(e)}>
@@ -272,7 +272,7 @@ const UserAddressCreate = () => {
               <>
                 <InputWithLabel
                   type="text"
-                  label="Sub District"
+                  label={SUB_DISTRICT_NAME}
                   id="sub-district"
                   labelStyling="font-light"
                   value={addAddressData.subDistrict}
@@ -286,7 +286,7 @@ const UserAddressCreate = () => {
                 />
                 <InputWithLabel
                   type="text"
-                  label="Sub from Sub-District"
+                  label={SUB_FROM_SUB_DISTRICT_NAME}
                   id="sub-from-sub-district"
                   labelStyling="font-light"
                   value={addAddressData.subSubDistrict}
@@ -357,13 +357,29 @@ const UserAddressCreateHeading = () => {
 
   return (
     <>
-      <div className="hidden sm:block">
-        <Navigation />
-      </div>
-      <div className="sm:hidden UserSettingsAddress__navbar w-[100%] min-w-auto flex items-center top-0 h-[52px] border-b-[1px] sticky bg-white">
+      <Head>
+        <title>Jual Beli Online Aman dan Nyaman | LilOren</title>
+        <meta
+          data-rh="true"
+          name="viewport"
+          content="initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=no, width=device-width"
+        />
+        <meta data-rh="true" property="site_name" content="LilOren" />
+        <meta
+          data-rh="true"
+          property="title"
+          content="Jual Beli Online Aman dan Nyaman | LilOren"
+        />
+        <meta
+          data-rh="true"
+          name="description"
+          content="Mal online terbesar Indonesia, tempat berkumpulnya toko / online shop terpercaya se Indonesia. Jual beli online semakin aman dan nyaman di LilOren."
+        ></meta>
+      </Head>
+      <div className="lg:hidden UserSettingsAddress__navbar w-[100%] min-w-auto flex items-center top-0 h-[52px] border-b-[1px] sticky bg-white">
         <BackButton
           icon={<ArrowLeft size={24} />}
-          onClick={() => router.push(PATH_USER_SETTINGS_ADDRESS)}
+          onClick={() => router.back()}
         />
         <div>
           <p className="user__address__heading block relative font-medium m-0 text-[16px]">

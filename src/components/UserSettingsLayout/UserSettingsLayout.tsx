@@ -1,4 +1,5 @@
 import React, { ReactNode } from 'react';
+import Navigation from '../Navigation/Navigation';
 
 interface UserSettingsLayoutProps {
   children: ReactNode;
@@ -11,6 +12,9 @@ const UserSettingsLayout = ({
 }: UserSettingsLayoutProps) => {
   return (
     <div>
+      <div className="hidden lg:block">
+        <Navigation />
+      </div>
       {component}
       <main>{children}</main>
     </div>
