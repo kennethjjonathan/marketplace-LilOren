@@ -19,6 +19,8 @@ import { Label } from '@/components/ui/label';
 import DotsLoading from '@/components/DotsLoading/DotsLoading';
 import SkeletonSelect from '@/components/SkeletonSelect/SkeletonSelect';
 import { Button } from '@/components/ui/button';
+import TextAreaWithLabel from '@/components/TextAreaWithLabel/TextAreaWithLabel';
+import Modal from '@/components/Modal/Modal';
 
 const RECEIVER_NAME = 'Receiver Name';
 const PHONE_NUMBER = 'Receiver Name';
@@ -58,6 +60,7 @@ const UserAddressCreate = () => {
   const [loadingFetchProvince, setLoadingFetchProvince] =
     useState<boolean>(false);
   const [loadingFetchCity, setLoadingFetchCity] = useState<boolean>(false);
+  const [showModal, setShowModal] = useState(false);
 
   const [addAddressData, setAddAddressData] = useState({
     receiverName: '',
@@ -111,7 +114,10 @@ const UserAddressCreate = () => {
     setLoadingFetchCity(false);
   };
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>, key: string) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    key: string,
+  ) => {
     setAddAddressData({ ...addAddressData, [key]: e.target.value });
   };
 
@@ -137,6 +143,7 @@ const UserAddressCreate = () => {
       setIsDataValid({ ...isDataValid, [key]: false });
       return false;
     }
+    console.log('masuk sini');
     setIsDataValid({ ...isDataValid, [key]: true });
     return true;
   };
@@ -304,6 +311,21 @@ const UserAddressCreate = () => {
                   isValid={isDataValid.zipCode}
                   onBlur={() => validateData('zipCode', /^\+?\d{5,15}$/)}
                   validation="Please enter a valid zip code"
+                  required
+                />
+                <TextAreaWithLabel
+                  id={'full-address'}
+                  label={'Full Address'}
+                  labelStyling="font-light"
+                  value={addAddressData.fullAddress}
+                  minLength={1}
+                  maxLength={500}
+                  onChange={(e) => handleChange(e, 'fullAddress')}
+                  isValid={isDataValid.fullAddress}
+                  onBlur={() =>
+                    validateData('fullAddress', /^[#.0-9a-zA-Z\s,-]+$/)
+                  }
+                  validation="Must not be a blank"
                   required
                 />
               </>

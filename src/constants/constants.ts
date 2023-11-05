@@ -1,5 +1,6 @@
 const CONSTANTS = {
   BASEURL: 'http://localhost:3004',
+  RO_BASEURL: 'https://api.rajaongkir.com/starter',
   CATEGORY_LIST: [
     {
       title: 'Electronic',
