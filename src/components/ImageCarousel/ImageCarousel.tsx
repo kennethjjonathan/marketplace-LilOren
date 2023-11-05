@@ -78,7 +78,7 @@ function ImageCarousel({ imageArray }: ImageCarouselProps) {
               {imageArray.map((image, index) => (
                 <div
                   key={index}
-                  className={`min-w-fit min-h-fit relative border-2 cursor-pointer duration-300 hover:opacity-100 hover:border-primary rounded-xl overflow-hidden ${
+                  className={`min-w-fit min-h-fit relative border-2 cursor-pointer duration-300 lg:hover:opacity-100 lg:hover:border-primary rounded-xl overflow-hidden ${
                     currentIndex === index
                       ? 'opacity-100 border-primary'
                       : 'opacity-50 border-transparent'
@@ -139,7 +139,7 @@ function ImageCarousel({ imageArray }: ImageCarouselProps) {
                 height={500}
                 width={500}
                 style={{ objectFit: 'fill' }}
-                className="w-full aspect-square duration-300 border-[1px] border-transparent hover:border-primary"
+                className="w-full aspect-square duration-300 border-[1px] border-transparent lg:hover:border-primary"
                 onMouseEnter={(e) => {
                   const { width, height } =
                     e.currentTarget.getBoundingClientRect();
