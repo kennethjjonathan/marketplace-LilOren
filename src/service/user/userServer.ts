@@ -8,6 +8,7 @@ export class UserServer {
       if (response.status === 201 || response.status === 200) {
         const responseAPI = {
           error: false,
+          status: response.status,
           data: response.data,
           message: response.statusText,
         };
@@ -16,6 +17,7 @@ export class UserServer {
     } catch (error: any) {
       const responseAPI = {
         error: true,
+        status: error.response.status,
         data: null,
         message: error.response.statusText,
       };

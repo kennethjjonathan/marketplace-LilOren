@@ -11,12 +11,16 @@ import { BuiltInProviderType } from 'next-auth/providers/index';
 import GoogleButton from '@/components/GoogleButton/GoogleButton';
 import Link from 'next/link';
 import Image from 'next/image';
+import { UserClient } from '@/service/user/userClient';
+import { IRegister } from '@/interface/user';
+import { useToast } from '@/components/ui/use-toast';
 
 interface RegisterPageProps {
   providers: Record<LiteralUnion<BuiltInProviderType>, ClientSafeProvider>;
 }
 
 function RegisterPage({ providers }: RegisterPageProps) {
+  const { toast } = useToast();
   const [registerData, setRegisterData] = useState({
     username: '',
     email: '',
@@ -29,7 +33,12 @@ function RegisterPage({ providers }: RegisterPageProps) {
     password: true,
     confirmPassword: true,
   });
-  const [passwordMessage, setPasswordMessage] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState({
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
 
   const handleRegisterData = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -41,12 +50,18 @@ function RegisterPage({ providers }: RegisterPageProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const validateUsername = (): boolean => {
-    const usernameRegex = /[a-zA-Z0-9]{3,}/gi;
+    const usernameRegex = /^[a-zA-Z0-9]{3,}$/gi;
     if (!usernameRegex.test(registerData.username)) {
       setIsDataValid({ ...isDataValid, username: false });
+      setErrorMessage({
+        ...errorMessage,
+        username:
+          'Username must be 3 alphanumeric characters minimum without special characters',
+      });
       return false;
     }
     setIsDataValid({ ...isDataValid, username: true });
+    setErrorMessage({ ...errorMessage, username: '' });
     return true;
   };
 
@@ -54,9 +69,14 @@ function RegisterPage({ providers }: RegisterPageProps) {
     const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/gi;
     if (!emailRegex.test(registerData.email)) {
       setIsDataValid({ ...isDataValid, email: false });
+      setErrorMessage({
+        ...errorMessage,
+        email: 'Please put in a valid email',
+      });
       return false;
     }
     setIsDataValid({ ...isDataValid, email: true });
+    setErrorMessage({ ...errorMessage, email: '' });
     return true;
   };
 
@@ -65,9 +85,11 @@ function RegisterPage({ providers }: RegisterPageProps) {
       /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm;
     if (!passwordRegex.test(registerData.password)) {
       setIsDataValid({ ...isDataValid, password: false });
-      setPasswordMessage(
-        'Password must contain at least 1 lowercase letter, 1 uppercase letter, 1 number, and with a minimum of 8 characters',
-      );
+      setErrorMessage({
+        ...errorMessage,
+        password:
+          'Password must contain at least 1 lowercase letter, 1 uppercase letter, 1 number, and with a minimum of 8 characters',
+      });
       return false;
     }
     if (
@@ -76,20 +98,34 @@ function RegisterPage({ providers }: RegisterPageProps) {
         .includes(registerData.username.toLowerCase())
     ) {
       setIsDataValid({ ...isDataValid, password: false });
-      setPasswordMessage('Password cannot contain username');
+      setErrorMessage({
+        ...errorMessage,
+        password: 'Password cannot contain username',
+      });
       return false;
     }
     setIsDataValid({ ...isDataValid, password: true });
-    setPasswordMessage('');
+    setErrorMessage({
+      ...errorMessage,
+      password: '',
+    });
     return true;
   };
 
   const validateConfirmPassword = (): boolean => {
     if (registerData.password !== registerData.confirmPassword) {
       setIsDataValid({ ...isDataValid, confirmPassword: false });
+      setErrorMessage({
+        ...errorMessage,
+        confirmPassword: 'Must be the same with password',
+      });
       return false;
     }
     setIsDataValid({ ...isDataValid, confirmPassword: true });
+    setErrorMessage({
+      ...errorMessage,
+      confirmPassword: 'Must be the same with password',
+    });
     return true;
   };
 
@@ -115,11 +151,21 @@ function RegisterPage({ providers }: RegisterPageProps) {
     if (!validateAll()) return;
     setIsLoading(true);
     try {
-      const response = await axios.post(
-        `${CONSTANTS.BASEURL}/users`,
-        registerData,
-      );
-      console.log('Berhasil');
+      const newRegisterData: IRegister = {
+        username: registerData.username,
+        email: registerData.email,
+        password: registerData.password,
+      };
+      const response = await UserClient.postRegister(newRegisterData);
+      console.log(response.data);
+      if (response.data.error) {
+        toast({
+          variant: 'destructive',
+          title: 'Uh oh! something went wrong',
+          description: response.data.message,
+        });
+        return;
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -139,7 +185,7 @@ function RegisterPage({ providers }: RegisterPageProps) {
     <section className="bg-gradient-to-t from-[#FF7337] to-[#F99116] flex flex-col justify-center items-center gap-5 sm:min-h-screen sm:py-6 xl:flex-row xl:justify-between xl:gap-10 xl:px-40 xl:items-start xl:py-20">
       <div className="hidden sm:flex flex-col items-center justify-center xl:justify-start xl:min-h-full xl:flex-1 xl:gap-40">
         <h1 className="font-bold text-3xl text-primary-foreground lg:text-4xl xl:w-full xl:text-left">
-          LOGO
+          LilOren
         </h1>
         <div className="hidden relative w-[424px] h-[424px] xl:block">
           <Image src={'/google.svg'} alt="Google's logo" fill sizes="40vw" />
@@ -169,7 +215,8 @@ function RegisterPage({ providers }: RegisterPageProps) {
               onChange={(e) => handleRegisterData(e, 'username')}
               onBlur={validateUsername}
               isValid={isDataValid.username}
-              validation="Must consist of 3 alphanumeric characters minimum"
+              validation={errorMessage.username}
+              disabled={isLoading}
               required
             />
             <InputWithLabel
@@ -181,7 +228,8 @@ function RegisterPage({ providers }: RegisterPageProps) {
               onChange={(e) => handleRegisterData(e, 'email')}
               isValid={isDataValid.email}
               onBlur={validateEmail}
-              validation="Please put in a valid email"
+              validation={errorMessage.email}
+              disabled={isLoading}
               required
             />
             <InputWithLabel
@@ -193,7 +241,8 @@ function RegisterPage({ providers }: RegisterPageProps) {
               onBlur={validatePassword}
               onChange={(e) => handleRegisterData(e, 'password')}
               isValid={isDataValid.password}
-              validation={passwordMessage}
+              validation={errorMessage.password}
+              disabled={isLoading}
               required
             />
             <InputWithLabel
@@ -205,7 +254,8 @@ function RegisterPage({ providers }: RegisterPageProps) {
               onChange={(e) => handleRegisterData(e, 'confirmPassword')}
               onBlur={validateConfirmPassword}
               isValid={isDataValid.confirmPassword}
-              validation="Must be the same with password"
+              validation={errorMessage.confirmPassword}
+              disabled={isLoading}
               required
             />
             <AsyncButton
@@ -217,14 +267,18 @@ function RegisterPage({ providers }: RegisterPageProps) {
               Register
             </AsyncButton>
           </form>
-          <div className="flex items-center w-full justify-between gap-3 mt-2">
-            <div className="w-full h-px bg-gray-300" />
-            <p className="text-sm text-gray-300 font-normal">OR</p>
-            <div className="w-full h-px bg-gray-300" />
-          </div>
-          <div className="w-full mt-2">
-            <GoogleButton onClick={handleGoogleSignIn} />
-          </div>
+          {providers && providers.google && (
+            <>
+              <div className="flex items-center w-full justify-between gap-3 mt-2">
+                <div className="w-full h-px bg-gray-300" />
+                <p className="text-sm text-gray-300 font-normal">OR</p>
+                <div className="w-full h-px bg-gray-300" />
+              </div>
+              <div className="w-full mt-2">
+                <GoogleButton onClick={handleGoogleSignIn} />
+              </div>
+            </>
+          )}
         </div>
         <p className="font-extralight mt-3 w-full text-center text-base lg:text-lg">
           Already have an account?{' '}

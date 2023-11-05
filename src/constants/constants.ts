@@ -1,5 +1,5 @@
 const CONSTANTS = {
-  BASEURL: 'http://localhost:3004',
+  BASEURL: 'http://localhost:8080',
 };
 
 export default CONSTANTS;
