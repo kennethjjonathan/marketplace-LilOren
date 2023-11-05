@@ -6,7 +6,6 @@ interface InputWithLabelProps
   id: string;
   label: string;
   placeHolder?: string;
-  type?: string;
   required?: boolean;
   inputStyling?: string;
   labelStyling?: string;
@@ -18,7 +17,7 @@ export function InputWithLabel({
   id,
   label,
   placeHolder = '',
-  type = 'text',
+  type,
   required = false,
   inputStyling = '',
   labelStyling = '',
