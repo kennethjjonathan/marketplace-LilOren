@@ -9,13 +9,25 @@ export default async function handler(
 ) {
   const body = req.body;
   try {
-    const response = await axios.post(
-      `${CONSTANTS.BASEURL}/auth/register`,
-      body,
-    );
-    if (response.status === 201 || response.status === 200) {
+    const response = await axios.post(`${CONSTANTS.BASEURL}/auth/login`, body);
+    if (
+      (response.status === 201 || response.status === 200) &&
+      response.data.data
+    ) {
       const responseAPI = {
         error: false,
+        status: response.status,
+        data: response.data,
+        message: response.statusText,
+      };
+      res.json(responseAPI);
+    }
+    if (
+      (response.status === 201 || response.status === 200) &&
+      response.data.message
+    ) {
+      const responseAPI = {
+        error: true,
         status: response.status,
         data: response.data,
         message: response.statusText,

@@ -12,8 +12,9 @@ import GoogleButton from '@/components/GoogleButton/GoogleButton';
 import Link from 'next/link';
 import Image from 'next/image';
 import { UserClient } from '@/service/user/userClient';
-import { IRegister } from '@/interface/user';
+import { IErrorResponse, IRegister } from '@/interface/user';
 import { useToast } from '@/components/ui/use-toast';
+import { useRouter } from 'next/router';
 
 interface RegisterPageProps {
   providers: Record<LiteralUnion<BuiltInProviderType>, ClientSafeProvider>;
@@ -21,6 +22,7 @@ interface RegisterPageProps {
 
 function RegisterPage({ providers }: RegisterPageProps) {
   const { toast } = useToast();
+  const router = useRouter();
   const [registerData, setRegisterData] = useState({
     username: '',
     email: '',
@@ -157,15 +159,15 @@ function RegisterPage({ providers }: RegisterPageProps) {
         password: registerData.password,
       };
       const response = await UserClient.postRegister(newRegisterData);
-      console.log(response.data);
       if (response.data.error) {
-        toast({
-          variant: 'destructive',
-          title: 'Uh oh! something went wrong',
-          description: response.data.message,
-        });
+        handleErrorAuthResponse(response.data.message);
         return;
       }
+      toast({
+        title: 'Register is successful',
+        description: 'Please sign in with your account',
+      });
+      router.push('/signin');
     } catch (error) {
       console.error(error);
     } finally {
@@ -181,18 +183,41 @@ function RegisterPage({ providers }: RegisterPageProps) {
     return;
   };
 
+  const handleErrorAuthResponse = (message: IErrorResponse | string) => {
+    if (message instanceof Object) {
+      if (message.username !== undefined) {
+        setIsDataValid({ ...isDataValid, username: false });
+        setErrorMessage({ ...errorMessage, username: message.username });
+      }
+      if (message.email !== undefined) {
+        setIsDataValid({ ...isDataValid, email: false });
+        setErrorMessage({ ...errorMessage, email: message.email });
+      }
+      if (message.password !== undefined) {
+        setIsDataValid({ ...isDataValid, password: false });
+        setErrorMessage({ ...errorMessage, password: message.password });
+      }
+    } else {
+      toast({
+        variant: 'destructive',
+        title: 'Uh oh! something went wrong',
+        description: message,
+      });
+    }
+  };
+
   return (
     <section className="bg-gradient-to-t from-[#FF7337] to-[#F99116] flex flex-col justify-center items-center gap-5 sm:min-h-screen sm:py-6 xl:flex-row xl:justify-between xl:gap-10 xl:px-40 xl:items-start xl:py-20">
       <div className="hidden sm:flex flex-col items-center justify-center xl:justify-start xl:min-h-full xl:flex-1 xl:gap-40">
         <h1 className="font-bold text-3xl text-primary-foreground lg:text-4xl xl:w-full xl:text-left">
           LilOren
         </h1>
-        <div className="hidden relative w-[424px] h-[424px] xl:block">
-          <Image src={'/google.svg'} alt="Google's logo" fill sizes="40vw" />
+        <div className="hidden relative aspect-square w-[470px] xl:block">
+          <Image src={'/Logo_.svg'} alt="Google's logo" fill sizes="40vw" />
         </div>
       </div>
       <div className="container pb-16 pt-6 flex flex-col items-center justify-center gap-5 bg-primary-foreground sm:max-w-lg sm:pb-6 sm:rounded-lg xl:my-auto">
-        <h1 className="font-bold text-2xl text-primary sm:hidden">LOGO</h1>
+        <h1 className="font-bold text-2xl text-primary sm:hidden">LilOren</h1>
         <div className="rounded-lg w-full flex flex-col items-baseline justify-center">
           <h1 className="font-light text-xl w-full text-left lg:text-2xl">
             Register

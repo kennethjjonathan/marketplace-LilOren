@@ -1,22 +1,32 @@
 import React, { useState } from 'react';
-import Image from 'next/image';
-import { InputWithLabel } from '@/components/InputWithLabel/InputWithLabel';
-import AsyncButton from '@/components/AsyncButton/AsyncButton';
-import { LogIn } from 'lucide-react';
-import GoogleButton from '@/components/GoogleButton/GoogleButton';
 import { GetServerSideProps } from 'next';
-import { signIn, getProviders } from 'next-auth/react';
-import { LiteralUnion, ClientSafeProvider } from 'next-auth/react';
-import { BuiltInProviderType } from 'next-auth/providers/index';
+import Image from 'next/image';
+import {
+  signIn,
+  getProviders,
+  ClientSafeProvider,
+  LiteralUnion,
+} from 'next-auth/react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { BuiltInProviderType } from 'next-auth/providers/index';
 import axios from 'axios';
+import AsyncButton from '@/components/AsyncButton/AsyncButton';
+import GoogleButton from '@/components/GoogleButton/GoogleButton';
+import { InputWithLabel } from '@/components/InputWithLabel/InputWithLabel';
+import { LogIn } from 'lucide-react';
+import { IErrorResponse, ISignIn } from '@/interface/user';
 import CONSTANTS from '@/constants/constants';
+import { useToast } from '@/components/ui/use-toast';
+import { UserClient } from '@/service/user/userClient';
 
 interface SignInPageProps {
   providers: Record<LiteralUnion<BuiltInProviderType>, ClientSafeProvider>;
 }
 
 function SignInPage({ providers }: SignInPageProps) {
+  const { toast } = useToast();
+  const router = useRouter();
   const [registerData, setRegisterData] = useState({
     email: '',
     password: '',
@@ -24,6 +34,10 @@ function SignInPage({ providers }: SignInPageProps) {
   const [isDataValid, setIsDataValid] = useState({
     email: true,
     password: true,
+  });
+  const [errorMessage, setErrorMessage] = useState({
+    email: '',
+    password: '',
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -38,18 +52,28 @@ function SignInPage({ providers }: SignInPageProps) {
     const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/gi;
     if (!emailRegex.test(registerData.email)) {
       setIsDataValid({ ...isDataValid, email: false });
+      setErrorMessage({
+        ...errorMessage,
+        email: 'Please put in a valid email',
+      });
       return false;
     }
     setIsDataValid({ ...isDataValid, email: true });
+    setErrorMessage({ ...errorMessage, email: '' });
     return true;
   };
 
   const validatePassword = (): boolean => {
     if (registerData.password.length === 0) {
       setIsDataValid({ ...isDataValid, password: false });
+      setErrorMessage({
+        ...errorMessage,
+        password: 'Please put in your password',
+      });
       return false;
     }
     setIsDataValid({ ...isDataValid, password: true });
+    setErrorMessage({ ...errorMessage, password: '' });
     return true;
   };
 
@@ -69,11 +93,15 @@ function SignInPage({ providers }: SignInPageProps) {
     if (!validateAll()) return;
     setIsLoading(true);
     try {
-      const response = await axios.post(
-        `${CONSTANTS.BASEURL}/users`,
-        registerData,
-      );
-      console.log('Berhasil');
+      const response = await UserClient.postSignIn(registerData);
+      if (response.data.error) {
+        handleErrorAuthResponse(response.data.data.message);
+        return;
+      }
+      toast({
+        title: 'Your sign in is successful',
+      });
+      router.push('/');
     } catch (error) {
       console.error(error);
     } finally {
@@ -89,18 +117,37 @@ function SignInPage({ providers }: SignInPageProps) {
     return;
   };
 
+  const handleErrorAuthResponse = (message: IErrorResponse | string) => {
+    if (message instanceof Object) {
+      if (message.email !== undefined) {
+        setIsDataValid({ ...isDataValid, email: false });
+        setErrorMessage({ ...errorMessage, email: message.email });
+      }
+      if (message.password !== undefined) {
+        setIsDataValid({ ...isDataValid, password: false });
+        setErrorMessage({ ...errorMessage, password: message.password });
+      }
+    } else {
+      toast({
+        variant: 'destructive',
+        title: 'Uh oh! something went wrong',
+        description: message,
+      });
+    }
+  };
+
   return (
     <section className="bg-gradient-to-t from-[#FF7337] to-[#F99116] flex flex-col justify-center items-center gap-5 sm:min-h-screen sm:py-6 xl:flex-row xl:justify-between xl:gap-10 xl:px-40 xl:items-start xl:py-20">
       <div className="hidden sm:flex flex-col items-center justify-center xl:justify-start xl:min-h-full xl:flex-1 xl:gap-40">
         <h1 className="font-bold text-3xl text-primary-foreground lg:text-4xl xl:w-full xl:text-left">
-          LOGO
+          LilOren
         </h1>
-        <div className="hidden relative w-[424px] h-[424px] xl:block my-auto">
-          <Image src={'/google.svg'} alt="Google's logo" fill sizes="40vw" />
+        <div className="hidden relative aspect-square w-[470px] xl:block">
+          <Image src={'/Logo_.svg'} alt="Google's logo" fill sizes="40vw" />
         </div>
       </div>
       <div className="container pb-16 pt-6 flex flex-col items-center justify-center gap-5 bg-primary-foreground sm:max-w-lg sm:pb-6 sm:rounded-lg xl:my-auto">
-        <h1 className="font-bold text-2xl text-primary sm:hidden">LOGO</h1>
+        <h1 className="font-bold text-2xl text-primary sm:hidden">LilOren</h1>
         <div className="rounded-lg w-full flex flex-col items-baseline justify-center">
           <h1 className="font-light text-xl w-full text-left lg:text-2xl">
             Sign In
@@ -118,7 +165,8 @@ function SignInPage({ providers }: SignInPageProps) {
               onChange={(e) => handleRegisterData(e, 'email')}
               isValid={isDataValid.email}
               onBlur={validateEmail}
-              validation="Please put in a valid email"
+              validation={errorMessage.email}
+              disabled={isLoading}
               required
             />
             <InputWithLabel
@@ -130,7 +178,8 @@ function SignInPage({ providers }: SignInPageProps) {
               onChange={(e) => handleRegisterData(e, 'password')}
               isValid={isDataValid.password}
               onBlur={validatePassword}
-              validation="Please put in your password"
+              validation={errorMessage.password}
+              disabled={isLoading}
               required
             />
             <AsyncButton
@@ -142,14 +191,18 @@ function SignInPage({ providers }: SignInPageProps) {
               Sign In
             </AsyncButton>
           </form>
-          <div className="flex items-center w-full justify-between gap-3 mt-2">
-            <div className="w-full h-px bg-gray-300" />
-            <p className="text-sm text-gray-300 font-normal">OR</p>
-            <div className="w-full h-px bg-gray-300" />
-          </div>
-          <div className="w-full mt-2">
-            <GoogleButton onClick={handleGoogleSignIn} />
-          </div>
+          {providers && providers.google && (
+            <>
+              <div className="flex items-center w-full justify-between gap-3 mt-2">
+                <div className="w-full h-px bg-gray-300" />
+                <p className="text-sm text-gray-300 font-normal">OR</p>
+                <div className="w-full h-px bg-gray-300" />
+              </div>
+              <div className="w-full mt-2">
+                <GoogleButton onClick={handleGoogleSignIn} />
+              </div>
+            </>
+          )}
         </div>
         <p className="font-extralight mt-3 w-full text-center text-base lg:text-lg">
           Don&apos;t have an account?{' '}

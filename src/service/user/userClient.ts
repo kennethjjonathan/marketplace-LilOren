@@ -10,10 +10,7 @@ export class UserClient {
   }
 
   static async postSignIn(data: ISignIn) {
-    const response = await UserServer.post(
-      `${CONSTANTS.BASEURL}/auth/login`,
-      data,
-    );
+    const response = await axios.post(`api/signin`, data);
     return response;
   }
 }
