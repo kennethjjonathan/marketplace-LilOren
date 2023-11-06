@@ -1,72 +1,51 @@
 import React, { useState } from 'react';
 import { GetServerSideProps } from 'next';
 import Image from 'next/image';
-import Link from 'next/link';
 import {
   signIn,
   getProviders,
   ClientSafeProvider,
   LiteralUnion,
 } from 'next-auth/react';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { BuiltInProviderType } from 'next-auth/providers/index';
-import { InputWithLabel } from '@/components/InputWithLabel/InputWithLabel';
+import axios from 'axios';
 import AsyncButton from '@/components/AsyncButton/AsyncButton';
 import GoogleButton from '@/components/GoogleButton/GoogleButton';
-import { UserClient } from '@/service/user/userClient';
+import { InputWithLabel } from '@/components/InputWithLabel/InputWithLabel';
+import { LogIn } from 'lucide-react';
+import { IErrorResponse, ISignIn } from '@/interface/user';
+import CONSTANTS from '@/constants/constants';
 import { useToast } from '@/components/ui/use-toast';
-import { UserPlus } from 'lucide-react';
-import { IErrorResponse, IRegister } from '@/interface/user';
+import { UserClient } from '@/service/user/userClient';
 
-interface RegisterPageProps {
+interface SignInPageProps {
   providers: Record<LiteralUnion<BuiltInProviderType>, ClientSafeProvider>;
 }
 
-function RegisterPage({ providers }: RegisterPageProps) {
+function SignInPage({ providers }: SignInPageProps) {
   const { toast } = useToast();
   const router = useRouter();
   const [registerData, setRegisterData] = useState({
-    username: '',
     email: '',
     password: '',
-    confirmPassword: '',
   });
   const [isDataValid, setIsDataValid] = useState({
-    username: true,
     email: true,
     password: true,
-    confirmPassword: true,
   });
   const [errorMessage, setErrorMessage] = useState({
-    username: '',
     email: '',
     password: '',
-    confirmPassword: '',
   });
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleRegisterData = (
     e: React.ChangeEvent<HTMLInputElement>,
     key: string,
   ) => {
     setRegisterData({ ...registerData, [key]: e.target.value });
-  };
-
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const validateUsername = (): boolean => {
-    const usernameRegex = /^[a-zA-Z0-9]{3,}$/gi;
-    if (!usernameRegex.test(registerData.username)) {
-      setIsDataValid({ ...isDataValid, username: false });
-      setErrorMessage({
-        ...errorMessage,
-        username:
-          'Username must be 3 alphanumeric characters minimum without special characters',
-      });
-      return false;
-    }
-    setIsDataValid({ ...isDataValid, username: true });
-    setErrorMessage({ ...errorMessage, username: '' });
-    return true;
   };
 
   const validateEmail = (): boolean => {
@@ -85,66 +64,25 @@ function RegisterPage({ providers }: RegisterPageProps) {
   };
 
   const validatePassword = (): boolean => {
-    const passwordRegex =
-      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm;
-    if (!passwordRegex.test(registerData.password)) {
+    if (registerData.password.length === 0) {
       setIsDataValid({ ...isDataValid, password: false });
       setErrorMessage({
         ...errorMessage,
-        password:
-          'Password must contain at least 1 lowercase letter, 1 uppercase letter, 1 number, and with a minimum of 8 characters',
-      });
-      return false;
-    }
-    if (
-      registerData.password
-        .toLowerCase()
-        .includes(registerData.username.toLowerCase())
-    ) {
-      setIsDataValid({ ...isDataValid, password: false });
-      setErrorMessage({
-        ...errorMessage,
-        password: 'Password cannot contain username',
+        password: 'Please put in your password',
       });
       return false;
     }
     setIsDataValid({ ...isDataValid, password: true });
-    setErrorMessage({
-      ...errorMessage,
-      password: '',
-    });
-    return true;
-  };
-
-  const validateConfirmPassword = (): boolean => {
-    if (registerData.password !== registerData.confirmPassword) {
-      setIsDataValid({ ...isDataValid, confirmPassword: false });
-      setErrorMessage({
-        ...errorMessage,
-        confirmPassword: 'Must be the same with password',
-      });
-      return false;
-    }
-    setIsDataValid({ ...isDataValid, confirmPassword: true });
-    setErrorMessage({
-      ...errorMessage,
-      confirmPassword: 'Must be the same with password',
-    });
+    setErrorMessage({ ...errorMessage, password: '' });
     return true;
   };
 
   const validateAll = (): boolean => {
     let isContinue: boolean = true;
-    if (!validateUsername()) {
-      isContinue = false;
-    }
     if (!validateEmail()) {
       isContinue = false;
     }
     if (!validatePassword()) {
-      isContinue = false;
-    }
-    if (!validateConfirmPassword()) {
       isContinue = false;
     }
     return isContinue;
@@ -155,21 +93,15 @@ function RegisterPage({ providers }: RegisterPageProps) {
     if (!validateAll()) return;
     setIsLoading(true);
     try {
-      const newRegisterData: IRegister = {
-        username: registerData.username,
-        email: registerData.email,
-        password: registerData.password,
-      };
-      const response = await UserClient.postRegister(newRegisterData);
+      const response = await UserClient.postSignIn(registerData);
       if (response.data.error) {
-        handleErrorAuthResponse(response.data.message);
+        handleErrorAuthResponse(response.data.data.message);
         return;
       }
       toast({
-        title: 'Register is successful',
-        description: 'Please sign in with your account',
+        title: 'Your sign in is successful',
       });
-      router.push('/signin');
+      router.push('/');
     } catch (error) {
       console.error(error);
     } finally {
@@ -187,10 +119,6 @@ function RegisterPage({ providers }: RegisterPageProps) {
 
   const handleErrorAuthResponse = (message: IErrorResponse | string) => {
     if (message instanceof Object) {
-      if (message.username !== undefined) {
-        setIsDataValid({ ...isDataValid, username: false });
-        setErrorMessage({ ...errorMessage, username: message.username });
-      }
       if (message.email !== undefined) {
         setIsDataValid({ ...isDataValid, email: false });
         setErrorMessage({ ...errorMessage, email: message.email });
@@ -222,30 +150,12 @@ function RegisterPage({ providers }: RegisterPageProps) {
         <h1 className="font-bold text-2xl text-primary sm:hidden">LilOren</h1>
         <div className="rounded-lg w-full flex flex-col items-baseline justify-center">
           <h1 className="font-light text-xl w-full text-left lg:text-2xl">
-            Register
+            Sign In
           </h1>
-          <p className="font-light text-sm w-full text-justify mt-2 lg:text-base">
-            By creating an account with us, you will be able to move through the
-            checkout process faster, view and track your orders in your account
-            and more.
-          </p>
           <form
             className="mt-5 flex flex-col gap-3 w-full"
             onSubmit={handleSubmit}
           >
-            <InputWithLabel
-              type="text"
-              label="Username"
-              id="username-input"
-              value={registerData.username}
-              labelStyling="font-light"
-              onChange={(e) => handleRegisterData(e, 'username')}
-              onBlur={validateUsername}
-              isValid={isDataValid.username}
-              validation={errorMessage.username}
-              disabled={isLoading}
-              required
-            />
             <InputWithLabel
               type="email"
               label="Email"
@@ -265,23 +175,10 @@ function RegisterPage({ providers }: RegisterPageProps) {
               id="password-input"
               labelStyling="font-light"
               value={registerData.password}
-              onBlur={validatePassword}
               onChange={(e) => handleRegisterData(e, 'password')}
               isValid={isDataValid.password}
+              onBlur={validatePassword}
               validation={errorMessage.password}
-              disabled={isLoading}
-              required
-            />
-            <InputWithLabel
-              type="password"
-              label="Confirm Password"
-              id="confirm-password-input"
-              labelStyling="font-light"
-              value={registerData.confirmPassword}
-              onChange={(e) => handleRegisterData(e, 'confirmPassword')}
-              onBlur={validateConfirmPassword}
-              isValid={isDataValid.confirmPassword}
-              validation={errorMessage.confirmPassword}
               disabled={isLoading}
               required
             />
@@ -290,8 +187,8 @@ function RegisterPage({ providers }: RegisterPageProps) {
               type="submit"
               isLoading={isLoading}
             >
-              <UserPlus className="mr-2 h-4 w-4" />
-              Register
+              <LogIn className="mr-2 h-4 w-4" />
+              Sign In
             </AsyncButton>
           </form>
           {providers && providers.google && (
@@ -308,9 +205,9 @@ function RegisterPage({ providers }: RegisterPageProps) {
           )}
         </div>
         <p className="font-extralight mt-3 w-full text-center text-base lg:text-lg">
-          Already have an account?{' '}
-          <Link href="/signin" className="font-normal underline">
-            Sign in
+          Don&apos;t have an account?{' '}
+          <Link href="/register" className="font-normal underline">
+            Register
           </Link>
         </p>
       </div>
@@ -318,7 +215,7 @@ function RegisterPage({ providers }: RegisterPageProps) {
   );
 }
 
-export default RegisterPage;
+export default SignInPage;
 
 export const getServerSideProps: GetServerSideProps = async () => {
   return {
