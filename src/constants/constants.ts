@@ -156,6 +156,7 @@ const CONSTANTS = {
     },
   ],
   URL_USER_ADDRESS_REGISTRATION: '/profile/addresses',
+  URL_MERCHANT: '/merchant',
 };
 
 export default CONSTANTS;

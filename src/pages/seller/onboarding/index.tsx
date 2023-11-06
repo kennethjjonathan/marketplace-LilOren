@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
+import { Router, useRouter } from 'next/router';
 import { ArrowLeft } from 'lucide-react';
 import { NextPageWithLayout } from '../../_app';
 import RegisterSeller from '../../../../public/seller-portal.svg';
@@ -16,6 +16,7 @@ const START_REGISTERED =
 const WELCOME_TO_LILOREN = 'Welcome to LilOren!';
 
 const SellerOnboarding: NextPageWithLayout = () => {
+  const router = useRouter();
   return (
     <>
       <div>
@@ -32,7 +33,12 @@ const SellerOnboarding: NextPageWithLayout = () => {
         </div>
       </div>
       <div className={styles.button_wrapper}>
-        <Button className="w-full" type="submit" variant={'default'}>
+        <Button
+          className="w-full"
+          type="submit"
+          variant={'default'}
+          onClick={() => router.push('/seller/onboarding/form')}
+        >
           {'Start Registration'}
         </Button>
       </div>
@@ -63,9 +69,9 @@ const SellerOnboardingHeading = () => {
           content="Mal online terbesar Indonesia, tempat berkumpulnya toko / online shop terpercaya se Indonesia. Jual beli online semakin aman dan nyaman di LilOren."
         ></meta>
       </Head>
-      <div className="lg:hidden UserSettingsAddress__navbar w-[100%] min-w-auto flex items-center top-0 h-[52px] border-b-[1px] sticky bg-white">
+      <div className="lg:hidden SellerOnboarding__navbar w-[100%] min-w-auto flex items-center top-0 h-[52px] border-b-[1px] sticky bg-white">
         <BackButton
-          icon={<ArrowLeft size={24} />}
+          icon={<ArrowLeft size={24} className="text-primary" />}
           onClick={() => router.push('/')}
         />
         <div>
