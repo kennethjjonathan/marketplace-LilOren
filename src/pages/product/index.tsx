@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import Image from 'next/image';
 import {
   Star,
@@ -22,6 +22,8 @@ import {
 } from '@/components/ui/select';
 import ReviewCard from '@/components/ReviewCard/ReviewCard';
 import QuantityController from '@/components/QuantityController/QuantityController';
+import { NextPageWithLayout } from '../_app';
+import Layout from '@/components/Layout/Layout';
 
 const dummyArray: string[] = [
   '/banner-1.jpg',
@@ -49,7 +51,7 @@ const colors: string[] = [
 
 const sizes: string[] = ['S', 'M', 'XL'];
 
-function ProductPage() {
+const ProductPage: NextPageWithLayout = () => {
   const [colorsIndex, setColorsIndex] = useState<number>(0);
   const [sizesIndex, setSizesIndex] = useState<number>(0);
   const [quantity, setQuantity] = useState<number>(1);
@@ -441,6 +443,10 @@ function ProductPage() {
       </div>
     </>
   );
-}
+};
+
+ProductPage.getLayout = function getLayout(page: ReactElement) {
+  return <Layout>{page}</Layout>;
+};
 
 export default ProductPage;
