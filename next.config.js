@@ -11,8 +11,13 @@ const nextConfig = {
         hostname: 'down-id.img.susercontent.com',
         port: '',
       },
+      {
+        hostname: 'images.tokopedia.net',
+        port: '',
+      },
     ],
   },
+  output: 'standalone',
 };
 
 module.exports = nextConfig;
