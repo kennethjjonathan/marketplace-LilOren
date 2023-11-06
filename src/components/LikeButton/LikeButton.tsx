@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useEffect } from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { Heart } from 'lucide-react';
 
 interface LikeButtonProps {
@@ -13,8 +13,22 @@ const LikeButton = ({
   likedAmount,
 }: LikeButtonProps) => {
   return (
-    <button className={`flex items-center gap-1`}>
-      <Heart />
+    <button
+      className={`flex items-center gap-1 focus:outline-none`}
+      onClick={() => setIsLiked((prev) => !prev)}
+    >
+      <Heart
+        className={`aspect-square w-6 duration-300 lg:hover:text-blue-500 focus:outline-none sm:w-8 xl:w-9 ${
+          isLiked ? 'fill-red-500 text-red-500' : 'text-black'
+        }`}
+      />
+      {likedAmount && (
+        <p
+          className={`${isLiked ? 'fill-red-500 text-red-500' : 'text-black'}`}
+        >
+          {likedAmount}
+        </p>
+      )}
     </button>
   );
 };
