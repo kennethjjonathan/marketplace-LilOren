@@ -1,6 +1,8 @@
 const CONSTANTS = {
   BASEURL: 'http://localhost:3004',
   RO_BASEURL: 'https://api.rajaongkir.com/starter',
+  RO_API_PROVINCE: '/api/rajaongkirprovince',
+  RO_API_CITY: '/api/rajaongkir',
   CATEGORY_LIST: [
     {
       title: 'Electronic',
@@ -153,6 +155,7 @@ const CONSTANTS = {
       href: '/',
     },
   ],
+  URL_USER_ADDRESS_REGISTRATION: '/profile/addresses',
 };
 
 export default CONSTANTS;

@@ -1,7 +1,10 @@
 import React, { ReactElement, useState, ChangeEvent, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 import { ArrowLeft } from 'lucide-react';
 import axios from 'axios';
+import { ToastContainer, ToastContent } from 'react-toastify';
+import { Utils } from '@/utils';
 import {
   Select,
   SelectContent,
@@ -11,39 +14,42 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import BackButton from '@/components/BackButton/BackButton';
-import Navigation from '@/components/Navigation/Navigation';
 import UserSettingsLayout from '@/components/UserSettingsLayout/UserSettingsLayout';
 import { InputWithLabel } from '@/components/InputWithLabel/InputWithLabel';
-import { Label } from '@/components/ui/label';
 import DotsLoading from '@/components/DotsLoading/DotsLoading';
 import SkeletonSelect from '@/components/SkeletonSelect/SkeletonSelect';
-import { Button } from '@/components/ui/button';
 import TextAreaWithLabel from '@/components/TextAreaWithLabel/TextAreaWithLabel';
-import Head from 'next/head';
+import AsyncButton from '@/components/AsyncButton/AsyncButton';
+import CONSTANTS from '@/constants/constants';
+import { UserAddressClient } from '@/service/userAddress/userAddressClient';
+import styles from './UserAddressCreate.module.scss';
 
 const RECEIVER_NAME = 'Receiver Name';
 const PHONE_NUMBER = 'Phone Number';
-const ADDRESS_LABEL = 'Address Label';
 const PROVINCE_NAME = 'Province';
 const CITY_NAME = 'City';
 const SUB_DISTRICT_NAME = 'Sub District';
 const SUB_FROM_SUB_DISTRICT_NAME = 'Sub from Sub District';
+const ADDRESS_DETAILS = 'Address Details';
+const PATH_USER_SETTINGS_ADDRESS = '/user/settings/address';
 
-interface IAddAddressData {
-  receiverName: string;
-  phoneNumber: number;
-  addressLabel: string;
+export interface IAddAddressData {
+  receiver_name: string;
+  receiver_phone_number: string;
   province_id: string;
   city_id: string;
-  districName: string;
+  sub_district: string;
+  sub_sub_district: string;
+  postal_code: string;
+  address: string;
 }
-
 export interface IROProvince {
   province_id: number;
   province: string;
 }
-
 export interface ICity {
   city_id: string;
   province_id: string;
@@ -54,62 +60,63 @@ export interface ICity {
 }
 
 const UserAddressCreate = () => {
-  const [provinceId, setProvinceId] = useState<string>('');
-  const [cityId, setCityId] = useState<string>('');
   const [provinces, setProvinces] = useState<IROProvince[]>([]);
   const [cities, setCities] = useState<ICity[]>([]);
   const [loadingFetchProvince, setLoadingFetchProvince] =
     useState<boolean>(false);
   const [loadingFetchCity, setLoadingFetchCity] = useState<boolean>(false);
-  const [showModal, setShowModal] = useState(false);
+  const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
+  const router = useRouter();
 
-  const [addAddressData, setAddAddressData] = useState({
-    receiverName: '',
-    phoneNumber: '',
-    addressLabel: '',
+  const [addAddressData, setAddAddressData] = useState<IAddAddressData>({
+    receiver_name: '',
+    receiver_phone_number: '',
     province_id: '',
     city_id: '',
-    subDistrict: '',
-    subSubDistrict: '',
-    zipCode: '',
-    fullAddress: '',
+    sub_district: '',
+    sub_sub_district: '',
+    postal_code: '',
+    address: '',
   });
 
   const [isDataValid, setIsDataValid] = useState({
-    receiverName: true,
-    phoneNumber: true,
-    addressLabel: true,
+    receiver_name: true,
+    receiver_phone_number: true,
     province_id: true,
     city_id: true,
-    subDistrict: true,
-    subSubDistrict: true,
-    zipCode: true,
-    fullAddress: true,
+    sub_district: true,
+    sub_sub_district: true,
+    postal_code: true,
+    address: true,
   });
 
   const fetchProvince = async () => {
     try {
       const response = await axios({
         method: 'GET',
-        url: `/api/rajaongkirprovince`,
+        url: CONSTANTS.RO_API_PROVINCE,
       });
 
       const provinces: IROProvince[] = response.data.data.rajaongkir.results;
       setProvinces(provinces);
       setLoadingFetchProvince(false);
     } catch (error) {
-      // toastify
+      if (axios.isAxiosError(error)) {
+        Utils.notify(error.message, 'error', 'light');
+        setLoadingFetchProvince(false);
+      }
     }
   };
 
   const handleChangeProvince = async (e: string) => {
     setLoadingFetchCity(true);
-    setProvinceId(e);
+    setAddAddressData({ ...addAddressData, ['province_id']: e });
     const response = await axios({
       method: 'GET',
-      url: `/api/rajaongkir/${e}`,
+      url: `${CONSTANTS.RO_API_CITY}/${e}`,
     });
-
+    const cities = response.data.data.rajaongkir.results;
+    setCities(cities);
     setLoadingFetchCity(false);
   };
 
@@ -121,7 +128,6 @@ const UserAddressCreate = () => {
   };
 
   const handleChangeCity = (e: string) => {
-    setCityId(e);
     setAddAddressData({ ...addAddressData, ['city_id']: e });
   };
 
@@ -142,24 +148,34 @@ const UserAddressCreate = () => {
       setIsDataValid({ ...isDataValid, [key]: false });
       return false;
     }
-    console.log('masuk sini');
     setIsDataValid({ ...isDataValid, [key]: true });
     return true;
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(e.target);
+    setLoadingSubmit(true);
+    const responseSubmit = await UserAddressClient.create(addAddressData);
+    const error = responseSubmit?.error!;
+    const message = responseSubmit?.message!;
+
+    if (error) {
+      Utils.notify(message as ToastContent, 'error', 'light');
+    } else {
+      Utils.notify(message as ToastContent, 'success', 'light');
+    }
+    router.push(PATH_USER_SETTINGS_ADDRESS);
+    setLoadingSubmit(false);
   };
 
   useEffect(() => {
     setLoadingFetchProvince(true);
-    // fetchProvince();
-    setLoadingFetchProvince(false);
+    fetchProvince();
   }, []);
 
   return (
     <div className="h-[100vh]">
+      <ToastContainer />
       {loadingFetchProvince ? (
         <DotsLoading />
       ) : (
@@ -173,12 +189,12 @@ const UserAddressCreate = () => {
               label={RECEIVER_NAME}
               id="receiver-name"
               labelStyling="font-light"
-              value={addAddressData.receiverName}
+              value={addAddressData.receiver_name}
               minLength={1}
               maxLength={50}
-              onChange={(e) => handleChange(e, 'receiverName')}
-              isValid={isDataValid.receiverName}
-              onBlur={() => validateData('receiverName', /^[a-zA-Z\s]+$/)}
+              onChange={(e) => handleChange(e, 'receiver_name')}
+              isValid={isDataValid.receiver_name}
+              onBlur={() => validateData('receiver_name', /^[a-zA-Z\s]+$/)}
               validation="Must not be a blank"
               required
             />
@@ -187,33 +203,21 @@ const UserAddressCreate = () => {
               label={PHONE_NUMBER}
               id="phone-number"
               labelStyling="font-light"
-              value={addAddressData.phoneNumber}
+              value={addAddressData.receiver_phone_number}
               minLength={9}
               maxLength={15}
-              onChange={(e) => handleChange(e, 'phoneNumber')}
-              isValid={isDataValid.phoneNumber}
+              onChange={(e) => handleChange(e, 'receiver_phone_number')}
+              isValid={isDataValid.receiver_phone_number}
               onKeyDown={(e) => handleNumber(e)}
-              onBlur={() => validateData('phoneNumber', /^\+?\d{9,15}$/)}
+              onBlur={() =>
+                validateData('receiver_phone_number', /^\+?\d{9,15}$/)
+              }
               validation="Min 9 numbers"
               required
             />
           </div>
           <div className="divider bg-accent h-2"></div>
           <div className="mb-6 mt-6 px-[14px] flex flex-col gap-4">
-            <InputWithLabel
-              type="text"
-              label={ADDRESS_LABEL}
-              id="address-label"
-              labelStyling="font-light"
-              value={addAddressData.addressLabel}
-              minLength={1}
-              maxLength={30}
-              onChange={(e) => handleChange(e, 'addressLabel')}
-              isValid={isDataValid.addressLabel}
-              onBlur={() => validateData('addressLabel', /^[a-zA-Z\s]+$/)}
-              validation="Must not be a blank"
-              required
-            />
             {/* Province */}
             <Label className="font-light w-full md:text-base">
               {PROVINCE_NAME}
@@ -268,19 +272,19 @@ const UserAddressCreate = () => {
                 </>
               )
             )}
-            {cityId && (
+            {addAddressData.city_id !== '' && (
               <>
                 <InputWithLabel
                   type="text"
                   label={SUB_DISTRICT_NAME}
                   id="sub-district"
                   labelStyling="font-light"
-                  value={addAddressData.subDistrict}
+                  value={addAddressData.sub_district}
                   minLength={1}
                   maxLength={50}
-                  onChange={(e) => handleChange(e, 'subDistrict')}
-                  isValid={isDataValid.subDistrict}
-                  onBlur={() => validateData('subDistrict', /^[a-zA-Z\s]+$/)}
+                  onChange={(e) => handleChange(e, 'sub_district')}
+                  isValid={isDataValid.sub_district}
+                  onBlur={() => validateData('sub_district', /^[a-zA-Z\s]+$/)}
                   validation="Must not be a blank"
                   required
                 />
@@ -289,12 +293,14 @@ const UserAddressCreate = () => {
                   label={SUB_FROM_SUB_DISTRICT_NAME}
                   id="sub-from-sub-district"
                   labelStyling="font-light"
-                  value={addAddressData.subSubDistrict}
+                  value={addAddressData.sub_sub_district}
                   minLength={1}
                   maxLength={50}
-                  onChange={(e) => handleChange(e, 'subSubDistrict')}
-                  isValid={isDataValid.subSubDistrict}
-                  onBlur={() => validateData('subSubDistrict', /^[a-zA-Z\s]+$/)}
+                  onChange={(e) => handleChange(e, 'sub_sub_district')}
+                  isValid={isDataValid.sub_sub_district}
+                  onBlur={() =>
+                    validateData('sub_sub_district', /^[a-zA-Z\s]+$/)
+                  }
                   validation="Must not be a blank"
                   required
                 />
@@ -303,13 +309,13 @@ const UserAddressCreate = () => {
                   label="Zip Code"
                   id="zip-code"
                   labelStyling="font-light"
-                  value={addAddressData.zipCode}
+                  value={addAddressData.postal_code}
                   minLength={5}
                   maxLength={10}
-                  onChange={(e) => handleChange(e, 'zipCode')}
+                  onChange={(e) => handleChange(e, 'postal_code')}
                   onKeyDown={(e) => handleNumber(e)}
-                  isValid={isDataValid.zipCode}
-                  onBlur={() => validateData('zipCode', /^\+?\d{5,15}$/)}
+                  isValid={isDataValid.postal_code}
+                  onBlur={() => validateData('postal_code', /^\+?\d{5,15}$/)}
                   validation="Please enter a valid zip code"
                   required
                 />
@@ -317,44 +323,46 @@ const UserAddressCreate = () => {
                   id={'full-address'}
                   label={'Full Address'}
                   labelStyling="font-light"
-                  value={addAddressData.fullAddress}
+                  value={addAddressData.address}
                   minLength={1}
                   maxLength={500}
-                  onChange={(e) => handleChange(e, 'fullAddress')}
-                  isValid={isDataValid.fullAddress}
-                  onBlur={() =>
-                    validateData('fullAddress', /^[#.0-9a-zA-Z\s,-]+$/)
-                  }
+                  onChange={(e) => handleChange(e, 'address')}
+                  isValid={isDataValid.address}
+                  onBlur={() => validateData('address', /^[#.0-9a-zA-Z\s,-]+$/)}
                   validation="Must not be a blank"
                   required
                 />
               </>
             )}
           </div>
-          <div className="h-[60px] bg-white w-full flex justify-center items-center text-ellipsis whitespace-nowrap overflow-hidden px-4 pt-4 pb-4 fixed shadow-[0_-1px_6px_0_rgba(141,150,170,0.4)] bottom-0">
-            <Button
-              disabled={
-                !Object.values(addAddressData).every((val) => val !== '')
-              }
-              className="w-full"
-              type="submit"
-              variant={'default'}
-            >
-              {'Submit'}
-            </Button>
-          </div>
+          {loadingSubmit ? (
+            <div className={styles.button_wrapper}>
+              <AsyncButton className="w-full" isLoading={true}>
+                {'Submit'}
+              </AsyncButton>
+            </div>
+          ) : (
+            <div className={styles.button_wrapper}>
+              <Button
+                disabled={
+                  !Object.values(addAddressData).every((val) => val !== '')
+                }
+                className="w-full"
+                type="submit"
+                variant={'default'}
+              >
+                {'Submit'}
+              </Button>
+            </div>
+          )}
         </form>
       )}
     </div>
   );
 };
 
-const ADDRESS_DETAILS = 'Address Details';
-const PATH_USER_SETTINGS_ADDRESS = '/user/settings/address';
-
 const UserAddressCreateHeading = () => {
   const router = useRouter();
-
   return (
     <>
       <Head>
@@ -393,7 +401,10 @@ const UserAddressCreateHeading = () => {
 
 UserAddressCreate.getLayout = function getLayout(page: ReactElement) {
   return (
-    <UserSettingsLayout component={<UserAddressCreateHeading />}>
+    <UserSettingsLayout
+      component={<UserAddressCreateHeading />}
+      currentTab={'My Bio'}
+    >
       {page}
     </UserSettingsLayout>
   );
