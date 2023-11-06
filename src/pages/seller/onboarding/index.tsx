@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
-import { Router, useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import { ArrowLeft } from 'lucide-react';
 import { NextPageWithLayout } from '../../_app';
 import RegisterSeller from '../../../../public/seller-portal.svg';
