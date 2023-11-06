@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 import Navigation from '../Navigation/Navigation';
 import UserPresentation from '../UserPresentation/UserPresentation';
 import styles from './UserSettingsLayout.module.scss';
-import { Router, useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 
 interface UserSettingsLayoutProps {
   children: ReactNode;
