@@ -3,7 +3,6 @@ import { ArrowLeft, Check, MoreHorizontal } from 'lucide-react';
 import { useRouter } from 'next/router';
 import UserSettingsLayout from '@/components/UserSettingsLayout/UserSettingsLayout';
 import BackButton from '@/components/BackButton/BackButton';
-import Navigation from '@/components/Navigation/Navigation';
 import styles from './UserSettingsAddress.module.scss';
 import { Button } from '@/components/ui/button';
 import ButtonWithIcon from '@/components/ButtonWithIcon/ButtonWithIcon';
@@ -115,7 +114,7 @@ const UserSettingsAddress = () => {
         ))}
       </div>
       {loadingChangeMainAddress ? (
-        <></>
+        <>LoadingButton</>
       ) : (
         <div className="h-[60px] bg-white w-full flex justify-center items-center text-ellipsis whitespace-nowrap overflow-hidden px-4 pt-4 pb-4 fixed shadow-[0_-1px_6px_0_rgba(141,150,170,0.4)] bottom-0">
           <Button className="w-full" type="button" variant={'default'}>
@@ -150,9 +149,6 @@ const UserSettingsAddressHeading = () => {
           content="Mal online terbesar Indonesia, tempat berkumpulnya toko / online shop terpercaya se Indonesia. Jual beli online semakin aman dan nyaman di LilOren."
         ></meta>
       </Head>
-      {/* <div className="hidden lg:block">
-        <Navigation />
-      </div> */}
       <div className="lg:hidden UserSettingsAddress__navbar w-[100%] min-w-auto flex items-center top-0 h-[52px] border-b-[1px] sticky bg-white">
         <BackButton
           id="back-button"
@@ -177,7 +173,10 @@ const UserSettingsAddressHeading = () => {
 
 UserSettingsAddress.getLayout = function getLayout(page: ReactElement) {
   return (
-    <UserSettingsLayout component={<UserSettingsAddressHeading />}>
+    <UserSettingsLayout
+      currentTab="My Addresses"
+      component={<UserSettingsAddressHeading />}
+    >
       {page}
     </UserSettingsLayout>
   );

@@ -1,15 +1,14 @@
-import React, { Fragment, ReactElement, useState } from 'react';
-import Image from 'next/image';
-import { ArrowLeft, Pencil, PlusCircle, Store } from 'lucide-react';
+import React, { Fragment, ReactElement, ReactNode, useState } from 'react';
+import { ArrowLeft, KeyRound, Store } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { NextPageWithLayout } from '../_app';
 import { Button } from '@/components/ui/button';
 import AddAddressModal from '../../components/AddAddressModal/AddAddressModal';
-import Navigation from '@/components/Navigation/Navigation';
 import BackButton from '@/components/BackButton/BackButton';
 import UserSettingsLayout from '@/components/UserSettingsLayout/UserSettingsLayout';
 import styles from './User.module.scss';
 import Head from 'next/head';
+import UserPresentation from '@/components/UserPresentation/UserPresentation';
 
 const User: NextPageWithLayout = () => {
   const router = useRouter();
@@ -41,22 +40,34 @@ const User: NextPageWithLayout = () => {
         ></meta>
       </Head>
       <Fragment>
-        <div className="bg-accent flex flex-col justify-start h-[100vh]">
-          <UserPresentation />
-          <div className="lilOren__user__setting pt-[17px] bg-white">
-            <span id="account-setting-section" className="font-bold px-4">
-              {'Account Settings'}
-            </span>
-            <ul className="lilOren__user__account__setting__list mt-[5px]">
-              <UserSetting
-                onClick={() => router.push('/user/settings/address')}
-              />
-            </ul>
-          </div>
-          <div className="lilOren__user__logout w-full flex justify-center items-center pt-[17px]">
-            <Button variant={'outline'} onClick={() => handleLogout()}>
-              {'Logout'}
-            </Button>
+        <div className="lg:flex lg:justify-center lg:items-center w-[100vw] bg-white">
+          <div className="bg-accent flex flex-col justify-start h-[100vh] lg:w-[75vw] lg:p-4 lg:bg-transparent lg:hidden">
+            <UserPresentation />
+            <div className="lilOren__user__setting pt-[17px] bg-white lg:bg-transparent lg:w-[350px] lg:hidden">
+              <span id="account-setting-section" className="font-bold px-4">
+                {'Account Settings'}
+              </span>
+              <ul className="lilOren__user__account__setting__list mt-[5px]">
+                <UserSetting
+                  title={'My Address'}
+                  icon={<Store />}
+                  description={'Atur alamat pengiriman belanjaan'}
+                  onClick={() => router.push('/user/settings/address')}
+                />
+                <UserSetting
+                  title={'Change Password'}
+                  icon={<KeyRound />}
+                  description={'Atur password akun Anda'}
+                  onClick={() => router.push('/user/settings/password')}
+                />
+              </ul>
+            </div>
+            <div className=""></div>
+            <div className="lilOren__user__logout w-full flex justify-center items-center pt-[17px] lg:hidden">
+              <Button variant={'outline'} onClick={() => handleLogout()}>
+                {'Logout'}
+              </Button>
+            </div>
           </div>
         </div>
         <AddAddressModal
@@ -70,7 +81,9 @@ const User: NextPageWithLayout = () => {
 
 User.getLayout = function getLayout(page: ReactElement) {
   return (
-    <UserSettingsLayout component={<UserHeading />}>{page}</UserSettingsLayout>
+    <UserSettingsLayout currentTab="My Biodata" component={<UserHeading />}>
+      {page}
+    </UserSettingsLayout>
   );
 };
 
@@ -94,63 +107,29 @@ const UserHeading = () => {
   );
 };
 
-const UserPresentation = () => {
-  return (
-    <div className={styles.liloren__user__presentation}>
-      <Image
-        src={
-          'https://images.tokopedia.net/img/cache/300/tPxBYm/2023/1/20/17d1d6b7-50c0-4c06-b16e-3fd60feb70a8.jpg'
-        }
-        alt={'user__profpic'}
-        width={500}
-        height={500}
-        className={'rounded-full h-[64px] w-[64px]'}
-      />
-      <UserInfo />
-      <div className="flex ml-auto items-center">
-        <Pencil className="text-muted-foreground" />
-      </div>
-    </div>
-  );
-};
-
-const UserInfo = () => {
-  return (
-    <div className={styles.lilOren__user__info}>
-      <div className={styles.lilOren__user__name__container}>
-        <span className={styles.lilOren__user__info__firstname}>
-          {'Endriyani'}
-        </span>
-      </div>
-      <div className="lilOren__user__phone__container"></div>
-      <div className={styles.lilOren__user_email__container}>
-        {'endriyanira@gmail.com'}
-      </div>
-      <Button className={styles.lilOren__user__edit__button}>
-        <PlusCircle size={20} />
-        <span className="font-bold ml-[10px]">{'Add Phone Number'}</span>
-      </Button>
-    </div>
-  );
-};
-
 interface UserSettingProps {
   onClick: () => void;
+  title: string;
+  description: string;
+  icon: ReactNode;
 }
 
-const UserSetting = ({ onClick }: UserSettingProps) => {
+const UserSetting = ({
+  onClick,
+  title,
+  description,
+  icon,
+}: UserSettingProps) => {
   return (
     <li
       className={styles.list__item}
       onClick={() => onClick()}
       onKeyDown={() => onClick()}
     >
-      <Store />
+      {icon}
       <div className={styles.list__item__container}>
-        <p className={styles.list__item__title}>My Address</p>
-        <p className={styles.list__item__desc}>
-          Atur alamat pengiriman belanjaan
-        </p>
+        <p className={styles.list__item__title}>{title}</p>
+        <p className={styles.list__item__desc}>{description}</p>
       </div>
     </li>
   );
