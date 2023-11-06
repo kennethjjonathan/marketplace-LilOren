@@ -52,7 +52,6 @@ const CartCardProduct = ({ product }: CartCardProductProps) => {
             setInputValue={setQuantity}
             maximum={product.stock}
           />
-          
         </div>
       </div>
     </div>
