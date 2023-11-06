@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import axios from 'axios';
 import CONSTANTS from '@/constants/constants';
 
-const RO_API_KEY = '7302ae73633e5295eda443f1146f1156';
+const RO_API_KEY = '453da4be0759767e21f34c688dcf8494';
 
 //data untuk ngeresponse
 export type Data = {
