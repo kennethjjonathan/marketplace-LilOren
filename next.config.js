@@ -15,6 +15,10 @@ const nextConfig = {
         hostname: 'images.tokopedia.net',
         port: '',
       },
+      {
+        hostname: 'deo.shopeesz.com',
+        port: '',
+      },
     ],
   },
   output: 'standalone',

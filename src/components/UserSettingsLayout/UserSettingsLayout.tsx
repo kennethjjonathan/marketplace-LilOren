@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 interface UserSettingsLayoutProps {
   children: ReactNode;
   component: ReactNode;
-  currentTab: string;
+  currentTab?: string;
 }
 
 const UserSettingsLayout = ({
