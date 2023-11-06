@@ -4,7 +4,12 @@ import { UserPlus } from 'lucide-react';
 import AsyncButton from '@/components/AsyncButton/AsyncButton';
 import axios from 'axios';
 import CONSTANTS from '@/constants/constants';
-import { signIn, getProviders, LiteralUnion, ClientSafeProvider } from 'next-auth/react';
+import {
+  signIn,
+  getProviders,
+  LiteralUnion,
+  ClientSafeProvider,
+} from 'next-auth/react';
 import { GetServerSideProps } from 'next';
 import { BuiltInProviderType } from 'next-auth/providers/index';
 import GoogleButton from '@/components/GoogleButton/GoogleButton';
