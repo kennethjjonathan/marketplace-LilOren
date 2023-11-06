@@ -1,20 +1,22 @@
-import { InputWithLabel } from '@/components/InputWithLabel/InputWithLabel';
 import React, { useState } from 'react';
-import { UserPlus } from 'lucide-react';
-import AsyncButton from '@/components/AsyncButton/AsyncButton';
-import axios from 'axios';
-import CONSTANTS from '@/constants/constants';
-import { signIn, getProviders } from 'next-auth/react';
 import { GetServerSideProps } from 'next';
-import { LiteralUnion, ClientSafeProvider } from 'next-auth/react';
-import { BuiltInProviderType } from 'next-auth/providers/index';
-import GoogleButton from '@/components/GoogleButton/GoogleButton';
-import Link from 'next/link';
 import Image from 'next/image';
-import { UserClient } from '@/service/user/userClient';
-import { IErrorResponse, IRegister } from '@/interface/user';
-import { useToast } from '@/components/ui/use-toast';
+import Link from 'next/link';
+import {
+  signIn,
+  getProviders,
+  ClientSafeProvider,
+  LiteralUnion,
+} from 'next-auth/react';
 import { useRouter } from 'next/router';
+import { BuiltInProviderType } from 'next-auth/providers/index';
+import { InputWithLabel } from '@/components/InputWithLabel/InputWithLabel';
+import AsyncButton from '@/components/AsyncButton/AsyncButton';
+import GoogleButton from '@/components/GoogleButton/GoogleButton';
+import { UserClient } from '@/service/user/userClient';
+import { useToast } from '@/components/ui/use-toast';
+import { UserPlus } from 'lucide-react';
+import { IErrorResponse, IRegister } from '@/interface/user';
 
 interface RegisterPageProps {
   providers: Record<LiteralUnion<BuiltInProviderType>, ClientSafeProvider>;

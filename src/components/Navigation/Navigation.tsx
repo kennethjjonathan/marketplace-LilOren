@@ -91,17 +91,21 @@ const Navigation = () => {
 
   return (
     <div className={styles.navigation}>
-      <div className="lg:hidden md:w-[75vw] text-right pb-2">
-        <ButtonWithIcon variant={'link'} href={'/login'}>
-          {'Login'}
-        </ButtonWithIcon>
-        <ButtonWithIcon
-          variant={'link'}
-          href={'/register'}
-          className="text-muted-foreground"
-        >
-          {'Register'}
-        </ButtonWithIcon>
+      <div className="lg:hidden md:w-[80vw] text-right pb-2">
+        {user.firstName === '' && (
+          <>
+            <ButtonWithIcon variant={'link'} href={'/login'}>
+              {'Login'}
+            </ButtonWithIcon>
+            <ButtonWithIcon
+              variant={'link'}
+              href={'/register'}
+              className="text-muted-foreground"
+            >
+              {'Register'}
+            </ButtonWithIcon>
+          </>
+        )}
       </div>
       <div className={styles.navigationContent}>
         <div className={styles.logo}>LOGO</div>
@@ -178,7 +182,7 @@ const Navigation = () => {
               {user.firstName !== '' ? (
                 <NavigationMenuTrigger>
                   <div className="flex md:flex-row md:gap-3 items-center">
-                    <ButtonWithIcon href="/profile" variant={'ghost'}>
+                    <ButtonWithIcon href="/user" variant={'ghost'}>
                       <User2 />
                       <p className="hidden md:hidden lg:block font-light pl-3">
                         {user.firstName}
