@@ -6,6 +6,6 @@ export interface IProduct {
   discountedPrice: number;
   discountPercentage: number;
   quantity: number;
-  maxQuantity: number;
+  stock: number;
   isLiked: boolean;
 }

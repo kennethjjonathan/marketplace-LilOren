@@ -15,7 +15,7 @@ const dummyArray: IProduct[] = [
     discountedPrice: 135000,
     discountPercentage: 10,
     quantity: 5,
-    maxQuantity: 15,
+    stock: 15,
     isLiked: true,
   },
 ];

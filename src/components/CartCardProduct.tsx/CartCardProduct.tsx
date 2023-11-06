@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { IProduct } from '@/interface/product';
 import { Checkbox } from '../ui/checkbox';
 import moneyFornatter from '@/lib/moneyFornatter';
+import QuantityController from '../QuantityController/QuantityController';
 
 interface CartCardProductProps {
   product: IProduct;
 }
 
 const CartCardProduct = ({ product }: CartCardProductProps) => {
+  const [quantity, setQuantity] = useState<number>(product.quantity);
   return (
     <div className="w-full flex flex-col gap-1">
       <div className="flex items-start gap-2 w-full">
@@ -43,7 +45,16 @@ const CartCardProduct = ({ product }: CartCardProductProps) => {
           )}
         </div>
       </div>
-      <div className="w-full p-2"></div>
+      <div className="w-full mt-1 flex justify-between">
+        <div className="flex items-center gap-2">
+          <QuantityController
+            inputValue={quantity}
+            setInputValue={setQuantity}
+            maximum={product.stock}
+          />
+          
+        </div>
+      </div>
     </div>
   );
 };
