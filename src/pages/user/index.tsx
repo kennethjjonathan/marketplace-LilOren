@@ -93,7 +93,7 @@ const UserHeading = () => {
   const router = useRouter();
 
   return (
-    <div className="lg:hidden UserSettingsAddress__navbar w-[100%] min-w-auto flex items-center top-0 h-[52px] border-b-[1px] sticky bg-white">
+    <div className="lg:hidden User__navbar w-[100%] min-w-auto flex items-center top-0 h-[52px] border-b-[1px] sticky bg-white">
       <BackButton
         icon={<ArrowLeft size={24} />}
         onClick={() => router.push('/')}
