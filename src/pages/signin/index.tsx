@@ -102,7 +102,12 @@ function SignInPage({ providers }: SignInPageProps) {
         title: 'Your sign in is successful',
       });
       router.push('/');
-    } catch (error) {
+    } catch (error: any) {
+      toast({
+        title: 'Uh oh! something went wrong',
+        description: error.message,
+        variant: 'destructive',
+      });
       console.error(error);
     } finally {
       setIsLoading(false);

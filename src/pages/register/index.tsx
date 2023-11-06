@@ -161,7 +161,9 @@ function RegisterPage({ providers }: RegisterPageProps) {
         password: registerData.password,
       };
       const response = await UserClient.postRegister(newRegisterData);
+      console.log(response);
       if (response.data.error) {
+        console.log('masuk');
         handleErrorAuthResponse(response.data.message);
         return;
       }
@@ -170,7 +172,12 @@ function RegisterPage({ providers }: RegisterPageProps) {
         description: 'Please sign in with your account',
       });
       router.push('/signin');
-    } catch (error) {
+    } catch (error: any) {
+      toast({
+        title: 'Uh oh! something went wrong',
+        description: error.message,
+        variant: 'destructive',
+      });
       console.error(error);
     } finally {
       setIsLoading(false);
