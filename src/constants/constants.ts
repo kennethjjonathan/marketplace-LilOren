@@ -1,5 +1,5 @@
 const CONSTANTS = {
-  BASEURL: 'http://localhost:3004',
+  BASEURL: process.env.BASEURL,
   CATEGORY_LIST: [
     {
       title: 'Electronic',

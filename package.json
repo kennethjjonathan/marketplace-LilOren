@@ -26,6 +26,7 @@
     "axios": "^1.6.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
+    "cookies-next": "^4.0.0",
     "cors": "^2.8.5",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.290.0",
