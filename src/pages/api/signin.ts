@@ -1,9 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import CONSTANTS from '@/constants/constants';
+import { IAuthReturnData } from '@/interface/user';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<any>,
+  res: NextApiResponse<IAuthReturnData>,
 ) {
   const body = req.body;
   try {
