@@ -1,15 +1,18 @@
 import React, { PropsWithChildren, useState } from 'react';
 import Navbar from './Navbar';
+import Sidebar from './Sidebar';
 
 const SellerLayout = (props: PropsWithChildren) => {
-  const [showSidebar, setShowSidebar] = useState<boolean>(false);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
     <div className="grid min-h-screen grid-rows-header bg-zinc-100">
       <div className="bg-white shadow-sm z-10">
-        <Navbar onMenuButtonClick={() => setShowSidebar((prev) => !prev)} />
+      <Navbar onMenuButtonClick={() => setSidebarOpen((prev) => !prev)} />
       </div>
       <div className="grid md:grid-cols-sidebar">
-        <div className="shadow-md bg-zinc-50">Sidebar</div>
+        <div className="shadow-md bg-zinc-50">
+            <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />
+        </div>
         {props.children}
       </div>
     </div>
