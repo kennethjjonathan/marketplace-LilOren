@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useOnClickOutside } from 'usehooks-ts';
 import classNames from 'classnames';
 import DefaultNavbarItems from './DefaultNavbarItems';
@@ -25,6 +26,8 @@ const Sidebar = ({
   useOnClickOutside(ref, (e) => {
     setOpen(false);
   });
+  const router = useRouter();
+
 
   return (
     <div
@@ -49,6 +52,9 @@ const Sidebar = ({
                     'flex gap-4 items-center ': true,
                     'transition-colors duration-300': true,
                     'rounded-md p-2 mx-2': true,
+                    "bg-primary text-white":
+                      router.pathname === item.href ||
+                      router.pathname === `${item.href}/shipment`,
                   })}
                 >
                   {item.icon} {item.label}
