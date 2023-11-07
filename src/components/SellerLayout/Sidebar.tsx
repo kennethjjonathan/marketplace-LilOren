@@ -28,7 +28,6 @@ const Sidebar = ({
   });
   const router = useRouter();
 
-
   return (
     <div
       className={classNames({
@@ -52,7 +51,7 @@ const Sidebar = ({
                     'flex gap-4 items-center ': true,
                     'transition-colors duration-300': true,
                     'rounded-md p-2 mx-2': true,
-                    "bg-primary text-white":
+                    'bg-primary text-white':
                       router.pathname === item.href ||
                       router.pathname === `${item.href}/shipment`,
                   })}
