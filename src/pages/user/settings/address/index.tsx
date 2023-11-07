@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { ArrowLeft, Check, MoreHorizontal } from 'lucide-react';
 import { useRouter } from 'next/router';
 import UserSettingsLayout from '@/components/UserSettingsLayout/UserSettingsLayout';
@@ -7,6 +7,7 @@ import styles from './UserSettingsAddress.module.scss';
 import { Button } from '@/components/ui/button';
 import ButtonWithIcon from '@/components/ButtonWithIcon/ButtonWithIcon';
 import Head from 'next/head';
+import SkeletonUserAddress from '@/components/SkeletonUserAddress/SkeletonUserAddress';
 
 interface IUserAddress {
   id: number;
@@ -42,87 +43,108 @@ const UserSettingsAddress = () => {
   );
   const [loadingChangeMainAddress, setLoadingChangeMainAddress] =
     useState<boolean>(false);
+  const [loadingFetchUserAddress, setLoadingFetchUserAddress] =
+    useState<boolean>(false);
 
   const handleMainAddress = (address: IUserAddress) => {
     setLoadingChangeMainAddress(true);
     console.log(address);
     setLoadingChangeMainAddress(false);
   };
+
+  useEffect(() => {
+    setLoadingFetchUserAddress(true);
+
+    setTimeout(() => {
+      setLoadingFetchUserAddress(false);
+    }, 1000);
+  }, []);
   return (
-    <div className="all-address">
-      <div className="pb-[60px] m-[16px] flex flex-col gap-4">
-        {userAddresses.map((address: IUserAddress, index) => (
-          <div
-            key={`key:${String(index)} ${address.addressLabel} ${
-              address.receiverName
-            }`}
-            className="address-card-item flex gap-2 hover:cursor-pointer"
-            onClick={() => setCurrentAddress(address)}
-            onKeyDown={() => setCurrentAddress(address)}
-          >
-            <div className="address-card flex-grow">
-              <section
-                className={`${styles.card} ${
-                  currentAddress?.id == address.id && styles.selected
-                }`}
-              >
-                <div className={`info-container flex`}>
-                  <div
-                    className={`${styles.info_container} ${styles.info} flex-grow`}
-                  >
-                    <div className={`title ${styles.title}`}>
-                      <p
-                        className={`${styles.text_title} ${styles.heading} ${styles.text}`}
-                      >
-                        {address.addressLabel}
-                      </p>
-                    </div>
-                    <p className={`${styles.receiver_name}`}>
-                      {address.receiverName}
-                    </p>
-                    <p className={`${styles.full_address} ${styles.heading}`}>
-                      {address.fullAddress}
-                    </p>
-                  </div>
-                  {address.id === currentAddress.id && (
-                    <div className={`icons`}>
-                      <Check className={`text-primary`} />
-                    </div>
-                  )}
-                </div>
-                <div className={`action-button ${styles.action_buttons}`}>
-                  <ButtonWithIcon
-                    variant={'outline'}
-                    className="py-0 px-2 w-full text-muted-foreground flex justify-center items-center"
-                    href="/"
-                  >
-                    {'Edit Address'}
-                  </ButtonWithIcon>
-                  {address.id === userSelectedAddress.id && (
-                    <Button
-                      className="py-0 px-2 w-fit text-muted-foreground flex justify-center items-center"
-                      variant={'outline'}
-                      onClick={() => handleMainAddress(currentAddress)}
-                    >
-                      <MoreHorizontal />
-                    </Button>
-                  )}
-                </div>
-              </section>
-            </div>
-          </div>
-        ))}
-      </div>
-      {loadingChangeMainAddress ? (
-        <>LoadingButton</>
+    <>
+      {loadingFetchUserAddress ? (
+        <>
+          <SkeletonUserAddress />
+          <SkeletonUserAddress />
+        </>
       ) : (
-        <div className="h-[60px] bg-white w-full flex justify-center items-center text-ellipsis whitespace-nowrap overflow-hidden px-4 pt-4 pb-4 fixed shadow-[0_-1px_6px_0_rgba(141,150,170,0.4)] bottom-0">
-          <Button className="w-full" type="button" variant={'default'}>
-            {'Select Address'}
-          </Button>
+        <div className="all-address">
+          <div className="pb-[60px] m-[16px] flex flex-col gap-4">
+            {userAddresses.map((address: IUserAddress, index) => (
+              <div
+                key={`key:${String(index)} ${address.addressLabel} ${
+                  address.receiverName
+                }`}
+                className="address-card-item flex gap-2 hover:cursor-pointer"
+                onClick={() => setCurrentAddress(address)}
+                onKeyDown={() => setCurrentAddress(address)}
+              >
+                <div className="address-card flex-grow">
+                  <section
+                    className={`${styles.card} ${
+                      currentAddress?.id == address.id && styles.selected
+                    }`}
+                  >
+                    <div className={`info-container flex`}>
+                      <div
+                        className={`${styles.info_container} ${styles.info} flex-grow`}
+                      >
+                        <div className={`title ${styles.title}`}>
+                          <p
+                            className={`${styles.text_title} ${styles.heading} ${styles.text}`}
+                          >
+                            {address.addressLabel}
+                          </p>
+                        </div>
+                        <p className={`${styles.receiver_name}`}>
+                          {address.receiverName}
+                        </p>
+                        <p
+                          className={`${styles.full_address} ${styles.heading}`}
+                        >
+                          {address.fullAddress}
+                        </p>
+                      </div>
+                      {address.id === currentAddress.id && (
+                        <div className={`icons`}>
+                          <Check className={`text-primary`} />
+                        </div>
+                      )}
+                    </div>
+                    <div className={`action-button ${styles.action_buttons}`}>
+                      <ButtonWithIcon
+                        variant={'outline'}
+                        className="py-0 px-2 w-full text-muted-foreground flex justify-center items-center"
+                        href="/"
+                      >
+                        {'Edit Address'}
+                      </ButtonWithIcon>
+                      {address.id === userSelectedAddress.id && (
+                        <Button
+                          className="py-0 px-2 w-fit text-muted-foreground flex justify-center items-center"
+                          variant={'outline'}
+                          onClick={() => handleMainAddress(currentAddress)}
+                        >
+                          <MoreHorizontal />
+                        </Button>
+                      )}
+                    </div>
+                  </section>
+                </div>
+              </div>
+            ))}
+          </div>
+          {loadingChangeMainAddress ? (
+            <>LoadingButton</>
+          ) : (
+            <div className="h-[60px] bg-white w-full flex justify-center items-center text-ellipsis whitespace-nowrap overflow-hidden px-4 pt-4 pb-4 fixed shadow-[0_-1px_6px_0_rgba(141,150,170,0.4)] bottom-0 lg:hidden right-0">
+              <Button className="w-full" type="button" variant={'default'}>
+                {'Select Address'}
+              </Button>
+            </div>
+          )}
         </div>
       )}
-    </div>
+    </>
   );
 };
 
