@@ -24,7 +24,7 @@ axiosInstance.interceptors.response.use(
         originalConfig._retry = true;
         try {
           const access_token = await refreshAccessToken();
-          
+
           return axiosInstance(originalConfig);
         } catch (_error) {
           return Promise.reject(_error);
