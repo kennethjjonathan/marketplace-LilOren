@@ -10,13 +10,11 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { BuiltInProviderType } from 'next-auth/providers/index';
-import axios from 'axios';
 import AsyncButton from '@/components/AsyncButton/AsyncButton';
 import GoogleButton from '@/components/GoogleButton/GoogleButton';
 import { InputWithLabel } from '@/components/InputWithLabel/InputWithLabel';
 import { LogIn } from 'lucide-react';
-import { IErrorResponse, ISignIn } from '@/interface/user';
-import CONSTANTS from '@/constants/constants';
+import { IErrorResponse } from '@/interface/user';
 import { useToast } from '@/components/ui/use-toast';
 import { UserClient } from '@/service/user/userClient';
 
