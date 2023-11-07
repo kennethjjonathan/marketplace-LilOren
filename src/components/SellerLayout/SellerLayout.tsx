@@ -1,6 +1,8 @@
 import React, { PropsWithChildren, useState } from 'react';
+import { Store } from 'lucide-react';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
+import styles from './SellerLayout.module.scss';
 
 const SellerLayout = (props: PropsWithChildren) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);

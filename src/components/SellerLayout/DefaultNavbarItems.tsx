@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  ClipboardList,
-  Home,
-  Package,
-  ShoppingCart,
-  Truck,
-} from 'lucide-react';
+import { ClipboardList, Home, Package, Settings } from 'lucide-react';
 import { NavItem } from './Sidebar';
 
 export const defaultNavItems: NavItem[] = [
@@ -25,9 +19,9 @@ export const defaultNavItems: NavItem[] = [
     icon: <ClipboardList className="w-6 h-6" />,
   },
   {
-    label: 'Delivery',
-    href: '/seller/delivery',
-    icon: <Truck className="w-6 h-6" />,
+    label: 'Settings',
+    href: '/seller/settings',
+    icon: <Settings className="w-6 h-6" />,
   },
 ];
 
