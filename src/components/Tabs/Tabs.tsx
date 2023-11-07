@@ -35,7 +35,7 @@ const Tabs = () => {
   };
 
   return (
-    <div className="bg-white shadow-sm rounded-t-xl flex gap-2 p-2">
+    <div className="bg-white shadow-sm rounded-t-xl flex gap-2 p-2 overflow-x-auto w-[80vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw]">
       {data.map((orderStatus) => (
         <div key={`key:${orderStatus.id}`}>
           <Button
