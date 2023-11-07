@@ -5,7 +5,7 @@ import { NavItem } from './Sidebar';
 export const defaultNavItems: NavItem[] = [
   {
     label: 'Home',
-    href: '/seller/home',
+    href: '/seller/portal/home',
     icon: <Home className="w-6 h-6" />,
   },
   {
@@ -15,12 +15,12 @@ export const defaultNavItems: NavItem[] = [
   },
   {
     label: 'Order',
-    href: '/seller/order',
+    href: '/seller/portal/order',
     icon: <ClipboardList className="w-6 h-6" />,
   },
   {
     label: 'Settings',
-    href: '/seller/settings',
+    href: '/seller/portal/settings',
     icon: <Settings className="w-6 h-6" />,
   },
 ];
