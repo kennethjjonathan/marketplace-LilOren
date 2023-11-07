@@ -10,7 +10,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Button } from '../ui/button';
 import { IProduct } from '@/interface/product';
 
 interface TrashButtonProps {
@@ -25,12 +24,17 @@ const TrashButton = ({ product }: TrashButtonProps) => {
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>
-            {`Are you sure you want to delete ${product.name}?`}
+          <AlertDialogTitle className="lg:text-lg">
+            {`Are you sure you want to delete ${product.name} from cart?`}
           </AlertDialogTitle>
         </AlertDialogHeader>
         <AlertDialogDescription>
-          <Button variant={'destructive'}>Delete</Button>
+          <div className="w-full flex items-center gap-5 justify-end">
+            <AlertDialogCancel className="mt-0 lg:text-lg">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction className="lg:text-lg">Delete</AlertDialogAction>
+          </div>
         </AlertDialogDescription>
       </AlertDialogContent>
     </AlertDialog>
