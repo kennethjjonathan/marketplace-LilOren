@@ -38,6 +38,10 @@ const items = [
   },
 ] as const;
 
+const SHIPMENT_SERVICES = 'Shipment Services';
+const CHOOSE_SERVICE_DESCRIPTION =
+  'Select the courier service you want to provide in your shop';
+
 const FormSchema = z.object({
   items: z.array(z.string()).refine((value) => value.some((item) => item), {
     message: 'You have to select at least one item.',
@@ -67,10 +71,8 @@ const CheckboxCourier = () => {
           render={() => (
             <FormItem>
               <div className="mb-4">
-                <FormLabel className="text-base">Shipment Services</FormLabel>
-                <FormDescription>
-                  Select the courier service you want to provide in your shop
-                </FormDescription>
+                <FormLabel className="text-base">{SHIPMENT_SERVICES}</FormLabel>
+                <FormDescription>{CHOOSE_SERVICE_DESCRIPTION}</FormDescription>
               </div>
               {items.map((item) => (
                 <FormField
