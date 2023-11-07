@@ -1,44 +1,40 @@
-import { Input } from '@/components/ui/input';
+import React from 'react';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
-interface InputWithLabelProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
+interface TextAreaWithLabelProps
+  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   id: string;
   label: string;
   placeHolder?: string;
-  required?: boolean;
   inputStyling?: string;
   labelStyling?: string;
   validation?: string;
   isValid?: boolean;
 }
 
-export function InputWithLabel({
+const TextAreaWithLabel = ({
   id,
   label,
-  placeHolder = '',
-  type,
   required = false,
-  inputStyling = '',
-  labelStyling = '',
-  validation = '',
-  pattern,
+  placeholder,
+  inputStyling,
+  labelStyling,
+  validation,
   isValid,
   ...props
-}: InputWithLabelProps) {
+}: TextAreaWithLabelProps) => {
   return (
     <div className="w-full items-center flex flex-col gap-1.5">
       <Label htmlFor={id} className="font-light w-full md:text-base">
         {label}
         {required ? <span className="text-primary">{' *'}</span> : null}
       </Label>
-      <Input
-        type={type}
+      <Textarea
         id={id}
-        placeholder={placeHolder}
+        placeholder={placeholder}
         className={inputStyling + 'peer w-full md:text-base md:h-12'}
         required={required}
-        pattern={pattern}
         isValid={isValid}
         {...props}
       />
@@ -49,4 +45,6 @@ export function InputWithLabel({
       )}
     </div>
   );
-}
+};
+
+export default TextAreaWithLabel;
