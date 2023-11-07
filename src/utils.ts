@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { Theme, ToastContent, TypeOptions, toast } from 'react-toastify';
 
 export class Utils {
@@ -19,6 +18,7 @@ export class Utils {
     toast(message, {
       type: type,
       position: toast.POSITION.TOP_RIGHT,
+      theme: theme,
     });
   };
 }
