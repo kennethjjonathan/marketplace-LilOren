@@ -2,6 +2,7 @@ import React, { ReactElement, useState } from 'react';
 import SellerLayout from '@/components/SellerLayout/SellerLayout';
 import styles from './SellerSettingsShipment.module.scss';
 import { Store } from 'lucide-react';
+import CheckboxCourier from '@/components/CheckboxCourier/CheckboxCourier';
 
 const SHIPMENT_SERVICES = 'Shipment Services';
 const CHOOSE_SERVICE_DESCRIPTION =
@@ -10,9 +11,7 @@ const CHOOSE_SERVICE_DESCRIPTION =
 const SellerSettingsShipment = () => {
   const [selectedCourier, setselectedCourier] = useState([]);
 
-  const handleAddCourier = () => {
-
-  };
+  const handleAddCourier = () => {};
 
   return (
     <div className={`${styles.sellerSettingsShipment}`}>
@@ -24,25 +23,7 @@ const SellerSettingsShipment = () => {
         className={`page-shipping-editor bg-white ${styles.page_shipping_editor}`}
       >
         <section className={`${styles.section_courier_editor}`}>
-          <div className={`${styles.section_header}`}>
-            <p className={`${styles.heading}`}>{SHIPMENT_SERVICES}</p>
-            <p className={`${styles.description}`}>
-              {CHOOSE_SERVICE_DESCRIPTION}
-            </p>
-          </div>
-          <section
-            className={`section-courier-editor ${styles.select_courier_wrapper}`}
-          >
-            <div
-              className={`section-courier-reguler ${styles.section_courier_reguler}`}
-            >
-              <div className={`section-courier-editor_group_list`}>
-                <section className={`${styles.card}`}>
-                    
-                </section>
-              </div>
-            </div>
-          </section>
+          <CheckboxCourier />
         </section>
       </div>
     </div>
