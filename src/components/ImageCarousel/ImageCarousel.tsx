@@ -1,26 +1,20 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { IProductMedia } from '@/interface/productPage';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { Pagination } from 'swiper/modules';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '../ui/button';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface ImageCarouselProps {
-  imageArray: string[];
+  mediaArray: IProductMedia[];
 }
 
-function ImageCarousel({ imageArray }: ImageCarouselProps) {
+function ImageCarousel({ mediaArray }: ImageCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [coordinate, setCoordinate] = useState<[number, number]>([0, 0]);
   const [imageSize, setImageSize] = useState<[number, number]>([0, 0]);
@@ -28,12 +22,12 @@ function ImageCarousel({ imageArray }: ImageCarouselProps) {
 
   const goToPrev = () => {
     setCurrentIndex((current) =>
-      current === 0 ? imageArray.length - 1 : current - 1,
+      current === 0 ? mediaArray.length - 1 : current - 1,
     );
   };
   const goToNext = () => {
     setCurrentIndex((current) =>
-      current === imageArray.length - 1 ? 0 : current + 1,
+      current === mediaArray.length - 1 ? 0 : current + 1,
     );
   };
 
@@ -42,7 +36,7 @@ function ImageCarousel({ imageArray }: ImageCarouselProps) {
       <DialogContent>
         <div className="w-full flex flex-col justify-between items-center gap-1 mt-6">
           <Image
-            src={imageArray[currentIndex]}
+            src={mediaArray[currentIndex].media_url}
             alt={`Product view ${currentIndex + 1}`}
             height={400}
             width={300}
@@ -67,7 +61,7 @@ function ImageCarousel({ imageArray }: ImageCarouselProps) {
               size={'sm'}
               onClick={goToNext}
               className={`${
-                currentIndex === imageArray.length - 1 ? 'hidden' : 'block'
+                currentIndex === mediaArray.length - 1 ? 'hidden' : 'block'
               }`}
             >
               <ChevronRight />
@@ -75,7 +69,7 @@ function ImageCarousel({ imageArray }: ImageCarouselProps) {
           </div>
           <ScrollArea className="max-w-full">
             <div className="flex space-x-5 py-1">
-              {imageArray.map((image, index) => (
+              {mediaArray.map((media, index) => (
                 <div
                   key={index}
                   className={`min-w-fit min-h-fit relative border-2 cursor-pointer duration-300 lg:hover:opacity-100 lg:hover:border-primary rounded-xl overflow-hidden ${
@@ -85,7 +79,7 @@ function ImageCarousel({ imageArray }: ImageCarouselProps) {
                   }`}
                 >
                   <Image
-                    src={image}
+                    src={media.media_url}
                     alt={`Product view ${index + 1}`}
                     width={80}
                     height={80}
@@ -94,7 +88,7 @@ function ImageCarousel({ imageArray }: ImageCarouselProps) {
                   />
                   <p className="p-1 bg-[rgba(0,0,0,0.5)] absolute bottom-0 left-0 text-white text-xs">{`${
                     index + 1
-                  }/${imageArray.length}`}</p>
+                  }/${mediaArray.length}`}</p>
                 </div>
               ))}
             </div>
@@ -113,11 +107,11 @@ function ImageCarousel({ imageArray }: ImageCarouselProps) {
             }}
             modules={[Pagination]}
           >
-            {imageArray.map((image, index) => (
+            {mediaArray.map((media, index) => (
               <SwiperSlide key={index}>
                 <DialogTrigger asChild>
                   <Image
-                    src={image}
+                    src={media.media_url}
                     alt={`Product's view ${index + 1}`}
                     height={500}
                     width={500}
@@ -134,7 +128,7 @@ function ImageCarousel({ imageArray }: ImageCarouselProps) {
           <DialogTrigger asChild>
             <div style={{ position: 'relative', cursor: 'none' }}>
               <Image
-                src={imageArray[currentIndex]}
+                src={mediaArray[currentIndex].media_url}
                 alt={`Product view ${currentIndex + 1}`}
                 height={500}
                 width={500}
@@ -166,7 +160,7 @@ function ImageCarousel({ imageArray }: ImageCarouselProps) {
                     top: `${coordinate[1] - 150}px`,
                     border: '1px solid gray',
                     backgroundColor: 'white',
-                    backgroundImage: `url(${imageArray[currentIndex]})`,
+                    backgroundImage: `url(${mediaArray[currentIndex].media_url})`,
                     backgroundRepeat: 'no-repeat',
                     backgroundSize: `${imageSize[0] * 1.5}px ${
                       imageSize[1] * 1.5
@@ -181,7 +175,7 @@ function ImageCarousel({ imageArray }: ImageCarouselProps) {
           <div>
             <ScrollArea className="max-w-full rounded-md">
               <div className="flex space-x-5 py-1">
-                {imageArray.map((image, index) => (
+                {mediaArray.map((media, index) => (
                   <div
                     key={index}
                     className={`min-w-fit min-h-fit relative border-2 cursor-pointer duration-300 lg:hover:opacity-100 lg:hover:border-primary rounded-xl overflow-hidden ${
@@ -191,7 +185,7 @@ function ImageCarousel({ imageArray }: ImageCarouselProps) {
                     }`}
                   >
                     <Image
-                      src={image}
+                      src={media.media_url}
                       alt={`Product view ${index + 1}`}
                       width={80}
                       height={80}
@@ -201,7 +195,7 @@ function ImageCarousel({ imageArray }: ImageCarouselProps) {
                     />
                     <p className="p-1 bg-[rgba(0,0,0,0.5)] absolute bottom-0 left-0 text-white text-xs">{`${
                       index + 1
-                    }/${imageArray.length}`}</p>
+                    }/${mediaArray.length}`}</p>
                   </div>
                 ))}
               </div>

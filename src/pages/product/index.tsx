@@ -1,12 +1,6 @@
 import React, { ReactElement, useState } from 'react';
 import Image from 'next/image';
-import {
-  Star,
-  MessageCircle,
-  Calendar,
-  FileImage,
-  ShoppingCart,
-} from 'lucide-react';
+import { Star, ShoppingCart } from 'lucide-react';
 import ImageCarousel from '@/components/ImageCarousel/ImageCarousel';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
@@ -62,7 +56,7 @@ const ProductPage: NextPageWithLayout = () => {
         <section className="w-full md:w-[75vw] pt-5 pb-16">
           <div className="w-full flex flex-col gap-6 lg:flex-row">
             <div className="w-full lg:w-1/3">
-              <ImageCarousel imageArray={dummyArray} />
+              {/* <ImageCarousel imageArray={dummyArray} /> */}
             </div>
             <div className="flex-1 px-2 flex flex-col gap-4">
               <div className="flex flex-col gap-2">
