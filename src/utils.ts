@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { Theme, ToastContent, TypeOptions, toast } from 'react-toastify';
 
 export class Utils {

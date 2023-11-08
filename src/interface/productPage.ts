@@ -6,7 +6,7 @@ export interface IProduct {
 export interface ISeller {
   id: number;
   name: string;
-  profile_pircture_url: string;
+  profile_picture_url: string;
   location: string;
 }
 
@@ -39,5 +39,9 @@ export interface IProductPage {
   Shop: ISeller;
   product_variant: IProductVariant[];
   product_media: IProductMedia[];
-  variant_group: IVariantGroup[];
+  variant_group1: IVariantGroup;
+  variant_group2: IVariantGroup;
+  high_price: number;
+  low_price: number;
+  is_variant: boolean;
 }

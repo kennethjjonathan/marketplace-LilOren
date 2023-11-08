@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { GetServerSideProps } from 'next';
 import { Star } from 'lucide-react';
 import ImageCarousel from '@/components/ImageCarousel/ImageCarousel';
@@ -7,19 +7,110 @@ import { Separator } from '@/components/ui/separator';
 import SellerProfileSnippet from '@/components/SellerProfileSnippet/SellerProfileSnippet';
 import ProductDetailDesc from '@/components/ProductDetailDesc/ProductDetailDesc';
 import CONSTANTS from '@/constants/constants';
-import { IProductPage, IProductVariant } from '@/interface/productPage';
+import {
+  IProductPage,
+  IProductVariant,
+  IVariantType,
+} from '@/interface/productPage';
 import ReviewComponent from '@/components/ReviewComponent/ReviewComponent';
+import TypeSelector from '@/components/TypeSelector/TypeSelector';
 import { Utils } from '@/utils';
 
 interface ProductPageProps {
   productPage: IProductPage;
 }
 
+const dummyProductPage: IProductPage = {
+  product: {
+    name: 'Shirt',
+    description: 'desc',
+  },
+  Shop: {
+    id: 1,
+    name: 'Hyouka',
+    profile_picture_url: '',
+    location: 'Aceh Barat',
+  },
+  product_variant: [
+    {
+      id: 1,
+      price: 100000,
+      discounted_price: 95000,
+      stock: 100,
+      discount: 5,
+      variant_type1_id: 2,
+      variant_type2_id: 5,
+    },
+    {
+      id: 2,
+      price: 200000,
+      discounted_price: 200000,
+      stock: 10,
+      discount: 0,
+      variant_type1_id: 3,
+      variant_type2_id: 5,
+    },
+  ],
+  product_media: [
+    {
+      media_url: 'url',
+      media_type: 'image',
+    },
+  ],
+  variant_group1: {
+    group_name: 'color',
+    variant_types: [
+      {
+        type_id: 1,
+        type_name: 'default',
+      },
+      {
+        type_id: 2,
+        type_name: 'red',
+      },
+      {
+        type_id: 3,
+        type_name: 'blue',
+      },
+    ],
+  },
+  variant_group2: {
+    group_name: 'size',
+    variant_types: [
+      {
+        type_id: 4,
+        type_name: 'default',
+      },
+      {
+        type_id: 5,
+        type_name: 'L',
+      },
+    ],
+  },
+  high_price: 200000,
+  low_price: 100000,
+  is_variant: false,
+};
+
 const ProductPage = ({ productPage }: ProductPageProps) => {
+  console.log(productPage);
   const [quantity, setQuantity] = useState<number>(0);
+  const [group1, setGroup1] = useState<IVariantType | undefined>(undefined);
+  const [group2, setGroup2] = useState<IVariantType | undefined>(undefined);
   const [variant, setVariant] = useState<IProductVariant>(
     productPage.product_variant[0],
   );
+
+  function handleChooseType(typeNumber: 1 | 2, type: IVariantType) {
+    if (typeNumber === 1) {
+    }
+  }
+
+  // function setInitialState() {
+  //   if (productPage)
+  // }
+
+  useEffect(() => {}, []);
 
   return (
     <>
@@ -64,9 +155,24 @@ const ProductPage = ({ productPage }: ProductPageProps) => {
               </div>
               <Separator className="h-0.5 rounded-md" />
               <div>
-                <div className="mt-2">
-                  {/* <TypeSelector variant_group={productPage.variant_group} chosenType={}/> */}
-                </div>
+                {productPage.variant_group1.variant_types.length > 1 && (
+                  <div className="mt-2">
+                    <TypeSelector
+                      variant_group={productPage.variant_group1}
+                      chosenType={group1}
+                      setChosenType={setGroup1}
+                    />
+                  </div>
+                )}
+                {productPage.variant_group2.variant_types.length > 1 && (
+                  <div className="mt-2">
+                    <TypeSelector
+                      variant_group={productPage.variant_group2}
+                      chosenType={group2}
+                      setChosenType={setGroup2}
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </div>

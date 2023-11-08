@@ -93,15 +93,29 @@ function SignInPage({ providers }: SignInPageProps) {
     if (!validateAll()) return;
     setIsLoading(true);
     try {
-      const response = await UserClient.postSignIn(registerData);
-      if (response.data.error) {
-        handleErrorAuthResponse(response.data.data.message);
-        return;
-      }
-      toast({
-        title: 'Your sign in is successful',
-      });
-      router.push('/');
+      // const response = await UserClient.postSignIn(registerData);
+      const response = await fetch(
+        `https://digitalent.games.test.shopee.io/vm1/api/auth/login`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(registerData),
+        },
+      );
+      console.log(response);
+      const data = await response.json();
+      console.log(data);
+      console.log('masuk');
+      // if (response.data.error) {
+      //   handleErrorAuthResponse(response.data.data.message);
+      //   return;
+      // }
+      // toast({
+      //   title: 'Your sign in is successful',
+      // });
+      // router.push('/');
     } catch (error) {
       console.error(error);
     } finally {
