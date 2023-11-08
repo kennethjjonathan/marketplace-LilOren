@@ -41,7 +41,12 @@ const TableBody = ({ tableData, columns }: TableBodyProps) => {
                 );
               } else if (accessor === 'price') {
                 return (
-                  <td key={accessor}>{Utils.convertPrice(tData as number)}</td>
+                  <td
+                    key={accessor}
+                    className="text-overflow overflow-hidden whitespace-nowrap"
+                  >
+                    {Utils.convertPrice(tData as number)}
+                  </td>
                 );
               } else {
                 return <td key={accessor}>{tData}</td>;

@@ -19,7 +19,7 @@ const Tabs = ({ datas }: TabsProps) => {
   };
 
   return (
-    <div className="bg-white shadow-sm rounded-t-xl flex gap-2 p-2 overflow-x-auto w-[80vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw]">
+    <div className="bg-white shadow-sm rounded-t-xl flex gap-2 p-2 overflow-x-auto w-[80vw] sm:w-[90vw] md:w-[47vw] lg:w-[65vw]">
       {datas.map((data) => (
         <div key={`key:${data.id}`}>
           <Link href={data.href ? data.href : '/'}>

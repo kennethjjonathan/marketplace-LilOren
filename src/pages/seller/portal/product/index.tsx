@@ -1,8 +1,9 @@
-import SellerLayout from '@/components/SellerLayout/SellerLayout';
 import React, { ReactElement } from 'react';
-import styles from './SellerPortalProduct.module.scss';
+import { useRouter } from 'next/router';
+import SellerLayout from '@/components/SellerLayout/SellerLayout';
 import Table from '@/components/Table/Table';
 import { Button } from '@/components/ui/button';
+import styles from './SellerPortalProduct.module.scss';
 
 const data = [
   {
@@ -13,20 +14,24 @@ const data = [
 ];
 
 const SellerPortalProduct = () => {
+  const router = useRouter();
   return (
     <div className={`${styles.sellerPortalProduct}`}>
-      <div className={`${styles.page_product}`}>
-        <section
-          className={`flex flex-col w-[80vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw] px-5 pb-5 bg-white`}
-        >
-          <div className="w-full right-0 py-3">
-            <Button className="w-full md:w-[200px]">{'Add new product'}</Button>
+      <section
+        className={`flex flex-col w-[80vw] sm:w-[90vw] md:w-[47vw] lg:w-[65vw] px-5 pb-5 bg-white`}
+      >
+        <div className="w-full flex">
+          <div className="w-full flex right-0 py-3">
+            <Button
+              onClick={() => router.push('/seller/portal/product/create')}
+              className="w-[200px]"
+            >
+              {'Add new product'}
+            </Button>
           </div>
-          <>
-            <Table />
-          </>
-        </section>
-      </div>
+        </div>
+        <Table />
+      </section>
     </div>
   );
 };
