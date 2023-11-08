@@ -4,7 +4,8 @@ import { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
 import type { NextPage } from 'next';
 import type { AppProps } from 'next/app';
-import { Toaster } from '@/components/ui/toaster';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -22,7 +23,7 @@ export default function MyApp({
 
   return (
     <SessionProvider session={session}>
-      <Toaster />
+      <ToastContainer />
       {getLayout(<Component {...pageProps} />)}
     </SessionProvider>
   );

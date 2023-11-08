@@ -1,6 +1,4 @@
 import { IRegister, ISignIn } from '@/interface/user';
-import { UserServer } from './userServer';
-import CONSTANTS from '@/constants/constants';
 import axios from 'axios';
 
 export class UserClient {
