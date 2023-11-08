@@ -21,4 +21,98 @@ export class Utils {
       theme: theme,
     });
   };
+
+  static getDDMonthYYYYTime = (d: string) => {
+    const months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    const date = new Date(d);
+    let result: string = '';
+    const day = date.getDay().toString();
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    const time = date.toLocaleTimeString('it-IT').slice(0, -3);
+    result += day + ' ' + month + ' ' + year + ', ' + time;
+    return result;
+  };
+
+  static getDateAndTime = (d: string) => {
+    const months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    const days = [
+      'Sunday',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+    ];
+    const date = new Date(d);
+
+    let result = '';
+    const day = days[date.getDay()];
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    const time = date.toLocaleTimeString('US-id');
+    result += day + ' ' + month + ' ' + year + ', ' + time;
+    return result;
+  };
+
+  static getDate = (d: string) => {
+    const months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    const days = [
+      'Sunday',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+    ];
+    const date = new Date(d);
+
+    let result = '';
+    const day = days[date.getDay()];
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    result += day + ' ' + month + ' ' + year;
+    return result;
+  };
 }
