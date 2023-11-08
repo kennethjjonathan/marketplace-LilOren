@@ -143,7 +143,8 @@ const recommendationProducts: {
       rating_average: 4.9,
       total_sold: 720,
     },
-  },  {
+  },
+  {
     image:
       'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//92/MTA-5070654/dc_dc_trase_tx_m_shoe_adys300126-bgm_black-gum_full02_g0b376j9.jpg',
     name: 'ACMIC DIGIMAX SuperMini Digital 10000mAh Power Bank (QC4 + PD + VOOC)',
@@ -158,7 +159,6 @@ const recommendationProducts: {
       total_sold: 720,
     },
   },
-
 ];
 
 const Home: NextPageWithLayout = () => {
@@ -265,9 +265,21 @@ const Home: NextPageWithLayout = () => {
                                 <div
                                   className={`${styles.shop_rating_average_and_label}`}
                                 >
-                                  <Star size={15} fill={'#FFDF00'} className={'text-[#FFDF00] flex-shrink mr-[2px]'} />
-                                  <span className={`${styles.shop_rating_average}`}>{product.shop.rating_average}</span>
-                                  <span className={`${styles.separator}`}></span>
+                                  <Star
+                                    size={15}
+                                    fill={'#FFDF00'}
+                                    className={
+                                      'text-[#FFDF00] flex-shrink mr-[2px]'
+                                    }
+                                  />
+                                  <span
+                                    className={`${styles.shop_rating_average}`}
+                                  >
+                                    {product.shop.rating_average}
+                                  </span>
+                                  <span
+                                    className={`${styles.separator}`}
+                                  ></span>
                                   <span className={`${styles.shop_label}`}>
                                     {product.shop.total_sold}+ terjual
                                   </span>
