@@ -16,7 +16,7 @@ function QuantityController({
     <div className="p-1 bg-input flex items-center gap-4 w-fit lg:gap-5">
       <button
         onClick={() => setInputValue((prev) => prev - 1)}
-        disabled={inputValue === 1}
+        disabled={inputValue <= 1}
         className="text-primary w-5 aspect-square lg:w-6 disabled:text-[#777777] disabled:cursor-not-allowed"
       >
         <Minus />

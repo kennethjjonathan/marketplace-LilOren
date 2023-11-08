@@ -50,6 +50,15 @@ const dummyProductPage: IProductPage = {
       variant_type1_id: 3,
       variant_type2_id: 5,
     },
+    {
+      id: 3,
+      price: 300000,
+      discounted_price: 270000,
+      stock: 10,
+      discount: 10,
+      variant_type1_id: 2,
+      variant_type2_id: 6,
+    },
   ],
   product_media: [
     {
@@ -85,6 +94,14 @@ const dummyProductPage: IProductPage = {
         type_id: 5,
         type_name: 'L',
       },
+      {
+        type_id: 6,
+        type_name: 'XL',
+      },
+      {
+        type_id: 7,
+        type_name: 'XXL',
+      },
     ],
   },
   high_price: 200000,
@@ -92,25 +109,105 @@ const dummyProductPage: IProductPage = {
   is_variant: false,
 };
 
-const ProductPage = ({ productPage }: ProductPageProps) => {
-  console.log(productPage);
-  const [quantity, setQuantity] = useState<number>(0);
+const ProductPage = ({ productPage = dummyProductPage }: ProductPageProps) => {
+  const [quantity, setQuantity] = useState<number>(1);
+  const [highestDiscount, setHighestDiscount] = useState<number>(0);
   const [group1, setGroup1] = useState<IVariantType | undefined>(undefined);
   const [group2, setGroup2] = useState<IVariantType | undefined>(undefined);
-  const [variant, setVariant] = useState<IProductVariant>(
-    productPage.product_variant[0],
+  const [initialAvailableGroup1, setInitialAvailableGroup1] =
+    useState<Set<number>>();
+  const [initialAvailableGroup2, setInitialAvailableGroup2] =
+    useState<Set<number>>();
+  const [availableGroup1, setAvailableGroup1] = useState<Set<number>>();
+  const [availableGroup2, setAvailableGroup2] = useState<Set<number>>();
+  const [variant, setVariant] = useState<IProductVariant | undefined>(
+    undefined,
   );
 
-  function handleChooseType(typeNumber: 1 | 2, type: IVariantType) {
-    if (typeNumber === 1) {
+  function handleChooseGroup1(type: IVariantType) {
+    if (group1 !== undefined && group1.type_id === type.type_id) {
+      setGroup1(undefined);
+      setAvailableGroup2(initialAvailableGroup2);
+      searchVariant(undefined, group2);
+    } else {
+      setGroup1(type);
+      searchAvailable(1, type);
+      searchVariant(type, group2);
     }
   }
 
-  // function setInitialState() {
-  //   if (productPage)
-  // }
+  function handleChooseGroup2(type: IVariantType) {
+    if (group2 !== undefined && group2.type_id === type.type_id) {
+      setGroup2(undefined);
+      setAvailableGroup1(initialAvailableGroup1);
+      searchVariant(group1, undefined);
+    } else {
+      setGroup2(type);
+      searchAvailable(2, type);
+      searchVariant(group1, type);
+    }
+  }
 
-  useEffect(() => {}, []);
+  function searchAvailable(typeNumber: 1 | 2, type: IVariantType) {
+    if (typeNumber === 1) {
+      const newAvailable = new Set<number>();
+      for (let i = 0; i < productPage.product_variant.length; i++) {
+        if (productPage.product_variant[i].variant_type1_id === type.type_id) {
+          newAvailable.add(productPage.product_variant[i].variant_type2_id);
+        }
+      }
+      setAvailableGroup2(newAvailable);
+    } else {
+      const newAvailable = new Set<number>();
+      for (let i = 0; i < productPage.product_variant.length; i++) {
+        if (productPage.product_variant[i].variant_type2_id === type.type_id) {
+          newAvailable.add(productPage.product_variant[i].variant_type1_id);
+        }
+      }
+      setAvailableGroup1(newAvailable);
+    }
+  }
+
+  function searchVariant(
+    type1: IVariantType | undefined,
+    type2: IVariantType | undefined,
+  ) {
+    if (type1 === undefined || type2 === undefined) {
+      setVariant(undefined);
+    } else {
+      for (let i = 0; i < productPage.product_variant.length; i++) {
+        if (
+          productPage.product_variant[i].variant_type1_id === type1.type_id &&
+          productPage.product_variant[i].variant_type2_id === type2.type_id
+        ) {
+          setVariant(productPage.product_variant[i]);
+          return;
+        }
+      }
+    }
+  }
+
+  function setInitialAvailable() {
+    let initiateHighestDiscount: number = 0;
+    const availableSet1 = new Set<number>();
+    const availableSet2 = new Set<number>();
+    for (let i = 0; i < productPage.product_variant.length; i++) {
+      if (productPage.product_variant[i].discount > initiateHighestDiscount) {
+        initiateHighestDiscount = productPage.product_variant[i].discount;
+      }
+      availableSet1.add(productPage.product_variant[i].variant_type1_id);
+      availableSet2.add(productPage.product_variant[i].variant_type2_id);
+    }
+    setHighestDiscount(initiateHighestDiscount);
+    setAvailableGroup1(availableSet1);
+    setInitialAvailableGroup1(availableSet1);
+    setAvailableGroup2(availableSet2);
+    setInitialAvailableGroup2(availableSet2);
+  }
+
+  useEffect(() => {
+    setInitialAvailable();
+  }, []);
 
   return (
     <>
@@ -138,41 +235,65 @@ const ProductPage = ({ productPage }: ProductPageProps) => {
                   </div>
                 </div>
                 <div className="lg:mt-12">
-                  <p className="text-2xl font-semibold sm:text-3xl lg:text-4xl">
-                    {variant.discount === 0
-                      ? Utils.convertPrice(variant.price)
-                      : Utils.convertPrice(variant.discounted_price)}
-                  </p>
-                  {variant.discount !== 0 && (
+                  {variant === undefined &&
+                  productPage.low_price < productPage.high_price ? (
+                    <p className="text-2xl font-semibold sm:text-3xl lg:text-4xl">
+                      {`${Utils.convertPrice(
+                        productPage.low_price,
+                      )} - ${Utils.convertPrice(productPage.high_price)}`}
+                    </p>
+                  ) : variant === undefined &&
+                    productPage.low_price === productPage.high_price ? (
+                    <p className="text-2xl font-semibold sm:text-3xl lg:text-4xl">
+                      {Utils.convertPrice(productPage.low_price)}
+                    </p>
+                  ) : (
+                    <p className="text-2xl font-semibold sm:text-3xl lg:text-4xl">
+                      {variant!.discount === 0
+                        ? Utils.convertPrice(variant!.price)
+                        : Utils.convertPrice(variant!.discounted_price)}
+                    </p>
+                  )}
+                  {variant === undefined && highestDiscount !== 0 ? (
+                    <div className="flex items-center gap-2 mt-1 text-base sm:text-lg lg:text-xl">
+                      <p className="px-1.5 py-0.5 bg-destructive text-white font-semibold rounded-md">{`%${highestDiscount}`}</p>
+                    </div>
+                  ) : variant === undefined &&
+                    highestDiscount === 0 ? null : variant !== undefined &&
+                    variant.discount !== 0 ? (
                     <div className="flex items-center gap-2 mt-1 text-base sm:text-lg lg:text-xl">
                       <p className="px-1.5 py-0.5 bg-destructive text-white font-semibold rounded-md">{`%${variant.discount}`}</p>
                       <p className="text-gray-400 font-semibold line-through">
                         {Utils.convertPrice(variant.price)}
                       </p>
                     </div>
-                  )}
+                  ) : null}
                 </div>
               </div>
               <Separator className="h-0.5 rounded-md" />
               <div>
-                {productPage.variant_group1.variant_types.length > 1 && (
-                  <div className="mt-2">
-                    <TypeSelector
-                      variant_group={productPage.variant_group1}
-                      chosenType={group1}
-                      setChosenType={setGroup1}
-                    />
-                  </div>
-                )}
-                {productPage.variant_group2.variant_types.length > 1 && (
-                  <div className="mt-2">
-                    <TypeSelector
-                      variant_group={productPage.variant_group2}
-                      chosenType={group2}
-                      setChosenType={setGroup2}
-                    />
-                  </div>
-                )}
+                {productPage.variant_group1.variant_types.length > 1 &&
+                  availableGroup1 !== undefined && (
+                    <div className="mt-2">
+                      <TypeSelector
+                        variant_group={productPage.variant_group1}
+                        chosenType={group1}
+                        handleChooseGroup={handleChooseGroup1}
+                        availableSet={availableGroup1}
+                      />
+                    </div>
+                  )}
+                {productPage.variant_group2.variant_types.length > 1 &&
+                  availableGroup2 !== undefined && (
+                    <div className="mt-2">
+                      <TypeSelector
+                        variant_group={productPage.variant_group2}
+                        chosenType={group2}
+                        handleChooseGroup={handleChooseGroup2}
+                        availableSet={availableGroup2}
+                      />
+                    </div>
+                  )}
               </div>
             </div>
           </div>
@@ -190,37 +311,41 @@ const ProductPage = ({ productPage }: ProductPageProps) => {
           <ReviewComponent />
         </div>
       </section>
-      <ProductPageLayout quantity={quantity} setQuantity={setQuantity} />
+      <ProductPageLayout
+        quantity={quantity}
+        setQuantity={setQuantity}
+        stock={variant?.stock}
+      />
     </>
   );
 };
 
 export default ProductPage;
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  let productPage: IProductPage | null = null;
-  try {
-    const response = await fetch(
-      `${CONSTANTS.BASEURL}/product/${params!.productId}`,
-    );
-    if (!response.ok) throw new Error(response.statusText);
-    const data = await response.json();
-    productPage = data.data;
-  } catch (error) {
-    console.error(error);
-  }
+// export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+//   let productPage: IProductPage | null = null;
+//   try {
+//     const response = await fetch(
+//       `${CONSTANTS.BASEURL}/product/${params!.productId}`,
+//     );
+//     if (!response.ok) throw new Error(response.statusText);
+//     const data = await response.json();
+//     productPage = data.data;
+//   } catch (error) {
+//     console.error(error);
+//   }
 
-  console.log(productPage);
+//   console.log(productPage);
 
-  if (!productPage) {
-    return {
-      notFound: true,
-    };
-  }
+//   if (!productPage) {
+//     return {
+//       notFound: true,
+//     };
+//   }
 
-  return {
-    props: {
-      productPage: productPage,
-    },
-  };
-};
+//   return {
+//     props: {
+//       productPage: productPage,
+//     },
+//   };
+// };

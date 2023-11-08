@@ -6,11 +6,13 @@ import { Button } from '../ui/button';
 interface ProductPageLayoutProps {
   quantity: number;
   setQuantity: Dispatch<SetStateAction<number>>;
+  stock: number | undefined;
 }
 
 const ProductPageLayout = ({
   quantity,
   setQuantity,
+  stock,
 }: ProductPageLayoutProps) => {
   return (
     <div className="bg-primary-foreground w-full fixed z-30 bottom-0 left-0 flex justify-center">
@@ -21,9 +23,9 @@ const ProductPageLayout = ({
         </div>
         <div className="w-full lg:w-3/5 flex items-center gap-2">
           <QuantityController
-            inputValue={quantity}
+            inputValue={stock === undefined ? 0 : quantity}
             setInputValue={setQuantity}
-            maximum={5}
+            maximum={stock === undefined ? 0 : stock}
           />
           <Button
             variant={'tertiary'}
