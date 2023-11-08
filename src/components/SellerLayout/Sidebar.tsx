@@ -53,7 +53,8 @@ const Sidebar = ({
                     'rounded-md p-2 mx-2': true,
                     'bg-primary text-white':
                       router.pathname === item.href ||
-                      router.pathname === `${item.href}/shipment`,
+                      router.pathname === `${item.href}/shipment` ||
+                      router.pathname === `${item.href}/create`,
                   })}
                 >
                   {item.icon} {item.label}

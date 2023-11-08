@@ -3,13 +3,19 @@ import { Store } from 'lucide-react';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 import styles from './SellerLayout.module.scss';
+import Tabs from '../Tabs/Tabs';
 
 interface SellerLayoutProps {
   children: ReactNode;
   header: string;
+  tabData?: {
+    id: number;
+    label: string;
+    href?: string;
+  }[];
 }
 
-const SellerLayout = ({ children, header }: SellerLayoutProps) => {
+const SellerLayout = ({ children, header, tabData }: SellerLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
     <div className="grid min-h-screen grid-rows-header bg-zinc-100">
@@ -25,6 +31,7 @@ const SellerLayout = ({ children, header }: SellerLayoutProps) => {
             <Store className="mr-4 text-muted-foreground" />
             {header}
           </div>
+          {tabData && <Tabs datas={tabData!} />}
           {children}
         </div>
       </div>

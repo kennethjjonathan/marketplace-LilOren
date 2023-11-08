@@ -10,7 +10,7 @@ export const defaultNavItems: NavItem[] = [
   },
   {
     label: 'Product',
-    href: '/seller/product',
+    href: '/seller/portal/product',
     icon: <Package className="w-6 h-6" />,
   },
   {

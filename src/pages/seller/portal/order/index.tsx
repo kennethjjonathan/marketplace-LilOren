@@ -37,16 +37,20 @@ const SellerPortalOrder = () => {
   const [orders, setOrders] = useState([]);
   return (
     <div className={`${styles.sellerPortalOrder}`}>
-      <Tabs datas={data} />
+      {/* <Tabs datas={data} /> */}
       <div className={`${styles.page_order}`}>
-        <section></section>
+        <section>Haha</section>
       </div>
     </div>
   );
 };
 
 SellerPortalOrder.getLayout = function getLayout(page: ReactElement) {
-  return <SellerLayout header="Order List">{page}</SellerLayout>;
+  return (
+    <SellerLayout tabData={data!} header="Order List">
+      {page}
+    </SellerLayout>
+  );
 };
 
 export default SellerPortalOrder;
