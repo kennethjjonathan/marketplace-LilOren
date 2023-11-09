@@ -1,7 +1,6 @@
 import React from 'react';
 import { IProduct } from '@/interface/product';
 import Image from 'next/image';
-import moneyFornatter from '@/lib/moneyFornatter';
 
 interface CheckoutProductListTabProps {
   item: IProduct;
@@ -26,9 +25,7 @@ const CheckoutProductListTab = ({ item }: CheckoutProductListTabProps) => {
             {item.name}
           </p>
           <p className="text-gray-500 text-xs leading-none sm:text-sm">{`Variant: ${item.variant}`}</p>
-          <p className="font-semibold text-base sm:text-lg">{`${
-            item.quantity
-          } x ${moneyFornatter(item.price)}`}</p>
+          <p className="font-semibold text-base sm:text-lg">{`${item.quantity} x ${item.base_price}`}</p>
         </div>
       </div>
     </div>

@@ -2,10 +2,10 @@ export interface IProduct {
   image: string;
   name: string;
   variant?: string;
-  price: number;
-  discountedPrice: number;
-  discountPercentage: number;
+  base_price: number;
+  discount_price: number;
+  discount: number;
   quantity: number;
-  stock: number;
-  isLiked: boolean;
+  stock?: number;
+  isLiked?: boolean;
 }

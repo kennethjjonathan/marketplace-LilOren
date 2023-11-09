@@ -12,10 +12,10 @@ const dummyArray: IProduct[] = [
     image:
       'https://images.tokopedia.net/img/cache/900/VqbcmM/2021/2/24/ed9ad62e-b13a-43ba-a021-ee51be422a3e.jpg',
     name: 'Outerwear Unisex Erigo Coach Jacket Idaina Kaeru Taslan Black',
-    price: 150000,
+    base_price: 150000,
     variant: 'S',
-    discountedPrice: 135000,
-    discountPercentage: 10,
+    discount_price: 135000,
+    discount: 10,
     quantity: 5,
     stock: 15,
     isLiked: true,

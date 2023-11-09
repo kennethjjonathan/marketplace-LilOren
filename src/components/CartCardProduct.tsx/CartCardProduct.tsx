@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { IProduct } from '@/interface/product';
 import { Checkbox } from '../ui/checkbox';
-import moneyFornatter from '@/lib/moneyFornatter';
 import QuantityController from '../QuantityController/QuantityController';
 import LikeButton from '../LikeButton/LikeButton';
 import TrashButton from '../TrashButton/TrashButton';
@@ -27,26 +26,26 @@ const CartCardProduct = ({ product }: CartCardProductProps) => {
             style={{ objectFit: 'cover' }}
             sizes="(max-width: 1024px) 35vw, 20vw"
           />
-          {product.discountPercentage !== 0 && (
-            <div className="absolute p-[2px] bottom-0 left-0 bg-destructive text-primary-foreground text-sm font-semibold sm:text-base xl:text-lg">{`%${product.discountPercentage}`}</div>
+          {product.discount_price !== 0 && (
+            <div className="absolute p-[2px] bottom-0 left-0 bg-destructive text-primary-foreground text-sm font-semibold sm:text-base xl:text-lg">{`%${product.discount}`}</div>
           )}
         </div>
         <div className="flex flex-col items-start gap-0.5 w-full sm:gap-1">
           <p className="line-clamp-2 text-ellipsis leading-none font-light text-sm sm:text-lg xl:text-xl">
             {product.name}
           </p>
-          {product.discountPercentage !== 0 ? (
+          {product.discount !== 0 ? (
             <div className="flex items-center gap-1">
               <p className="font-semibold sm:text-xl xl:text-2xl">
-                {moneyFornatter(product.discountedPrice!)}
+                {product.discount_price!}
               </p>
               <p className="text-gray-500 text-xs line-through sm:text-base xl:text-lg">
-                {moneyFornatter(product.price)}
+                {product.base_price}
               </p>
             </div>
           ) : (
             <p className="font-semibold sm:text-xl xl:text-2xl">
-              {moneyFornatter(product.price)}
+              {product.base_price}
             </p>
           )}
           {product.variant && (
@@ -61,7 +60,7 @@ const CartCardProduct = ({ product }: CartCardProductProps) => {
           <QuantityController
             inputValue={quantity}
             setInputValue={setQuantity}
-            maximum={product.stock}
+            maximum={product.stock!}
           />
           <LikeButton isLiked={isLiked} setIsLiked={setIsLiked} />
         </div>

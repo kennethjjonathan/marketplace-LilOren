@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button } from '../ui/button';
-import moneyFornatter from '@/lib/moneyFornatter';
 
 interface CheckoutLayoutProps {
   amount: number;
@@ -15,7 +14,7 @@ const CheckoutLayout = ({ amount }: CheckoutLayoutProps) => {
             Total:
           </p>
           <p className="text-xl font-semibold sm:text-2xl xl:text-3xl">
-            {moneyFornatter(amount)}
+            {amount}
           </p>
         </div>
         <Button size={'customBlank'} className="p-2 text-xl w-1/3 lg:text-2xl">
