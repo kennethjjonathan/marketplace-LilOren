@@ -29,8 +29,8 @@ npm run check-types ||
     false;
 )
 
-# If everything passes... Now we can commit
-echo '🤔🤔🤔🤔... Alright.... Code looks good to me... Trying to build now. 🤔🤔🤔🤔'
+# # If everything passes... Now we can commit
+# echo '🤔🤔🤔🤔... Alright.... Code looks good to me... Trying to build now. 🤔🤔🤔🤔'
 
 # npm run build ||
 # (

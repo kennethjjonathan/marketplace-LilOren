@@ -18,6 +18,7 @@ export class Utils {
     toast(message, {
       type: type,
       position: toast.POSITION.TOP_RIGHT,
+      theme: theme,
     });
   };
 }
