@@ -23,7 +23,10 @@ const CartCard = ({ shop, shop_items }: CartCardProps) => {
       </div>
       <div className="w-full flex flex-col gap-2 p-2 divide-x-2">
         {shop_items.map((items, index) => (
-          <CartCardProduct key={`key-${items.name} ${index.toString()}`} product={items} />
+          <CartCardProduct
+            key={`key-${items.name} ${index.toString()}`}
+            product={items}
+          />
         ))}
       </div>
       <Divider />
