@@ -25,7 +25,7 @@ const TrashButton = ({ product }: TrashButtonProps) => {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle className="lg:text-lg">
-            {`Are you sure you want to delete ${product.name} from cart?`}
+            {`Are you sure you want to delete ${product.product_name} from cart?`}
           </AlertDialogTitle>
         </AlertDialogHeader>
         <AlertDialogDescription>

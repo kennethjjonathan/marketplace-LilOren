@@ -1,8 +1,13 @@
 import React from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Button } from '../ui/button';
+import { Button } from '@/components/ui/button';
+import { Utils } from '@/utils';
 
-const CartLayout = () => {
+interface CartLayoutProps {
+  total: number;
+}
+
+const CartLayout = ({ total }: CartLayoutProps) => {
   return (
     <section className="w-full fixed bottom-0 left-0 bg-primary-foreground">
       <div className="w-full md:w-[75vw] p-2 pb-3 flex items-center justify-between mx-auto gap-2">
@@ -30,8 +35,12 @@ const CartLayout = () => {
               <p className="text-xs text-gray-500 sm:text-sm xl:text-base text-right">
                 Total
               </p>
-              <p className="text-base font-semibold sm:text-xl xl:text-2xl text-right">
-                Rp 1.900.000
+              <p
+                className={`text-base  sm:text-xl xl:text-2xl text-right ${
+                  total ? 'font-semibold' : 'font-light'
+                }`}
+              >
+                {total ? Utils.convertPrice(total) : '-'}
               </p>
             </div>
             <Button

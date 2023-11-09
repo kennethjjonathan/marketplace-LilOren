@@ -1,8 +1,8 @@
 import React from 'react';
 import { IProduct } from '@/interface/product';
-import { Checkbox } from '../ui/checkbox';
-import CartCardProduct from '../CartCardProduct.tsx/CartCardProduct';
-import Divider from '../Divider/Divider';
+import { Checkbox } from '@/components/ui/checkbox';
+import Divider from '@/components/Divider/Divider';
+import CartCardProduct from '@/components/CartCardProduct/CartCardProduct';
 
 interface CartCardProps {
   shop: string;
@@ -21,7 +21,7 @@ const CartCard = ({ shop, shop_items }: CartCardProps) => {
       <div className="w-full flex flex-col gap-2 p-2">
         {shop_items.map((items, index) => (
           <CartCardProduct
-            key={`key-${items.name} ${index.toString()}`}
+            key={`key-${items.product_name} ${index.toString()}`}
             product={items}
           />
         ))}
