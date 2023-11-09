@@ -18,8 +18,6 @@ import { IErrorResponse } from '@/interface/user';
 import { UserClient } from '@/service/user/userClient';
 import { Utils } from '@/utils';
 import { ISignIn } from '@/interface/user';
-import CONSTANTS from '@/constants/constants';
-import axios from 'axios';
 
 interface SignInPageProps {
   providers: Record<LiteralUnion<BuiltInProviderType>, ClientSafeProvider>;
@@ -98,15 +96,10 @@ function SignInPage({ providers }: SignInPageProps) {
         password: registerData.password,
       };
       const response = await UserClient.postSignIn(registerData);
-      console.log(response);
       if (response.data.error) {
         handleErrorAuthResponse(response.data.data.message);
         return;
       }
-      const roleResponse = await axios(`${CONSTANTS.BASEURL}/auth/user`, {
-        withCredentials: true,
-      });
-      console.log(roleResponse);
       Utils.notify('Your sign in is successful', 'success', 'colored');
       router.push('/');
     } catch (error: any) {
