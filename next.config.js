@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   env: {
-    BASEURL: process.env.BASEURL
+    BASEURL: process.env.BASEURL,
   },
   images: {
     remotePatterns: [
