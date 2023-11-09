@@ -17,7 +17,7 @@ function QuantityController({
       <button
         onClick={() => setInputValue((prev) => prev - 1)}
         disabled={inputValue === 1}
-        className="text-primary w-5 aspect-square lg:w-6 disabled:text-[#777777] disabled:cursor-not-allowed"
+        className="text-primary w-5 aspect-square disabled:text-[#777777] disabled:cursor-not-allowed"
       >
         <Minus />
       </button>
@@ -25,7 +25,7 @@ function QuantityController({
       <button
         onClick={() => setInputValue((prev) => prev + 1)}
         disabled={inputValue === maximum}
-        className="text-primary w-5 aspect-square lg:w-6 disabled:text-[#777777] disabled:cursor-not-allowed"
+        className="text-primary w-5 aspect-square disabled:text-[#777777] disabled:cursor-not-allowed"
       >
         <Plus />
       </button>
