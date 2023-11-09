@@ -112,8 +112,14 @@ const dummyProductPage: IProductPage = {
 const ProductPage = ({ productPage = dummyProductPage }: ProductPageProps) => {
   const [quantity, setQuantity] = useState<number>(1);
   const [highestDiscount, setHighestDiscount] = useState<number>(0);
-  const [group1, setGroup1] = useState<IVariantType | undefined>(undefined);
-  const [group2, setGroup2] = useState<IVariantType | undefined>(undefined);
+  const [group1, setGroup1] = useState<IVariantType>(
+    productPage.variant_group1.variant_types[0],
+  );
+  const [group2, setGroup2] = useState<IVariantType>(
+    productPage.variant_group2.variant_types[0],
+  );
+  const [isGroup1Variant, setIsGroup1Variant] = useState<boolean>(false);
+  const [isGroup2Variant, setIsGroup2Variant] = useState<boolean>(false);
   const [initialAvailableGroup1, setInitialAvailableGroup1] =
     useState<Set<number>>();
   const [initialAvailableGroup2, setInitialAvailableGroup2] =
@@ -125,10 +131,10 @@ const ProductPage = ({ productPage = dummyProductPage }: ProductPageProps) => {
   );
 
   function handleChooseGroup1(type: IVariantType) {
-    if (group1 !== undefined && group1.type_id === type.type_id) {
-      setGroup1(undefined);
+    if (group1.type_name !== 'default' && group1.type_id === type.type_id) {
+      setGroup1(productPage.variant_group1.variant_types[0]);
       setAvailableGroup2(initialAvailableGroup2);
-      searchVariant(undefined, group2);
+      searchVariant(productPage.variant_group1.variant_types[0], group2);
     } else {
       setGroup1(type);
       searchAvailable(1, type);
@@ -137,10 +143,10 @@ const ProductPage = ({ productPage = dummyProductPage }: ProductPageProps) => {
   }
 
   function handleChooseGroup2(type: IVariantType) {
-    if (group2 !== undefined && group2.type_id === type.type_id) {
-      setGroup2(undefined);
+    if (group2.type_name !== 'default' && group2.type_id === type.type_id) {
+      setGroup2(productPage.variant_group2.variant_types[0]);
       setAvailableGroup1(initialAvailableGroup1);
-      searchVariant(group1, undefined);
+      searchVariant(group1, productPage.variant_group2.variant_types[0]);
     } else {
       setGroup2(type);
       searchAvailable(2, type);
@@ -168,11 +174,11 @@ const ProductPage = ({ productPage = dummyProductPage }: ProductPageProps) => {
     }
   }
 
-  function searchVariant(
-    type1: IVariantType | undefined,
-    type2: IVariantType | undefined,
-  ) {
-    if (type1 === undefined || type2 === undefined) {
+  function searchVariant(type1: IVariantType, type2: IVariantType) {
+    if (
+      (type1.type_name === 'default' && isGroup1Variant) ||
+      (type2.type_name === 'default' && isGroup2Variant)
+    ) {
       setVariant(undefined);
     } else {
       for (let i = 0; i < productPage.product_variant.length; i++) {
@@ -203,6 +209,18 @@ const ProductPage = ({ productPage = dummyProductPage }: ProductPageProps) => {
     setInitialAvailableGroup1(availableSet1);
     setAvailableGroup2(availableSet2);
     setInitialAvailableGroup2(availableSet2);
+
+    if (productPage.variant_group1.variant_types.length > 1) {
+      setIsGroup1Variant(true);
+    } else {
+      setIsGroup1Variant(false);
+    }
+
+    if (productPage.variant_group2.variant_types.length > 1) {
+      setIsGroup2Variant(true);
+    } else {
+      setIsGroup2Variant(false);
+    }
   }
 
   useEffect(() => {
@@ -212,7 +230,7 @@ const ProductPage = ({ productPage = dummyProductPage }: ProductPageProps) => {
   return (
     <>
       <section className="flex flex-col justify-center items-center w-full bg-white roboto-text">
-        <div className="w-full md:w-[75vw] pt-5 pb-16">
+        <div className="w-full md:w-[75vw] pt-5 pb-[5.5rem]">
           <div className="w-full flex flex-col gap-6 lg:flex-row">
             <div className="w-full lg:w-1/3">
               {/* <ImageCarousel mediaArray={productPage.product_media} /> */}
@@ -220,7 +238,15 @@ const ProductPage = ({ productPage = dummyProductPage }: ProductPageProps) => {
             <div className="flex-1 px-2 flex flex-col gap-4">
               <div className="flex flex-col gap-2">
                 <h1 className="text-lg font-semibold sm:text-xl lg:text-3xl">
-                  {productPage.product.name}
+                  {`${
+                    productPage.product.name +
+                    (group1.type_name === 'default'
+                      ? ''
+                      : ` | ${group1.type_name}`) +
+                    (group2.type_name === 'default'
+                      ? ''
+                      : ` | ${group2.type_name}`)
+                  }`}
                 </h1>
                 <div className="w-full flex justify-start items-center gap-2">
                   <p className="text-base sm:text-lg lg:text-xl">
@@ -314,7 +340,7 @@ const ProductPage = ({ productPage = dummyProductPage }: ProductPageProps) => {
       <ProductPageLayout
         quantity={quantity}
         setQuantity={setQuantity}
-        stock={variant?.stock}
+        variant={variant}
       />
     </>
   );

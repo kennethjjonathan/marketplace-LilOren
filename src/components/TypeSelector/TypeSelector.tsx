@@ -4,7 +4,7 @@ import { IVariantGroup, IVariantType } from '@/interface/productPage';
 
 interface TypeSelectorProps {
   variant_group: IVariantGroup;
-  chosenType: IVariantType | undefined;
+  chosenType: IVariantType;
   handleChooseGroup: (input: IVariantType) => void;
   availableSet: Set<number>;
 }
@@ -19,14 +19,17 @@ const TypeSelector = ({
     <div className="flex flex-col items-baseline w-full">
       <p className="text-base font-semibold sm:text-lg lg:text-xl">
         {`${variant_group.group_name}:`}{' '}
-        {chosenType === undefined ? null : (
+        {chosenType.type_name === 'default' ? null : (
           <span className="font-light">{chosenType.type_name}</span>
         )}
       </p>
       <ScrollArea className="max-w-full mt-2">
         <div className="flex space-x-5 py-1">
           {variant_group.variant_types.map((type) => {
-            if (chosenType === undefined && type.type_name !== 'default') {
+            if (
+              chosenType.type_name === undefined &&
+              type.type_name !== 'default'
+            ) {
               return (
                 <button
                   key={type.type_id}
