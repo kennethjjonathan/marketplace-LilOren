@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import React from 'react';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { IVariantGroup, IVariantType } from '@/interface/productPage';
 

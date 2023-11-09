@@ -17,7 +17,7 @@ function QuantityController({
 }: QuantityControllerProps) {
   const [isInput, setIsInput] = useState<boolean>(false);
   return (
-    <div className="p-1 bg-input flex items-center gap-2 w-fit lg:gap-5 h-11">
+    <div className="p-1 bg-input flex items-center gap-2 w-fit lg:gap-5 h-11 xl:h-12">
       <button
         onClick={() => {
           if (handleMaximumValid !== undefined) {
@@ -34,9 +34,13 @@ function QuantityController({
       {isInput ? (
         <form
           className="max-w-fit"
-          onSubmit={() => {
-            if (isNaN(parseInt(inputValue.toString()))) {
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (isNaN(parseInt(inputValue.toString())) || inputValue < 1) {
               setInputValue(1);
+              setIsInput(false);
+            } else if (inputValue >= maximum) {
+              setInputValue(maximum);
               setIsInput(false);
             } else {
               setIsInput(false);
@@ -48,8 +52,11 @@ function QuantityController({
             value={inputValue}
             onChange={(e) => setInputValue(parseInt(e.target.value))}
             onBlur={() => {
-              if (isNaN(parseInt(inputValue.toString()))) {
+              if (isNaN(parseInt(inputValue.toString())) || inputValue < 1) {
                 setInputValue(1);
+                setIsInput(false);
+              } else if (inputValue >= maximum) {
+                setInputValue(maximum);
                 setIsInput(false);
               } else {
                 setIsInput(false);
@@ -77,7 +84,7 @@ function QuantityController({
           setInputValue((prev) => prev + 1);
         }}
         disabled={inputValue >= maximum && handleMaximumValid === undefined}
-        className={`w-5 aspect-square lg:w-6  ${
+        className={`w-5 aspect-square lg:w-6 disabled:text-[#777777] disabled:cursor-not-allowed  ${
           inputValue >= maximum
             ? 'text-[#777777] cursor-not-allowed'
             : 'text-primary'

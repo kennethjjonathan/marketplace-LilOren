@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, ReactElement } from 'react';
 import { GetServerSideProps } from 'next';
 import { Star } from 'lucide-react';
 import ImageCarousel from '@/components/ImageCarousel/ImageCarousel';
@@ -15,6 +15,8 @@ import {
 import ReviewComponent from '@/components/ReviewComponent/ReviewComponent';
 import TypeSelector from '@/components/TypeSelector/TypeSelector';
 import { Utils } from '@/utils';
+import { NextPageWithLayout } from '../_app';
+import Layout from '@/components/Layout/Layout';
 
 interface ProductPageProps {
   productPage: IProductPage;
@@ -347,6 +349,10 @@ const ProductPage = ({ productPage = dummyProductPage }: ProductPageProps) => {
 };
 
 export default ProductPage;
+
+ProductPage.getLayout = function getLayout(page: ReactElement) {
+  return <Layout>{page}</Layout>;
+};
 
 // export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 //   let productPage: IProductPage | null = null;
