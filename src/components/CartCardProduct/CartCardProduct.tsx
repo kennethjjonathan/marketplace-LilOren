@@ -114,6 +114,7 @@ const CartCardProduct = ({ product, index }: CartCardProductProps) => {
             inputValue={quantity}
             setInputValue={setQuantity}
             maximum={product.remaining_quantity!}
+            product={product}
           />
         </div>
       </div>

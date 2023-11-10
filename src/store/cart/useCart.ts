@@ -42,7 +42,7 @@ const useCartBase = create<State & Actions>((set) => ({
           discount_price: 10000,
           discount: 40,
           quantity: 2,
-          remaining_quantity: 3,
+          remaining_quantity: 10,
           variant1_name: 'black',
           variant2_name: '16 GB',
           image_url:
@@ -57,7 +57,7 @@ const useCartBase = create<State & Actions>((set) => ({
           discount_price: 35000,
           discount: 13,
           quantity: 2,
-          remaining_quantity: 3,
+          remaining_quantity: 15,
           variant1_name: '',
           variant2_name: '',
           image_url:
@@ -80,7 +80,7 @@ const useCartBase = create<State & Actions>((set) => ({
           discount_price: 10000,
           discount: 40,
           quantity: 2,
-          remaining_quantity: 3,
+          remaining_quantity: 20,
           variant1_name: 'black',
           variant2_name: '16 GB',
           image_url:
@@ -95,7 +95,7 @@ const useCartBase = create<State & Actions>((set) => ({
           discount_price: 35000,
           discount: 13,
           quantity: 2,
-          remaining_quantity: 3,
+          remaining_quantity: 30,
           variant1_name: '',
           variant2_name: '',
           image_url:

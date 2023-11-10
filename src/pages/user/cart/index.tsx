@@ -48,19 +48,10 @@ const CartPage: NextPageWithLayout = () => {
     setCheckedCart(is_checked_cart);
   };
 
-  const handleIncrementTotal = (price: number, quantity: number) => {
-    setTotal((prev) => prev + price * quantity);
-  };
-
-  const handleDecrementTotal = (price: number, quantity: number) => {
-    setTotal((prev) => prev - price * quantity);
-  };
-
   useEffect(() => {
     handleSetFirstTotal(cartItems);
     fetchCart();
     handleSetCheckedFirstCart();
-    console.log(cartItems);
   }, []);
   return (
     <>

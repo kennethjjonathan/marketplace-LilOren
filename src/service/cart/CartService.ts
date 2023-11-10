@@ -89,9 +89,10 @@ export class CartService {
       if (response.status === 200) {
         const responseAPI: ICartsResponse = {
           error: false,
-          message: 'Success update quantity',
+          message: 'Success',
           data: response.data.data,
         };
+        return responseAPI;
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
