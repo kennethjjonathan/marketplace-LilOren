@@ -157,7 +157,7 @@ function RegisterPage({ providers }: RegisterPageProps) {
     try {
       const newRegisterData: IRegister = {
         username: registerData.username,
-        email: registerData.email,
+        email: registerData.email.toLowerCase(),
         password: registerData.password,
       };
       const response = await UserClient.postRegister(newRegisterData);
@@ -168,7 +168,8 @@ function RegisterPage({ providers }: RegisterPageProps) {
       Utils.notify('Register is successful', 'success', 'colored');
       router.push('/signin');
     } catch (error: any) {
-      Utils.notify(error.message, 'error', 'colored');
+      handleErrorAuthResponse(error.response.data.message);
+      // Utils.notify(error.message, 'error', 'colored');
       console.error(error);
     } finally {
       setIsLoading(false);

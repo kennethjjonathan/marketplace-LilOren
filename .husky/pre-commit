@@ -3,7 +3,7 @@
 
 npm run format
 
-echo '🏗️👷 Styling, testing and building your project before committing'
+# echo '🏗️👷 Styling, testing and building your project before committing'
 
 # Check Prettier standards
 npm run check-format ||

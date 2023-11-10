@@ -17,6 +17,7 @@ import { LogIn } from 'lucide-react';
 import { IErrorResponse } from '@/interface/user';
 import { UserClient } from '@/service/user/userClient';
 import { Utils } from '@/utils';
+import { ISignIn } from '@/interface/user';
 
 interface SignInPageProps {
   providers: Record<LiteralUnion<BuiltInProviderType>, ClientSafeProvider>;
@@ -90,6 +91,10 @@ function SignInPage({ providers }: SignInPageProps) {
     if (!validateAll()) return;
     setIsLoading(true);
     try {
+      const newRegisterData: ISignIn = {
+        email: registerData.email.toLowerCase(),
+        password: registerData.password,
+      };
       const response = await UserClient.postSignIn(registerData);
       if (response.data.error) {
         handleErrorAuthResponse(response.data.data.message);
@@ -98,7 +103,8 @@ function SignInPage({ providers }: SignInPageProps) {
       Utils.notify('Your sign in is successful', 'success', 'colored');
       router.push('/');
     } catch (error: any) {
-      Utils.notify(error.message, 'error', 'colored');
+      handleErrorAuthResponse(error.response.data.message);
+      // Utils.notify(error.message, 'error', 'colored');
       console.error(error);
     } finally {
       setIsLoading(false);
