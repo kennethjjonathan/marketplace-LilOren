@@ -1,127 +1,45 @@
 import React, { useEffect, useState, ReactElement } from 'react';
 import { GetServerSideProps } from 'next';
 import { Star } from 'lucide-react';
+import CONSTANTS from '@/constants/constants';
 import ImageCarousel from '@/components/ImageCarousel/ImageCarousel';
 import ProductPageLayout from '@/components/ProductPageLayout/ProductPageLayout';
 import { Separator } from '@/components/ui/separator';
 import SellerProfileSnippet from '@/components/SellerProfileSnippet/SellerProfileSnippet';
 import ProductDetailDesc from '@/components/ProductDetailDesc/ProductDetailDesc';
-import CONSTANTS from '@/constants/constants';
 import {
   IProductPage,
   IProductVariant,
   IVariantType,
 } from '@/interface/productPage';
+import Layout from '@/components/Layout/Layout';
 import ReviewComponent from '@/components/ReviewComponent/ReviewComponent';
 import TypeSelector from '@/components/TypeSelector/TypeSelector';
 import { Utils } from '@/utils';
-import { NextPageWithLayout } from '../_app';
-import Layout from '@/components/Layout/Layout';
+import axiosInstance from '@/lib/axiosInstance';
+import { useRouter } from 'next/router';
 
 interface ProductPageProps {
   productPage: IProductPage;
+  highestDiscount: number;
+  isGroup1Variant: boolean;
+  isGroup2Variant: boolean;
 }
 
-const dummyProductPage: IProductPage = {
-  product: {
-    name: 'Shirt',
-    description: 'desc',
-  },
-  Shop: {
-    id: 1,
-    name: 'Hyouka',
-    profile_picture_url: '',
-    location: 'Aceh Barat',
-  },
-  product_variant: [
-    {
-      id: 1,
-      price: 100000,
-      discounted_price: 95000,
-      stock: 100,
-      discount: 5,
-      variant_type1_id: 2,
-      variant_type2_id: 5,
-    },
-    {
-      id: 2,
-      price: 200000,
-      discounted_price: 200000,
-      stock: 10,
-      discount: 0,
-      variant_type1_id: 3,
-      variant_type2_id: 5,
-    },
-    {
-      id: 3,
-      price: 300000,
-      discounted_price: 270000,
-      stock: 10,
-      discount: 10,
-      variant_type1_id: 2,
-      variant_type2_id: 6,
-    },
-  ],
-  product_media: [
-    {
-      media_url: 'url',
-      media_type: 'image',
-    },
-  ],
-  variant_group1: {
-    group_name: 'color',
-    variant_types: [
-      {
-        type_id: 1,
-        type_name: 'default',
-      },
-      {
-        type_id: 2,
-        type_name: 'red',
-      },
-      {
-        type_id: 3,
-        type_name: 'blue',
-      },
-    ],
-  },
-  variant_group2: {
-    group_name: 'size',
-    variant_types: [
-      {
-        type_id: 4,
-        type_name: 'default',
-      },
-      {
-        type_id: 5,
-        type_name: 'L',
-      },
-      {
-        type_id: 6,
-        type_name: 'XL',
-      },
-      {
-        type_id: 7,
-        type_name: 'XXL',
-      },
-    ],
-  },
-  high_price: 200000,
-  low_price: 100000,
-  is_variant: false,
-};
-
-const ProductPage = ({ productPage = dummyProductPage }: ProductPageProps) => {
+const ProductPage = ({
+  productPage,
+  highestDiscount,
+  isGroup1Variant,
+  isGroup2Variant,
+}: ProductPageProps) => {
+  const router = useRouter();
   const [quantity, setQuantity] = useState<number>(1);
-  const [highestDiscount, setHighestDiscount] = useState<number>(0);
   const [group1, setGroup1] = useState<IVariantType>(
     productPage.variant_group1.variant_types[0],
   );
   const [group2, setGroup2] = useState<IVariantType>(
     productPage.variant_group2.variant_types[0],
   );
-  const [isGroup1Variant, setIsGroup1Variant] = useState<boolean>(false);
-  const [isGroup2Variant, setIsGroup2Variant] = useState<boolean>(false);
   const [initialAvailableGroup1, setInitialAvailableGroup1] =
     useState<Set<number>>();
   const [initialAvailableGroup2, setInitialAvailableGroup2] =
@@ -196,38 +114,45 @@ const ProductPage = ({ productPage = dummyProductPage }: ProductPageProps) => {
   }
 
   function setInitialAvailable() {
-    let initiateHighestDiscount: number = 0;
     const availableSet1 = new Set<number>();
     const availableSet2 = new Set<number>();
     for (let i = 0; i < productPage.product_variant.length; i++) {
-      if (productPage.product_variant[i].discount > initiateHighestDiscount) {
-        initiateHighestDiscount = productPage.product_variant[i].discount;
-      }
       availableSet1.add(productPage.product_variant[i].variant_type1_id);
       availableSet2.add(productPage.product_variant[i].variant_type2_id);
     }
-    setHighestDiscount(initiateHighestDiscount);
     setAvailableGroup1(availableSet1);
     setInitialAvailableGroup1(availableSet1);
     setAvailableGroup2(availableSet2);
     setInitialAvailableGroup2(availableSet2);
-
-    if (productPage.variant_group1.variant_types.length > 1) {
-      setIsGroup1Variant(true);
-    } else {
-      setIsGroup1Variant(false);
-    }
-
-    if (productPage.variant_group2.variant_types.length > 1) {
-      setIsGroup2Variant(true);
-    } else {
-      setIsGroup2Variant(false);
-    }
   }
 
   useEffect(() => {
     setInitialAvailable();
   }, []);
+
+  async function handleAddToCart() {
+    try {
+      const response = await axiosInstance.post(
+        `${CONSTANTS.BASEURL}/cart/add-product`,
+        {
+          product_variant_id: 4,
+          seller_id: 1,
+          quantity: 5,
+        },
+        { withCredentials: true },
+      );
+    } catch (error: any) {
+      if (error.data.message === CONSTANTS.ALREADY_LOGGED_OUT) {
+        Utils.notify(
+          'Your token has expired, please log in again',
+          'default',
+          'colored',
+        );
+        router.push('/signin');
+      }
+      
+    }
+  }
 
   return (
     <>
@@ -328,7 +253,7 @@ const ProductPage = ({ productPage = dummyProductPage }: ProductPageProps) => {
           <div className="px-2 w-full my-4">
             <Separator className="h-0.5 rounded-md" />
           </div>
-          <SellerProfileSnippet seller={productPage.Shop} />
+          <SellerProfileSnippet seller={productPage.shop} />
           <div className="px-2 w-full my-4">
             <Separator className="h-0.5 rounded-md" />
           </div>
@@ -343,6 +268,7 @@ const ProductPage = ({ productPage = dummyProductPage }: ProductPageProps) => {
         quantity={quantity}
         setQuantity={setQuantity}
         variant={variant}
+        handleAddToCart={handleAddToCart}
       />
     </>
   );
@@ -354,30 +280,173 @@ ProductPage.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
 };
 
-// export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-//   let productPage: IProductPage | null = null;
-//   try {
-//     const response = await fetch(
-//       `${CONSTANTS.BASEURL}/product/${params!.productId}`,
-//     );
-//     if (!response.ok) throw new Error(response.statusText);
-//     const data = await response.json();
-//     productPage = data.data;
-//   } catch (error) {
-//     console.error(error);
-//   }
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+  // const productPage: IProductPage = {
+  //   product: {
+  //     name: 'Shirt',
+  //     description: 'desc',
+  //   },
+  //   shop: {
+  //     id: 1,
+  //     name: 'Hyouka',
+  //     profile_picture_url:
+  //       'https://down-aka-id.img.susercontent.com/7d2818ddcf9fd656b596ca8ca0a61b80_tn',
+  //     location: 'Aceh Barat',
+  //   },
+  //   product_variant: [
+  //     {
+  //       id: 1,
+  //       price: 100000,
+  //       discounted_price: 95000,
+  //       stock: 100,
+  //       discount: 5,
+  //       variant_type1_id: 2,
+  //       variant_type2_id: 5,
+  //     },
+  //     {
+  //       id: 2,
+  //       price: 200000,
+  //       discounted_price: 200000,
+  //       stock: 10,
+  //       discount: 0,
+  //       variant_type1_id: 3,
+  //       variant_type2_id: 5,
+  //     },
+  //     {
+  //       id: 3,
+  //       price: 300000,
+  //       discounted_price: 270000,
+  //       stock: 10,
+  //       discount: 10,
+  //       variant_type1_id: 2,
+  //       variant_type2_id: 6,
+  //     },
+  //   ],
+  //   product_media: [
+  //     {
+  //       media_url:
+  //         'https://down-id.img.susercontent.com/file/13913932b65d105da4af78ee23e72a1a',
+  //       media_type: 'image',
+  //     },
+  //     {
+  //       media_url:
+  //         'https://down-id.img.susercontent.com/file/27670afe9db6af1f9d85d1a39c05eba5',
+  //       media_type: 'image',
+  //     },
+  //     {
+  //       media_url:
+  //         'https://down-id.img.susercontent.com/file/1e27552a88b18bf53d4274badb8cabd4',
+  //       media_type: 'image',
+  //     },
+  //     {
+  //       media_url:
+  //         'https://down-id.img.susercontent.com/file/9de3c76fc7e9bb5123e146c6e80e7335',
+  //       media_type: 'image',
+  //     },
+  //     {
+  //       media_url:
+  //         'https://down-id.img.susercontent.com/file/93b788c59388944b3de6742928a88324',
+  //       media_type: 'image',
+  //     },
+  //     {
+  //       media_url:
+  //         'https://down-id.img.susercontent.com/file/315b0a3b5aa3d7743f0e914ec60d5fed',
+  //       media_type: 'image',
+  //     },
+  //     {
+  //       media_url:
+  //         'https://down-id.img.susercontent.com/file/ee24535522586415b4d4998bc8309658',
+  //       media_type: 'image',
+  //     },
+  //   ],
+  //   variant_group1: {
+  //     group_name: 'color',
+  //     variant_types: [
+  //       {
+  //         type_id: 1,
+  //         type_name: 'default',
+  //       },
+  //       {
+  //         type_id: 2,
+  //         type_name: 'red',
+  //       },
+  //       {
+  //         type_id: 3,
+  //         type_name: 'blue',
+  //       },
+  //     ],
+  //   },
+  //   variant_group2: {
+  //     group_name: 'size',
+  //     variant_types: [
+  //       {
+  //         type_id: 4,
+  //         type_name: 'default',
+  //       },
+  //       {
+  //         type_id: 5,
+  //         type_name: 'L',
+  //       },
+  //       {
+  //         type_id: 6,
+  //         type_name: 'XL',
+  //       },
+  //       {
+  //         type_id: 7,
+  //         type_name: 'XXL',
+  //       },
+  //     ],
+  //   },
+  //   high_price: 200000,
+  //   low_price: 100000,
+  //   is_variant: false,
+  // };
+  let productPage: IProductPage | null = null;
+  let highestDiscount: number = 0;
+  let isGroup1Variant: boolean | null = null;
+  let isGroup2Variant: boolean | null = null;
 
-//   console.log(productPage);
+  try {
+    const response = await fetch(
+      `${CONSTANTS.BASEURL}/products/${params!.productId}`,
+    );
+    if (!response.ok) throw new Error(response.statusText);
+    const data = await response.json();
+    productPage = data.data;
+  } catch (error) {
+    console.error(error);
+  }
 
-//   if (!productPage) {
-//     return {
-//       notFound: true,
-//     };
-//   }
+  if (productPage !== null) {
+    for (let i = 0; i < productPage.product_variant.length; i++) {
+      if (productPage.product_variant[i].discount > highestDiscount) {
+        highestDiscount = productPage.product_variant[i].discount;
+      }
+    }
+    if (productPage.variant_group1.variant_types.length > 1) {
+      isGroup1Variant = true;
+    } else {
+      isGroup1Variant = false;
+    }
+    if (productPage.variant_group2.variant_types.length > 1) {
+      isGroup2Variant = true;
+    } else {
+      isGroup2Variant = false;
+    }
+  }
 
-//   return {
-//     props: {
-//       productPage: productPage,
-//     },
-//   };
-// };
+  if (!productPage) {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: {
+      productPage: productPage,
+      highestDiscount: highestDiscount,
+      isGroup1Variant: isGroup1Variant,
+      isGroup2Variant: isGroup2Variant,
+    },
+  };
+};

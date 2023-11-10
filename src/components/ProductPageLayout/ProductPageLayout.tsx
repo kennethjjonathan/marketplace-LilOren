@@ -9,12 +9,14 @@ interface ProductPageLayoutProps {
   quantity: number;
   setQuantity: Dispatch<SetStateAction<number>>;
   variant: IProductVariant | undefined;
+  handleAddToCart: () => void;
 }
 
 const ProductPageLayout = ({
   quantity,
   setQuantity,
   variant,
+  handleAddToCart,
 }: ProductPageLayoutProps) => {
   const [isMaxValid, setIsMaxValid] = useState<boolean>(true);
   function handleVariantChange() {
@@ -81,19 +83,19 @@ const ProductPageLayout = ({
               handleMaximumValid={handleMaximumValid}
             />
           </div>
-
           <Button
             variant={'tertiary'}
             size={'customBlank'}
-            className="px-1 py-2 w-full h-11 xl:h-12"
+            className="px-3 py-2 h-11 xl:h-12 w-full"
+            onClick={handleAddToCart}
           >
             <ShoppingCart className="aspect-square w-5 lg:w-6" />
-            <p className="ml-1 text-base lg:text-lg">Add to Cart</p>
+            <p className="ml-2 text-lg hidden lg:block">Add to Cart</p>
           </Button>
           <Button
             variant={'default'}
             size={'customBlank'}
-            className="px-1 py-2 w-full h-11 text-base lg:text-lg xl:h-12"
+            className="px-3 py-2 h-11 text-base lg:text-lg xl:h-12 w-full"
           >
             Buy now
           </Button>

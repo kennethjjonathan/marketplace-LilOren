@@ -36,7 +36,7 @@ export interface IVariantGroup {
 
 export interface IProductPage {
   product: IProduct;
-  Shop: ISeller;
+  shop: ISeller;
   product_variant: IProductVariant[];
   product_media: IProductMedia[];
   variant_group1: IVariantGroup;

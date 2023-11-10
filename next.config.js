@@ -22,6 +22,10 @@ const nextConfig = {
         hostname: 'deo.shopeesz.com',
         port: '',
       },
+      {
+        hostname: 'down-aka-id.img.susercontent.com',
+        port: '',
+      },
     ],
   },
   output: 'standalone',
