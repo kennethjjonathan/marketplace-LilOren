@@ -1,9 +1,8 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import { Minus, Plus } from 'lucide-react';
 import { IProduct } from '@/interface/product';
 import { CartClient } from '@/service/cart/CartClient';
-import { Utils } from '@/utils';
-
+import useDebounce from '@/hook/useDebounce';
 interface QuantityControllerProps extends React.HTMLAttributes<HTMLDivElement> {
   inputValue: number;
   setInputValue: Dispatch<SetStateAction<number>>;
@@ -17,29 +16,22 @@ function QuantityController({
   maximum,
   product,
 }: QuantityControllerProps) {
-  const [qty, setQty] = useState(inputValue);
+  const handleAPI = useDebounce(putQuantityToDb, 1000);
   const handleUpdateQuantity = async (type: string) => {
     if (type === 'decrement') {
       setInputValue((prev) => prev - 1);
     } else {
       setInputValue((prev) => prev + 1);
     }
-    setQty(inputValue);
   };
 
-  const putQuantityToDb = async () => {
+  async function putQuantityToDb() {
     await CartClient.updateQuantityInCart(product.cart_id!, {
       quantity: inputValue,
     });
-  };
+  }
 
-  useEffect(() => {
-    const wait = setTimeout(() => {
-      putQuantityToDb();
-    }, 1000);
-
-    return () => clearTimeout(wait);
-  }, [qty]);
+  handleAPI();
 
   return (
     <div className="p-1 bg-white border-[1px] flex items-center gap-4 w-fit lg:gap-5 rounded-md">
