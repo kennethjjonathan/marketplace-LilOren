@@ -79,7 +79,10 @@ export class CartService {
     }
   };
 
-  static put = async (url: string, payload: ICartRequest) => {
+  static put = async (
+    url: string,
+    payload: ICartRequest | ICartCheckedRequest,
+  ) => {
     try {
       const response = await axios({
         method: 'PUT',

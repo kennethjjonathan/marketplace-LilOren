@@ -53,7 +53,7 @@ const CartCardProduct = ({ product, index }: CartCardProductProps) => {
 
   useEffect(() => {
     fetchCart();
-  }, []);
+  }, [is_checked_carts]);
   return (
     <div className="w-full flex flex-col gap-1 border-t-[1px] py-5">
       <div className="flex items-start gap-2 w-full">
@@ -77,7 +77,7 @@ const CartCardProduct = ({ product, index }: CartCardProductProps) => {
           )}
         </div>
         <div className="flex flex-col items-start gap-0.5 w-full sm:gap-1">
-          <p className=" text-ellipsis leading-none font-light text-xs sm:text-base">
+          <p className=" text-ellipsis overflow-hidden line-clamp-1 font-light text-xs sm:text-base">
             {product.product_name}
           </p>
           {product.variant1_name && (

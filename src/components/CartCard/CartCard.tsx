@@ -4,6 +4,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import Divider from '@/components/Divider/Divider';
 import CartCardProduct from '@/components/CartCardProduct/CartCardProduct';
 import { useCart } from '@/store/cart/useCart';
+import { CartClient } from '@/service/cart/CartClient';
+import { ICartCheckedRequest } from '@/service/cart/CartService';
 
 interface CartCardProps {
   shop: string;
@@ -16,49 +18,49 @@ const CartCard = ({ shop, shop_items, indexData }: CartCardProps) => {
   const fetchCart = useCart.use.fetchCart();
   const cartItems = useCart.use.cartItems();
   const setCart = useCart.use.setCartItems();
+  const is_checked_carts = useCart.use.is_checked_carts();
+  const setIsCheckedCarts = useCart.use.setCheckedCart();
+  const putIsCheckedCart = useCart.use.putIsCheckedCart();
   const checkIsShopCheckOrNot = () => {
     const isCheck = shop_items.every((item) => item.is_checked === true);
     setIsShopCheck(isCheck);
   };
 
-  const handleCheckBySeller = () => {
+  const handleCheckBySeller = (isCheck: boolean) => {
+    setIsShopCheck(!isShopCheck);
     const updatedCartItems = [...cartItems];
-    const idx = updatedCartItems.findIndex(
-      (shop_in_cart) => shop_in_cart.seller_name === shop,
-    );
-    const products = updatedCartItems[idx].products;
+    const products = updatedCartItems[indexData].products;
     products.forEach((product, index) => {
       const updatedProduct = product;
-      updatedProduct.is_checked = true;
-      updatedCartItems[idx].products[index] = updatedProduct;
+      updatedProduct.is_checked = isCheck;
+      updatedCartItems[indexData].products[index] = updatedProduct;
     });
-    setIsShopCheck(true);
     setCart(updatedCartItems);
-    console.log(isShopCheck);
-    return true;
+    handleUpdateIsChecked(isCheck);
   };
 
-  const handleUnCheckBySeller = () => {
+  const handleUpdateIsChecked = async (isCheck: boolean) => {
     const updatedCartItems = [...cartItems];
-    const idx = updatedCartItems.findIndex(
-      (shop_in_cart) => shop_in_cart.seller_name === shop,
-    );
-    const products = updatedCartItems[idx].products;
-    products.forEach((product, index) => {
-      const updatedProduct = product;
-      updatedProduct.is_checked = false;
-      updatedCartItems[idx].products[index] = updatedProduct;
+    const products = updatedCartItems[indexData].products;
+    const updated_is_checked_carts = [...is_checked_carts];
+    updated_is_checked_carts.forEach((cart, index) => {
+      products.forEach((product) => {
+        if (product.cart_id === cart.cart_id) {
+          updated_is_checked_carts[index].is_checked = isCheck;
+        }
+      });
     });
-    setIsShopCheck(false);
-    console.log(isShopCheck);
-    setCart(updatedCartItems);
-    return false;
+    setIsCheckedCarts(updated_is_checked_carts);
+    const req: ICartCheckedRequest = {
+      is_checked_carts: is_checked_carts,
+    };
+    putIsCheckedCart(req);
   };
 
   useEffect(() => {
     fetchCart();
     checkIsShopCheckOrNot();
-  }, []);
+  }, [is_checked_carts]);
 
   return (
     <div className="flex flex-col w-full border-[1px] border-gray-100">
@@ -66,8 +68,9 @@ const CartCard = ({ shop, shop_items, indexData }: CartCardProps) => {
         <Checkbox
           checked={isShopCheck}
           onCheckedChange={(checked) => {
-            console.log(checked);
-            return checked ? handleUnCheckBySeller() : handleCheckBySeller();
+            return checked
+              ? handleCheckBySeller(true)
+              : handleCheckBySeller(false);
           }}
           id={`check-${shop}`}
           className="w-5 h-5"

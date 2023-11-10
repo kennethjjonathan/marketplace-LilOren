@@ -10,7 +10,7 @@ export class CartClient {
   };
 
   static updateIsChecked = async (data: ICartCheckedRequest) => {
-    const response = await CartService.post(
+    const response = await CartService.put(
       `${CONSTANTS.BASEURL}/carts/check-items`,
       data,
     );
