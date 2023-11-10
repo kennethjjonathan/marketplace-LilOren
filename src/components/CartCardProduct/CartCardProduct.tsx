@@ -20,7 +20,7 @@ const CartCardProduct = ({ product, index }: CartCardProductProps) => {
   const cartItems = useCart.use.cartItems();
   const setCart = useCart.use.setCartItems();
   const is_checked_carts = useCart.use.is_checked_carts();
-  const setIsCheckedCarts = useCart.use.setCheckedCart()
+  const setIsCheckedCarts = useCart.use.setCheckedCart();
 
   const handleCheckUncheck = (cart_id: number) => {
     const updatedCartItems = [...cartItems];
@@ -30,11 +30,14 @@ const CartCardProduct = ({ product, index }: CartCardProductProps) => {
     );
     updatedCartItems[index].products[idx].is_checked =
       !updatedCartItems[index].products[idx].is_checked;
-    
-    const idx_checked_cart = is_checked_carts.findIndex((_cart) => _cart.cart_id === cart_id)
-    const updated_is_checked_carts = [...is_checked_carts]
-    updated_is_checked_carts[idx_checked_cart].is_checked = !updated_is_checked_carts[idx_checked_cart].is_checked
-    setIsCheckedCarts(updated_is_checked_carts)
+
+    const idx_checked_cart = is_checked_carts.findIndex(
+      (_cart) => _cart.cart_id === cart_id,
+    );
+    const updated_is_checked_carts = [...is_checked_carts];
+    updated_is_checked_carts[idx_checked_cart].is_checked =
+      !updated_is_checked_carts[idx_checked_cart].is_checked;
+    setIsCheckedCarts(updated_is_checked_carts);
     setCart(updatedCartItems);
   };
 

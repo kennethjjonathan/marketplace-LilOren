@@ -1,10 +1,9 @@
 import { create } from 'zustand';
 import { ICartItem } from '@/pages/user/cart';
-import { CartClient } from '@/service/cart/CartClient';
 import { createZusSelector } from '../useSelector';
 
-export interface ICheckedCart    {
-  cart_id:number;
+export interface ICheckedCart {
+  cart_id: number;
   is_checked: boolean;
 }
 
@@ -12,7 +11,7 @@ type State = {
   totalCartPrice: number;
   cartItems: ICartItem[];
   loadingFetchCart: boolean;
-  is_checked_carts : ICheckedCart[]
+  is_checked_carts: ICheckedCart[];
 };
 
 type Actions = {
@@ -22,7 +21,7 @@ type Actions = {
   unCheckCart: (cart_id: number) => void;
   incrementTotalCartPrice: (price: number, quantity: number) => void;
   decrementTotalCartPrice: (price: number, quantity: number) => void;
-  setCheckedCart:(data:ICheckedCart[])=>void;
+  setCheckedCart: (data: ICheckedCart[]) => void;
 };
 
 const useCartBase = create<State & Actions>((set) => ({
@@ -106,7 +105,7 @@ const useCartBase = create<State & Actions>((set) => ({
     },
   ],
   loadingFetchCart: false,
-  is_checked_carts:[],
+  is_checked_carts: [],
   fetchCart: async () => {
     set(() => ({ loadingFetchCart: true }));
     // const response = await CartClient.getListofCartItem();
@@ -124,11 +123,11 @@ const useCartBase = create<State & Actions>((set) => ({
   unCheckCart: (cart_id: number) => {},
   incrementTotalCartPrice: (price: number, quantity: number) => {},
   decrementTotalCartPrice: (price, quantity) => {},
-  setCheckedCart:(data:ICheckedCart[])=>{
+  setCheckedCart: (data: ICheckedCart[]) => {
     set((state) => ({
-      is_checked_carts:data
-    }))
-  }
+      is_checked_carts: data,
+    }));
+  },
 }));
 
 export const useCart = createZusSelector(useCartBase);

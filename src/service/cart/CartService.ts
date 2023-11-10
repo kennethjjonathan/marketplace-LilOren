@@ -1,4 +1,5 @@
 import { ICartItem } from '@/pages/user/cart';
+import { ICheckedCart } from '@/store/cart/useCart';
 import axios from 'axios';
 
 export interface ICartsResponse {
@@ -13,10 +14,17 @@ export interface ICartRequest {
   quantity?: number;
 }
 
+export interface ICartCheckedRequest {
+  is_checked_carts: ICheckedCart[];
+}
+
 axios.defaults.withCredentials = true;
 
 export class CartService {
-  static post = async (url: string, payload: ICartRequest) => {
+  static post = async (
+    url: string,
+    payload: ICartRequest | ICartCheckedRequest,
+  ) => {
     try {
       const response = await axios({
         method: 'POST',
@@ -27,7 +35,7 @@ export class CartService {
       if (response.status === 201) {
         const responseAPI: ICartsResponse = {
           error: false,
-          message: 'Success Add Product to Cart',
+          message: 'Success',
           data: response.data.data,
         };
         return responseAPI;
@@ -48,7 +56,7 @@ export class CartService {
       const response = await axios({
         withCredentials: true,
         method: 'GET',
-        url: 'http://localhost/vm1/api/carts',
+        url: url,
         params: params,
       });
 
