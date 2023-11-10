@@ -30,7 +30,7 @@ axiosInstance.interceptors.response.use(
         originalConfig._retry = true;
         try {
           const refreshReponse = await refreshAccessToken();
-          if (refreshReponse.data.message === 'User already logged out') {
+          if (refreshReponse.data.message === CONSTANTS.ALREADY_LOGGED_OUT) {
             return Promise.reject(refreshReponse);
           }
           return axiosInstance(originalConfig);

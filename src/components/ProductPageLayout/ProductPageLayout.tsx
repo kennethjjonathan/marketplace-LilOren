@@ -10,6 +10,7 @@ interface ProductPageLayoutProps {
   setQuantity: Dispatch<SetStateAction<number>>;
   variant: IProductVariant | undefined;
   handleAddToCart: () => void;
+  isVariant: boolean;
 }
 
 const ProductPageLayout = ({
@@ -17,6 +18,7 @@ const ProductPageLayout = ({
   setQuantity,
   variant,
   handleAddToCart,
+  isVariant,
 }: ProductPageLayoutProps) => {
   const [isMaxValid, setIsMaxValid] = useState<boolean>(true);
   function handleVariantChange() {
@@ -88,6 +90,7 @@ const ProductPageLayout = ({
             size={'customBlank'}
             className="px-3 py-2 h-11 xl:h-12 w-full"
             onClick={handleAddToCart}
+            disabled={variant === undefined && isVariant}
           >
             <ShoppingCart className="aspect-square w-5 lg:w-6" />
             <p className="ml-2 text-lg hidden lg:block">Add to Cart</p>
@@ -96,6 +99,7 @@ const ProductPageLayout = ({
             variant={'default'}
             size={'customBlank'}
             className="px-3 py-2 h-11 text-base lg:text-lg xl:h-12 w-full"
+            disabled={variant === undefined && isVariant}
           >
             Buy now
           </Button>

@@ -8,6 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import SellerProfileSnippet from '@/components/SellerProfileSnippet/SellerProfileSnippet';
 import ProductDetailDesc from '@/components/ProductDetailDesc/ProductDetailDesc';
 import {
+  IAddToCart,
   IProductPage,
   IProductVariant,
   IVariantType,
@@ -24,6 +25,7 @@ interface ProductPageProps {
   highestDiscount: number;
   isGroup1Variant: boolean;
   isGroup2Variant: boolean;
+  isVariant: boolean;
 }
 
 const ProductPage = ({
@@ -31,6 +33,7 @@ const ProductPage = ({
   highestDiscount,
   isGroup1Variant,
   isGroup2Variant,
+  isVariant,
 }: ProductPageProps) => {
   const router = useRouter();
   const [quantity, setQuantity] = useState<number>(1);
@@ -131,25 +134,59 @@ const ProductPage = ({
   }, []);
 
   async function handleAddToCart() {
+    if (variant === undefined && isVariant) {
+      Utils.notify(
+        'Please choose the options for the product',
+        'default',
+        'colored',
+      );
+      return;
+    } else if (variant !== undefined && variant.stock < quantity) {
+      Utils.notify(
+        "Your quantity is more than the product's stock",
+        'default',
+        'colored',
+      );
+      return;
+    }
+    const payload: IAddToCart = {
+      product_variant_id: -1,
+      seller_id: productPage.shop.id,
+      quantity: quantity,
+    };
+    if (!isVariant) {
+      payload.product_variant_id = productPage.product_variant[0].id;
+    } else if (variant && isVariant) {
+      payload.product_variant_id = variant.id;
+    }
+
     try {
       const response = await axiosInstance.post(
-        `${CONSTANTS.BASEURL}/cart/add-product`,
-        {
-          product_variant_id: 4,
-          seller_id: 1,
-          quantity: 5,
-        },
+        `${CONSTANTS.BASEURL}/carts/add-product`,
+        payload,
         { withCredentials: true },
       );
+      Utils.notify('Successfully added to cart', 'success', 'colored');
     } catch (error: any) {
-      if (error.data.message === CONSTANTS.ALREADY_LOGGED_OUT) {
+      if (error.data && error.data.message === CONSTANTS.ALREADY_LOGGED_OUT) {
         Utils.notify(
-          'Your token has expired, please log in again',
+          'Your token has expired, please sign in again',
           'default',
           'colored',
         );
         router.push('/signin');
+        return;
       }
+      if (error.response.status === 401) {
+        Utils.notify(
+          'Your token has expired, please sign in again',
+          'default',
+          'colored',
+        );
+        router.push('/signin');
+        return;
+      }
+      Utils.notify(error.response.data.message, 'error', 'colored');
     }
   }
 
@@ -268,6 +305,7 @@ const ProductPage = ({
         setQuantity={setQuantity}
         variant={variant}
         handleAddToCart={handleAddToCart}
+        isVariant={isVariant}
       />
     </>
   );
@@ -404,8 +442,10 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   let highestDiscount: number = 0;
   let isGroup1Variant: boolean | null = null;
   let isGroup2Variant: boolean | null = null;
+  let isVariant: boolean = false;
 
   try {
+    
     const response = await fetch(
       `${CONSTANTS.BASEURL}/products/${params!.productId}`,
     );
@@ -432,6 +472,9 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     } else {
       isGroup2Variant = false;
     }
+    if (productPage.product_variant.length > 1) {
+      isVariant = true;
+    }
   }
 
   if (!productPage) {
@@ -446,6 +489,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       highestDiscount: highestDiscount,
       isGroup1Variant: isGroup1Variant,
       isGroup2Variant: isGroup2Variant,
+      isVariant: isVariant,
     },
   };
 };
