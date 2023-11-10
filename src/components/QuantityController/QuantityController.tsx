@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { Minus, Plus } from 'lucide-react';
 import { IProduct } from '@/interface/product';
 import { CartClient } from '@/service/cart/CartClient';
