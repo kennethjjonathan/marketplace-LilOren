@@ -1,24 +1,57 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { IProduct } from '@/interface/product';
-import { Checkbox } from '../ui/checkbox';
-import QuantityController from '../QuantityController/QuantityController';
-import LikeButton from '../LikeButton/LikeButton';
-import TrashButton from '../TrashButton/TrashButton';
+import { Checkbox } from '@/components/ui/checkbox';
+import QuantityController from '@/components/QuantityController/QuantityController';
+import LikeButton from '@/components/LikeButton/LikeButton';
+import TrashButton from '@/components/TrashButton/TrashButton';
 import { Utils } from '@/utils';
+import { useCart } from '@/store/cart/useCart';
 
 interface CartCardProductProps {
   product: IProduct;
+  index: number;
 }
 
-const CartCardProduct = ({ product }: CartCardProductProps) => {
+const CartCardProduct = ({ product, index }: CartCardProductProps) => {
   const [quantity, setQuantity] = useState<number>(product.quantity!);
   const [isLiked, setIsLiked] = useState<boolean>(false);
+  const fetchCart = useCart.use.fetchCart();
+  const cartItems = useCart.use.cartItems();
+  const setCart = useCart.use.setCartItems();
+  const is_checked_carts = useCart.use.is_checked_carts();
+  const setIsCheckedCarts = useCart.use.setCheckedCart()
+
+  const handleCheckUncheck = (cart_id: number) => {
+    const updatedCartItems = [...cartItems];
+    const updatedCartProduct = updatedCartItems[index];
+    const idx = updatedCartProduct.products.findIndex(
+      (product) => product.cart_id === cart_id,
+    );
+    updatedCartItems[index].products[idx].is_checked =
+      !updatedCartItems[index].products[idx].is_checked;
+    
+    const idx_checked_cart = is_checked_carts.findIndex((_cart) => _cart.cart_id === cart_id)
+    const updated_is_checked_carts = [...is_checked_carts]
+    updated_is_checked_carts[idx_checked_cart].is_checked = !updated_is_checked_carts[idx_checked_cart].is_checked
+    setIsCheckedCarts(updated_is_checked_carts)
+    setCart(updatedCartItems);
+  };
+
+  useEffect(() => {
+    fetchCart();
+  }, []);
   return (
     <div className="w-full flex flex-col gap-1 border-t-[1px] py-5">
       <div className="flex items-start gap-2 w-full">
-        <Checkbox className="w-5 h-5" />
-        <div className="relative aspect-square rounded-md overflow-hidden border-[1px] border-gray-100 w-[100px] md:w-[110px]">
+        <Checkbox
+          checked={product.is_checked}
+          onCheckedChange={(checked) => {
+            return handleCheckUncheck(product.cart_id!);
+          }}
+          className="w-5 h-5"
+        />
+        <div className="relative aspect-square rounded-md overflow-hidden border-[1px] border-gray-100 w-[100px]">
           <Image
             src={product.image_url}
             alt={`${product.product_name}'s view`}

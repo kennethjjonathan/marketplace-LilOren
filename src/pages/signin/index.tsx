@@ -17,6 +17,9 @@ import { LogIn } from 'lucide-react';
 import { IErrorResponse } from '@/interface/user';
 import { UserClient } from '@/service/user/userClient';
 import { Utils } from '@/utils';
+import axios from 'axios';
+import CONSTANTS from '@/constants/constants';
+import { register } from 'module';
 
 interface SignInPageProps {
   providers: Record<LiteralUnion<BuiltInProviderType>, ClientSafeProvider>;
@@ -90,7 +93,13 @@ function SignInPage({ providers }: SignInPageProps) {
     if (!validateAll()) return;
     setIsLoading(true);
     try {
-      const response = await UserClient.postSignIn(registerData);
+      const response = await axios.post(
+        `http://localhost/vm1/api/auth/login`,
+        registerData,
+        {
+          withCredentials: true,
+        },
+      );
       if (response.data.error) {
         handleErrorAuthResponse(response.data.data.message);
         return;
