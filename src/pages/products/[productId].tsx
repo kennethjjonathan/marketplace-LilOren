@@ -445,7 +445,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   let isVariant: boolean = false;
 
   try {
-    
     const response = await fetch(
       `${CONSTANTS.BASEURL}/products/${params!.productId}`,
     );
