@@ -150,7 +150,6 @@ const ProductPage = ({
         );
         router.push('/signin');
       }
-      
     }
   }
 
