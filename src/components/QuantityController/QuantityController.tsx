@@ -34,11 +34,11 @@ function QuantityController({
   };
 
   useEffect(() => {
-    const wait = setTimeout(()=>{
-      putQuantityToDb()
-    },1000)
+    const wait = setTimeout(() => {
+      putQuantityToDb();
+    }, 1000);
 
-    return () => clearTimeout(wait)
+    return () => clearTimeout(wait);
   }, [qty]);
 
   return (
