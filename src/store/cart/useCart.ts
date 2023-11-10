@@ -22,6 +22,7 @@ type Actions = {
   incrementTotalCartPrice: (price: number, quantity: number) => void;
   decrementTotalCartPrice: (price: number, quantity: number) => void;
   setCheckedCart: (data: ICheckedCart[]) => void;
+  // postIsCheckedCart : (data: ICartCheckedRequest) =>void
 };
 
 const useCartBase = create<State & Actions>((set) => ({
@@ -128,6 +129,10 @@ const useCartBase = create<State & Actions>((set) => ({
       is_checked_carts: data,
     }));
   },
+  // postIsCheckedCart:async (data:ICartCheckedRequest)=>{
+  //   const response =  await CartClient.updateIsChecked(data)
+  //   return response
+  // }
 }));
 
 export const useCart = createZusSelector(useCartBase);

@@ -60,6 +60,7 @@ const CartPage: NextPageWithLayout = () => {
     handleSetFirstTotal(cartItems);
     fetchCart();
     handleSetCheckedFirstCart();
+    console.log(cartItems);
   }, []);
   return (
     <>

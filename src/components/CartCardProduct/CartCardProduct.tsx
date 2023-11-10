@@ -7,6 +7,8 @@ import LikeButton from '@/components/LikeButton/LikeButton';
 import TrashButton from '@/components/TrashButton/TrashButton';
 import { Utils } from '@/utils';
 import { useCart } from '@/store/cart/useCart';
+import { CartClient } from '@/service/cart/CartClient';
+import { ICartCheckedRequest } from '@/service/cart/CartService';
 
 interface CartCardProductProps {
   product: IProduct;
@@ -39,6 +41,14 @@ const CartCardProduct = ({ product, index }: CartCardProductProps) => {
       !updated_is_checked_carts[idx_checked_cart].is_checked;
     setIsCheckedCarts(updated_is_checked_carts);
     setCart(updatedCartItems);
+    updateIsCheckedOfItems();
+  };
+
+  const updateIsCheckedOfItems = async () => {
+    const req: ICartCheckedRequest = {
+      is_checked_carts: is_checked_carts,
+    };
+    await CartClient.updateIsChecked(req);
   };
 
   useEffect(() => {
