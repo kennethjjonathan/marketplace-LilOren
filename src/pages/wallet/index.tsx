@@ -4,6 +4,7 @@ import { NextPageWithLayout } from '../_app';
 import Layout from '@/components/Layout/Layout';
 import { Utils } from '@/utils';
 import WalletHistoryTab from '@/components/HostoryTab/HistoryTab';
+import PinInput from '@/components/PinInput/PinInput';
 
 export interface IWalletHistory {
   title: string;
@@ -82,6 +83,7 @@ const WalletPage: NextPageWithLayout = () => {
           </div>
         </div>
       </div>
+      <PinInput />
     </section>
   );
 };
