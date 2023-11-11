@@ -10,22 +10,20 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { BuiltInProviderType } from 'next-auth/providers/index';
-import axios from 'axios';
 import AsyncButton from '@/components/AsyncButton/AsyncButton';
 import GoogleButton from '@/components/GoogleButton/GoogleButton';
 import { InputWithLabel } from '@/components/InputWithLabel/InputWithLabel';
 import { LogIn } from 'lucide-react';
-import { IErrorResponse, ISignIn } from '@/interface/user';
-import CONSTANTS from '@/constants/constants';
-import { useToast } from '@/components/ui/use-toast';
+import { IErrorResponse } from '@/interface/user';
 import { UserClient } from '@/service/user/userClient';
+import { Utils } from '@/utils';
+import { ISignIn } from '@/interface/user';
 
 interface SignInPageProps {
   providers: Record<LiteralUnion<BuiltInProviderType>, ClientSafeProvider>;
 }
 
 function SignInPage({ providers }: SignInPageProps) {
-  const { toast } = useToast();
   const router = useRouter();
   const [registerData, setRegisterData] = useState({
     email: '',
@@ -93,16 +91,20 @@ function SignInPage({ providers }: SignInPageProps) {
     if (!validateAll()) return;
     setIsLoading(true);
     try {
+      const newRegisterData: ISignIn = {
+        email: registerData.email.toLowerCase(),
+        password: registerData.password,
+      };
       const response = await UserClient.postSignIn(registerData);
       if (response.data.error) {
         handleErrorAuthResponse(response.data.data.message);
         return;
       }
-      toast({
-        title: 'Your sign in is successful',
-      });
+      Utils.notify('Your sign in is successful', 'success', 'colored');
       router.push('/');
-    } catch (error) {
+    } catch (error: any) {
+      handleErrorAuthResponse(error.response.data.message);
+      // Utils.notify(error.message, 'error', 'colored');
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -128,11 +130,7 @@ function SignInPage({ providers }: SignInPageProps) {
         setErrorMessage({ ...errorMessage, password: message.password });
       }
     } else {
-      toast({
-        variant: 'destructive',
-        title: 'Uh oh! something went wrong',
-        description: message,
-      });
+      Utils.notify(message, 'error', 'colored');
     }
   };
 

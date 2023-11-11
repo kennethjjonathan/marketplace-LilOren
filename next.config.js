@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  env: {
+    BASEURL: process.env.BASEURL,
+  },
   images: {
     remotePatterns: [
       {
@@ -17,6 +20,10 @@ const nextConfig = {
       },
       {
         hostname: 'deo.shopeesz.com',
+        port: '',
+      },
+      {
+        hostname: 'down-aka-id.img.susercontent.com',
         port: '',
       },
     ],

@@ -1,5 +1,6 @@
 const CONSTANTS = {
-  BASEURL: 'http://localhost:3004',
+  BASEURL: process.env.BASEURL,
+  ALREADY_LOGGED_OUT: 'User already logged out',
   RO_BASEURL: 'https://api.rajaongkir.com/starter',
   RO_API_PROVINCE: '/api/rajaongkirprovince',
   RO_API_CITY: '/api/rajaongkir',

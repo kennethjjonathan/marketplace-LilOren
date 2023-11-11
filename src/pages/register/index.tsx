@@ -15,15 +15,14 @@ import { InputWithLabel } from '@/components/InputWithLabel/InputWithLabel';
 import AsyncButton from '@/components/AsyncButton/AsyncButton';
 import GoogleButton from '@/components/GoogleButton/GoogleButton';
 import { UserClient } from '@/service/user/userClient';
-import { useToast } from '@/components/ui/use-toast';
 import { IErrorResponse, IRegister } from '@/interface/user';
+import { Utils } from '@/utils';
 
 interface RegisterPageProps {
   providers: Record<LiteralUnion<BuiltInProviderType>, ClientSafeProvider>;
 }
 
 function RegisterPage({ providers }: RegisterPageProps) {
-  const { toast } = useToast();
   const router = useRouter();
   const [registerData, setRegisterData] = useState({
     username: '',
@@ -99,7 +98,8 @@ function RegisterPage({ providers }: RegisterPageProps) {
     if (
       registerData.password
         .toLowerCase()
-        .includes(registerData.username.toLowerCase())
+        .includes(registerData.username.toLowerCase()) &&
+      registerData.username.trim().length !== 0
     ) {
       setIsDataValid({ ...isDataValid, password: false });
       setErrorMessage({
@@ -157,20 +157,19 @@ function RegisterPage({ providers }: RegisterPageProps) {
     try {
       const newRegisterData: IRegister = {
         username: registerData.username,
-        email: registerData.email,
+        email: registerData.email.toLowerCase(),
         password: registerData.password,
       };
       const response = await UserClient.postRegister(newRegisterData);
       if (response.data.error) {
-        handleErrorAuthResponse(response.data.message);
+        handleErrorAuthResponse(response.data.data.message);
         return;
       }
-      toast({
-        title: 'Register is successful',
-        description: 'Please sign in with your account',
-      });
+      Utils.notify('Register is successful', 'success', 'colored');
       router.push('/signin');
-    } catch (error) {
+    } catch (error: any) {
+      handleErrorAuthResponse(error.response.data.message);
+      // Utils.notify(error.message, 'error', 'colored');
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -200,11 +199,7 @@ function RegisterPage({ providers }: RegisterPageProps) {
         setErrorMessage({ ...errorMessage, password: message.password });
       }
     } else {
-      toast({
-        variant: 'destructive',
-        title: 'Uh oh! something went wrong',
-        description: message,
-      });
+      Utils.notify(message, 'error', 'colored');
     }
   };
 
