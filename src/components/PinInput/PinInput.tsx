@@ -1,10 +1,20 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+
 import styles from './PinInput.module.css';
 
-let currentActiveIndex: number = 0;
+interface PinInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  pins: string[];
+  setPins: Dispatch<SetStateAction<string[]>>;
+}
 
-const PinInput = () => {
-  const [pins, setPins] = useState<string[]>(new Array(8).fill(''));
+let currentActiveIndex: number = 0;
+const PinInput = ({ pins, setPins, ...props }: PinInputProps) => {
   const [activeIndex, setActiveIndex] = useState<number>(0);
 
   const pinRef = useRef<HTMLInputElement>(null);
@@ -43,19 +53,19 @@ const PinInput = () => {
     pinRef.current?.focus();
   }, [activeIndex]);
   return (
-    <>
-      {pins.map((pin, index) => (
+    <div className="flex items-center space-x-1">
+      {pins.map((_, index) => (
         <input
           ref={index === activeIndex ? pinRef : null}
           key={index}
           type="number"
-          className={`w-12 h-12 border-2 rounded bg-transparent outline-none text-center font-semibold text-xl border-gray-400 focus:border-gray-700 focus:text-gray-700 text-gray-400 ${styles.hideIndicator}`}
           onChange={(e) => handleChange(e, index)}
           onKeyDown={(e) => handleKeyDown(e, index)}
           value={pins[index]}
+          className={` ${styles.hideIndicator} aspect-square w-8 border-[1px] rounded bg-transparent outline-none text-center text-xl border-black focus:border-primary focus:text-black text-black`}
         />
       ))}
-    </>
+    </div>
   );
 };
 
