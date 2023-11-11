@@ -19,10 +19,7 @@ const PinInput = ({ pins, setPins, ...props }: PinInputProps) => {
 
   const pinRef = useRef<HTMLInputElement>(null);
 
-  function handleChange(
-    { target }: React.ChangeEvent<HTMLInputElement>,
-    index: number,
-  ) {
+  function handleChange({ target }: React.ChangeEvent<HTMLInputElement>) {
     const { value } = target;
     const newPins: string[] = [...pins];
     newPins[currentActiveIndex] = value.substring(value.length - 1);
@@ -59,10 +56,10 @@ const PinInput = ({ pins, setPins, ...props }: PinInputProps) => {
           ref={index === activeIndex ? pinRef : null}
           key={index}
           type="number"
-          onChange={(e) => handleChange(e, index)}
+          onChange={(e) => handleChange(e)}
           onKeyDown={(e) => handleKeyDown(e, index)}
           value={pins[index]}
-          className={` ${styles.hideIndicator} aspect-square w-8 border-[1px] rounded bg-transparent outline-none text-center text-xl border-black focus:border-primary focus:text-black text-black`}
+          className={` ${styles.hideIndicator} aspect-square w-8 border-[1px] rounded bg-transparent outline-none text-center text-xl border-gray-500 focus:border-black focus:text-black text-gray-500 opacity-60 focus:opacity-100`}
         />
       ))}
     </div>
