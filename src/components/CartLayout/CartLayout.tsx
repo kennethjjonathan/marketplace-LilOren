@@ -12,17 +12,15 @@ const CartLayout = ({ total }: CartLayoutProps) => {
   const [isAllChecked, setIsAllChecked] = useState(false);
   const is_checked_cart = useCart.use.is_checked_carts();
   const cartItems = useCart.use.cartItems();
-  
+
   const checkAllCartItem = () => {
     const updated_is_checked_cart = [...is_checked_cart];
-    updated_is_checked_cart.forEach((cart_by_seller) =>{
+    updated_is_checked_cart.forEach((cart_by_seller) => {});
+  };
 
-    })
-  }
-
-  useEffect(()=>{
-    checkAllCartItem()
-  },[])
+  useEffect(() => {
+    checkAllCartItem();
+  }, []);
   return (
     <section className="w-full fixed bottom-0 left-0 bg-primary-foreground">
       <div className="w-full md:w-[75vw] p-2 pb-3 flex items-center justify-between mx-auto gap-2">

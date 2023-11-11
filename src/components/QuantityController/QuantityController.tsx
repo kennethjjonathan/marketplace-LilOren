@@ -1,4 +1,10 @@
-import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { Minus, Plus } from 'lucide-react';
 import { IProduct } from '@/interface/product';
 import { CartClient } from '@/service/cart/CartClient';
@@ -17,16 +23,16 @@ function QuantityController({
   product,
 }: QuantityControllerProps) {
   const isMounted = useRef(false);
-  const [countMounted, setCountMounted] = useState(0)
-  const [qty, setQty] = useState(inputValue)
+  const [countMounted, setCountMounted] = useState(0);
+  const [qty, setQty] = useState(inputValue);
   const handleAPI = useDebounce(putQuantityToDb, 1000);
   const handleUpdateQuantity = async (type: string) => {
     if (type === 'decrement') {
       setInputValue((prev) => prev - 1);
-      setQty(inputValue)
+      setQty(inputValue);
     } else {
       setInputValue((prev) => prev + 1);
-      setQty(inputValue)
+      setQty(inputValue);
     }
   };
 
@@ -36,16 +42,16 @@ function QuantityController({
     });
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     if (isMounted.current) {
       handleAPI();
     } else {
-      setCountMounted((prev) => prev + 1)
-      if(countMounted >= 1){
+      setCountMounted((prev) => prev + 1);
+      if (countMounted >= 1) {
         isMounted.current = true;
       }
     }
-  },[qty])
+  }, [qty]);
 
   return (
     <div className="p-1 bg-white border-[1px] flex items-center gap-4 w-fit lg:gap-5 rounded-md">
