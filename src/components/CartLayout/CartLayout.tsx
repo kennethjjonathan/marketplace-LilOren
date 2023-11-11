@@ -1,13 +1,28 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { Utils } from '@/utils';
+import { useCart } from '@/store/cart/useCart';
 
 interface CartLayoutProps {
   total: number;
 }
 
 const CartLayout = ({ total }: CartLayoutProps) => {
+  const [isAllChecked, setIsAllChecked] = useState(false);
+  const is_checked_cart = useCart.use.is_checked_carts();
+  const cartItems = useCart.use.cartItems();
+  
+  const checkAllCartItem = () => {
+    const updated_is_checked_cart = [...is_checked_cart];
+    updated_is_checked_cart.forEach((cart_by_seller) =>{
+
+    })
+  }
+
+  useEffect(()=>{
+    checkAllCartItem()
+  },[])
   return (
     <section className="w-full fixed bottom-0 left-0 bg-primary-foreground">
       <div className="w-full md:w-[75vw] p-2 pb-3 flex items-center justify-between mx-auto gap-2">
@@ -18,6 +33,8 @@ const CartLayout = ({ total }: CartLayoutProps) => {
               <Checkbox
                 id="check-all-product"
                 className="sm:h-5 sm:w-5 xl:w-6 xl:h-6"
+                checked={isAllChecked}
+                // checked=
               />
               <label
                 htmlFor="check-all-product"
