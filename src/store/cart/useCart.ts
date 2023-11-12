@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { ICartItem } from '@/pages/user/cart';
+import { ICart, ICartItem } from '@/pages/user/cart';
 import { ICartCheckedRequest } from '@/service/cart/CartService';
 import { createZusSelector } from '../useSelector';
 import { CartClient } from '@/service/cart/CartClient';
@@ -11,7 +11,7 @@ export interface ICheckedCart {
 
 type State = {
   totalCartPrice: number;
-  cartItems: ICartItem[];
+  cartItems: ICart;
   loadingFetchCart: boolean;
   is_checked_carts: ICheckedCart[];
 };
@@ -19,7 +19,7 @@ type State = {
 type Actions = {
   fetchCart: () => void;
   checkCart: (cart_id: number) => void;
-  setCartItems: (cartItems: ICartItem[]) => void;
+  setCartItems: (cartItems: ICart) => void;
   unCheckCart: (cart_id: number) => void;
   incrementTotalCartPrice: (price: number, quantity: number) => void;
   decrementTotalCartPrice: (price: number, quantity: number) => void;
@@ -29,95 +29,85 @@ type Actions = {
 
 const useCartBase = create<State & Actions>((set) => ({
   totalCartPrice: 0,
-  cartItems: [
-    {
-      seller_name: 'Erigo Store',
-      seller_id: 1,
-
-      products: [
-        {
-          cart_id: 1,
-          product_name:
-            'Jacquelle Magic Wash - Makeup Remover Pembersih Wajah - PINK',
-          product_id: 23,
-          base_price: 30000,
-          discount_price: 10000,
-          discount: 40,
-          quantity: 2,
-          remaining_quantity: 10,
-          variant1_name: 'black',
-          variant2_name: '16 GB',
-          image_url:
-            'https://images.tokopedia.net/img/cache/100-square/VqbcmM/2021/7/27/5b3236fd-45aa-42c0-85d7-477dc0abfa8f.png?ect=4g',
-          is_checked: false,
-        },
-        {
-          cart_id: 2,
-          product_name: 'Mandiri e-Money edisi Barbie - Barbie & Friends',
-          product_id: 23,
-          base_price: 40000,
-          discount_price: 35000,
-          discount: 13,
-          quantity: 2,
-          remaining_quantity: 15,
-          variant1_name: '',
-          variant2_name: '',
-          image_url:
-            'https://images.tokopedia.net/img/cache/900/VqbcmM/2023/7/10/d0ac6370-86f1-4cd8-ad80-5754758e3a2b.jpg',
-          is_checked: false,
-        },
-      ],
+  cartItems: {
+    items: [
+      {
+        seller_name: 'Hyouka',
+        seller_id: 1,
+        products: [
+          {
+            cart_id: 1,
+            product_name:
+              'Apple iPhone 15 Garansi Resmi - 128GB 256GB 512GB - Black+Proteksi, 256GB',
+            product_id: 1,
+            image_url:
+              'https://images.tokopedia.net/img/cache/100-square/VqbcmM/2023/10/16/9a895898-56d6-4430-b338-bbd43107f091.png.webp?ect=4g',
+            base_price: 22499000,
+            discount_price: 18576000,
+            discount: 17,
+            quantity: 5,
+            remaining_quantity: 10,
+            variant1_name: 'Black+Proteksi, 256GB',
+            variant2_name: '',
+            is_checked: true,
+          },
+          {
+            cart_id: 2,
+            product_name:
+              'Apple iPhone 15 Garansi Resmi - 128GB 256GB 512GB - Black+Proteksi, 256GB',
+            product_id: 1,
+            image_url:
+              'https://images.tokopedia.net/img/cache/100-square/VqbcmM/2023/10/16/9a895898-56d6-4430-b338-bbd43107f091.png.webp?ect=4g',
+            base_price: 100000,
+            discount_price: 95000,
+            discount: 5,
+            quantity: 5,
+            remaining_quantity: 100,
+            variant1_name: 'Black+Proteksi, 256GB',
+            variant2_name: '',
+            is_checked: false,
+          },
+        ],
+      },
+      {
+        seller_name: 'Health Media',
+        seller_id: 2,
+        products: [
+          {
+            cart_id: 3,
+            product_name: 'Blackmores Bio Zinc 168 tablets',
+            product_id: 1,
+            image_url:
+              'https://images.tokopedia.net/img/cache/900/VqbcmM/2021/3/21/19e19780-4bf2-46b7-bbc7-8ebf4652e0ee.jpg',
+            base_price: 283000,
+            discount_price: 218000,
+            discount: 23,
+            quantity: 5,
+            remaining_quantity: 100,
+            variant1_name: '',
+            variant2_name: '',
+            is_checked: false,
+          },
+        ],
+      },
+    ],
+    prices: {
+      total_base_price: 2500000,
+      total_discount_price: 25000,
+      total_price: 2475000,
     },
-    {
-      seller_name: 'Erigo Store2',
-      seller_id: 2,
-
-      products: [
-        {
-          cart_id: 3,
-          product_name:
-            'Jacquelle Magic Wash - Makeup Remover Pembersih Wajah - PINK',
-          product_id: 23,
-          base_price: 30000,
-          discount_price: 10000,
-          discount: 40,
-          quantity: 2,
-          remaining_quantity: 20,
-          variant1_name: 'black',
-          variant2_name: '16 GB',
-          image_url:
-            'https://images.tokopedia.net/img/cache/100-square/VqbcmM/2021/7/27/5b3236fd-45aa-42c0-85d7-477dc0abfa8f.png?ect=4g',
-          is_checked: false,
-        },
-        {
-          cart_id: 4,
-          product_name: 'Mandiri e-Money edisi Barbie - Barbie & Friends',
-          product_id: 23,
-          base_price: 40000,
-          discount_price: 35000,
-          discount: 13,
-          quantity: 2,
-          remaining_quantity: 30,
-          variant1_name: '',
-          variant2_name: '',
-          image_url:
-            'https://images.tokopedia.net/img/cache/900/VqbcmM/2023/7/10/d0ac6370-86f1-4cd8-ad80-5754758e3a2b.jpg',
-          is_checked: false,
-        },
-      ],
-    },
-  ],
+  },
   loadingFetchCart: false,
   is_checked_carts: [],
   fetchCart: async () => {
     set(() => ({ loadingFetchCart: true }));
-    // const response = await CartClient.getListofCartItem();
+    const response = await CartClient.getListofCartItem();
     // set((state) => ({
     //   cartItems: [...state.cartItems, response.data],
     // }));
     set(() => ({ loadingFetchCart: true }));
   },
-  setCartItems: (cartItems: ICartItem[]) => {
+  setCartItems: (cartItems: ICart) => {
     set((state) => ({
       cartItems: cartItems,
     }));

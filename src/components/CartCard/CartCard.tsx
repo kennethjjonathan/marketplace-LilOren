@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { IProduct } from '@/interface/product';
 import { Checkbox } from '@/components/ui/checkbox';
 import Divider from '@/components/Divider/Divider';
@@ -6,6 +6,7 @@ import CartCardProduct from '@/components/CartCardProduct/CartCardProduct';
 import { useCart } from '@/store/cart/useCart';
 import { CartClient } from '@/service/cart/CartClient';
 import { ICartCheckedRequest } from '@/service/cart/CartService';
+import { ICart } from '@/pages/user/cart';
 
 interface CartCardProps {
   shop: string;
@@ -28,19 +29,22 @@ const CartCard = ({ shop, shop_items, indexData }: CartCardProps) => {
 
   const handleCheckBySeller = (isCheck: boolean) => {
     setIsShopCheck(!isShopCheck);
-    const updatedCartItems = [...cartItems];
+    const updatedCart: ICart = JSON.parse(JSON.stringify(cartItems));
+    const updatedCartItems = updatedCart.items;
     const products = updatedCartItems[indexData].products;
     products.forEach((product, index) => {
       const updatedProduct = product;
       updatedProduct.is_checked = isCheck;
       updatedCartItems[indexData].products[index] = updatedProduct;
     });
-    setCart(updatedCartItems);
+    updatedCart.items = updatedCartItems;
+    setCart(updatedCart);
     handleUpdateIsChecked(isCheck);
   };
 
   const handleUpdateIsChecked = async (isCheck: boolean) => {
-    const updatedCartItems = [...cartItems];
+    const updatedCart: ICart = JSON.parse(JSON.stringify(cartItems));
+    const updatedCartItems = updatedCart.items;
     const products = updatedCartItems[indexData].products;
     const updated_is_checked_carts = [...is_checked_carts];
     updated_is_checked_carts.forEach((cart, index) => {
@@ -58,7 +62,6 @@ const CartCard = ({ shop, shop_items, indexData }: CartCardProps) => {
   };
 
   useEffect(() => {
-    fetchCart();
     checkIsShopCheckOrNot();
   }, [is_checked_carts]);
 
