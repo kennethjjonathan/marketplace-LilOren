@@ -127,7 +127,7 @@ const Navigation = () => {
                     </div>
                   )}
 
-                  <ButtonWithIcon href="/cart" variant={'ghost'}>
+                  <ButtonWithIcon href="/user/cart" variant={'ghost'}>
                     <ShoppingCart />
                   </ButtonWithIcon>
                 </div>

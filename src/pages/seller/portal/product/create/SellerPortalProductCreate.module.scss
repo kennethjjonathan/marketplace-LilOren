@@ -1,0 +1,35 @@
+.sellerPortalProductCreate {
+  min-height: 92vh;
+  height: auto;
+}
+
+.add_product_section {
+  display: block;
+  position: relative;
+  border-radius: 8px;
+  cursor: default;
+
+  @media (min-width: 1024px) {
+    display: block;
+    position: relative;
+    border-radius: 8px;
+    border-color: var(--NN200, #d6dfeb);
+    box-shadow: rgba(141, 150, 170, 0.4) 0px 1px 4px;
+    cursor: default;
+    padding: 11px 32px 0px;
+  }
+}
+
+.section_title {
+  @apply font-bold text-[12px] lg:text-[16px] pb-4;
+}
+
+.product_info {
+  @apply hidden duration-500 before:ease-in-out after:ease-in-out;
+}
+
+.product_icon:hover {
+  .product_info {
+    @apply block z-[10px];
+  }
+}
