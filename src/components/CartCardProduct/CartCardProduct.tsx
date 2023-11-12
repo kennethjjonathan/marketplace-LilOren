@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { IProduct } from '@/interface/product';
 import { Checkbox } from '@/components/ui/checkbox';
-import QuantityController from '@/components/QuantityController/QuantityController';
 import LikeButton from '@/components/LikeButton/LikeButton';
 import TrashButton from '@/components/TrashButton/TrashButton';
-import { Utils } from '@/utils';
+import CartQuantityController from '@/components/CartQuantityController/CartQuantityController';
+import { IProduct } from '@/interface/product';
 import { useCart } from '@/store/cart/useCart';
 import { CartClient } from '@/service/cart/CartClient';
 import { ICartCheckedRequest } from '@/service/cart/CartService';
+import { Utils } from '@/utils';
 
 interface CartCardProductProps {
   product: IProduct;
@@ -110,7 +110,7 @@ const CartCardProduct = ({ product, index }: CartCardProductProps) => {
           <TrashButton product={product} />
         </div>
         <div className="flex items-center gap-5">
-          <QuantityController
+          <CartQuantityController
             inputValue={quantity}
             setInputValue={setQuantity}
             maximum={product.remaining_quantity!}
