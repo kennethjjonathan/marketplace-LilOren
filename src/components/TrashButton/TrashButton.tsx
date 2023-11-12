@@ -20,12 +20,12 @@ const TrashButton = ({ product }: TrashButtonProps) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger>
-        <Trash2 className="aspect-square w-6 duration-300 lg:hover:text-blue-500 focus:outline-none sm:w-8 xl:w-9" />
+        <Trash2 className="aspect-square w-5 duration-300 focus:outline-none text-muted-foreground" />
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle className="lg:text-lg">
-            {`Are you sure you want to delete ${product.name} from cart?`}
+            {`Are you sure you want to delete ${product.product_name} from cart?`}
           </AlertDialogTitle>
         </AlertDialogHeader>
         <AlertDialogDescription>
