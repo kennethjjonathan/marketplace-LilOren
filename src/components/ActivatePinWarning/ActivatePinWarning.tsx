@@ -61,7 +61,6 @@ const ActivatePinWarning = ({ isOpen, setIsOpen }: ActivatePinWarningProps) => {
         { wallet_pin: pins.join() },
         { withCredentials: true },
       );
-      
     } catch (error) {
       console.error(error);
     }
