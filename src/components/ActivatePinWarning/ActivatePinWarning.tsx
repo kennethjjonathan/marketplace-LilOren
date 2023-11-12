@@ -9,14 +9,26 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import PinInput from '@/components/PinInput/PinInput';
 
-import styles from './ActivatePinWarning.module.css';
 import AsyncButton from '../AsyncButton/AsyncButton';
 import { Button } from '../ui/button';
 import axiosInstance from '@/lib/axiosInstance';
 import CONSTANTS from '@/constants/constants';
+import { Utils } from '@/utils';
+import styles from './ActivatePinWarning.module.css';
+import { useRouter } from 'next/router';
 
 interface ActivatePinWarningProps {
   isOpen: boolean;
@@ -24,6 +36,7 @@ interface ActivatePinWarningProps {
 }
 
 const ActivatePinWarning = ({ isOpen, setIsOpen }: ActivatePinWarningProps) => {
+  const router = useRouter();
   const [pins, setPins] = useState<string[]>(new Array(6).fill(''));
   const [isPINValid, setIsPINValid] = useState<boolean>(true);
   const [isConfirmOpen, setIsConfirmOpen] = useState<boolean>(false);
@@ -43,26 +56,66 @@ const ActivatePinWarning = ({ isOpen, setIsOpen }: ActivatePinWarningProps) => {
     }
   }
 
+  function handleCancel() {
+    setPins(new Array(6).fill(''));
+    setConfirmPins(new Array(6).fill(''));
+    setIsPINValid(true);
+    setIsConfirmValid(true);
+    setIsOpen(false);
+    setIsConfirmOpen(false);
+  }
+
   function handleGoBack() {
     setIsConfirmOpen(false);
     setIsOpen(true);
   }
 
+  function checkIfConfirmTheSame(): boolean {
+    let counter: number = 0;
+    for (let i = 0; i < pins.length; i++) {
+      if (pins[i] === confirmPins[i]) counter++;
+    }
+    return counter === pins.length;
+  }
+
   async function handleConfirmPIN() {
-    if (pins !== confirmPins) {
+    if (!checkIfConfirmTheSame()) {
       setIsConfirmValid(false);
       return;
     }
-
     setIsConfirmValid(true);
+    setIsConfirmLoading(true);
     try {
       const response = await axiosInstance.post(
-        `${CONSTANTS.BASEURL}`,
-        { wallet_pin: pins.join() },
+        `${CONSTANTS.BASEURL}/wallets/activate-personal`,
+        { wallet_pin: pins.join('') },
         { withCredentials: true },
       );
-    } catch (error) {
-      console.error(error);
+      Utils.notify('Successfully activate PIN', 'success', 'colored');
+      setIsConfirmOpen(false);
+    } catch (error: any) {
+      console.log(error);
+      if (error.data && error.data.message === CONSTANTS.ALREADY_LOGGED_OUT) {
+        Utils.notify(
+          'Your token has expired, please sign in again',
+          'default',
+          'colored',
+        );
+        router.push('/signin');
+        return;
+      }
+      if (error.response && error.response.status === 401) {
+        Utils.notify(
+          'Your token has expired, please sign in again',
+          'default',
+          'colored',
+        );
+        router.push('/signin');
+        return;
+      }
+      Utils.notify(error.message, 'error', 'colored');
+    } finally {
+      setIsConfirmLoading(false);
     }
   }
 
@@ -107,19 +160,31 @@ const ActivatePinWarning = ({ isOpen, setIsOpen }: ActivatePinWarningProps) => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <Dialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
-        <DialogContent>
-          <div className="w-full flex flex-col items-center justify-center gap-2">
-            <div className="w-full">
+      <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <div className="w-full flex items-center justify-between">
               <Button
                 variant={'outline'}
                 size={'customBlank'}
                 className="text-sm p-1"
                 onClick={handleGoBack}
+                disabled={isConfirmLoading}
               >
                 <ChevronLeft className="w-5 h-5" /> Back
               </Button>
+              <Button
+                variant={'outline'}
+                size={'customBlank'}
+                className="text-sm p-1"
+                onClick={handleCancel}
+                disabled={isConfirmLoading}
+              >
+                Cancel
+              </Button>
             </div>
+          </AlertDialogHeader>
+          <div className="w-full flex flex-col items-center justify-center gap-2">
             {!isConfirmValid ? (
               <p
                 className={`w-full text-center font-semibold text-destructive text-sm ${styles.wiggleOnce}`}
@@ -135,21 +200,21 @@ const ActivatePinWarning = ({ isOpen, setIsOpen }: ActivatePinWarningProps) => {
               pins={confirmPins}
               setPins={setConfirmPins}
               onEnter={handleConfirmPIN}
+              isLoading={isConfirmLoading}
             />
           </div>
-          <DialogFooter>
+          <AlertDialogFooter>
             <AsyncButton
-              onClick={handleActivatePIN}
+              onClick={handleConfirmPIN}
               variant={'outline'}
               isLoading={isConfirmLoading}
             >
               Confirm Pin
             </AsyncButton>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };
-
 export default ActivatePinWarning;

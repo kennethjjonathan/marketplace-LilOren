@@ -11,11 +11,18 @@ import styles from './PinInput.module.css';
 interface PinInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   pins: string[];
   setPins: Dispatch<SetStateAction<string[]>>;
+  isLoading?: boolean;
   onEnter: () => void;
 }
 
 let currentActiveIndex: number = 0;
-const PinInput = ({ pins, setPins, onEnter, ...props }: PinInputProps) => {
+const PinInput = ({
+  pins,
+  setPins,
+  isLoading = false,
+  onEnter,
+  ...props
+}: PinInputProps) => {
   const [activeIndex, setActiveIndex] = useState<number>(0);
 
   const pinRef = useRef<HTMLInputElement>(null);
@@ -64,6 +71,7 @@ const PinInput = ({ pins, setPins, onEnter, ...props }: PinInputProps) => {
           onChange={(e) => handleChange(e)}
           onKeyDown={(e) => handleKeyDown(e, index)}
           value={pins[index]}
+          disabled={isLoading}
           className={` ${styles.hideIndicator} aspect-square w-8 border-[1px] rounded bg-transparent outline-none text-center text-xl border-gray-500 focus:border-black focus:text-black text-gray-500 opacity-60 focus:opacity-100`}
         />
       ))}

@@ -100,50 +100,50 @@ WalletPage.getLayout = function getLayout(page: ReactElement) {
 
 export default WalletPage;
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  let cookieList = null;
-  let user = null;
-  if (context.req.headers.cookie) {
-    cookieList = cookie.parse(context.req.headers.cookie);
-  }
-  if (cookieList) {
-    try {
-      let response = await fetch(`${CONSTANTS.BASEURL}/auth/user`, {
-        headers: { Cookie: cookieList.toString() },
-      });
-      if (response.status === 401) {
-        try {
-          const refreshResponse = await fetch(
-            `${CONSTANTS.BASEURL}/auth/refresh-token`,
-            { method: 'POST', body: null, credentials: 'include' },
-          );
-          const refreshData = await refreshResponse.json();
-          if (refreshData.message === CONSTANTS.ALREADY_LOGGED_OUT) {
-            return {
-              redirect: {
-                permanent: false,
-                destination: '/signin',
-              },
-            };
-          }
-          response = await fetch(`${CONSTANTS.BASEURL}/auth/user`, {
-            headers: { Cookie: cookieList.toString() },
-          });
-          user = await response.json();
-        } catch (error) {
-          throw error;
-        }
-      } else {
-        user = await response.json();
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
+// export const getServerSideProps: GetServerSideProps = async (context) => {
+//   let cookieList = null;
+//   let user = null;
+//   if (context.req.headers.cookie) {
+//     cookieList = cookie.parse(context.req.headers.cookie);
+//   }
+//   if (cookieList) {
+//     try {
+//       let response = await fetch(`${CONSTANTS.BASEURL}/auth/user`, {
+//         headers: { Cookie: cookieList.toString() },
+//       });
+//       if (response.status === 401) {
+//         try {
+//           const refreshResponse = await fetch(
+//             `${CONSTANTS.BASEURL}/auth/refresh-token`,
+//             { method: 'POST', body: null, credentials: 'include' },
+//           );
+//           const refreshData = await refreshResponse.json();
+//           if (refreshData.message === CONSTANTS.ALREADY_LOGGED_OUT) {
+//             return {
+//               redirect: {
+//                 permanent: false,
+//                 destination: '/signin',
+//               },
+//             };
+//           }
+//           response = await fetch(`${CONSTANTS.BASEURL}/auth/user`, {
+//             headers: { Cookie: cookieList.toString() },
+//           });
+//           user = await response.json();
+//         } catch (error) {
+//           throw error;
+//         }
+//       } else {
+//         user = await response.json();
+//       }
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   }
 
-  return {
-    props: {
-      user: user || null,
-    },
-  };
-};
+//   return {
+//     props: {
+//       user: user || null,
+//     },
+//   };
+// };

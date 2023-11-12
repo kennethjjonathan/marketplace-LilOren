@@ -1,0 +1,17 @@
+.shopname {
+  position: relative;
+  font-weight: 800;
+  font-size: 18px;
+  line-height: 26px;
+  letter-spacing: -0.1px;
+  text-decoration: initial;
+  margin: 26px 0px 30px;
+  display: flex;
+  align-items: center;
+  @apply px-[24px];
+}
+@media (min-width: 768px) {
+  .shopname {
+    font-size: 22px;
+  }
+}/*# sourceMappingURL=SellerLayout.module.css.map */
