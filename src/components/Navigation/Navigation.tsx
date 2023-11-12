@@ -14,40 +14,38 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
-import { Search, ShoppingCart, User2 } from 'lucide-react';
+import { Search, ShoppingCart, Store, User2 } from 'lucide-react';
 import ButtonWithIcon from '../ButtonWithIcon/ButtonWithIcon';
 import styles from './Navigation.module.scss';
 import EmptyCart from '../EmptyCart/EmptyCart';
-import { className } from '../../../node_modules/@sinonjs/commons/types/index.d';
 
 const components: {
   title: string;
   href: string;
-  description: string;
+  description?: string;
 }[] = [
   {
-    title: 'Alert Dialog',
-    href: '/docs/primitives/alert-dialog',
-    description: 'A modal dialog that ',
+    title: 'My Profile',
+    href: '/user',
   },
   {
-    title: 'Hover Card',
+    title: 'My Order',
+    href: '/',
+  },
+  {
+    title: 'Whislist',
     href: '/docs/primitives/hover-card',
-    description: 'For sighted users to preview ',
-  },
-  {
-    title: 'Progress',
-    href: '/docs/primitives/progress',
-    description: 'Displays an indicator',
   },
 ];
 
 const user: {
   firstName: string;
   lastName: string;
+  isSeller: boolean;
 } = {
   firstName: 'Endriyani',
   lastName: 'Rahayu',
+  isSeller: false,
 };
 
 const products: {
@@ -176,6 +174,63 @@ const Navigation = () => {
                 )}
               </NavigationMenuContent>
             </NavigationMenuItem>
+            {/* My Shop */}
+            {user.isSeller ? (
+              <NavigationMenuItem>
+                <NavigationMenuTrigger>
+                  <div className="flex md:flex-row md:gap-3 items-center">
+                    <ButtonWithIcon href="/user" variant={'ghost'}>
+                      <Store />
+                      <p className="hidden md:hidden lg:block font-light pl-3">
+                        {'My Shop'}
+                      </p>
+                    </ButtonWithIcon>
+                  </div>
+                </NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <div
+                    className={`flex flex-col lg:w-[400px] justify-start items-start p-3 gap-3`}
+                  >
+                    <p className={'text-muted-foreground'}>
+                      {
+                        "Monitor incoming orders and check your shop's progress regularly in one place."
+                      }
+                    </p>
+                    <ButtonWithIcon variant={'default'} href={'/seller'}>
+                      {'Check my shop'}
+                    </ButtonWithIcon>
+                  </div>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            ) : (
+              <NavigationMenuItem>
+                <NavigationMenuTrigger>
+                  <div className="flex md:flex-row md:gap-3 items-center">
+                    <ButtonWithIcon href="/user" variant={'ghost'}>
+                      <Store />
+                      <p className="hidden md:hidden lg:block font-light pl-3">
+                        {'Shop'}
+                      </p>
+                    </ButtonWithIcon>
+                  </div>
+                </NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <div
+                    className={`flex flex-col lg:w-[300px] justify-center items-center p-3 gap-3`}
+                  >
+                    <p className={'text-muted-foreground'}>
+                      {"You don't have a shop yet."}
+                    </p>
+                    <ButtonWithIcon
+                      variant={'default'}
+                      href={'/seller/onboarding'}
+                    >
+                      {'Open a free shop'}
+                    </ButtonWithIcon>
+                  </div>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            )}
             {/* My Account */}
             <NavigationMenuItem>
               {/* check if user is logged in or not */}

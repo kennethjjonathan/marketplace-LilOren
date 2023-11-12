@@ -23,6 +23,7 @@ import { Utils } from '@/utils';
 import { ToastContainer, ToastContent } from 'react-toastify';
 import AsyncButton from '@/components/AsyncButton/AsyncButton';
 import DotsLoading from '@/components/DotsLoading/DotsLoading';
+import SellerOnboardingLayout from '@/components/SellerOnboardingLayout/SellerOnboardingLayout';
 
 export interface IShopInfoFormData {
   shop_name: string;
@@ -84,7 +85,7 @@ const SellerOnboardingForm = () => {
   const fetchUserDetails = () => {
     setTimeout(() => {
       setLoadingFetchUserDetails(false);
-    }, 2000);
+    }, 500);
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>, key: string) => {
@@ -137,12 +138,15 @@ const SellerOnboardingForm = () => {
   }, []);
 
   return (
-    <div className="h-[90vh]">
+    <div className="h-[90vh] lg:flex lg:justify-center lg:w-full lg:bg-primary-foreground">
       <ToastContainer />
       {loadingFetchUserDetails ? (
         <DotsLoading />
       ) : (
-        <form className="bg-white pb-[100px]" onSubmit={handleSubmit}>
+        <form
+          className="bg-white pb-[100px] lg:pb-2 lg:w-[30vw] flex flex-col justify-center border-[1px] rounded-xl lg:h-fit lg:mt-[100px]"
+          onSubmit={handleSubmit}
+        >
           <div className="mb-6 mt-6 px-[14px] flex flex-col gap-4">
             <InputWithLabel
               type="text"
@@ -187,18 +191,36 @@ const SellerOnboardingForm = () => {
               </AsyncButton>
             </div>
           ) : (
-            <div className={styles.button_wrapper}>
-              <Button
-                disabled={
-                  !Object.values(shopInfoFormData).every((val) => val !== '')
+            <>
+              <div
+                className={
+                  'hidden w-full lg:flex justify-end items-center pr-3'
                 }
-                className="w-full"
-                type="submit"
-                variant={'default'}
               >
-                {'Register Shop'}
-              </Button>
-            </div>
+                <Button
+                  disabled={
+                    !Object.values(shopInfoFormData).every((val) => val !== '')
+                  }
+                  className="w-[150px]"
+                  type="submit"
+                  variant={'default'}
+                >
+                  {'Register Shop'}
+                </Button>
+              </div>
+              <div className={styles.button_wrapper}>
+                <Button
+                  disabled={
+                    !Object.values(shopInfoFormData).every((val) => val !== '')
+                  }
+                  className="w-full"
+                  type="submit"
+                  variant={'default'}
+                >
+                  {'Register Shop'}
+                </Button>
+              </div>
+            </>
           )}
           <Modal
             title={'Edit Address'}
@@ -291,9 +313,9 @@ const SellerOnboardingFormHeading = () => {
 
 SellerOnboardingForm.getLayout = function getLayout(page: ReactElement) {
   return (
-    <UserSettingsLayout component={<SellerOnboardingFormHeading />}>
+    <SellerOnboardingLayout component={<SellerOnboardingFormHeading />}>
       {page}
-    </UserSettingsLayout>
+    </SellerOnboardingLayout>
   );
 };
 
