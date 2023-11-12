@@ -2,6 +2,10 @@
   animation: wiggle-animation 3.5s ease infinite;
 }
 
+.wiggleOnce {
+  animation: wiggle-animation 3.5s ease infinite;
+}
+
 @keyframes wiggle-animation {
   0% {
     transform: translate(0, 0);

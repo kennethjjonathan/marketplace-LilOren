@@ -11,10 +11,11 @@ import styles from './PinInput.module.css';
 interface PinInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   pins: string[];
   setPins: Dispatch<SetStateAction<string[]>>;
+  onEnter: () => void;
 }
 
 let currentActiveIndex: number = 0;
-const PinInput = ({ pins, setPins, ...props }: PinInputProps) => {
+const PinInput = ({ pins, setPins, onEnter, ...props }: PinInputProps) => {
   const [activeIndex, setActiveIndex] = useState<number>(0);
 
   const pinRef = useRef<HTMLInputElement>(null);
@@ -43,6 +44,10 @@ const PinInput = ({ pins, setPins, ...props }: PinInputProps) => {
     if (e.key === 'Backspace' && !pins[index]) {
       e.preventDefault();
       setActiveIndex(currentActiveIndex - 1);
+    }
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      onEnter();
     }
   }
 
