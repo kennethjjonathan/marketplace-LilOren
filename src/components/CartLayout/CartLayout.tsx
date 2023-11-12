@@ -5,6 +5,7 @@ import { Utils } from '@/utils';
 import { useCart } from '@/store/cart/useCart';
 import { CartClient } from '@/service/cart/CartClient';
 import { ICartCheckedRequest } from '@/service/cart/CartService';
+import { ICart } from '@/pages/user/cart';
 
 interface CartLayoutProps {
   total: number;
@@ -27,7 +28,8 @@ const CartLayout = ({ total }: CartLayoutProps) => {
   const handleCheckUnCheckAll = async (isCheck: boolean) => {
     const updated_is_checked_cart = [...is_checked_carts];
     updated_is_checked_cart.forEach((cart) => (cart.is_checked = isCheck));
-    const updatedCartItems = [...cartItems];
+    const updatedCart: ICart = JSON.parse(JSON.stringify(cartItems));
+    const updatedCartItems = updatedCart.items;
     updatedCartItems.forEach((cartItem) => {
       cartItem.products.forEach((product) => (product.is_checked = isCheck));
     });
@@ -38,8 +40,9 @@ const CartLayout = ({ total }: CartLayoutProps) => {
 
     await CartClient.updateIsChecked(req);
     setIsAllChecked(isCheck);
+    updatedCart.items = updatedCartItems;
     setTimeout(() => {
-      setCartItems(updatedCartItems);
+      setCartItems(updatedCart);
       setCheckedCart(updated_is_checked_cart);
     }, 200);
   };

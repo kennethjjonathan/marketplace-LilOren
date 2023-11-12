@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import { NextPageWithLayout } from '../../_app';
 import Layout from '@/components/Layout/Layout';
 import CartLayout from '@/components/CartLayout/CartLayout';
@@ -12,31 +12,28 @@ export interface ICartItem {
   products: IProduct[];
 }
 
+export interface ICartPrice {
+  total_base_price: number;
+  total_discount_price: number;
+  total_price: number;
+}
+
+export interface ICart {
+  items: ICartItem[];
+  prices: ICartPrice;
+}
+
 const CartPage: NextPageWithLayout = () => {
+  const isMounted = useRef(false);
+  const [countMounted, setCountMounted] = useState(0);
   const [total, setTotal] = useState(0);
   const fetchCart = useCart.use.fetchCart();
   const cartItems = useCart.use.cartItems();
   const setCheckedCart = useCart.use.setCheckedCart();
-  const loadingFetchCart = useCart.use.loadingFetchCart();
-
-  const handleSetFirstTotal = (cartItems: ICartItem[]) => {
-    let total = 0;
-    for (let i = 0; i < cartItems.length; i++) {
-      const products_per_seller = cartItems[i].products;
-      products_per_seller.forEach((product) => {
-        const total_price_per_product =
-          product.discount_price !== 0
-            ? product.discount_price
-            : product.base_price;
-        total += total_price_per_product * product.quantity!;
-      });
-    }
-    setTotal(total);
-  };
 
   const handleSetCheckedFirstCart = () => {
     let is_checked_cart: ICheckedCart[] = [];
-    cartItems.forEach((cart_per_seller) => {
+    cartItems.items.forEach((cart_per_seller) => {
       cart_per_seller.products.forEach((cart) => {
         const obj: ICheckedCart = {
           cart_id: cart.cart_id!,
@@ -49,15 +46,22 @@ const CartPage: NextPageWithLayout = () => {
   };
 
   useEffect(() => {
-    handleSetFirstTotal(cartItems);
-    fetchCart();
-    handleSetCheckedFirstCart();
-  }, []);
+    if (isMounted.current) {
+      fetchCart();
+      handleSetCheckedFirstCart();
+      setTotal(cartItems.prices.total_price);
+    } else {
+      setCountMounted((prev) => prev + 1);
+      if (countMounted >= 0) {
+        isMounted.current = true;
+      }
+    }
+  }, [cartItems]);
   return (
     <>
       <section className="flex flex-col justify-center items-center w-full bg-white pb-8">
         <div className="w-full md:w-[75vw] lg:px-2 lg:pt-5 lg:pb-16 flex flex-col">
-          {cartItems.map((item, index) => (
+          {cartItems.items.map((item, index) => (
             <CartCard
               key={`key:${item.seller_name}`}
               shop={item.seller_name!}

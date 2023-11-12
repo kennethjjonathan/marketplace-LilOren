@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { Checkbox } from '@/components/ui/checkbox';
 import LikeButton from '@/components/LikeButton/LikeButton';
@@ -9,6 +9,7 @@ import { useCart } from '@/store/cart/useCart';
 import { CartClient } from '@/service/cart/CartClient';
 import { ICartCheckedRequest } from '@/service/cart/CartService';
 import { Utils } from '@/utils';
+import { ICart } from '@/pages/user/cart';
 
 interface CartCardProductProps {
   product: IProduct;
@@ -25,7 +26,8 @@ const CartCardProduct = ({ product, index }: CartCardProductProps) => {
   const setIsCheckedCarts = useCart.use.setCheckedCart();
 
   const handleCheckUncheck = (cart_id: number) => {
-    const updatedCartItems = [...cartItems];
+    const updatedCart: ICart = JSON.parse(JSON.stringify(cartItems));
+    const updatedCartItems = updatedCart.items;
     const updatedCartProduct = updatedCartItems[index];
     const idx = updatedCartProduct.products.findIndex(
       (product) => product.cart_id === cart_id,
@@ -39,8 +41,9 @@ const CartCardProduct = ({ product, index }: CartCardProductProps) => {
     const updated_is_checked_carts = [...is_checked_carts];
     updated_is_checked_carts[idx_checked_cart].is_checked =
       !updated_is_checked_carts[idx_checked_cart].is_checked;
+    updatedCart.items = updatedCartItems;
     setIsCheckedCarts(updated_is_checked_carts);
-    setCart(updatedCartItems);
+    setCart(updatedCart);
     updateIsCheckedOfItems();
   };
 
@@ -51,9 +54,6 @@ const CartCardProduct = ({ product, index }: CartCardProductProps) => {
     await CartClient.updateIsChecked(req);
   };
 
-  useEffect(() => {
-    fetchCart();
-  }, [is_checked_carts]);
   return (
     <div className="w-full flex flex-col gap-1 border-t-[1px] py-5">
       <div className="flex items-start gap-2 w-full">
@@ -83,7 +83,7 @@ const CartCardProduct = ({ product, index }: CartCardProductProps) => {
           {product.variant1_name && (
             <p className="text-gray-500 leading-none font-light text-xs sm:text-base">
               {`${product.variant1_name} ${
-                product.variant2_name && '|' + product.variant2_name
+                product.variant2_name && '| ' + product.variant2_name
               } `}
             </p>
           )}
