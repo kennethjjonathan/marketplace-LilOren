@@ -5,11 +5,10 @@ import { IAddress } from '@/interface/checkoutPage';
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from '@/components/ui/sheet';
+import Divider from '../Divider/Divider';
 
 interface CheckoutAddressOptionProps {
   chosenAddress: IAddress | undefined;
@@ -37,7 +36,9 @@ const CheckoutAddressOption = ({
       <div className="w-full border-[1px] border-gray-100 px-2">
         <div className="flex items-center gap-2 py-2 border-b-[1px] border-gray-200 w-full">
           <MapPin className="text-primary w-6 h-6 sm:w-7 sm:h-7" />
-          <p className="font-semibold text-sm md:text-base">Shipping Address</p>
+          <p className="font-semibold text-sm md:text-base line-clamp-1 overflow-hidden whitespace-nowrap text-elipsis">
+            Shipping Address
+          </p>
         </div>
         <div
           className="w-full p-2 flex justify-between items-center cursor-pointer"
@@ -64,11 +65,10 @@ const CheckoutAddressOption = ({
               </p>
             </div>
           </div>
-          <button onClick={() => setIsOptionOpen(true)}>
-            <ChevronRight className="h-6 w-6 sm:w-9 sm:h-9 text-gray-500 duration-300 lg:hover:text-primary" />
-          </button>
+          <ChevronRight className="h-6 w-6 sm:w-9 sm:h-9 text-gray-500 duration-300 lg:hover:text-primary" />
         </div>
       </div>
+      <Divider />
       <Sheet open={isOptionOpen} onOpenChange={setIsOptionOpen}>
         <SheetContent
           side={'bottom'}
