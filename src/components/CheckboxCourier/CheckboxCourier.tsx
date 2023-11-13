@@ -23,18 +23,24 @@ const items = [
     image: 'https://images.tokopedia.net/img/kurir-jne.png',
     label: 'JNE',
     category: 'Regular',
+    description:
+      'JNE Reguler adalah paket reguler yang ditawarkan JNE. Kecepatan pengiriman tergantung dari lokasi pengiriman dan lokasi tujuan. Untuk kota yang sama, umumnya memakan waktu 2-3 hari.',
   },
   {
     id: '2',
     image: 'https://images.tokopedia.net/img/kurir-tiki.png',
     label: 'TIKI',
     category: 'Regular',
+    description:
+      'TIKI Paket Reguler adalah paket yang dapat menjangkau seluruh Indonesia hanya dalam waktu kurang dari 7 hari kerja.',
   },
   {
     id: '3',
     image: 'https://images.tokopedia.net/img/kurir-pos-aja.png',
     label: 'POS',
     category: 'Regular',
+    description:
+      'Gunakan Pos Reguler, sebagai pilihan tepat untuk pengiriman Suratpos yang mengandalkan kecepatan kiriman dan menjangkau ke seluruh pelosok Indonesia.',
   },
 ] as const;
 
@@ -99,20 +105,28 @@ const CheckboxCourier = () => {
                             }}
                           />
                         </FormControl>
-                        <FormLabel className="font-bold flex flex-row items-center justify-center gap-4">
-                          <Image
-                            src={item.image}
-                            width={500}
-                            height={500}
-                            alt={'courier'}
-                            className="w-[50px]"
-                          />
-                          <div className="flex flex-col">
-                            <p>{item.label}</p>
-                            <p className="font-normal text-[12px] text-muted-foreground">
-                              {item.category}
-                            </p>
+                        <FormLabel className="font-bold flex flex-col gap-5 w-full">
+                          <div className="flex flex-row items-center justify-start gap-4">
+                            <Image
+                              src={item.image}
+                              width={500}
+                              height={500}
+                              alt={'courier'}
+                              className="w-[50px]"
+                            />
+                            <div className="flex flex-col">
+                              <p>{item.label}</p>
+                              <p className="font-normal text-[12px] text-muted-foreground">
+                                {item.category}
+                              </p>
+                            </div>
                           </div>
+                          <>
+                            <div className="border-t-[0.5px]"></div>
+                            <p className="font-light text-muted-foreground text-[12px] sm:text-[14px] leading-normal">
+                              {item.description}
+                            </p>
+                          </>
                         </FormLabel>
                       </FormItem>
                     );
