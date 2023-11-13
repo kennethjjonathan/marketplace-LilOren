@@ -22,4 +22,11 @@ export class CartClient {
     );
     return response;
   };
+
+  static deleteCart = async (cart_id: number) => {
+    const response = await CartService.delete(
+      `${CONSTANTS.BASEURL}/carts/${cart_id}`,
+    );
+    return response;
+  };
 }
