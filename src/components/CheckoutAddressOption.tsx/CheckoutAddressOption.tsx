@@ -34,9 +34,8 @@ const CheckoutAddressOption = ({
   return (
     <>
       <div className="w-full border-[1px] border-gray-100 px-2">
-        <div className="flex items-center gap-2 py-2 border-b-[1px] border-gray-200 w-full">
-          <MapPin className="text-primary w-6 h-6 sm:w-7 sm:h-7" />
-          <p className="font-semibold text-sm md:text-base line-clamp-1 overflow-hidden whitespace-nowrap text-elipsis">
+        <div className="py-2 border-b-[1px] border-gray-200 w-full">
+          <p className="font-semibold text-sm md:text-base truncate">
             Shipping Address
           </p>
         </div>

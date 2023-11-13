@@ -8,8 +8,25 @@ import CheckoutLayout from '@/components/CheckoutLayout/CheckoutLayout';
 import { IAddress } from '@/interface/checkoutPage';
 import axiosInstance from '@/lib/axiosInstance';
 import CONSTANTS from '@/constants/constants';
+import { ICheckout } from '@/interface/checkoutPage';
 
-// const dummyData:
+const dummyData: ICheckout[] = [
+  {
+    shop_id: 0,
+    shop_name: 'Zataru',
+    shop_city: 'Kab. Tangerang',
+    items: [
+      {
+        name: 'Fragrance 1',
+        image_url:
+          'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//92/MTA-5070654/dc_dc_trase_tx_m_shoe_adys300126-bgm_black-gum_full02_g0b376j9.jpg',
+        quantity: 1,
+        total_weight: 500,
+        price: 150000,
+      },
+    ],
+  },
+];
 
 const CheckoutPage: NextPageWithLayout = () => {
   const [allAddress, setAllAddress] = useState<IAddress[] | undefined>();
@@ -34,21 +51,28 @@ const CheckoutPage: NextPageWithLayout = () => {
     getAddress();
   }, []);
   return (
-    <>
-      <section className="flex flex-col justify-center items-center w-full bg-white pb-8 roboto-text">
-        <div className="w-full md:w-[75vw] lg:px-2 lg:pt-5 lg:pb-16 flex flex-col">
-          <CheckoutAddressOption
-            chosenAddress={chosenAddress}
-            setChosenAddress={setChosenAddress}
-            allAddress={allAddress}
-          />
-          <div className="w-full">{}</div>
-          {/* <OrderCard items={dummyArray} /> */}
+    <section className="flex flex-col justify-center items-center w-full bg-white pb-5">
+      <div className="w-full md:w-[75vw] lg:px-2 lg:pt-5 flex flex-col">
+        <CheckoutAddressOption
+          chosenAddress={chosenAddress}
+          setChosenAddress={setChosenAddress}
+          allAddress={allAddress}
+        />
+        <div className="w-full">
+          {dummyData.map((checkout, index) => (
+            <OrderCard
+              key={index}
+              checkout={checkout}
+              index={index}
+              isMultiple={true}
+            />
+          ))}
+        </div>
+        <div className="w-full flex justify-end">
           <CheckoutPaymentOption />
         </div>
-      </section>
-      <CheckoutLayout amount={150000} />
-    </>
+      </div>
+    </section>
   );
 };
 

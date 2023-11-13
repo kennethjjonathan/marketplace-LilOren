@@ -25,7 +25,7 @@ const OrderCard = ({ checkout, index, isMultiple }: OrderCardProps) => {
       <div className="w-full border-[1px] border-gray-100 px-2 pt-2 pb-5">
         <div className="pb-2 border-b-[1px] border-gray-200 w-full">
           {isMultiple && (
-            <p className="font-semibold text-xs md:text-sm w-full text-center">{`Order ${
+            <p className="text-xs md:text-sm w-full text-left">{`Order ${
               index + 1
             }`}</p>
           )}
@@ -43,21 +43,23 @@ const OrderCard = ({ checkout, index, isMultiple }: OrderCardProps) => {
         </div>
         <div className="w-full">
           <Select>
-            <SelectTrigger>
+            <SelectTrigger className="max-w-sm">
               <SelectValue
-                placeholder={
-                  <div className="flex items-center gap-2 w-full">
-                    <p className="text-sm sm:text-lg">Shipping option</p>
-                    <Truck className="text-primary w-5 h-5 sm:w-6 sm:h-6" />
-                  </div>
-                }
+                className="text-sm sm:text-base md:text-lg"
+                placeholder={'Shipping option'}
               />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="jne" className="sm:text-lg">
+            <SelectContent className="max-w-sm">
+              <SelectItem
+                value="jne"
+                className="text-sm sm:text-base md:text-lg"
+              >
                 JNE
               </SelectItem>
-              <SelectItem value="ninja" className="sm:text-lg">
+              <SelectItem
+                value="ninja"
+                className="text-sm sm:text-base md:text-lg"
+              >
                 Ninja
               </SelectItem>
             </SelectContent>
