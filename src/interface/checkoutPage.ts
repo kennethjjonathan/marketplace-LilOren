@@ -5,6 +5,11 @@ export interface IAddress {
   postal_code: number;
 }
 
+export interface ICouriers {
+  label: string;
+  value: number;
+}
+
 export interface ICheckoutItem {
   name: string;
   image_url: string;
@@ -18,6 +23,7 @@ export interface ICheckout {
   shop_name: string;
   shop_city: string;
   items: ICheckoutItem[];
+  couriers: ICouriers[];
 }
 
 export interface IOrderSummary {
@@ -35,4 +41,14 @@ export interface ICheckoutSummary {
   total_delivery_cost: number;
   service_price: number;
   summary_price: number;
+}
+
+export interface IRequestOrderSummary {
+  shop_id: number;
+  shop_courier_id: number | undefined;
+}
+
+export interface IRequestSummary {
+  order_deliveries: IRequestOrderSummary[];
+  buyer_address_id: number;
 }

@@ -39,7 +39,7 @@ const CheckoutPaymentOption = () => {
           dummySummary.service_price,
         )}`}</p>
       </div>
-      <div className="flex items-center justify-between py-2 text-lg sm:text-xl lg:text-2xl max-w-2xl">
+      <div className="flex items-center justify-between py-2 text-lg sm:text-xl lg:text-2xl">
         <p className="font-bold">{`Shopping Total:`}</p>
         <p className="font-bold">
           {Utils.convertPrice(dummySummary.total_shop_price)}

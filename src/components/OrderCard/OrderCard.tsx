@@ -14,9 +14,15 @@ interface OrderCardProps {
   checkout: ICheckout;
   index: number;
   isMultiple: boolean;
+  handleCouriersChange: (shop_id: number, shop_courier_id: number) => void;
 }
 
-const OrderCard = ({ checkout, index, isMultiple }: OrderCardProps) => {
+const OrderCard = ({
+  checkout,
+  index,
+  isMultiple,
+  handleCouriersChange,
+}: OrderCardProps) => {
   return (
     <>
       <div className="w-full border-[1px] border-gray-100 px-2 pt-2 pb-5">
@@ -33,29 +39,30 @@ const OrderCard = ({ checkout, index, isMultiple }: OrderCardProps) => {
             {checkout.shop_city}
           </p>
         </div>
-        <div className="w-full flex flex-col gap-1">
+        <div className="w-full divide-y-2 divide-gray-200">
           {checkout.items.map((item, index) => (
             <CheckoutProductListTab key={index} item={item} />
           ))}
         </div>
         <div className="w-full">
-          <Select>
+          <Select
+            onValueChange={(value) =>
+              handleCouriersChange(checkout.shop_id, parseInt(value))
+            }
+          >
             <SelectTrigger className="max-w-sm text-sm sm:text-base md:text-lg">
               <SelectValue placeholder={'Shipping option'} />
             </SelectTrigger>
             <SelectContent className="max-w-sm">
-              <SelectItem
-                value="jne"
-                className="text-sm sm:text-base md:text-lg"
-              >
-                JNE
-              </SelectItem>
-              <SelectItem
-                value="ninja"
-                className="text-sm sm:text-base md:text-lg"
-              >
-                Ninja
-              </SelectItem>
+              {checkout.couriers.map((courier, index) => (
+                <SelectItem
+                  key={index}
+                  value={courier.value.toString()}
+                  className="text-sm sm:text-base md:text-lg"
+                >
+                  {courier.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
