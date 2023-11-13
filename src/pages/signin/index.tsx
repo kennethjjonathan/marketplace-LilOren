@@ -103,7 +103,13 @@ function SignInPage({ providers }: SignInPageProps) {
       Utils.notify('Your sign in is successful', 'success', 'colored');
       router.push('/');
     } catch (error: any) {
-      handleErrorAuthResponse(error.response.data.message);
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        handleErrorAuthResponse(error.response.data.message);
+      }
       // Utils.notify(error.message, 'error', 'colored');
       console.error(error);
     } finally {
@@ -141,7 +147,7 @@ function SignInPage({ providers }: SignInPageProps) {
           LilOren
         </h1>
         <div className="hidden relative aspect-square w-[470px] xl:block">
-          <Image src={'/Logo_.svg'} alt="Google's logo" fill sizes="40vw" />
+          <Image src={'/Logo_.svg'} alt="LilOren's logo" fill sizes="40vw" />
         </div>
       </div>
       <div className="container pb-16 pt-6 flex flex-col items-center justify-center gap-5 bg-primary-foreground sm:max-w-lg sm:pb-6 sm:rounded-lg xl:my-auto">

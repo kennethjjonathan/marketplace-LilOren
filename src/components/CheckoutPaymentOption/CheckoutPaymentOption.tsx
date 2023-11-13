@@ -20,7 +20,7 @@ const dummySummary: ICheckoutSummary = {
 
 const CheckoutPaymentOption = () => {
   return (
-    <div className="w-full border-[1px] border-gray-100 px-2 pb-2 xl:max-w-4xl">
+    <div className="w-full border-[1px] border-gray-100 px-2 pb-2">
       <div className="py-2 border-b-[1px] border-gray-200 w-full">
         <p className="font-semibold text-sm truncate sm:text-base lg:text-lg">
           Checkout Summary
@@ -39,7 +39,7 @@ const CheckoutPaymentOption = () => {
           dummySummary.service_price,
         )}`}</p>
       </div>
-      <div className="flex items-center justify-between py-2 text-lg sm:text-xl lg:text-2xl">
+      <div className="flex items-center justify-between py-2 text-lg sm:text-xl lg:text-2xl max-w-2xl">
         <p className="font-bold">{`Shopping Total:`}</p>
         <p className="font-bold">
           {Utils.convertPrice(dummySummary.total_shop_price)}

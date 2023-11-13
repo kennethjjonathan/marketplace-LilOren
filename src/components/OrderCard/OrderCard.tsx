@@ -1,11 +1,8 @@
 import React from 'react';
-import { Truck } from 'lucide-react';
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
@@ -43,11 +40,8 @@ const OrderCard = ({ checkout, index, isMultiple }: OrderCardProps) => {
         </div>
         <div className="w-full">
           <Select>
-            <SelectTrigger className="max-w-sm">
-              <SelectValue
-                className="text-sm sm:text-base md:text-lg"
-                placeholder={'Shipping option'}
-              />
+            <SelectTrigger className="max-w-sm text-sm sm:text-base md:text-lg">
+              <SelectValue placeholder={'Shipping option'} />
             </SelectTrigger>
             <SelectContent className="max-w-sm">
               <SelectItem

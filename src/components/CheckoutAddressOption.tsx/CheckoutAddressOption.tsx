@@ -82,7 +82,7 @@ const CheckoutAddressOption = ({
             {allAddress.map((address, index) => (
               <div
                 key={index}
-                className={`w-full border-[1px] p-2 cursor-pointer group duration-300 lg:hover:bg-orange-200 ${
+                className={`w-full border-[1px] p-2 cursor-pointer group duration-300 lg:hover:border-primary ${
                   chosenAddress.id === address.id
                     ? 'border-primary bg-orange-100'
                     : 'border-gray-200'

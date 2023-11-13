@@ -45,10 +45,20 @@ const CheckoutPage: NextPageWithLayout = () => {
     }
   }
 
-  console.log(allAddress);
+  async function getOrderList() {
+    try {
+      const response = await axiosInstance(`${CONSTANTS.BASEURL}/checkouts`, {
+        withCredentials: true,
+      });
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   useEffect(() => {
     getAddress();
+    getOrderList();
   }, []);
   return (
     <section className="flex flex-col justify-center items-center w-full bg-white pb-5">
