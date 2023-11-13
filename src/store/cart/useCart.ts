@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { ICart, ICartItem } from '@/pages/user/cart';
+import { ICart, ICartPrice } from '@/pages/user/cart';
 import { ICartCheckedRequest } from '@/service/cart/CartService';
 import { createZusSelector } from '../useSelector';
 import { CartClient } from '@/service/cart/CartClient';
@@ -14,15 +14,12 @@ type State = {
   cartItems: ICart;
   loadingFetchCart: boolean;
   is_checked_carts: ICheckedCart[];
+  prices: ICartPrice;
 };
 
 type Actions = {
   fetchCart: () => void;
-  checkCart: (cart_id: number) => void;
   setCartItems: (cartItems: ICart) => void;
-  unCheckCart: (cart_id: number) => void;
-  incrementTotalCartPrice: (price: number, quantity: number) => void;
-  decrementTotalCartPrice: (price: number, quantity: number) => void;
   setCheckedCart: (data: ICheckedCart[]) => void;
   putIsCheckedCart: (data: ICartCheckedRequest) => void;
 };
@@ -99,23 +96,28 @@ const useCartBase = create<State & Actions>((set) => ({
   },
   loadingFetchCart: false,
   is_checked_carts: [],
+  prices: {
+    total_base_price: 0,
+    total_discount_price: 0,
+    total_price: 0,
+  },
   fetchCart: async () => {
     set(() => ({ loadingFetchCart: true }));
     const response = await CartClient.getListofCartItem();
+    const data = response.data;
     // set((state) => ({
-    //   cartItems: [...state.cartItems, response.data],
+    //   cartItems: data,
     // }));
-    set(() => ({ loadingFetchCart: true }));
+    // set((state) => ({
+    //   prices: data.prices,
+    // }));
+    set(() => ({ loadingFetchCart: false }));
   },
   setCartItems: (cartItems: ICart) => {
     set((state) => ({
       cartItems: cartItems,
     }));
   },
-  checkCart: (cart_id: number) => {},
-  unCheckCart: (cart_id: number) => {},
-  incrementTotalCartPrice: (price: number, quantity: number) => {},
-  decrementTotalCartPrice: (price, quantity) => {},
   setCheckedCart: (data: ICheckedCart[]) => {
     set((state) => ({
       is_checked_carts: data,
@@ -123,7 +125,9 @@ const useCartBase = create<State & Actions>((set) => ({
   },
   putIsCheckedCart: async (data: ICartCheckedRequest) => {
     const response = await CartClient.updateIsChecked(data);
-    return response;
+    set((state) => ({
+      prices: response.data.data,
+    }));
   },
 }));
 

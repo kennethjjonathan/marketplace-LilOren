@@ -23,17 +23,12 @@ function CartQuantityController({
   maximum,
   product,
 }: CartQuantityControllerProps) {
-  const isMounted = useRef(false);
-  const [countMounted, setCountMounted] = useState(0);
-  const [qty, setQty] = useState(inputValue);
-  const handleAPI = useDebounce(putQuantityToDb, 1000);
+  const handleAPI = useDebounce(putQuantityToDb, 500);
   const handleUpdateQuantity = async (type: string) => {
     if (type === 'decrement') {
       setInputValue((prev) => prev - 1);
-      setQty(inputValue);
     } else {
       setInputValue((prev) => prev + 1);
-      setQty(inputValue);
     }
   };
 
@@ -44,15 +39,8 @@ function CartQuantityController({
   }
 
   useEffect(() => {
-    if (isMounted.current) {
-      handleAPI();
-    } else {
-      setCountMounted((prev) => prev + 1);
-      if (countMounted >= 1) {
-        isMounted.current = true;
-      }
-    }
-  }, [qty]);
+    handleAPI();
+  }, [inputValue]);
 
   return (
     <div className="p-1 bg-white border-[1px] flex items-center gap-4 w-fit lg:gap-5 rounded-md">

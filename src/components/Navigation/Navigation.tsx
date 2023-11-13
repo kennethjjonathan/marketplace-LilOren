@@ -53,31 +53,31 @@ const products: {
   price: number;
   quantity: number;
 }[] = [
-  {
-    name: 'Bantal tidur silikon Restking Bantal tidur silikon Restking',
-    price: 100000,
-    quantity: 1,
-  },
-  {
-    name: 'Bantal tidur silikon Restking',
-    price: 100000,
-    quantity: 12,
-  },
-  {
-    name: 'Bantal tidur silikon Restking',
-    price: 100000,
-    quantity: 3,
-  },
-  {
-    name: 'Bantal tidur silikon Restking',
-    price: 100000,
-    quantity: 4,
-  },
-  {
-    name: 'Bantal tidur silikon Restking',
-    price: 100000,
-    quantity: 5,
-  },
+  // {
+  //   name: 'Bantal tidur silikon Restking Bantal tidur silikon Restking',
+  //   price: 100000,
+  //   quantity: 1,
+  // },
+  // {
+  //   name: 'Bantal tidur silikon Restking',
+  //   price: 100000,
+  //   quantity: 12,
+  // },
+  // {
+  //   name: 'Bantal tidur silikon Restking',
+  //   price: 100000,
+  //   quantity: 3,
+  // },
+  // {
+  //   name: 'Bantal tidur silikon Restking',
+  //   price: 100000,
+  //   quantity: 4,
+  // },
+  // {
+  //   name: 'Bantal tidur silikon Restking',
+  //   price: 100000,
+  //   quantity: 5,
+  // },
 ];
 
 const Navigation = () => {

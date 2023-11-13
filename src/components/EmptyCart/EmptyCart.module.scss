@@ -1,5 +1,5 @@
 .emptyCart {
-  @apply hidden sm:flex sm:flex-col gap-4 p-6 sm:w-[150px] md:w-[160px] lg:w-[300px] justify-center items-center;
+  @apply hidden sm:flex sm:flex-col gap-4 p-6 sm:w-[150px] md:w-[160px] lg:w-full justify-center items-center;
 }
 
 .EmptyCartText {
