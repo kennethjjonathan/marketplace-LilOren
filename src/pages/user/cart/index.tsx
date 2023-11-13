@@ -1,10 +1,15 @@
 import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import { NextPageWithLayout } from '../../_app';
 import Layout from '@/components/Layout/Layout';
 import CartLayout from '@/components/CartLayout/CartLayout';
 import CartCard from '@/components/CartCard/CartCard';
 import { IProduct } from '@/interface/product';
 import { ICheckedCart, useCart } from '@/store/cart/useCart';
+import { EMPTY_CART_TEXT } from '@/components/EmptyCart/constants';
+import ButtonWithIcon from '@/components/ButtonWithIcon/ButtonWithIcon';
+import EmptyCartImage from '../../../../public/empty-cart.svg';
+import styles from './CartPage.module.scss';
 
 export interface ICartItem {
   seller_name: string;
@@ -26,7 +31,6 @@ export interface ICart {
 const CartPage: NextPageWithLayout = () => {
   const isMounted = useRef(false);
   const [countMounted, setCountMounted] = useState(0);
-  const [total, setTotal] = useState(0);
   const fetchCart = useCart.use.fetchCart();
   const cartItems = useCart.use.cartItems();
   const setCheckedCart = useCart.use.setCheckedCart();
@@ -49,7 +53,6 @@ const CartPage: NextPageWithLayout = () => {
     if (isMounted.current) {
       fetchCart();
       handleSetCheckedFirstCart();
-      setTotal(cartItems.prices.total_price);
     } else {
       setCountMounted((prev) => prev + 1);
       if (countMounted >= 0) {
@@ -61,17 +64,35 @@ const CartPage: NextPageWithLayout = () => {
     <>
       <section className="flex flex-col justify-center items-center w-full bg-white pb-8">
         <div className="w-full md:w-[75vw] lg:px-2 lg:pt-5 lg:pb-16 flex flex-col">
-          {cartItems.items.map((item, index) => (
-            <CartCard
-              key={`key:${item.seller_name}`}
-              shop={item.seller_name!}
-              shop_items={item.products}
-              indexData={index}
-            />
-          ))}
+          {cartItems.items.length !== 0 ? (
+            cartItems.items.map((item, index) => (
+              <CartCard
+                key={`key:${item.seller_name}`}
+                shop={item.seller_name!}
+                shop_items={item.products}
+                indexData={index}
+              />
+            ))
+          ) : (
+            <div className="flex flex-col justify-center items-center w-full">
+              <div className={`${styles.emptyCart}`}>
+                <Image
+                  alt="empty-cart"
+                  src={EmptyCartImage}
+                  width={500}
+                  height={500}
+                  className="w-[50px] h-[50px] sm:w-[70px] sm:h-[70px]"
+                />
+                <p className={styles.EmptyCartText}>{EMPTY_CART_TEXT}</p>
+                <ButtonWithIcon href={'/'}>{'Shop Now'}</ButtonWithIcon>
+              </div>
+            </div>
+          )}
         </div>
       </section>
-      <CartLayout total={total} />
+      {cartItems.items.length !== 0 && (
+        <CartLayout total={cartItems.prices.total_price} />
+      )}
     </>
   );
 };
