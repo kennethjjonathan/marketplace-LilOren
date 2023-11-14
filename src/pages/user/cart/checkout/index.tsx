@@ -94,6 +94,7 @@ const CheckoutPage: NextPageWithLayout = () => {
     summary_price: 0,
   });
   const [isSummaryLoading, setIsSummaryLoading] = useState<boolean>(false);
+  const [pins, setPins] = useState<string[]>(new Array(6).fill(''));
 
   async function handleCourierChange(
     shop_id: number,
@@ -213,6 +214,8 @@ const CheckoutPage: NextPageWithLayout = () => {
           <CheckoutPaymentOption
             checkoutSummary={checkoutSummary}
             isLoading={isSummaryLoading}
+            pins={pins}
+            setPins={setPins}
           />
         </div>
       </div>
