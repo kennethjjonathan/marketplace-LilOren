@@ -16,6 +16,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import PinInput from '../PinInput/PinInput';
 
 const dummyWallet = {
   balance: 10000,
@@ -93,17 +94,20 @@ const CheckoutPaymentOption = ({
               Payment
             </AlertDialogTitle>
           </AlertDialogHeader>
-          <div className="w-full"></div>
+          <div className="w-full flex justify-center flex-col items-center gap-2">
+            <p className="font-semibold">Please enter your pin:</p>
+            {/* <PinInput pins={pins} setPins={setPins} /> */}
+          </div>
           <div className="flex gap-2 w-full justify-end">
             <Button
               size={'customBlank'}
               variant={'secondary'}
               onClick={() => setIsPaymentOpen(false)}
-              className="text-base px-3 py-2"
+              className="text-base px-2 py-1"
             >
               Cancel
             </Button>
-            <Button size={'customBlank'} className="text-base px-3 py-2">
+            <Button size={'customBlank'} className="text-base px-2 py-1">
               Insert PIN
             </Button>
           </div>

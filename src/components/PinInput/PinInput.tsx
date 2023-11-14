@@ -5,7 +5,6 @@ import React, {
   useRef,
   useState,
 } from 'react';
-
 import styles from './PinInput.module.css';
 
 interface PinInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -72,7 +71,8 @@ const PinInput = ({
           onKeyDown={(e) => handleKeyDown(e, index)}
           value={pins[index]}
           disabled={isLoading}
-          className={` ${styles.hideIndicator} aspect-square w-8 border-[1px] rounded bg-transparent outline-none text-center text-xl border-gray-500 focus:border-black focus:text-black text-gray-500 opacity-60 focus:opacity-100`}
+          className={` ${styles.hideIndicator} aspect-square w-9 border-[1px] rounded bg-transparent outline-none text-center text-xl border-gray-500 focus:border-black focus:text-black text-gray-500 opacity-60 focus:opacity-100`}
+          {...props}
         />
       ))}
     </div>
