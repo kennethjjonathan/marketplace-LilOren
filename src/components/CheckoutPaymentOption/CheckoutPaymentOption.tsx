@@ -18,7 +18,13 @@ const dummySummary: ICheckoutSummary = {
   summary_price: 10000,
 };
 
-const CheckoutPaymentOption = () => {
+interface CheckoutPaymentOptionProps {
+  checkoutSummary: ICheckoutSummary;
+}
+
+const CheckoutPaymentOption = ({
+  checkoutSummary,
+}: CheckoutPaymentOptionProps) => {
   return (
     <div className="w-full border-[1px] border-gray-100 px-2 pb-2">
       <div className="py-2 border-b-[1px] border-gray-200 w-full">
@@ -28,21 +34,21 @@ const CheckoutPaymentOption = () => {
       </div>
       <div className="w-full py-2 flex flex-col gap-1 border-b-2 border-gray-300 text-sm sm:text-base">
         <p className="text-gray-500">{`Total Price (${
-          dummySummary.total_product
+          checkoutSummary.total_product
         } product${
-          dummySummary.total_product > 1 && 's'
-        }): ${Utils.convertPrice(dummySummary.total_shop_price)}`}</p>
+          checkoutSummary.total_product > 1 ? 's' : ''
+        }): ${Utils.convertPrice(checkoutSummary.total_shop_price)}`}</p>
         <p className="text-gray-500">{`Shipping Fee: ${Utils.convertPrice(
-          dummySummary.total_delivery_cost,
+          checkoutSummary.total_delivery_cost,
         )}`}</p>
         <p className="text-gray-500">{`Service Fee: ${Utils.convertPrice(
-          dummySummary.service_price,
+          checkoutSummary.service_price,
         )}`}</p>
       </div>
       <div className="flex items-center justify-between py-2 text-lg sm:text-xl lg:text-2xl">
         <p className="font-bold">{`Shopping Total:`}</p>
         <p className="font-bold">
-          {Utils.convertPrice(dummySummary.total_shop_price)}
+          {Utils.convertPrice(checkoutSummary.summary_price)}
         </p>
       </div>
       <p className="text-sm truncate sm:text-base lg:text-lg">{`MyWallet (${Utils.convertPrice(

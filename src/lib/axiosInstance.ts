@@ -15,7 +15,7 @@ const refreshAccessToken = async () => {
     );
     return response;
   } catch (error: any) {
-    return error.response;
+    return error;
   }
 };
 
@@ -30,8 +30,8 @@ axiosInstance.interceptors.response.use(
         originalConfig._retry = true;
         try {
           const refreshReponse = await refreshAccessToken();
-          if (refreshReponse.data.message === 'User already logged out') {
-            return Promise.reject(refreshReponse);
+          if (refreshReponse.data.message === CONSTANTS.ALREADY_LOGGED_OUT) {
+            return Promise.reject(refreshReponse.data.message);
           }
           return axiosInstance(originalConfig);
         } catch (_error) {

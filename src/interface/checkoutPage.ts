@@ -23,13 +23,13 @@ export interface ICheckout {
   shop_name: string;
   shop_city: string;
   items: ICheckoutItem[];
-  couriers: ICouriers[];
+  courier_dropdown: ICouriers[];
 }
 
 export interface IOrderSummary {
   shop_id: number;
   shop_name: string;
-  subtotal_product: number;
+  sub_total_product: number;
   delivery_cost: number;
   subtotal: number;
 }
@@ -51,4 +51,9 @@ export interface IRequestOrderSummary {
 export interface IRequestSummary {
   order_deliveries: IRequestOrderSummary[];
   buyer_address_id: number;
+}
+
+export interface IResponseCheckouts {
+  checkouts: ICheckout[];
+  total_price: number;
 }
