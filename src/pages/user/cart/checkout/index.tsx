@@ -20,6 +20,7 @@ import {
 import axiosInstance from '@/lib/axiosInstance';
 import CONSTANTS from '@/constants/constants';
 import { ICheckout } from '@/interface/checkoutPage';
+import { Utils } from '@/utils';
 
 const dummyData: ICheckout[] = [
   {
@@ -95,6 +96,11 @@ const CheckoutPage: NextPageWithLayout = () => {
   });
   const [isSummaryLoading, setIsSummaryLoading] = useState<boolean>(false);
   const [pins, setPins] = useState<string[]>(new Array(6).fill(''));
+  const [isPinsValid, setIsPinsValid] = useState<boolean>(true);
+  const [isPaymentOpen, setIsPaymentOpen] = useState<boolean>(false);
+  const [isPaymentLoading, setIsPaymentLoading] = useState<boolean>(false);
+  const [couriersValid, setCouriersValid] = useState<boolean[]>();
+  const [wallet, setWallet] = useState<number>(0);
 
   async function handleCourierChange(
     shop_id: number,
@@ -103,16 +109,19 @@ const CheckoutPage: NextPageWithLayout = () => {
   ) {
     loadingToggle((prev) => !prev);
     setIsSummaryLoading(true);
-    if (couriers) {
+    if (couriers && couriersValid) {
       for (let i = 0; i < couriers.length; i++) {
         if (couriers[i].shop_id === shop_id) {
           const newCourierArr: IRequestOrderSummary[] = [...couriers];
+          const newCouriersValid: boolean[] = [...couriersValid];
           const newCourierItem: IRequestOrderSummary = {
             shop_id: shop_id,
             shop_courier_id: shop_courier_id,
           };
           newCourierArr[i] = newCourierItem;
+          newCouriersValid[i] = true;
           setCouriers(newCourierArr);
+          setCouriersValid(newCouriersValid);
           await getSummary(chosenAddress!, newCourierArr);
           loadingToggle((prev) => !prev);
           setIsSummaryLoading(false);
@@ -171,17 +180,79 @@ const CheckoutPage: NextPageWithLayout = () => {
       const checkoutReponse: IResponseCheckouts = await getInitialOrderList();
       const initialAddress = await getInitialAddress();
       const initialCouriers: IRequestOrderSummary[] = [];
+      const initialCouriersValid: boolean[] = [];
       for (let i = 0; i < checkoutReponse.checkouts.length; i++) {
         const orderReq: IRequestOrderSummary = {
           shop_id: checkoutReponse.checkouts[i].shop_id,
           shop_courier_id: undefined,
         };
         initialCouriers.push(orderReq);
+        initialCouriersValid.push(true);
       }
       setCouriers(initialCouriers);
+      setCouriersValid(initialCouriersValid);
       await getSummary(initialAddress, initialCouriers);
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  function findNonNumber(): boolean {
+    for (let i = 0; i < pins.length; i++) {
+      if (!/[0-9]/gi.test(pins[i])) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function checkCouriers(): boolean {
+    let isContinue: boolean = true;
+    if (couriers && couriersValid) {
+      for (let i = 0; i < couriers.length; i++) {
+        if (couriers[i].shop_courier_id === undefined) {
+          isContinue = false;
+          const newCouriersValid: boolean[] = [...couriersValid];
+          newCouriersValid[i] = false;
+          setCouriersValid(newCouriersValid);
+        }
+      }
+    } else {
+      return false;
+    }
+    return isContinue;
+  }
+
+  function handleOpenPaymentPortal() {
+    if (!checkCouriers()) {
+      Utils.notify(
+        "You haven't choose all shipping couriers",
+        'error',
+        'colored',
+      );
+      return;
+    } else {
+      setIsPaymentOpen(true);
+    }
+  }
+
+  async function handlePay() {
+    if (pins.includes('') || !findNonNumber()) {
+      setIsPinsValid(false);
+      return;
+    } else {
+      setIsPinsValid(true);
+    }
+    setIsPaymentLoading(true);
+    try {
+      const stepupResponse = await axiosInstance.post(
+        `${CONSTANTS.BASEURL}/auth/payment-token`,
+      );
+      setIsPaymentOpen(false);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsPaymentLoading(false);
     }
   }
 
@@ -207,6 +278,9 @@ const CheckoutPage: NextPageWithLayout = () => {
                 isMultiple={checkouts.length > 1}
                 handleCouriersChange={handleCourierChange}
                 checkoutSummary={checkoutSummary}
+                isCourierValid={
+                  couriersValid ? couriersValid[index] : undefined
+                }
               />
             ))}
         </div>
@@ -216,6 +290,13 @@ const CheckoutPage: NextPageWithLayout = () => {
             isLoading={isSummaryLoading}
             pins={pins}
             setPins={setPins}
+            handlePay={handlePay}
+            isPinsValid={isPinsValid}
+            setIsPinsValid={setIsPinsValid}
+            isPaymentOpen={isPaymentOpen}
+            setIsPaymentOpen={setIsPaymentOpen}
+            isPaymentLoading={isPaymentLoading}
+            handleOpenPayment={handleOpenPaymentPortal}
           />
         </div>
       </div>

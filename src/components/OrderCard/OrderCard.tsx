@@ -26,6 +26,7 @@ interface OrderCardProps {
     loadingToggle: Dispatch<SetStateAction<boolean>>,
   ) => void;
   checkoutSummary: ICheckoutSummary;
+  isCourierValid: boolean | undefined;
 }
 
 const OrderCard = ({
@@ -34,6 +35,7 @@ const OrderCard = ({
   isMultiple,
   handleCouriersChange,
   checkoutSummary,
+  isCourierValid,
 }: OrderCardProps) => {
   const [orderSummary, setOrderSummary] = useState<IOrderSummary>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -100,6 +102,11 @@ const OrderCard = ({
               ))}
             </SelectContent>
           </Select>
+          {isCourierValid !== undefined && isCourierValid === false && (
+            <p className="text-sm sm:text-base md:text-lg text-destructive">
+              Please choose a courier
+            </p>
+          )}
         </div>
         {isLoading && <OrderSumsSkeleton />}
         {!isLoading && orderSummary && (

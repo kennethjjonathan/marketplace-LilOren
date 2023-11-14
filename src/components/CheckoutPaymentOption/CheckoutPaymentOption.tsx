@@ -1,5 +1,4 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
-import { Wallet } from 'lucide-react';
 import { ICheckoutSummary } from '@/interface/checkoutPage';
 import { Utils } from '@/utils';
 import Link from 'next/link';
@@ -7,16 +6,14 @@ import { Button } from '../ui/button';
 import CheckoutSumSkeleton from '../Skeletons/CheckoutSumSkeleton';
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import PinInput from '../PinInput/PinInput';
+
+import styles from './CheckoutPaymentOption.module.css';
+import AsyncButton from '../AsyncButton/AsyncButton';
 
 const dummyWallet = {
   balance: 10000,
@@ -27,6 +24,13 @@ interface CheckoutPaymentOptionProps {
   isLoading: boolean;
   pins: string[];
   setPins: Dispatch<SetStateAction<string[]>>;
+  handlePay: () => void;
+  isPinsValid: boolean;
+  setIsPinsValid: Dispatch<SetStateAction<boolean>>;
+  isPaymentOpen: boolean;
+  setIsPaymentOpen: Dispatch<SetStateAction<boolean>>;
+  isPaymentLoading: boolean;
+  handleOpenPayment: () => void;
 }
 
 const CheckoutPaymentOption = ({
@@ -34,8 +38,19 @@ const CheckoutPaymentOption = ({
   isLoading,
   pins,
   setPins,
+  handlePay,
+  isPinsValid,
+  setIsPinsValid,
+  isPaymentOpen,
+  setIsPaymentOpen,
+  isPaymentLoading,
+  handleOpenPayment,
 }: CheckoutPaymentOptionProps) => {
-  const [isPaymentOpen, setIsPaymentOpen] = useState<boolean>(false);
+  function handleClosePaymentModal() {
+    setPins(new Array(6).fill(''));
+    setIsPaymentOpen(false);
+    setIsPinsValid(true);
+  }
   return (
     <>
       <div className="w-full border-[1px] border-gray-100 px-2 pb-2">
@@ -80,7 +95,7 @@ const CheckoutPaymentOption = ({
             </div>
             <Button
               className="p-2 text-sm sm:text-base lg:text-lg w-full h-fit mt-3"
-              onClick={() => setIsPaymentOpen(true)}
+              onClick={handleOpenPayment}
             >
               Pay
             </Button>
@@ -90,26 +105,40 @@ const CheckoutPaymentOption = ({
       <AlertDialog open={isPaymentOpen} onOpenChange={setIsPaymentOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="w-full text-center">
+            <AlertDialogTitle className="w-full text-center lg:text-lg">
               Payment
             </AlertDialogTitle>
           </AlertDialogHeader>
           <div className="w-full flex justify-center flex-col items-center gap-2">
-            <p className="font-semibold">Please enter your pin:</p>
-            {/* <PinInput pins={pins} setPins={setPins} /> */}
+            {isPinsValid ? (
+              <p className="font-semibold text-sm sm:text-base lg:text-lg">
+                Please enter your pin:
+              </p>
+            ) : (
+              <p
+                className={`font-semibold text-sm sm:text-base lg:text-lg text-destructive ${styles.wiggleDiv}`}
+              >
+                PIN must be 6 digits!
+              </p>
+            )}
+            <PinInput pins={pins} setPins={setPins} onEnter={handlePay} />
           </div>
           <div className="flex gap-2 w-full justify-end">
             <Button
               size={'customBlank'}
               variant={'secondary'}
-              onClick={() => setIsPaymentOpen(false)}
-              className="text-base px-2 py-1"
+              onClick={handleClosePaymentModal}
+              className="text-base px-2 py-1 lg:text-lg"
             >
               Cancel
             </Button>
-            <Button size={'customBlank'} className="text-base px-2 py-1">
-              Insert PIN
-            </Button>
+            <AsyncButton
+              className="text-base px-2 py-1 lg:text-lg"
+              onClick={handlePay}
+              isLoading={isPaymentLoading}
+            >
+              Continue
+            </AsyncButton>
           </div>
         </AlertDialogContent>
       </AlertDialog>

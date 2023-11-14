@@ -57,3 +57,7 @@ export interface IResponseCheckouts {
   checkouts: ICheckout[];
   total_price: number;
 }
+
+// export interface IRequestOrder {
+//   order
+// }
