@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Dispatch, SetStateAction } from 'react';
 import {
   Select,
   SelectContent,
@@ -20,7 +20,11 @@ interface OrderCardProps {
   checkout: ICheckout;
   index: number;
   isMultiple: boolean;
-  handleCouriersChange: (shop_id: number, shop_courier_id: number) => void;
+  handleCouriersChange: (
+    shop_id: number,
+    shop_courier_id: number,
+    loadingToggle: Dispatch<SetStateAction<boolean>>,
+  ) => void;
   checkoutSummary: ICheckoutSummary;
 }
 
@@ -74,7 +78,11 @@ const OrderCard = ({
         <div className="w-full pb-3">
           <Select
             onValueChange={(value) =>
-              handleCouriersChange(checkout.shop_id, parseInt(value))
+              handleCouriersChange(
+                checkout.shop_id,
+                parseInt(value),
+                setIsLoading,
+              )
             }
           >
             <SelectTrigger className="max-w-sm text-sm sm:text-base md:text-lg">
@@ -94,7 +102,7 @@ const OrderCard = ({
           </Select>
         </div>
         {isLoading && <OrderSumsSkeleton />}
-        {orderSummary && (
+        {!isLoading && orderSummary && (
           <div className="w-full bg-primary-foreground py-2 max-w-sm px-1">
             {orderSummary.sub_total_product > 0 && (
               <p className="text-gray-600 text-xs sm:text-sm">{`product(s): ${Utils.convertPrice(

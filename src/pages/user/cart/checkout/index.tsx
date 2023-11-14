@@ -1,4 +1,10 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, {
+  Dispatch,
+  ReactElement,
+  SetStateAction,
+  useEffect,
+  useState,
+} from 'react';
 import { NextPageWithLayout } from '@/pages/_app';
 import Layout from '@/components/Layout/Layout';
 import CheckoutAddressOption from '@/components/CheckoutAddressOption.tsx/CheckoutAddressOption';
@@ -87,8 +93,15 @@ const CheckoutPage: NextPageWithLayout = () => {
     service_price: 0,
     summary_price: 0,
   });
+  const [isSummaryLoading, setIsSummaryLoading] = useState<boolean>(false);
 
-  function handleCourierChange(shop_id: number, shop_courier_id: number) {
+  async function handleCourierChange(
+    shop_id: number,
+    shop_courier_id: number,
+    loadingToggle: Dispatch<SetStateAction<boolean>>,
+  ) {
+    loadingToggle((prev) => !prev);
+    setIsSummaryLoading(true);
     if (couriers) {
       for (let i = 0; i < couriers.length; i++) {
         if (couriers[i].shop_id === shop_id) {
@@ -99,11 +112,15 @@ const CheckoutPage: NextPageWithLayout = () => {
           };
           newCourierArr[i] = newCourierItem;
           setCouriers(newCourierArr);
-          getSummary(chosenAddress!, newCourierArr);
+          await getSummary(chosenAddress!, newCourierArr);
+          loadingToggle((prev) => !prev);
+          setIsSummaryLoading(false);
           return;
         }
       }
     }
+    loadingToggle((prev) => !prev);
+    setIsSummaryLoading(false);
   }
 
   async function getSummary(
@@ -119,7 +136,6 @@ const CheckoutPage: NextPageWithLayout = () => {
         `${CONSTANTS.BASEURL}/checkouts/summary`,
         newRequestSummary,
       );
-      console.log(response.data.data);
       setCheckoutSummary(response.data.data);
     } catch (error) {
       console.error(error);
@@ -194,7 +210,10 @@ const CheckoutPage: NextPageWithLayout = () => {
             ))}
         </div>
         <div className="w-full flex justify-end">
-          <CheckoutPaymentOption checkoutSummary={checkoutSummary} />
+          <CheckoutPaymentOption
+            checkoutSummary={checkoutSummary}
+            isLoading={isSummaryLoading}
+          />
         </div>
       </div>
     </section>
