@@ -3,6 +3,7 @@ import { ICart, ICartPrice } from '@/pages/user/cart';
 import { ICartCheckedRequest } from '@/service/cart/CartService';
 import { createZusSelector } from '../useSelector';
 import { CartClient } from '@/service/cart/CartClient';
+import { Utils } from '@/utils';
 
 export interface ICheckedCart {
   cart_id: number;
