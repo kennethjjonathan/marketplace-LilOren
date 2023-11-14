@@ -3,12 +3,43 @@ import React from 'react';
 import { Button } from '../ui/button';
 
 interface SellerOrderCardProps {
-  status: string;
-  invoiceNumber: string;
-  totalItems: number;
+  order_status: string;
 }
 
-const SellerOrderCard = () => {
+const SellerOrderCard = ({ order_status }: SellerOrderCardProps) => {
+  const handleEditOrder = (order_status: string, order_id: number) => {
+    console.log('time to edit order');
+  };
+
+  const handleGetAction = (order_status: string) => {
+    let action = '';
+    switch (order_status) {
+      case 'NEW':
+        action = 'Process Order';
+        break;
+      case 'PROCESS':
+        action = 'Process Order';
+        break;
+      case 'DELIVER':
+        action = 'Process Order';
+        break;
+      case 'ARRIVE':
+        action = 'Process Order';
+        break;
+      case 'RECEIVE':
+        action = 'Process Order';
+        break;
+      case 'CANCEL':
+        action = 'Process Order';
+        break;
+      default:
+        action = 'Process Order';
+        break;
+    }
+
+    return action;
+  };
+
   return (
     <div className="w-[85vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw] p-2">
       {/* top content */}
@@ -88,8 +119,9 @@ const SellerOrderCard = () => {
         <Button
           className="text-[12px] h-[30px] lg:h-[40px]"
           variant={'default'}
+          onClick={() => handleEditOrder('NEW', 1)}
         >
-          {'Process Order'}
+          {handleGetAction('NEW')}
         </Button>
       </div>
     </div>
