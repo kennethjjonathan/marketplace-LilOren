@@ -111,15 +111,6 @@ const CheckoutPage: NextPageWithLayout = () => {
     }
   }
 
-  // async function getOrderList() {
-  //   try {
-  //     const response = await axiosInstance(`${CONSTANTS.BASEURL}/checkouts`);
-  //     console.log(response.data);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // }
-
   async function setInitialStates() {
     try {
       const address = await getAddress();
