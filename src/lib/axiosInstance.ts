@@ -4,6 +4,7 @@ import axios from 'axios';
 
 const axiosInstance = axios.create({
   baseURL: CONSTANTS.BASEURL,
+  withCredentials: true,
 });
 
 const refreshAccessToken = async () => {

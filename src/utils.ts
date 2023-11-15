@@ -1,4 +1,6 @@
 import { Theme, ToastContent, TypeOptions, toast } from 'react-toastify';
+import { ICart, ICartItem } from './pages/user/cart';
+import { ICheckedCart } from './store/cart/useCart';
 
 export class Utils {
   static convertPrice = (price: number) => {
@@ -20,5 +22,10 @@ export class Utils {
       position: toast.POSITION.TOP_RIGHT,
       theme: theme,
     });
+  };
+
+  static isAllCartCheck = (isCheckedCarts: ICheckedCart[]) => {
+    const check = isCheckedCarts.every((cart) => cart.is_checked === true);
+    return check;
   };
 }

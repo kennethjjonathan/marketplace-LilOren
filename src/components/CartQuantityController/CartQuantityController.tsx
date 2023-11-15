@@ -9,6 +9,7 @@ import { Minus, Plus } from 'lucide-react';
 import { IProduct } from '@/interface/product';
 import { CartClient } from '@/service/cart/CartClient';
 import useDebounce from '@/hook/useDebounce';
+import { useCart } from '@/store/cart/useCart';
 interface CartQuantityControllerProps
   extends React.HTMLAttributes<HTMLDivElement> {
   inputValue: number;
@@ -24,6 +25,7 @@ function CartQuantityController({
   product,
 }: CartQuantityControllerProps) {
   const handleAPI = useDebounce(putQuantityToDb, 500);
+  const putQuantityCart = useCart.use.putQuantityCart();
   const handleUpdateQuantity = async (type: string) => {
     if (type === 'decrement') {
       setInputValue((prev) => prev - 1);
@@ -33,7 +35,7 @@ function CartQuantityController({
   };
 
   async function putQuantityToDb() {
-    await CartClient.updateQuantityInCart(product.cart_id!, {
+    putQuantityCart(product.cart_id!, {
       quantity: inputValue,
     });
   }

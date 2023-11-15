@@ -5,20 +5,24 @@ import { Utils } from '@/utils';
 import { useCart } from '@/store/cart/useCart';
 import { CartClient } from '@/service/cart/CartClient';
 import { ICartCheckedRequest } from '@/service/cart/CartService';
-import { ICart } from '@/pages/user/cart';
+import { ICart, ICartPrice } from '@/pages/user/cart';
 
 interface CartLayoutProps {
-  total: number;
+  prices: ICartPrice;
 }
 
-const CartLayout = ({ total }: CartLayoutProps) => {
+const CartLayout = ({ prices }: CartLayoutProps) => {
   const isMounted = useRef(false);
   const [countMounted, setCountMounted] = useState(0);
   const [isAllChecked, setIsAllChecked] = useState(false);
+  const all_checked = useCart.use.all_checked();
   const is_checked_carts = useCart.use.is_checked_carts();
   const cartItems = useCart.use.cartItems();
+  const price = useCart.use.prices();
   const setCartItems = useCart.use.setCartItems();
   const setCheckedCart = useCart.use.setCheckedCart();
+  const putIsCheckedCart = useCart.use.putIsCheckedCart();
+  const setAllCheck = useCart.use.setAllCheck();
 
   const checkAllCartItem = () => {
     const check = is_checked_carts.every((cart) => cart.is_checked === true);
@@ -37,14 +41,13 @@ const CartLayout = ({ total }: CartLayoutProps) => {
     const req: ICartCheckedRequest = {
       is_checked_carts: is_checked_carts,
     };
-
-    await CartClient.updateIsChecked(req);
-    setIsAllChecked(isCheck);
+    putIsCheckedCart(req);
+    setAllCheck(isCheck);
     updatedCart.items = updatedCartItems;
     setTimeout(() => {
       setCartItems(updatedCart);
       setCheckedCart(updated_is_checked_cart);
-    }, 200);
+    }, 100);
   };
 
   useEffect(() => {
@@ -56,7 +59,7 @@ const CartLayout = ({ total }: CartLayoutProps) => {
         isMounted.current = true;
       }
     }
-  }, [is_checked_carts]);
+  }, []);
   return (
     <section className="w-full fixed bottom-0 left-0 bg-primary-foreground">
       <div className="w-full md:w-[75vw] p-2 pb-3 flex items-center justify-between mx-auto gap-2">
@@ -67,7 +70,7 @@ const CartLayout = ({ total }: CartLayoutProps) => {
               <Checkbox
                 id="check-all-product"
                 className="sm:h-5 sm:w-5 xl:w-6 xl:h-6"
-                checked={isAllChecked}
+                checked={all_checked}
                 onCheckedChange={(checked) => {
                   return checked
                     ? handleCheckUnCheckAll(true)
@@ -90,13 +93,19 @@ const CartLayout = ({ total }: CartLayoutProps) => {
               <p className="text-xs text-gray-500 sm:text-sm xl:text-base text-right">
                 Total
               </p>
-              <p
-                className={`text-base  sm:text-xl xl:text-2xl text-right ${
-                  total ? 'font-semibold' : 'font-light'
-                }`}
-              >
-                {total ? Utils.convertPrice(total) : '-'}
-              </p>
+              {price.total_price ? (
+                <p
+                  className={`text-base  sm:text-xl xl:text-2xl text-right font-semibold`}
+                >
+                  {Utils.convertPrice(price.total_price)}
+                </p>
+              ) : (
+                <p
+                  className={`text-base  sm:text-xl xl:text-2xl text-right font-light`}
+                >
+                  {'-'}
+                </p>
+              )}
             </div>
             <Button
               variant={'default'}
