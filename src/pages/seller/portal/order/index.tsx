@@ -1,7 +1,9 @@
 import SellerLayout from '@/components/SellerLayout/SellerLayout';
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import styles from './SellerPortalOrder.module.scss';
 import Tabs from '@/components/Tabs/Tabs';
+import SellerOrderCard from '@/components/SellerOrderCard/SellerOrderCard';
+import Divider from '@/components/Divider/Divider';
 
 const EMPTY_ORDER = 'There are no orders yet, here';
 const EMPTY_ORDER_DESC =
@@ -25,21 +27,35 @@ const data = [
   },
   {
     id: 5,
-    label: 'Completed',
+    label: 'Arrived',
   },
   {
     id: 6,
+    label: 'Completed',
+  },
+  {
+    id: 7,
     label: 'Cancelled',
   },
 ];
 
 const SellerPortalOrder = () => {
   const [orders, setOrders] = useState([]);
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  }, []);
   return (
     <div className={`${styles.sellerPortalOrder}`}>
       <Tabs datas={data} />
       <div className={`${styles.page_order}`}>
-        <section></section>
+        <section className="w-[85vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw]">
+          <Divider />
+          <SellerOrderCard order_status={''} />
+        </section>
       </div>
     </div>
   );

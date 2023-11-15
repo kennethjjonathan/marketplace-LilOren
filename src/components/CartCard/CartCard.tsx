@@ -4,7 +4,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 import Divider from '@/components/Divider/Divider';
 import CartCardProduct from '@/components/CartCardProduct/CartCardProduct';
 import { useCart } from '@/store/cart/useCart';
-import { CartClient } from '@/service/cart/CartClient';
 import { ICartCheckedRequest } from '@/service/cart/CartService';
 import { ICart } from '@/pages/user/cart';
 
@@ -16,9 +15,9 @@ interface CartCardProps {
 
 const CartCard = ({ shop, shop_items, indexData }: CartCardProps) => {
   const [isShopCheck, setIsShopCheck] = useState(false);
-  const fetchCart = useCart.use.fetchCart();
   const cartItems = useCart.use.cartItems();
   const setCart = useCart.use.setCartItems();
+  const fetchCart = useCart.use.fetchCart();
   const is_checked_carts = useCart.use.is_checked_carts();
   const setIsCheckedCarts = useCart.use.setCheckedCart();
   const putIsCheckedCart = useCart.use.putIsCheckedCart();
