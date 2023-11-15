@@ -1,5 +1,6 @@
 import { Theme, ToastContent, TypeOptions, toast } from 'react-toastify';
 import { ICart, ICartItem } from './pages/user/cart';
+import { ICheckedCart } from './store/cart/useCart';
 
 export class Utils {
   static convertPrice = (price: number) => {
@@ -23,14 +24,8 @@ export class Utils {
     });
   };
 
-  static isAllCartCheck = (cartItems: ICart) => {
-    const items = cartItems.items;
-    const is_all_checked = items.every((item_per_seller) => {
-      const all_product_checked = item_per_seller.products.every(
-        (product) => product.is_checked === true,
-      );
-      return all_product_checked;
-    });
-    return is_all_checked;
+  static isAllCartCheck = (isCheckedCarts: ICheckedCart[]) => {
+    const check = isCheckedCarts.every((cart) => cart.is_checked === true);
+    return check;
   };
 }

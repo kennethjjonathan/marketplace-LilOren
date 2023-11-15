@@ -17,6 +17,7 @@ const CartCard = ({ shop, shop_items, indexData }: CartCardProps) => {
   const [isShopCheck, setIsShopCheck] = useState(false);
   const cartItems = useCart.use.cartItems();
   const setCart = useCart.use.setCartItems();
+  const fetchCart = useCart.use.fetchCart();
   const is_checked_carts = useCart.use.is_checked_carts();
   const setIsCheckedCarts = useCart.use.setCheckedCart();
   const putIsCheckedCart = useCart.use.putIsCheckedCart();

@@ -37,8 +37,6 @@ const CartPage: NextPageWithLayout = () => {
   const setCheckedCart = useCart.use.setCheckedCart();
   const loading_fetch_cart = useCart.use.loading_fetch_cart();
 
-  console.log(loading_fetch_cart);
-
   const handleSetCheckedFirstCart = () => {
     let is_checked_cart: ICheckedCart[] = [];
     cartItems.items.forEach((cart_per_seller) => {
@@ -105,7 +103,7 @@ const CartPage: NextPageWithLayout = () => {
         </div>
       </section>
       {!loading_fetch_cart && cartItems.items.length !== 0 && (
-        <CartLayout total={cartItems.prices.total_price} />
+        <CartLayout prices={cartItems.prices} />
       )}
     </>
   );

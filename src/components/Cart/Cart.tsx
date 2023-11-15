@@ -17,7 +17,6 @@ interface CartProps {
 }
 
 const Cart = ({ products }: CartProps) => {
-  console.log(products.length);
   return (
     <div className={styles.cart}>
       <div className="flex flex-row justify-between items-center px-5 pt-5">

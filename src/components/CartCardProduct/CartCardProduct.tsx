@@ -19,7 +19,7 @@ interface CartCardProductProps {
 const CartCardProduct = ({ product, index }: CartCardProductProps) => {
   const [quantity, setQuantity] = useState<number>(product.quantity!);
   const [isLiked, setIsLiked] = useState<boolean>(false);
-  const fetchCart = useCart.use.fetchCart();
+  const putIsCheckedCart = useCart.use.putIsCheckedCart();
   const cartItems = useCart.use.cartItems();
   const setCart = useCart.use.setCartItems();
   const is_checked_carts = useCart.use.is_checked_carts();
@@ -51,7 +51,7 @@ const CartCardProduct = ({ product, index }: CartCardProductProps) => {
     const req: ICartCheckedRequest = {
       is_checked_carts: is_checked_carts,
     };
-    await CartClient.updateIsChecked(req);
+    putIsCheckedCart(req);
   };
 
   return (

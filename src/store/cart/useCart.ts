@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { ICart, ICartPrice } from '@/pages/user/cart';
-import { ICartCheckedRequest } from '@/service/cart/CartService';
+import { ICartCheckedRequest, ICartRequest } from '@/service/cart/CartService';
 import { createZusSelector } from '../useSelector';
 import { CartClient } from '@/service/cart/CartClient';
 import { Utils } from '@/utils';
@@ -25,7 +25,9 @@ type Actions = {
   fetchCart: () => void;
   setCartItems: (cartItems: ICart) => void;
   setCheckedCart: (data: ICheckedCart[]) => void;
+  setAllCheck: (isCheck: boolean) => void;
   putIsCheckedCart: (data: ICartCheckedRequest) => void;
+  putQuantityCart: (cart_id: number, data: ICartRequest) => void;
 };
 
 const useCartBase = create<State & Actions>((set) => ({
@@ -51,35 +53,50 @@ const useCartBase = create<State & Actions>((set) => ({
   fetchCart: async () => {
     set(() => ({ loading_fetch_cart: true }));
     const response = await CartClient.getListofCartItem();
-    const data = response.data;
-    const is_all_checked = Utils.isAllCartCheck(data);
-    set((state) => ({ all_checked: is_all_checked }));
-    set((state) => ({
+    const data: ICart = response.data;
+    const checked_cart_data: ICheckedCart[] = [];
+    data.items.forEach((cart_per_seller) => {
+      cart_per_seller.products.forEach((cart) => {
+        const data: ICheckedCart = {
+          cart_id: cart.cart_id!,
+          is_checked: cart.is_checked!,
+        };
+        checked_cart_data.push(data);
+      });
+    });
+    const check = checked_cart_data.every((cart) => cart.is_checked === true);
+    set(() => ({ is_checked_carts: checked_cart_data }));
+    set(() => ({ all_checked: check }));
+    set(() => ({
       cartItems: data,
     }));
-    set((state) => ({
+    set(() => ({
       prices: data.prices,
     }));
     set(() => ({ loading_fetch_cart: false }));
   },
   setCartItems: (cartItems: ICart) => {
-    set((state) => ({
+    set(() => ({
       cartItems: cartItems,
     }));
   },
   setCheckedCart: (data: ICheckedCart[]) => {
-    set((state) => ({
+    set(() => ({
       is_checked_carts: data,
     }));
+  },
+  setAllCheck: (isCheck: boolean) => {
+    set(() => ({ all_checked: isCheck }));
   },
   putIsCheckedCart: async (data: ICartCheckedRequest) => {
     set(() => ({ loading_check_cart: true }));
     const response = await CartClient.updateIsChecked(data);
-    console.log(response);
-    set((state) => ({
-      prices: response.data.data,
-    }));
+    set(() => ({ prices: response.data }));
     set(() => ({ loading_check_cart: true }));
+  },
+  putQuantityCart: async (cart_id: number, payload: ICartRequest) => {
+    const response = await CartClient.updateQuantityInCart(cart_id, payload);
+    set(() => ({ prices: response.data }));
   },
 }));
 

@@ -3,10 +3,7 @@ import { CartService, ICartCheckedRequest, ICartRequest } from './CartService';
 
 export class CartClient {
   static getListofCartItem = async (params?: any) => {
-    const response = await CartService.get(
-      `${CONSTANTS.BASEURL}/carts/cart-page`,
-    );
-    console.log(response);
+    const response = await CartService.get(`${CONSTANTS.BASEURL}/carts`);
     return response;
   };
 
