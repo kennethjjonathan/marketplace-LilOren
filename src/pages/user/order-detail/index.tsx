@@ -65,7 +65,7 @@ const OrderDetailPage: NextPageWithLayout = () => {
       <div className="w-full md:w-[75vw] lg:px-2 lg:pt-5 pb-5 flex flex-col mx-auto">
         <Tabs datas={dummyData} />
         <Divider />
-        <div className="w-full py-2">
+        <div className="w-full pb-2">
           {orderItems &&
             orderItems.map((orderItem, index) => (
               <BuyerOrderDetailCard key={index} orderItem={orderItem} />
