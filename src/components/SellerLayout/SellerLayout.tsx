@@ -20,7 +20,7 @@ const SellerLayout = ({ children, header }: SellerLayoutProps) => {
         <div className="shadow-md bg-zinc-50">
           <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />
         </div>
-        <div className="flex flex-col pt-[10px] pl-[24px] pb-[24px]">
+        <div className="flex flex-col pt-[10px] lg:pl-[24px] pb-[24px]">
           <div className={`${styles.shopname} text-muted-foreground`}>
             <Store className="mr-4 text-muted-foreground" />
             {header}

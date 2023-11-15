@@ -15,14 +15,15 @@ const Tabs = ({ datas }: TabsProps) => {
   const [currentTab, setCCurrentTab] = useState(1);
   const [selectedTab, setSelectedTab] = useState(null);
   const handleChangeTab = (id: number) => {
+    console.log(id);
     setCCurrentTab(id);
   };
 
   return (
-    <div className="bg-white shadow-sm rounded-t-xl flex gap-2 p-2 overflow-x-auto w-[80vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw]">
+    <div className="bg-white shadow-sm rounded-t-xl flex gap-2 p-2 overflow-x-auto w-[85vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw]">
       {datas.map((data) => (
         <div key={`key:${data.id}`}>
-          <Link href={data.href ? data.href : '/'}>
+          <Link href={data.href ? data.href : '/seller/portal/order'}>
             <Button
               variant={'ghost'}
               className="p-0 hover:text-primary"
