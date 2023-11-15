@@ -19,8 +19,6 @@ export interface ICartCheckedRequest {
   is_checked_carts: ICheckedCart[];
 }
 
-axios.defaults.withCredentials = true;
-
 export class CartService {
   static post = async (
     url: string,
