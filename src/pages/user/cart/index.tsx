@@ -10,6 +10,7 @@ import { EMPTY_CART_TEXT } from '@/components/EmptyCart/constants';
 import ButtonWithIcon from '@/components/ButtonWithIcon/ButtonWithIcon';
 import EmptyCartImage from '../../../../public/empty-cart.svg';
 import styles from './CartPage.module.scss';
+import SkeletonCart from '@/components/SkeletonCart/SkeletonCart';
 
 export interface ICartItem {
   seller_name: string;
@@ -34,6 +35,9 @@ const CartPage: NextPageWithLayout = () => {
   const fetchCart = useCart.use.fetchCart();
   const cartItems = useCart.use.cartItems();
   const setCheckedCart = useCart.use.setCheckedCart();
+  const loading_fetch_cart = useCart.use.loading_fetch_cart();
+
+  console.log(loading_fetch_cart);
 
   const handleSetCheckedFirstCart = () => {
     let is_checked_cart: ICheckedCart[] = [];
@@ -64,33 +68,43 @@ const CartPage: NextPageWithLayout = () => {
     <>
       <section className="flex flex-col justify-center items-center w-full bg-white pb-8">
         <div className="w-full md:w-[75vw] lg:px-2 lg:pt-5 lg:pb-16 flex flex-col">
-          {cartItems.items.length !== 0 ? (
-            cartItems.items.map((item, index) => (
-              <CartCard
-                key={`key:${item.seller_name}`}
-                shop={item.seller_name!}
-                shop_items={item.products}
-                indexData={index}
-              />
-            ))
+          {loading_fetch_cart ? (
+            <>
+              <SkeletonCart />
+              <SkeletonCart />
+              <SkeletonCart />
+            </>
           ) : (
-            <div className="flex flex-col justify-center items-center w-full">
-              <div className={`${styles.emptyCart}`}>
-                <Image
-                  alt="empty-cart"
-                  src={EmptyCartImage}
-                  width={500}
-                  height={500}
-                  className="w-[50px] h-[50px] sm:w-[70px] sm:h-[70px]"
-                />
-                <p className={styles.EmptyCartText}>{EMPTY_CART_TEXT}</p>
-                <ButtonWithIcon href={'/'}>{'Shop Now'}</ButtonWithIcon>
-              </div>
-            </div>
+            <>
+              {cartItems.items.length !== 0 ? (
+                cartItems.items.map((item, index) => (
+                  <CartCard
+                    key={`key:${item.seller_name}`}
+                    shop={item.seller_name!}
+                    shop_items={item.products}
+                    indexData={index}
+                  />
+                ))
+              ) : (
+                <div className="flex flex-col justify-center items-center w-full">
+                  <div className={`${styles.emptyCart}`}>
+                    <Image
+                      alt="empty-cart"
+                      src={EmptyCartImage}
+                      width={500}
+                      height={500}
+                      className="w-[50px] h-[50px] sm:w-[70px] sm:h-[70px]"
+                    />
+                    <p className={styles.EmptyCartText}>{EMPTY_CART_TEXT}</p>
+                    <ButtonWithIcon href={'/'}>{'Shop Now'}</ButtonWithIcon>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>
-      {cartItems.items.length !== 0 && (
+      {!loading_fetch_cart && cartItems.items.length !== 0 && (
         <CartLayout total={cartItems.prices.total_price} />
       )}
     </>

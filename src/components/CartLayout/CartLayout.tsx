@@ -15,6 +15,7 @@ const CartLayout = ({ total }: CartLayoutProps) => {
   const isMounted = useRef(false);
   const [countMounted, setCountMounted] = useState(0);
   const [isAllChecked, setIsAllChecked] = useState(false);
+  const all_checked = useCart.use.all_checked();
   const is_checked_carts = useCart.use.is_checked_carts();
   const cartItems = useCart.use.cartItems();
   const setCartItems = useCart.use.setCartItems();
@@ -67,7 +68,7 @@ const CartLayout = ({ total }: CartLayoutProps) => {
               <Checkbox
                 id="check-all-product"
                 className="sm:h-5 sm:w-5 xl:w-6 xl:h-6"
-                checked={isAllChecked}
+                checked={all_checked}
                 onCheckedChange={(checked) => {
                   return checked
                     ? handleCheckUnCheckAll(true)

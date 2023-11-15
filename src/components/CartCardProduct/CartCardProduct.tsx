@@ -72,7 +72,7 @@ const CartCardProduct = ({ product, index }: CartCardProductProps) => {
             style={{ objectFit: 'cover' }}
             sizes="(max-width: 1024px) 35vw, 20vw"
           />
-          {product.discount_price !== 0 && (
+          {product.discount !== 0 && (
             <div className="absolute bottom-0 left-0 bg-destructive text-primary-foreground text-[10px] md:text-[12px] font-semibold p-1 rounded-tr-lg">{`${product.discount}%`}</div>
           )}
         </div>
