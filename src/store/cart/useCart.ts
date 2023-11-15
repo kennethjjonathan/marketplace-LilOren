@@ -106,12 +106,12 @@ const useCartBase = create<State & Actions>((set) => ({
     set(() => ({ loadingFetchCart: true }));
     const response = await CartClient.getListofCartItem();
     const data = response.data;
-    // set((state) => ({
-    //   cartItems: data,
-    // }));
-    // set((state) => ({
-    //   prices: data.prices,
-    // }));
+    set((state) => ({
+      cartItems: data,
+    }));
+    set((state) => ({
+      prices: data.prices,
+    }));
     set(() => ({ loadingFetchCart: false }));
   },
   setCartItems: (cartItems: ICart) => {

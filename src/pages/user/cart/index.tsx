@@ -59,7 +59,7 @@ const CartPage: NextPageWithLayout = () => {
         isMounted.current = true;
       }
     }
-  }, [cartItems]);
+  }, []);
   return (
     <>
       <section className="flex flex-col justify-center items-center w-full bg-white pb-8">
