@@ -1,9 +1,9 @@
 import CONSTANTS from '@/constants/constants';
-import { useRouter } from 'next/router';
 import axios from 'axios';
 
 const axiosInstance = axios.create({
   baseURL: CONSTANTS.BASEURL,
+  withCredentials: true,
 });
 
 const refreshAccessToken = async () => {
@@ -15,7 +15,7 @@ const refreshAccessToken = async () => {
     );
     return response;
   } catch (error: any) {
-    return error.response;
+    return error;
   }
 };
 
@@ -30,8 +30,8 @@ axiosInstance.interceptors.response.use(
         originalConfig._retry = true;
         try {
           const refreshReponse = await refreshAccessToken();
-          if (refreshReponse.data.message === 'User already logged out') {
-            return Promise.reject(refreshReponse);
+          if (refreshReponse.data.message === CONSTANTS.ALREADY_LOGGED_OUT) {
+            return Promise.reject(refreshReponse.data.message);
           }
           return axiosInstance(originalConfig);
         } catch (_error) {
