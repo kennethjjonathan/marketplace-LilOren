@@ -58,6 +58,11 @@ export interface IResponseCheckouts {
   total_price: number;
 }
 
+export interface ICheckoutWallet {
+  is_active: boolean;
+  balance: number;
+}
+
 // export interface IRequestOrder {
 //   order
 // }

@@ -42,12 +42,7 @@ export class Utils {
   };
 
   static handleGeneralError = (error: any) => {
-    if (
-      error &&
-      error.response &&
-      error.response.data &&
-      error.response.data.message
-    ) {
+    if (error.response && error.response.data && error.response.data.message) {
       toast(error.response.data.message, {
         type: 'error',
         position: toast.POSITION.TOP_RIGHT,
@@ -55,8 +50,16 @@ export class Utils {
       });
       return;
     }
-    if (error && error.response && error.response.statusText) {
+    if (error.response && error.response.statusText) {
       toast(error.response.statusText, {
+        type: 'error',
+        position: toast.POSITION.TOP_RIGHT,
+        theme: 'colored',
+      });
+      return;
+    }
+    if (error.message) {
+      toast(error.message, {
         type: 'error',
         position: toast.POSITION.TOP_RIGHT,
         theme: 'colored',

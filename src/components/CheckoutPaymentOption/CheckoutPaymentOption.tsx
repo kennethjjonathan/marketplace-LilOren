@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
-import { ICheckoutSummary } from '@/interface/checkoutPage';
+import { ICheckoutSummary, ICheckoutWallet } from '@/interface/checkoutPage';
 import { Utils } from '@/utils';
 import Link from 'next/link';
 import { Button } from '../ui/button';
@@ -14,10 +14,7 @@ import PinInput from '../PinInput/PinInput';
 
 import styles from './CheckoutPaymentOption.module.css';
 import AsyncButton from '../AsyncButton/AsyncButton';
-
-const dummyWallet = {
-  balance: 10000,
-};
+import ActivatePinWarning from '../ActivatePinWarning/ActivatePinWarning';
 
 interface CheckoutPaymentOptionProps {
   checkoutSummary: ICheckoutSummary;
@@ -31,6 +28,8 @@ interface CheckoutPaymentOptionProps {
   setIsPaymentOpen: Dispatch<SetStateAction<boolean>>;
   isPaymentLoading: boolean;
   handleOpenPayment: () => void;
+  wallet: ICheckoutWallet;
+  setUpdateToggle: Dispatch<SetStateAction<boolean>>;
 }
 
 const CheckoutPaymentOption = ({
@@ -45,7 +44,10 @@ const CheckoutPaymentOption = ({
   setIsPaymentOpen,
   isPaymentLoading,
   handleOpenPayment,
+  wallet,
+  setUpdateToggle,
 }: CheckoutPaymentOptionProps) => {
+  const [isActivatePinOpen, setIsActivatePinOpen] = useState<boolean>(false);
   function handleClosePaymentModal() {
     setPins(new Array(6).fill(''));
     setIsPaymentOpen(false);
@@ -82,23 +84,41 @@ const CheckoutPaymentOption = ({
                 {Utils.convertPrice(checkoutSummary.summary_price)}
               </p>
             </div>
-            <p className="text-sm truncate sm:text-base lg:text-lg">{`MyWallet (${Utils.convertPrice(
-              dummyWallet.balance,
-            )})`}</p>
-            <div className="flex items-center gap-1 mt-1 text-sm sm:text-base">
-              <p className="text-destructive truncate">
-                Balance is insufficient.
-              </p>
-              <Link href={'/'} className="truncate text-gray-500">
-                Top-Up Wallet
-              </Link>
-            </div>
-            <Button
-              className="p-2 text-sm sm:text-base lg:text-lg w-full h-fit mt-3"
-              onClick={handleOpenPayment}
-            >
-              Pay
-            </Button>
+            {wallet.is_active ? (
+              <>
+                <p className="text-sm truncate sm:text-base lg:text-lg">{`MyWallet (${Utils.convertPrice(
+                  wallet.balance,
+                )})`}</p>
+                <div className="flex items-center gap-1 mt-1 text-sm sm:text-base">
+                  {wallet.is_active &&
+                    wallet.balance < checkoutSummary.summary_price && (
+                      <p className="text-destructive truncate">
+                        Balance is insufficient.
+                      </p>
+                    )}
+                  <Link href={'/'} className="truncate text-gray-500">
+                    Top-Up Wallet
+                  </Link>
+                </div>
+                <Button
+                  className="p-2 text-sm sm:text-base lg:text-lg w-full h-fit mt-3"
+                  onClick={handleOpenPayment}
+                >
+                  Pay
+                </Button>{' '}
+              </>
+            ) : (
+              <div className="w-full flex flex-col items-center justify-center gap-1">
+                <p className="text-sm text-gray-500 sm:text-base">
+                  You have&apos;t activate your pin:
+                </p>
+                <ActivatePinWarning
+                  isOpen={isActivatePinOpen}
+                  setIsOpen={setIsActivatePinOpen}
+                  setUpdateToggle={setUpdateToggle}
+                />
+              </div>
+            )}
           </>
         )}
       </div>
@@ -129,6 +149,7 @@ const CheckoutPaymentOption = ({
               variant={'secondary'}
               onClick={handleClosePaymentModal}
               className="text-base px-2 py-1 lg:text-lg"
+              disabled={isPaymentLoading}
             >
               Cancel
             </Button>

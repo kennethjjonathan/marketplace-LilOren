@@ -1,6 +1,7 @@
 const CONSTANTS = {
   BASEURL: process.env.BASEURL,
   ALREADY_LOGGED_OUT: 'RefreshTokenExpired',
+  WALLET_NOT_ACTIVATED: 'Not yet activate wallet',
   TOKEN_HAS_EXPIRED: 'Your token has expired, please sign in again',
   RO_BASEURL: 'https://api.rajaongkir.com/starter',
   RO_API_PROVINCE: '/api/rajaongkirprovince',

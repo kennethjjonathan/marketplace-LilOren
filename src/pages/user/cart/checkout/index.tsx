@@ -13,6 +13,7 @@ import CheckoutPaymentOption from '@/components/CheckoutPaymentOption/CheckoutPa
 import {
   IAddress,
   ICheckoutSummary,
+  ICheckoutWallet,
   IRequestOrderSummary,
   IRequestSummary,
   IResponseCheckouts,
@@ -102,7 +103,11 @@ const CheckoutPage: NextPageWithLayout = () => {
   const [isPaymentOpen, setIsPaymentOpen] = useState<boolean>(false);
   const [isPaymentLoading, setIsPaymentLoading] = useState<boolean>(false);
   const [couriersValid, setCouriersValid] = useState<boolean[]>();
-  const [wallet, setWallet] = useState<number>(0);
+  const [wallet, setWallet] = useState<ICheckoutWallet>({
+    is_active: false,
+    balance: 0,
+  });
+  const [updateToggle, setUpdateToggle] = useState<boolean>(false);
 
   async function handleCourierChange(
     shop_id: number,
@@ -181,6 +186,27 @@ const CheckoutPage: NextPageWithLayout = () => {
     }
   }
 
+  async function getWallet() {
+    try {
+      const response = await axiosInstance(
+        `${CONSTANTS.BASEURL}/wallets/personal/info`,
+      );
+      setWallet(response.data.data);
+    } catch (error: any) {
+      if (
+        error &&
+        error.response &&
+        error.response.data &&
+        error.response.data.message &&
+        error.response.data.message === CONSTANTS.WALLET_NOT_ACTIVATED
+      ) {
+        setWallet({ is_active: false, balance: 0 });
+      } else {
+        Utils.notifyGeneralError(error);
+      }
+    }
+  }
+
   async function setInitialStates() {
     try {
       const checkoutReponse: IResponseCheckouts = await getInitialOrderList();
@@ -232,7 +258,13 @@ const CheckoutPage: NextPageWithLayout = () => {
   }
 
   function handleOpenPaymentPortal() {
-    if (!checkCouriers()) {
+    if (
+      !wallet.is_active ||
+      (wallet.is_active && wallet.balance < checkoutSummary.summary_price)
+    ) {
+      Utils.notifyGeneralError('Insufficient balance, please top up first');
+      return;
+    } else if (!checkCouriers()) {
       Utils.notify(
         "You haven't choose all shipping couriers",
         'error',
@@ -255,8 +287,9 @@ const CheckoutPage: NextPageWithLayout = () => {
     try {
       const stepupResponse = await axiosInstance.post(
         `${CONSTANTS.BASEURL}/auth/payment-token`,
+        { wallet_pin: pins.join('') },
       );
-      setIsPaymentOpen(false);
+      console.log(stepupResponse);
     } catch (error) {
       console.error(error);
     } finally {
@@ -267,6 +300,10 @@ const CheckoutPage: NextPageWithLayout = () => {
   useEffect(() => {
     setInitialStates();
   }, []);
+
+  useEffect(() => {
+    getWallet();
+  }, [updateToggle]);
 
   return (
     <section className="flex flex-col justify-center items-center w-full bg-white pb-5">
@@ -305,6 +342,8 @@ const CheckoutPage: NextPageWithLayout = () => {
             setIsPaymentOpen={setIsPaymentOpen}
             isPaymentLoading={isPaymentLoading}
             handleOpenPayment={handleOpenPaymentPortal}
+            wallet={wallet || { isActive: false, balance: 0 }}
+            setUpdateToggle={setUpdateToggle}
           />
         </div>
       </div>

@@ -38,21 +38,23 @@ const PinInput = ({
     }
     setPins(newPins);
   }
+
   function handleKeyDown(
     e: React.KeyboardEvent<HTMLInputElement>,
     index: number,
   ) {
     currentActiveIndex = index;
+    if (['e', 'E', '+', '-'].includes(e.key)) {
+      e.preventDefault();
+    }
     if (e.key === 'Tab') {
       e.preventDefault();
       setActiveIndex(currentActiveIndex + 1);
     }
     if (e.key === 'Backspace' && !pins[index]) {
-      e.preventDefault();
       setActiveIndex(currentActiveIndex - 1);
     }
     if (e.key === 'Enter') {
-      e.preventDefault();
       onEnter();
     }
   }
