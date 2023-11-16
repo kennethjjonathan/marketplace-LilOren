@@ -59,7 +59,7 @@ const OrderDetailPage: NextPageWithLayout = () => {
   const status = searchParams.get('status');
   const [orderItems, setOrderItems] = useState<IOrderItem[]>();
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [totalPage, setTotalPage] = useState<number>(0);
+  const [totalPage, setTotalPage] = useState<number>(1);
   const [currentTab, setCurrentTab] = useState<string>(
     status !== null ? status : '',
   );
@@ -77,6 +77,7 @@ const OrderDetailPage: NextPageWithLayout = () => {
             : `page=1&status=${status}`
         }`,
       );
+      console.log(response.data);
       setOrderItems(response.data.data.order);
       setTotalPage(response.data.data.pagination.total_page);
       setCurrentPage(response.data.data.pagination.current_page);

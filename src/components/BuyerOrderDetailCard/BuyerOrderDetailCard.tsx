@@ -16,12 +16,30 @@ interface BuyerOrderDetailCardProps {
 
 const BuyerOrderDetailCard = ({ orderItem }: BuyerOrderDetailCardProps) => {
   const [isAddDetailOpen, setIsAddDetailOpen] = useState<boolean>(false);
+  function parseStatus(inputString: string): string {
+    switch (inputString) {
+      case 'NEW':
+        return 'Waiting for Confirmation';
+      case 'PROCESS':
+        return 'On Process';
+      case 'DELIVER':
+        return 'On Delivery';
+      case 'ARRIVE':
+        return 'Arrived';
+      case 'RECEIVE':
+        return 'Received';
+      case 'CANCEL':
+        return 'Cancelled';
+      default:
+        return '';
+    }
+  }
   return (
     <>
       <div className="flex flex-col w-full border-[1px] border-gray-100">
         <div className="p-2 border-gray-200 w-full border-b-[1px] flex flex-col gap-1">
           <p className="border-l-[5px] border-primary p-0 pl-1 pt-0.5 text-xs font-bold text-left lg:text-sm 2xl:text-base">
-            {orderItem.status}
+            {parseStatus(orderItem.status)}
           </p>
           <div className="flex items-center gap-2 justify-between w-fit">
             <p className="text-sm md:text-base truncate text-gray-500">
@@ -79,7 +97,7 @@ const BuyerOrderDetailCard = ({ orderItem }: BuyerOrderDetailCardProps) => {
           </div>
         </div>
         <p className="font-semibold text-base md:text-lg truncate p-2 pb-0 lg:text-xl">
-          Shop Name
+          {orderItem.shop_name}
         </p>
         <div className="w-full px-2 divide-y-[1px] divide-gray-100">
           {orderItem.products.map((item, index) => (

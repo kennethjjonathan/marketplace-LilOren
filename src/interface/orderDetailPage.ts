@@ -7,6 +7,7 @@ export interface IOrderItem {
   address_detail: string;
   courier_name: string;
   total_price: number;
+  shop_name: string;
 }
 
 export interface IOrderProductItem {
@@ -16,4 +17,7 @@ export interface IOrderProductItem {
   variant2_name: string;
   sub_total_price: number;
   quantity: number;
+  base_price: number;
+  discounted_price: number;
+  discount: number;
 }
