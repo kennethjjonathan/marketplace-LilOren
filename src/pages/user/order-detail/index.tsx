@@ -7,6 +7,7 @@ import axiosInstance from '@/lib/axiosInstance';
 import CONSTANTS from '@/constants/constants';
 import { IOrderItem } from '@/interface/orderDetailPage';
 import BuyerOrderDetailCard from '@/components/BuyerOrderDetailCard/BuyerOrderDetailCard';
+import PaginationNav from '@/components/PaginationNav/PaginationNav';
 
 const dummyData = [
   {
@@ -48,6 +49,7 @@ const dummyData = [
 
 const OrderDetailPage: NextPageWithLayout = () => {
   const [orderItems, setOrderItems] = useState<IOrderItem[]>();
+  const [currentPage, setCurrentPage] = useState<number>(1);
   async function getItems() {
     try {
       const response = await axiosInstance(`/orders`);
@@ -70,6 +72,13 @@ const OrderDetailPage: NextPageWithLayout = () => {
             orderItems.map((orderItem, index) => (
               <BuyerOrderDetailCard key={index} orderItem={orderItem} />
             ))}
+        </div>
+        <div className="w-full flex items-center justify-center mt-3">
+          <PaginationNav
+            totalPage={20}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+          />
         </div>
       </div>
     </section>
