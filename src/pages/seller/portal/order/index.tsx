@@ -101,7 +101,11 @@ const SellerPortalOrder = () => {
 };
 
 SellerPortalOrder.getLayout = function getLayout(page: ReactElement) {
-  return <SellerLayout header="Order List">{page}</SellerLayout>;
+  return (
+    <SellerLayout tabData={data!} header="Order List">
+      {page}
+    </SellerLayout>
+  );
 };
 
 export default SellerPortalOrder;
