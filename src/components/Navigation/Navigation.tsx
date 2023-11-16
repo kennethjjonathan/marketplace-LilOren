@@ -85,6 +85,13 @@ const products: ICartHome[] = [
     price: 100000,
     quantity: 5,
   },
+  {
+    thumbnail_url:
+      'https://images.tokopedia.net/img/cache/100-square/VqbcmM/2022/10/13/2247df4c-8508-4d2e-ac46-ab4cf57f44f8.jpg.webp?ect=4g',
+    product_name: 'Bantal tidur silikon Restking',
+    price: 100000,
+    quantity: 5,
+  },
 ];
 
 const Navigation = () => {
