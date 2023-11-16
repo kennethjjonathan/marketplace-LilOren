@@ -1,7 +1,3 @@
-const nextEnv = require('@next/env');
-
-const envs = nextEnv.loadEnvConfig('.env.local', true);
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -32,8 +28,8 @@ const nextConfig = {
       },
     ],
   },
-  basePath: envs.combinedEnv.ENV == 'production' ? '/vm1' : undefined,
   output: 'standalone',
+  basePath: process.env.NODE_ENV === 'production' ? '/vm1' : undefined,
 };
 
 module.exports = nextConfig;
