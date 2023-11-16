@@ -21,6 +21,7 @@ import axiosInstance from '@/lib/axiosInstance';
 import CONSTANTS from '@/constants/constants';
 import { ICheckout } from '@/interface/checkoutPage';
 import { Utils } from '@/utils';
+import { useRouter } from 'next/router';
 
 const dummyData: ICheckout[] = [
   {
@@ -82,6 +83,7 @@ const dummyData: ICheckout[] = [
 ];
 
 const CheckoutPage: NextPageWithLayout = () => {
+  const router = useRouter();
   const [allAddress, setAllAddress] = useState<IAddress[] | undefined>();
   const [chosenAddress, setChosenAddress] = useState<IAddress | undefined>();
   const [checkouts, setCheckouts] = useState<ICheckout[]>();
@@ -107,7 +109,7 @@ const CheckoutPage: NextPageWithLayout = () => {
     shop_courier_id: number,
     loadingToggle: Dispatch<SetStateAction<boolean>>,
   ) {
-    loadingToggle((prev) => !prev);
+    loadingToggle(true);
     setIsSummaryLoading(true);
     if (couriers && couriersValid) {
       for (let i = 0; i < couriers.length; i++) {
@@ -123,13 +125,13 @@ const CheckoutPage: NextPageWithLayout = () => {
           setCouriers(newCourierArr);
           setCouriersValid(newCouriersValid);
           await getSummary(chosenAddress!, newCourierArr);
-          loadingToggle((prev) => !prev);
+          loadingToggle(false);
           setIsSummaryLoading(false);
           return;
         }
       }
     }
-    loadingToggle((prev) => !prev);
+    loadingToggle(false);
     setIsSummaryLoading(false);
   }
 
@@ -148,7 +150,11 @@ const CheckoutPage: NextPageWithLayout = () => {
       );
       setCheckoutSummary(response.data.data);
     } catch (error) {
-      console.error(error);
+      if (error === CONSTANTS.ALREADY_LOGGED_OUT) {
+        Utils.notifyTokenExp();
+        router.replace('/signin');
+      }
+      Utils.handleGeneralError(error);
     }
   }
 
@@ -157,8 +163,8 @@ const CheckoutPage: NextPageWithLayout = () => {
       const response = await axiosInstance(`${CONSTANTS.BASEURL}/checkouts`);
       setCheckouts(response.data.data.checkouts);
       return response.data.data;
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      Utils.handleGeneralError(error);
     }
   }
 
@@ -171,7 +177,7 @@ const CheckoutPage: NextPageWithLayout = () => {
       setChosenAddress(response.data.data[0]);
       return response.data.data[0];
     } catch (error) {
-      console.log(error);
+      Utils.handleGeneralError(error);
     }
   }
 
@@ -181,17 +187,19 @@ const CheckoutPage: NextPageWithLayout = () => {
       const initialAddress = await getInitialAddress();
       const initialCouriers: IRequestOrderSummary[] = [];
       const initialCouriersValid: boolean[] = [];
-      for (let i = 0; i < checkoutReponse.checkouts.length; i++) {
-        const orderReq: IRequestOrderSummary = {
-          shop_id: checkoutReponse.checkouts[i].shop_id,
-          shop_courier_id: undefined,
-        };
-        initialCouriers.push(orderReq);
-        initialCouriersValid.push(true);
+      if (checkoutReponse && checkoutReponse.checkouts) {
+        for (let i = 0; i < checkoutReponse.checkouts.length; i++) {
+          const orderReq: IRequestOrderSummary = {
+            shop_id: checkoutReponse.checkouts[i].shop_id,
+            shop_courier_id: undefined,
+          };
+          initialCouriers.push(orderReq);
+          initialCouriersValid.push(true);
+        }
+        setCouriers(initialCouriers);
+        setCouriersValid(initialCouriersValid);
+        await getSummary(initialAddress, initialCouriers);
       }
-      setCouriers(initialCouriers);
-      setCouriersValid(initialCouriersValid);
-      await getSummary(initialAddress, initialCouriers);
     } catch (error) {
       console.error(error);
     }
@@ -307,21 +315,5 @@ const CheckoutPage: NextPageWithLayout = () => {
 CheckoutPage.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
 };
-
-// export const getServerSideProps: GetServerSideProps = async () => {
-//   const cookieList = cookies()
-//   try {
-//     const response = await fetchInstance(`${CONSTANTS.BASEURL}/checkouts`, {
-//       credentials: 'include',
-//     });
-//     console.log(response);
-//   } catch (error) {
-//     console.error(error);
-//   }
-
-//   return {
-//     notFound: true,
-//   };
-// };
 
 export default CheckoutPage;

@@ -143,11 +143,7 @@ const ProductPage = ({
       );
     } catch (error: any) {
       if (error.data.message === CONSTANTS.ALREADY_LOGGED_OUT) {
-        Utils.notify(
-          'Your token has expired, please log in again',
-          'default',
-          'colored',
-        );
+        Utils.notify(CONSTANTS.TOKEN_HAS_EXPIRED, 'default', 'colored');
         router.push('/signin');
       }
     }

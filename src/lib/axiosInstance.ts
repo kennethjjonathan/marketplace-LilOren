@@ -25,21 +25,26 @@ axiosInstance.interceptors.response.use(
   },
   async (err) => {
     const originalConfig = err.config;
-    if (err.response) {
-      if (err.response.status === 401 && !originalConfig._retry) {
-        originalConfig._retry = true;
-        try {
-          const refreshReponse = await refreshAccessToken();
-          if (refreshReponse.data.message === CONSTANTS.ALREADY_LOGGED_OUT) {
-            return Promise.reject(refreshReponse.data.message);
-          }
-          return axiosInstance(originalConfig);
-        } catch (_error) {
-          return Promise.reject(_error);
+    if (err.response.status === 401 && !originalConfig._retry) {
+      originalConfig._retry = true;
+      try {
+        const refreshReponse = await refreshAccessToken();
+        if (
+          refreshReponse &&
+          refreshReponse.response &&
+          refreshReponse.response.data &&
+          refreshReponse.response.data.message &&
+          refreshReponse.response.data.message === CONSTANTS.ALREADY_LOGGED_OUT
+        ) {
+          return Promise.reject(CONSTANTS.ALREADY_LOGGED_OUT);
         }
+        return axiosInstance(originalConfig);
+      } catch (_error) {
+        return Promise.reject(_error);
       }
+    } else {
+      return Promise.reject(err);
     }
-    return Promise.reject(err);
   },
 );
 
