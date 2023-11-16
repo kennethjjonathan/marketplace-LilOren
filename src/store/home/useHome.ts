@@ -11,6 +11,7 @@ export interface ICartHome {
 
 type State = {
   cart_in_home: ICartHome[];
+  loading_fetch_cart_in_home: boolean;
 };
 
 type Actions = {
@@ -19,12 +20,14 @@ type Actions = {
 
 const useHomeBase = create<State & Actions>((set) => ({
   cart_in_home: [],
+  loading_fetch_cart_in_home: false,
   fetchCartInHome: async () => {
+    set(() => ({ loading_fetch_cart_in_home: true }));
     const response = await HomeClient.getCartInHome();
-    console.log(response);
     const data = response?.data;
     set(() => ({ cart_in_home: data }));
+    set(() => ({ loading_fetch_cart_in_home: false }));
   },
 }));
 
-export const useCart = createZusSelector(useHomeBase);
+export const useHome = createZusSelector(useHomeBase);

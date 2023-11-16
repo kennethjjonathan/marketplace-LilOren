@@ -25,7 +25,6 @@ export class HomeService {
       const responseAPI = {
         error: true,
         data: [],
-        message: error.response.statusText,
       };
       return responseAPI;
     }
