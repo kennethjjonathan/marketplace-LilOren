@@ -5,20 +5,19 @@ import Link from 'next/link';
 interface IData {
   id: number;
   label: string;
-  status: string;
+  status?: string;
   href: string;
 }
 
 interface TabsProps {
   datas: IData[];
-  currentTab: string;
+  currentTab?: string;
   setCurrentTab: Dispatch<SetStateAction<string>>;
 }
 const Tabs = ({ datas, currentTab, setCurrentTab }: TabsProps) => {
-  // const [currentTab, setCCurrentTab] = useState(1);
   const [selectedTab, setSelectedTab] = useState(null);
-  const handleChangeTab = (status: string) => {
-    setCurrentTab(status);
+  const handleChangeTab = (current: string) => {
+    setCurrentTab(current);
   };
 
   return (
@@ -29,7 +28,7 @@ const Tabs = ({ datas, currentTab, setCurrentTab }: TabsProps) => {
             <Button
               variant={'ghost'}
               className="p-0 hover:text-primary"
-              onClick={() => handleChangeTab(data.status)}
+              onClick={() => handleChangeTab(data.status!)}
             >
               <p
                 className={`text-[12px] lg:text-[14px] p-4 ${
