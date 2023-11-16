@@ -8,53 +8,59 @@ import CONSTANTS from '@/constants/constants';
 import { IOrderItem } from '@/interface/orderDetailPage';
 import BuyerOrderDetailCard from '@/components/BuyerOrderDetailCard/BuyerOrderDetailCard';
 import PaginationNav from '@/components/PaginationNav/PaginationNav';
+import { useSearchParams } from 'next/navigation';
 
 const dummyData = [
   {
     id: 1,
-    label: 'All Order',
-    href: '/user/order-detail',
+    label: 'All',
+    href: '/user/order-detail?page=1',
   },
   {
     id: 2,
     label: 'Waiting for seller',
-    href: '/user/order-detail',
+    href: '/user/order-detail?status=PROCESS&page=1',
   },
   {
     id: 3,
     label: 'Packaging',
-    href: '/user/order-detail',
+    href: '/user/order-detail?status=PROCESS&page=1',
   },
   {
     id: 4,
     label: 'On Delivery',
-    href: '/user/order-detail',
+    href: '/user/order-detail?status=PROCESS&page=1',
   },
   {
     id: 5,
     label: 'Arrived',
-    href: '/user/order-detail',
+    href: '/user/order-detail?status=PROCESS&page=1',
   },
   {
     id: 6,
     label: 'Completed',
-    href: '/user/order-detail',
+    href: '/user/order-detail?status=PROCESS&page=1',
   },
   {
     id: 7,
     label: 'Cancelled',
-    href: '/user/order-detail',
+    href: '/user/order-detail?status=PROCESS&page=1',
   },
 ];
 
 const OrderDetailPage: NextPageWithLayout = () => {
+  const statusParams = useSearchParams();
+  const status = statusParams.get('status');
   const [orderItems, setOrderItems] = useState<IOrderItem[]>();
   const [currentPage, setCurrentPage] = useState<number>(1);
+
+  console.log(status);
+
   async function getItems() {
     try {
       const response = await axiosInstance(`/orders`);
-      setOrderItems(response.data.data);
-      console.log(response.data.data);
+      setOrderItems(response.data.data.order);
+      console.log(response);
     } catch (error) {
       console.error(error);
     }
@@ -65,7 +71,7 @@ const OrderDetailPage: NextPageWithLayout = () => {
   return (
     <section className="w-full bg-white">
       <div className="w-full md:w-[75vw] lg:px-2 lg:pt-5 pb-5 flex flex-col mx-auto">
-        <Tabs datas={dummyData} />
+        <Tabs datas={dummyData} isBuyerOrder />
         <Divider />
         <div className="w-full pb-2">
           {orderItems &&
