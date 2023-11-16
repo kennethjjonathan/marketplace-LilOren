@@ -1,51 +1,47 @@
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import { Button } from '../ui/button';
 import Link from 'next/link';
 
 interface IData {
   id: number;
   label: string;
-  href?: string;
+  status: string;
+  href: string;
 }
 
 interface TabsProps {
   datas: IData[];
-  isBuyerOrder?: boolean;
+  currentTab: string;
+  setCurrentTab: Dispatch<SetStateAction<string>>;
 }
-const Tabs = ({ datas, isBuyerOrder = false }: TabsProps) => {
-  const [currentTab, setCCurrentTab] = useState(1);
+const Tabs = ({ datas, currentTab, setCurrentTab }: TabsProps) => {
   const [selectedTab, setSelectedTab] = useState(null);
-  const handleChangeTab = (id: number) => {
-    console.log(id);
-    setCCurrentTab(id);
+  const handleChangeTab = (current: string) => {
+    setCurrentTab(current);
   };
 
   return (
     <div
-      className={`bg-white shadow-sm rounded-t-xl flex gap-2 p-2 overflow-x-auto ${
-        isBuyerOrder
-          ? 'max-w-full'
-          : 'w-[85vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw]'
-      }`}
+      className={`bg-white shadow-sm rounded-t-xl flex gap-2 p-2 overflow-x-auto`}
     >
       {datas.map((data) => (
         <div key={`key:${data.id}`}>
-          <Link href={data.href ? data.href : '/seller/portal/order'}>
+          <Link href={data.href}>
             <Button
               variant={'ghost'}
               className="p-0 hover:text-primary"
-              onClick={() => handleChangeTab(data.id)}
+              onClick={() => handleChangeTab(data.status!)}
             >
               <p
                 className={`text-[12px] lg:text-[14px] p-4 ${
-                  currentTab === data.id && 'text-primary'
+                  currentTab === data.status && 'text-primary'
                 }`}
               >
                 {data.label}
               </p>
             </Button>
           </Link>
-          {currentTab === data.id && (
+          {currentTab === data.status && (
             <div
               className={`border-2 border-primary rounded-xl translate-x- duration-150 ease-in-out`}
             ></div>

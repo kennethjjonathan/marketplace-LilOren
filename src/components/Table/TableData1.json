@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "image": "https://images.tokopedia.net/img/cache/900/VqbcmM/2022/9/9/fbc13a48-f451-443d-be76-4c55c3e025f9.jpg",
+    "product_name": "Macbook Air 2020 8 GB",
+    "price": 12000000,
+    "stock": 500
+  },
+  {
+    "id": 2,
+    "image": "https://images.tokopedia.net/img/cache/900/VqbcmM/2022/9/9/fbc13a48-f451-443d-be76-4c55c3e025f9.jpg",
+    "product_name": "Macbook Air 2020 16 GB",
+    "price": 16000000,
+    "stock": 100
+  }
+]

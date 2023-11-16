@@ -13,30 +13,19 @@ const SellerOrderCard = ({ order_status }: SellerOrderCardProps) => {
 
   const handleGetAction = (order_status: string) => {
     let action = '';
-    switch (order_status) {
-      case 'NEW':
-        action = 'Process Order';
-        break;
-      case 'PROCESS':
-        action = 'Process Order';
-        break;
-      case 'DELIVER':
-        action = 'Process Order';
-        break;
-      case 'ARRIVE':
-        action = 'Process Order';
-        break;
-      case 'RECEIVE':
-        action = 'Process Order';
-        break;
-      case 'CANCEL':
-        action = 'Process Order';
-        break;
-      default:
-        action = 'Process Order';
-        break;
+    if (order_status === 'NEW') {
+      action = 'Process Order';
+    } else if (order_status === 'PROCESS') {
+      action = 'Process To Ship';
+    } else if (order_status === 'DELIVER') {
+      action = 'Process Order';
+    } else if (order_status === 'ARRIVE') {
+      action = 'Process Order';
+    } else if (order_status === 'RECEIVE') {
+      action = 'Process Order';
+    } else if (order_status === 'CANCEL') {
+      action = 'Process Order';
     }
-
     return action;
   };
 

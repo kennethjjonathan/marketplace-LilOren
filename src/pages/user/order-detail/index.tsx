@@ -4,62 +4,71 @@ import Layout from '@/components/Layout/Layout';
 import Tabs from '@/components/Tabs/Tabs';
 import Divider from '@/components/Divider/Divider';
 import axiosInstance from '@/lib/axiosInstance';
-import CONSTANTS from '@/constants/constants';
 import { IOrderItem } from '@/interface/orderDetailPage';
 import BuyerOrderDetailCard from '@/components/BuyerOrderDetailCard/BuyerOrderDetailCard';
 import PaginationNav from '@/components/PaginationNav/PaginationNav';
 import { useSearchParams } from 'next/navigation';
-
-const dummyData = [
+const data = [
   {
     id: 1,
-    label: 'All',
+    label: 'All Order',
+    status: '',
     href: '/user/order-detail?page=1',
   },
   {
     id: 2,
-    label: 'Waiting for seller',
-    href: '/user/order-detail?status=PROCESS&page=1',
+    label: 'Waiting for Confirmation',
+    status: 'NEW',
+    href: '/user/order-detail?status=NEW&page=1',
   },
   {
     id: 3,
-    label: 'Packaging',
+    label: 'On Process',
+    status: 'PROCESS',
     href: '/user/order-detail?status=PROCESS&page=1',
   },
   {
     id: 4,
     label: 'On Delivery',
-    href: '/user/order-detail?status=PROCESS&page=1',
+    status: 'DELIVER',
+    href: '/user/order-detail?status=DELIVER&page=1',
   },
   {
     id: 5,
     label: 'Arrived',
-    href: '/user/order-detail?status=PROCESS&page=1',
+    status: 'ARRIVE',
+    href: '/user/order-detail?status=ARRIVE&page=1',
   },
   {
     id: 6,
-    label: 'Completed',
-    href: '/user/order-detail?status=PROCESS&page=1',
+    label: 'Received',
+    status: 'RECEIVE',
+    href: '/user/order-detail?status=RECEIVE&page=1',
   },
   {
     id: 7,
     label: 'Cancelled',
-    href: '/user/order-detail?status=PROCESS&page=1',
+    status: 'CANCEL',
+    href: '/user/order-detail?status=CANCEL&page=1',
   },
 ];
 
 const OrderDetailPage: NextPageWithLayout = () => {
-  const statusParams = useSearchParams();
-  const status = statusParams.get('status');
+  const searchParams = useSearchParams();
   const [orderItems, setOrderItems] = useState<IOrderItem[]>();
   const [currentPage, setCurrentPage] = useState<number>(1);
-
-  console.log(status);
+  const [totalPage, setTotalPage] = useState<number>(0);
+  const [currentTab, setCurrentTab] = useState<string>('');
+  const status = searchParams.get('status');
+  const page = searchParams.get('page');
 
   async function getItems() {
+    console.log(status, page);
     try {
       const response = await axiosInstance(`/orders`);
       setOrderItems(response.data.data.order);
+      setTotalPage(response.data.data.pagination.total_page);
+      setCurrentPage(response.data.data.pagination.current_page);
       console.log(response);
     } catch (error) {
       console.error(error);
@@ -67,11 +76,15 @@ const OrderDetailPage: NextPageWithLayout = () => {
   }
   useEffect(() => {
     getItems();
-  }, []);
+  }, [searchParams]);
   return (
     <section className="w-full bg-white">
       <div className="w-full md:w-[75vw] lg:px-2 lg:pt-5 pb-5 flex flex-col mx-auto">
-        <Tabs datas={dummyData} isBuyerOrder />
+        <Tabs
+          datas={data}
+          currentTab={currentTab}
+          setCurrentTab={setCurrentTab}
+        />
         <Divider />
         <div className="w-full pb-2">
           {orderItems &&
@@ -81,7 +94,7 @@ const OrderDetailPage: NextPageWithLayout = () => {
         </div>
         <div className="w-full flex items-center justify-center mt-3">
           <PaginationNav
-            totalPage={20}
+            totalPage={totalPage}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
           />

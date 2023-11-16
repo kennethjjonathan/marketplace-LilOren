@@ -19,7 +19,7 @@ interface CartCardProductProps {
 const CartCardProduct = ({ product, index }: CartCardProductProps) => {
   const [quantity, setQuantity] = useState<number>(product.quantity!);
   const [isLiked, setIsLiked] = useState<boolean>(false);
-  const fetchCart = useCart.use.fetchCart();
+  const putIsCheckedCart = useCart.use.putIsCheckedCart();
   const cartItems = useCart.use.cartItems();
   const setCart = useCart.use.setCartItems();
   const is_checked_carts = useCart.use.is_checked_carts();
@@ -51,7 +51,7 @@ const CartCardProduct = ({ product, index }: CartCardProductProps) => {
     const req: ICartCheckedRequest = {
       is_checked_carts: is_checked_carts,
     };
-    await CartClient.updateIsChecked(req);
+    putIsCheckedCart(req);
   };
 
   return (
@@ -72,7 +72,7 @@ const CartCardProduct = ({ product, index }: CartCardProductProps) => {
             style={{ objectFit: 'cover' }}
             sizes="(max-width: 1024px) 35vw, 20vw"
           />
-          {product.discount_price !== 0 && (
+          {product.discount !== 0 && (
             <div className="absolute bottom-0 left-0 bg-destructive text-primary-foreground text-[10px] md:text-[12px] font-semibold p-1 rounded-tr-lg">{`${product.discount}%`}</div>
           )}
         </div>

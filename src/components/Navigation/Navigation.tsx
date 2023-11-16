@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { Button } from '../ui/button';
+import { Button } from '@/components/ui/button';
 import { Utils } from '@/utils';
 
 import { cn } from '@/lib/utils';
@@ -15,9 +14,11 @@ import {
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
 import { Search, ShoppingCart, Store, User2 } from 'lucide-react';
-import ButtonWithIcon from '../ButtonWithIcon/ButtonWithIcon';
+import ButtonWithIcon from '@/components/ButtonWithIcon/ButtonWithIcon';
+import EmptyCart from '@/components/EmptyCart/EmptyCart';
+import { ICartHome, useHome } from '@/store/home/useHome';
+import CartInHome from '@/components/CartInHome/CartInHome';
 import styles from './Navigation.module.scss';
-import EmptyCart from '../EmptyCart/EmptyCart';
 
 const components: {
   title: string;
@@ -48,44 +49,63 @@ const user: {
   isSeller: false,
 };
 
-const products: {
-  name: string;
-  price: number;
-  quantity: number;
-}[] = [
-  // {
-  //   name: 'Bantal tidur silikon Restking Bantal tidur silikon Restking',
-  //   price: 100000,
-  //   quantity: 1,
-  // },
-  // {
-  //   name: 'Bantal tidur silikon Restking',
-  //   price: 100000,
-  //   quantity: 12,
-  // },
-  // {
-  //   name: 'Bantal tidur silikon Restking',
-  //   price: 100000,
-  //   quantity: 3,
-  // },
-  // {
-  //   name: 'Bantal tidur silikon Restking',
-  //   price: 100000,
-  //   quantity: 4,
-  // },
-  // {
-  //   name: 'Bantal tidur silikon Restking',
-  //   price: 100000,
-  //   quantity: 5,
-  // },
+const products: ICartHome[] = [
+  {
+    thumbnail_url:
+      'https://images.tokopedia.net/img/cache/100-square/VqbcmM/2023/10/16/9a895898-56d6-4430-b338-bbd43107f091.png.webp?ect=4g',
+    product_name: 'Bantal tidur silikon Restking Bantal tidur silikon Restking',
+    price: 100000,
+    quantity: 1,
+  },
+  {
+    thumbnail_url:
+      'https://images.tokopedia.net/img/cache/100-square/VqbcmM/2021/7/27/5b3236fd-45aa-42c0-85d7-477dc0abfa8f.png.webp?ect=4g',
+    product_name: 'Bantal tidur silikon Restking',
+    price: 100000,
+    quantity: 12,
+  },
+  {
+    thumbnail_url:
+      'https://images.tokopedia.net/img/cache/100-square/VqbcmM/2021/3/21/19e19780-4bf2-46b7-bbc7-8ebf4652e0ee.jpg.webp?ect=4g',
+    product_name: 'Bantal tidur silikon Restking',
+    price: 100000,
+    quantity: 3,
+  },
+  {
+    thumbnail_url:
+      'https://images.tokopedia.net/img/cache/100-square/VqbcmM/2022/9/21/1109807a-c380-46cb-b460-b72638fa5630.png.webp?ect=4g',
+    product_name: 'Bantal tidur silikon Restking',
+    price: 100000,
+    quantity: 4,
+  },
+  {
+    thumbnail_url:
+      'https://images.tokopedia.net/img/cache/100-square/VqbcmM/2022/10/13/2247df4c-8508-4d2e-ac46-ab4cf57f44f8.jpg.webp?ect=4g',
+    product_name: 'Bantal tidur silikon Restking',
+    price: 100000,
+    quantity: 5,
+  },
+  {
+    thumbnail_url:
+      'https://images.tokopedia.net/img/cache/100-square/VqbcmM/2022/10/13/2247df4c-8508-4d2e-ac46-ab4cf57f44f8.jpg.webp?ect=4g',
+    product_name: 'Bantal tidur silikon Restking',
+    price: 100000,
+    quantity: 5,
+  },
 ];
 
 const Navigation = () => {
   const [searchKey, setSearchKey] = useState<string>('');
+  const cartInHome = useHome.use.cart_in_home();
+  const fetchCartInHome = useHome.use.fetchCartInHome();
 
   const handleSearchProduct = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   };
+
+  useEffect(() => {
+    fetchCartInHome();
+  }, []);
 
   return (
     <div className={styles.navigation}>
@@ -132,43 +152,7 @@ const Navigation = () => {
               </NavigationMenuTrigger>
               <NavigationMenuContent>
                 {user.firstName ? (
-                  <div className={styles.cart}>
-                    <div className={styles.cartHeader}>
-                      <p
-                        className={styles.totalCartItems}
-                      >{`Cart (${products.length})`}</p>
-                      <Button
-                        variant={'link'}
-                        className="p-0 text-[10px] sm:text-[12px] md:text-[14px]"
-                      >
-                        <Link href="/cart">See My Cart</Link>
-                      </Button>
-                    </div>
-                    <ul className={styles.cartItemsWrapper}>
-                      {products.length !== 0 ? (
-                        products.map((product) => (
-                          <ListItem
-                            key={`key:${product.name}`}
-                            href="/cart"
-                            title={product.name}
-                          >
-                            <div className="flex justify-between items-center pt-1">
-                              <p className="quantityinCart text-[10px] sm:text-[12px] md:text-[14px]">
-                                {`${product.quantity} ${
-                                  product.quantity > 1 ? 'items' : 'item'
-                                }`}
-                              </p>
-                              <p className="priceInCart text-primary text-[10px] sm:text-[12px] md:text-[14px]">
-                                {Utils.convertPrice(product.price)}
-                              </p>
-                            </div>
-                          </ListItem>
-                        ))
-                      ) : (
-                        <EmptyCart />
-                      )}
-                    </ul>
-                  </div>
+                  <CartInHome products={products} />
                 ) : (
                   <EmptyCart />
                 )}
@@ -289,7 +273,7 @@ export const ListItem = React.forwardRef<
           )}
           {...props}
         >
-          <div className="font-medium leading-none whitespace-nowrap overflow-hidden text-ellipsis w-[100px] sm:w-[150px] md:w-[120px] lg:w-[230px] text-[10px] sm:text-[12px] md:text-[14px]">
+          <div className="font-medium leading-none whitespace-nowrap overflow-hidden text-ellipsis w-[100px] sm:w-[150px] md:w-[180px] lg:w-[200px] text-[10px] sm:text-[12px] md:text-[14px]">
             {title}
           </div>
           <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">

@@ -1,10 +1,11 @@
 import CONSTANTS from '@/constants/constants';
-import { SellerOrderService } from './SellerOrderService';
+import { ISellerOrdersParams, SellerOrderService } from './SellerOrderService';
 
 export class SellerOrderClient {
-  static getSellerOrders = async () => {
+  static getSellerOrders = async (params: ISellerOrdersParams) => {
     const response = await SellerOrderService.get(
-      `${CONSTANTS.BASEURL}/orders/seller}`,
+      `${CONSTANTS.BASEURL}/orders/seller`,
+      params,
     );
     return response;
   };
