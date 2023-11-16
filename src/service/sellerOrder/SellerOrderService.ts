@@ -6,22 +6,28 @@ interface ISellerOrderResponse {
   data?: any;
 }
 
+export interface ISellerOrdersParams {
+  page: number;
+  status: string;
+}
+
 interface ISellerOrderRequestData {
   est_days: number;
 }
 
 export class SellerOrderService {
-  static get = async (url: string) => {
+  static get = async (url: string, params: ISellerOrdersParams) => {
     try {
       const response = await axiosInstance({
         method: 'GET',
         url: url,
+        params: params,
       });
       if (response.status === 200) {
         const responseAPI: ISellerOrderResponse = {
           error: false,
           message: 'success get',
-          data: {},
+          data: response.data,
         };
         return responseAPI;
       }
@@ -29,6 +35,7 @@ export class SellerOrderService {
       const response = {
         error: true,
         message: error.message,
+        data: {},
       };
       return response;
     }
