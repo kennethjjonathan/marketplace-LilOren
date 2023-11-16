@@ -86,7 +86,7 @@ const User: NextPageWithLayout = () => {
 
 User.getLayout = function getLayout(page: ReactElement) {
   return (
-    <UserSettingsLayout currentTab="My Biodata" component={<UserHeading />}>
+    <UserSettingsLayout currentTab="Info" component={<UserHeading />}>
       {page}
     </UserSettingsLayout>
   );

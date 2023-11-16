@@ -8,33 +8,43 @@ import { Button } from '@/components/ui/button';
 import ButtonWithIcon from '@/components/ButtonWithIcon/ButtonWithIcon';
 import Head from 'next/head';
 import SkeletonUserAddress from '@/components/SkeletonUserAddress/SkeletonUserAddress';
+import { useUser } from '@/store/user/useUser';
+import { IUserAddress } from '@/service/userAddress/userAddressService';
 
-interface IUserAddress {
-  id: number;
-  addressLabel: string;
-  receiverName: string;
-  phoneNumber: string;
-  fullAddress: string;
-}
+// interface IUserAddress {
+//   id: number;
+//   addressLabel: string;
+//   receiverName: string;
+//   phoneNumber: string;
+//   fullAddress: string;
+// }
 
-const userAddresses: IUserAddress[] = [
-  {
-    id: 1,
-    addressLabel: 'Rumah',
-    receiverName: 'Endriyani Rahayu',
-    phoneNumber: '081291268917 ',
-    fullAddress: 'JL Rawamangun Muka II Blok E 51 RT 006/ RW 012',
-  },
-  {
-    id: 2,
-    addressLabel: 'Rumah',
-    receiverName: 'Endradi Wulandari',
-    phoneNumber: '081291268917 ',
-    fullAddress: 'JL Rawamangun Muka II Blok E 51 RT 006/ RW 012',
-  },
-];
+// const userAddresses: IUserAddress[] = [
+//   {
+//     id: 1,
+//     receiver_name: 'Endriyani Rahayu',
+//     postal_code: '16112 ',
+//     address: 'JL Rawamangun Muka II Blok E 51 RT 006/ RW 012',
+//   },
+//   {
+//     id: 2,
+//     receiver_name: 'Endradi Wulandari',
+//     postal_code: '80351 ',
+//     address: 'Jl. Dago Asri Blok C No. 17A, Cilendek Timur, Bogor Barat',
+//   },
+//   {
+//     id: 3,
+//     receiver_name: 'Aditya Tresnobudi',
+//     postal_code: '40135 ',
+//     address: 'Jl. Raflesia II No. 16/ Taman Yasmin, Cilendek Timur, Bogor Barat',
+//   },
+// ];
 
 const UserSettingsAddress = () => {
+  const loading_fetch_user_addresses =
+    useUser.use.loading_ferch_user_addresses();
+  const fetchUserAddresses = useUser.use.fetchUserAddresses();
+  const userAddresses = useUser.use.user_addresses();
   const [currentAddress, setCurrentAddress] = useState<IUserAddress>(
     userAddresses[0],
   );
@@ -43,25 +53,18 @@ const UserSettingsAddress = () => {
   );
   const [loadingChangeMainAddress, setLoadingChangeMainAddress] =
     useState<boolean>(false);
-  const [loadingFetchUserAddress, setLoadingFetchUserAddress] =
-    useState<boolean>(false);
 
   const handleMainAddress = (address: IUserAddress) => {
     setLoadingChangeMainAddress(true);
-    console.log(address);
     setLoadingChangeMainAddress(false);
   };
 
   useEffect(() => {
-    setLoadingFetchUserAddress(true);
-
-    setTimeout(() => {
-      setLoadingFetchUserAddress(false);
-    }, 1000);
+    fetchUserAddresses();
   }, []);
   return (
     <>
-      {loadingFetchUserAddress ? (
+      {loading_fetch_user_addresses ? (
         <>
           <SkeletonUserAddress />
           <SkeletonUserAddress />
@@ -71,8 +74,8 @@ const UserSettingsAddress = () => {
           <div className="pb-[60px] m-[16px] flex flex-col gap-4">
             {userAddresses.map((address: IUserAddress, index) => (
               <div
-                key={`key:${String(index)} ${address.addressLabel} ${
-                  address.receiverName
+                key={`key:${String(index)} ${address.id.toString()} ${
+                  address.receiver_name
                 }`}
                 className="address-card-item flex gap-2 hover:cursor-pointer"
                 onClick={() => setCurrentAddress(address)}
@@ -88,20 +91,20 @@ const UserSettingsAddress = () => {
                       <div
                         className={`${styles.info_container} ${styles.info} flex-grow`}
                       >
-                        <div className={`title ${styles.title}`}>
+                        {/* <div className={`title ${styles.title}`}>
                           <p
                             className={`${styles.text_title} ${styles.heading} ${styles.text}`}
                           >
                             {address.addressLabel}
                           </p>
-                        </div>
+                        </div> */}
                         <p className={`${styles.receiver_name}`}>
-                          {address.receiverName}
+                          {address.receiver_name}
                         </p>
                         <p
                           className={`${styles.full_address} ${styles.heading}`}
                         >
-                          {address.fullAddress}
+                          {address.address}
                         </p>
                       </div>
                       {address.id === currentAddress.id && (

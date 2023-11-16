@@ -1,3 +1,4 @@
+import axiosInstance from '@/lib/axiosInstance';
 import axios from 'axios';
 
 export interface IUserAddressRequest {
@@ -11,9 +12,17 @@ export interface IUserAddressRequest {
   postal_code: string;
 }
 
+export interface IUserAddress {
+  id: number;
+  receiver_name: string;
+  address: string;
+  postal_code: string;
+}
+
 export interface IUserAddressResponse {
   error?: boolean;
   message?: string;
+  data?: IUserAddress[];
 }
 
 export class UserAddressService {
@@ -39,6 +48,30 @@ export class UserAddressService {
         };
         return response;
       }
+    }
+  };
+
+  static get = async (url: string) => {
+    try {
+      const response = await axiosInstance({
+        method: 'GET',
+        url: url,
+      });
+      if (response.status === 200) {
+        const responseAPI: IUserAddressResponse = {
+          error: false,
+          message: 'success',
+          data: response.data,
+        };
+        return responseAPI;
+      }
+    } catch (error: any) {
+      const responseAPI: IUserAddressResponse = {
+        error: true,
+        message: 'failed get user addresses',
+        data: [],
+      };
+      return responseAPI;
     }
   };
 }
