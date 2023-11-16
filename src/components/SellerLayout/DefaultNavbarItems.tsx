@@ -5,7 +5,7 @@ import { NavItem } from './Sidebar';
 export const defaultNavItems: NavItem[] = [
   {
     label: 'Home',
-    href: '/seller/portal/home',
+    href: '/seller/portal',
     icon: <Home className="w-6 h-6" />,
   },
   {
@@ -15,7 +15,7 @@ export const defaultNavItems: NavItem[] = [
   },
   {
     label: 'Order',
-    href: '/seller/portal/order',
+    href: '/seller/portal/order?page=1',
     icon: <ClipboardList className="w-6 h-6" />,
   },
   {
