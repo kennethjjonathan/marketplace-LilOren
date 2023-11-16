@@ -38,7 +38,7 @@ const UserSettingsLayout = ({
       <div className="flex justify-center items-center">
         <div className="hidden lg:block lg:w-[75vw]">
           <UserPresentation />
-          <Tabs datas={data} />
+          {/* <Tabs datas={data} /> */}
         </div>
       </div>
       {component}
