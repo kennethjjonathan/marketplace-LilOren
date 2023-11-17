@@ -17,12 +17,13 @@ export interface IUserAddress {
   receiver_name: string;
   address: string;
   postal_code: string;
+  receiver_phone_number: string;
 }
 
 export interface IUserAddressResponse {
   error?: boolean;
   message?: string;
-  data?: IUserAddress[];
+  data: IUserAddress[];
 }
 
 export class UserAddressService {
@@ -37,6 +38,7 @@ export class UserAddressService {
         const response: IUserAddressResponse = {
           error: false,
           message: 'created',
+          data: [],
         };
         return response;
       }
@@ -45,6 +47,7 @@ export class UserAddressService {
         const response: IUserAddressResponse = {
           error: true,
           message: error.message,
+          data: [],
         };
         return response;
       }
@@ -61,7 +64,7 @@ export class UserAddressService {
         const responseAPI: IUserAddressResponse = {
           error: false,
           message: 'success',
-          data: response.data,
+          data: response.data.data,
         };
         return responseAPI;
       }

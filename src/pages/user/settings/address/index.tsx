@@ -11,46 +11,17 @@ import SkeletonUserAddress from '@/components/SkeletonUserAddress/SkeletonUserAd
 import { useUser } from '@/store/user/useUser';
 import { IUserAddress } from '@/service/userAddress/userAddressService';
 
-// interface IUserAddress {
-//   id: number;
-//   addressLabel: string;
-//   receiverName: string;
-//   phoneNumber: string;
-//   fullAddress: string;
-// }
-
-// const userAddresses: IUserAddress[] = [
-//   {
-//     id: 1,
-//     receiver_name: 'Endriyani Rahayu',
-//     postal_code: '16112 ',
-//     address: 'JL Rawamangun Muka II Blok E 51 RT 006/ RW 012',
-//   },
-//   {
-//     id: 2,
-//     receiver_name: 'Endradi Wulandari',
-//     postal_code: '80351 ',
-//     address: 'Jl. Dago Asri Blok C No. 17A, Cilendek Timur, Bogor Barat',
-//   },
-//   {
-//     id: 3,
-//     receiver_name: 'Aditya Tresnobudi',
-//     postal_code: '40135 ',
-//     address: 'Jl. Raflesia II No. 16/ Taman Yasmin, Cilendek Timur, Bogor Barat',
-//   },
-// ];
-
 const UserSettingsAddress = () => {
   const loading_fetch_user_addresses =
     useUser.use.loading_ferch_user_addresses();
   const fetchUserAddresses = useUser.use.fetchUserAddresses();
   const userAddresses = useUser.use.user_addresses();
-  const [currentAddress, setCurrentAddress] = useState<IUserAddress>(
-    userAddresses[0],
-  );
-  const [userSelectedAddress, setUserSelectedAddress] = useState<IUserAddress>(
-    userAddresses[0],
-  );
+  const user_default_address = useUser.use.user_default_address();
+  const user_selected_address = useUser.use.user_selected_address();
+  const setUserSelectedAddress = useUser.use.setUserSelectedAddress();
+
+  const [currentAddress, setCurrentAddress] =
+    useState<IUserAddress>(user_default_address);
   const [loadingChangeMainAddress, setLoadingChangeMainAddress] =
     useState<boolean>(false);
 
@@ -91,20 +62,23 @@ const UserSettingsAddress = () => {
                       <div
                         className={`${styles.info_container} ${styles.info} flex-grow`}
                       >
-                        {/* <div className={`title ${styles.title}`}>
-                          <p
-                            className={`${styles.text_title} ${styles.heading} ${styles.text}`}
-                          >
-                            {address.addressLabel}
-                          </p>
-                        </div> */}
                         <p className={`${styles.receiver_name}`}>
                           {address.receiver_name}
+                        </p>
+                        <p
+                          className={`${styles.phone_number} ${styles.heading}`}
+                        >
+                          {address.receiver_phone_number}
                         </p>
                         <p
                           className={`${styles.full_address} ${styles.heading}`}
                         >
                           {address.address}
+                        </p>
+                        <p
+                          className={`${styles.postal_code} ${styles.heading}`}
+                        >
+                          {address.postal_code}
                         </p>
                       </div>
                       {address.id === currentAddress.id && (
@@ -114,22 +88,25 @@ const UserSettingsAddress = () => {
                       )}
                     </div>
                     <div className={`action-button ${styles.action_buttons}`}>
-                      <ButtonWithIcon
-                        variant={'outline'}
-                        className="py-0 px-2 w-full text-muted-foreground flex justify-center items-center"
-                        href="/"
-                      >
-                        {'Edit Address'}
-                      </ButtonWithIcon>
-                      {address.id === userSelectedAddress.id && (
+                      <div className="flex flex-row">
                         <Button
-                          className="py-0 px-2 w-fit text-muted-foreground flex justify-center items-center"
-                          variant={'outline'}
-                          onClick={() => handleMainAddress(currentAddress)}
+                          variant={'link'}
+                          className="pl-0 pr-2 border-r-[1px] py-0 h-[20px]"
                         >
-                          <MoreHorizontal />
+                          {'Edit'}
                         </Button>
-                      )}
+                        {user_default_address.id !== address.id && (
+                          <Button
+                            variant={'link'}
+                            className="pl-2 pr-2 border-r-[1px] py-0 h-[20px]"
+                          >
+                            {'Set as default address'}
+                          </Button>
+                        )}
+                        <Button variant={'link'} className="pl-2 py-0 h-[20px]">
+                          {'Delete'}
+                        </Button>
+                      </div>
                     </div>
                   </section>
                 </div>
@@ -151,7 +128,6 @@ const UserSettingsAddress = () => {
   );
 };
 
-const PATH_USER = '/user';
 const MY_ADDRESSES = 'My Addresses';
 const ADD_ADDRESS = 'Add Address';
 const PATH_USER_ADDRESS_CREATE = '/user/address/create';

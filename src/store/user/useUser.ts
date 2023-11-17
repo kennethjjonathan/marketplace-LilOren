@@ -6,20 +6,47 @@ import { UserAddressClient } from '@/service/userAddress/userAddressClient';
 type State = {
   user_addresses: IUserAddress[];
   loading_ferch_user_addresses: boolean;
-  fetchUserAddresses: () => void;
+  user_default_address: IUserAddress;
+  user_selected_address: IUserAddress;
 };
 
-type Actions = {};
+type Actions = {
+  fetchUserAddresses: () => void;
+  setUserSelectedAddress: (selected_address: IUserAddress) => void;
+  editUserDefaultAddress: (address_id: number) => void;
+};
 
 const useUserBase = create<State & Actions>((set) => ({
   user_addresses: [],
   loading_ferch_user_addresses: false,
+  user_default_address: {
+    id: 0,
+    receiver_name: '',
+    address: '',
+    postal_code: '',
+    receiver_phone_number: '',
+  },
+  user_selected_address: {
+    id: 0,
+    receiver_name: '',
+    address: '',
+    postal_code: '',
+    receiver_phone_number: '',
+  },
   fetchUserAddresses: async () => {
     set(() => ({ loading_ferch_user_addresses: true }));
     const response = await UserAddressClient.getUserAddresses();
     set(() => ({ user_addresses: response?.data }));
+    set(() => ({ user_default_address: response?.data![0] }));
+    set(() => ({ user_selected_address: response?.data![0] }));
     set(() => ({ loading_ferch_user_addresses: false }));
   },
+  setUserSelectedAddress: (selected_address: IUserAddress) => {
+    set(() => ({ user_selected_address: selected_address }));
+  },
+  editUserDefaultAddress:(address_id:number)=>{
+    
+  }
 }));
 
 export const useUser = createZusSelector(useUserBase);
