@@ -7,12 +7,10 @@ type State = {
   user_addresses: IUserAddress[];
   loading_ferch_user_addresses: boolean;
   user_default_address: IUserAddress;
-  user_selected_address: IUserAddress;
 };
 
 type Actions = {
   fetchUserAddresses: () => void;
-  setUserSelectedAddress: (selected_address: IUserAddress) => void;
   editUserDefaultAddress: (address_id: number) => void;
 };
 
@@ -38,15 +36,11 @@ const useUserBase = create<State & Actions>((set) => ({
     const response = await UserAddressClient.getUserAddresses();
     set(() => ({ user_addresses: response?.data }));
     set(() => ({ user_default_address: response?.data![0] }));
-    set(() => ({ user_selected_address: response?.data![0] }));
     set(() => ({ loading_ferch_user_addresses: false }));
   },
-  setUserSelectedAddress: (selected_address: IUserAddress) => {
-    set(() => ({ user_selected_address: selected_address }));
+  editUserDefaultAddress: async (address_id: number) => {
+    await UserAddressClient.editDefaultAddress(address_id);
   },
-  editUserDefaultAddress:(address_id:number)=>{
-    
-  }
 }));
 
 export const useUser = createZusSelector(useUserBase);

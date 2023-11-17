@@ -39,4 +39,16 @@ export class UserAddressClient {
     }
     return response;
   };
+
+  static editDefaultAddress = async (addres_id: number) => {
+    const response = await UserAddressService.put(
+      `${CONSTANTS.BASEURL}/profile/addresses/change-default`,
+      { id: addres_id },
+    );
+    const error = response?.error;
+    if (error) {
+      Utils.notify(response.message as ToastContent, 'error', 'light');
+    }
+    return response;
+  };
 }

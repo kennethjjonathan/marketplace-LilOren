@@ -1,15 +1,14 @@
 import React, { ReactElement, useEffect, useState } from 'react';
-import { ArrowLeft, Check, MoreHorizontal } from 'lucide-react';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { ArrowLeft, Check } from 'lucide-react';
 import UserSettingsLayout from '@/components/UserSettingsLayout/UserSettingsLayout';
 import BackButton from '@/components/BackButton/BackButton';
-import styles from './UserSettingsAddress.module.scss';
 import { Button } from '@/components/ui/button';
-import ButtonWithIcon from '@/components/ButtonWithIcon/ButtonWithIcon';
-import Head from 'next/head';
 import SkeletonUserAddress from '@/components/SkeletonUserAddress/SkeletonUserAddress';
 import { useUser } from '@/store/user/useUser';
 import { IUserAddress } from '@/service/userAddress/userAddressService';
+import UserAddressCard from '@/components/UserAddressCard/UserAddressCard';
 
 const UserSettingsAddress = () => {
   const loading_fetch_user_addresses =
@@ -17,18 +16,7 @@ const UserSettingsAddress = () => {
   const fetchUserAddresses = useUser.use.fetchUserAddresses();
   const userAddresses = useUser.use.user_addresses();
   const user_default_address = useUser.use.user_default_address();
-  const user_selected_address = useUser.use.user_selected_address();
-  const setUserSelectedAddress = useUser.use.setUserSelectedAddress();
-
-  const [currentAddress, setCurrentAddress] =
-    useState<IUserAddress>(user_default_address);
-  const [loadingChangeMainAddress, setLoadingChangeMainAddress] =
-    useState<boolean>(false);
-
-  const handleMainAddress = (address: IUserAddress) => {
-    setLoadingChangeMainAddress(true);
-    setLoadingChangeMainAddress(false);
-  };
+  const editUserDefaultAddress = useUser.use.editUserDefaultAddress();
 
   useEffect(() => {
     fetchUserAddresses();
@@ -44,84 +32,14 @@ const UserSettingsAddress = () => {
         <div className="all-address">
           <div className="pb-[60px] m-[16px] flex flex-col gap-4">
             {userAddresses.map((address: IUserAddress, index) => (
-              <div
+              <UserAddressCard
                 key={`key:${String(index)} ${address.id.toString()} ${
                   address.receiver_name
                 }`}
-                className="address-card-item flex gap-2 hover:cursor-pointer"
-                onClick={() => setCurrentAddress(address)}
-                onKeyDown={() => setCurrentAddress(address)}
-              >
-                <div className="address-card flex-grow">
-                  <section
-                    className={`${styles.card} ${
-                      currentAddress?.id == address.id && styles.selected
-                    }`}
-                  >
-                    <div className={`info-container flex`}>
-                      <div
-                        className={`${styles.info_container} ${styles.info} flex-grow`}
-                      >
-                        <p className={`${styles.receiver_name}`}>
-                          {address.receiver_name}
-                        </p>
-                        <p
-                          className={`${styles.phone_number} ${styles.heading}`}
-                        >
-                          {address.receiver_phone_number}
-                        </p>
-                        <p
-                          className={`${styles.full_address} ${styles.heading}`}
-                        >
-                          {address.address}
-                        </p>
-                        <p
-                          className={`${styles.postal_code} ${styles.heading}`}
-                        >
-                          {address.postal_code}
-                        </p>
-                      </div>
-                      {address.id === currentAddress.id && (
-                        <div className={`icons`}>
-                          <Check className={`text-primary`} />
-                        </div>
-                      )}
-                    </div>
-                    <div className={`action-button ${styles.action_buttons}`}>
-                      <div className="flex flex-row">
-                        <Button
-                          variant={'link'}
-                          className="pl-0 pr-2 border-r-[1px] py-0 h-[20px]"
-                        >
-                          {'Edit'}
-                        </Button>
-                        {user_default_address.id !== address.id && (
-                          <Button
-                            variant={'link'}
-                            className="pl-2 pr-2 border-r-[1px] py-0 h-[20px]"
-                          >
-                            {'Set as default address'}
-                          </Button>
-                        )}
-                        <Button variant={'link'} className="pl-2 py-0 h-[20px]">
-                          {'Delete'}
-                        </Button>
-                      </div>
-                    </div>
-                  </section>
-                </div>
-              </div>
+                address={address}
+              />
             ))}
           </div>
-          {loadingChangeMainAddress ? (
-            <>LoadingButton</>
-          ) : (
-            <div className="h-[60px] bg-white w-full flex justify-center items-center text-ellipsis whitespace-nowrap overflow-hidden px-4 pt-4 pb-4 fixed shadow-[0_-1px_6px_0_rgba(141,150,170,0.4)] bottom-0 lg:hidden right-0">
-              <Button className="w-full" type="button" variant={'default'}>
-                {'Select Address'}
-              </Button>
-            </div>
-          )}
         </div>
       )}
     </>

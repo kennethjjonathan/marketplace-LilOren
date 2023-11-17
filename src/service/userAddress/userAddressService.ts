@@ -1,5 +1,6 @@
 import axiosInstance from '@/lib/axiosInstance';
 import axios from 'axios';
+import CONSTANS from './constants';
 
 export interface IUserAddressRequest {
   receiver_name: string;
@@ -72,6 +73,31 @@ export class UserAddressService {
       const responseAPI: IUserAddressResponse = {
         error: true,
         message: 'failed get user addresses',
+        data: [],
+      };
+      return responseAPI;
+    }
+  };
+
+  static put = async (url: string, payload: { id: number }) => {
+    try {
+      const response = await axiosInstance({
+        method: 'PUT',
+        url: url,
+        data: payload,
+      });
+      if (response.status === 200) {
+        const responseAPI: IUserAddressResponse = {
+          error: false,
+          message: CONSTANS.success_edit,
+          data: [],
+        };
+        return responseAPI;
+      }
+    } catch (error: any) {
+      const responseAPI: IUserAddressResponse = {
+        error: true,
+        message: CONSTANS.failed_edit,
         data: [],
       };
       return responseAPI;
