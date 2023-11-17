@@ -5,23 +5,22 @@ import Link from 'next/link';
 interface IData {
   id: number;
   label: string;
-  status?: string;
+  status: string;
   href: string;
 }
 
 interface TabsProps {
   datas: IData[];
-  currentTab?: string;
+  currentTab: string;
   setCurrentTab: Dispatch<SetStateAction<string>>;
 }
 const Tabs = ({ datas, currentTab, setCurrentTab }: TabsProps) => {
-  const [selectedTab, setSelectedTab] = useState(null);
   const handleChangeTab = (current: string) => {
     setCurrentTab(current);
   };
 
   return (
-    <div className="bg-white shadow-sm rounded-t-xl flex gap-2 p-2 overflow-x-auto w-[85vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw]">
+    <div className="bg-white shadow-sm rounded-t-xl flex gap-2 p-2 overflow-x-auto w-[100vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw]">
       {datas.map((data) => (
         <div key={`key:${data.id}`}>
           <Link href={data.href}>

@@ -27,7 +27,7 @@ const SellerLayout = ({ children, header, tabData }: SellerLayoutProps) => {
           <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />
         </div>
         <div className="flex flex-col pt-[10px] lg:pl-[24px] pb-[24px]">
-          <div className={`${styles.shopname} text-muted-foreground`}>
+          <div className={`${styles.shopname} text-muted-foreground pl-[24px]`}>
             <Store className="mr-4 text-muted-foreground" />
             {header}
           </div>
