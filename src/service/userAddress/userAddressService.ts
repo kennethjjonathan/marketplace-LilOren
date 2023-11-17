@@ -1,5 +1,4 @@
 import axiosInstance from '@/lib/axiosInstance';
-import axios from 'axios';
 import CONSTANS from './constants';
 
 export interface IUserAddressRequest {
@@ -30,28 +29,28 @@ export interface IUserAddressResponse {
 export class UserAddressService {
   static post = async (url: string, payload: IUserAddressRequest) => {
     try {
-      const responseAPI = await axios({
+      const responseAPI = await axiosInstance({
         method: 'POST',
         url: url,
         data: payload,
       });
+      console.log(responseAPI);
       if (responseAPI.status === 201) {
         const response: IUserAddressResponse = {
           error: false,
-          message: 'created',
+          message: CONSTANS.success_created,
           data: [],
         };
         return response;
       }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const response: IUserAddressResponse = {
-          error: true,
-          message: error.message,
-          data: [],
-        };
-        return response;
-      }
+    } catch (error: any) {
+      console.log(error);
+      const response: IUserAddressResponse = {
+        error: true,
+        message: error.response.data.message,
+        data: [],
+      };
+      return response;
     }
   };
 

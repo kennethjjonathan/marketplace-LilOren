@@ -1,7 +1,7 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { ArrowLeft, Check } from 'lucide-react';
+import { ArrowLeft, Plus } from 'lucide-react';
 import UserSettingsLayout from '@/components/UserSettingsLayout/UserSettingsLayout';
 import BackButton from '@/components/BackButton/BackButton';
 import { Button } from '@/components/ui/button';
@@ -10,13 +10,16 @@ import { useUser } from '@/store/user/useUser';
 import { IUserAddress } from '@/service/userAddress/userAddressService';
 import UserAddressCard from '@/components/UserAddressCard/UserAddressCard';
 
+const MY_ADDRESSES = 'My Addresses';
+const ADD_ADDRESS = 'Add Address';
+const PATH_USER_ADDRESS_CREATE = '/user/address/create';
+
 const UserSettingsAddress = () => {
   const loading_fetch_user_addresses =
     useUser.use.loading_ferch_user_addresses();
   const fetchUserAddresses = useUser.use.fetchUserAddresses();
   const userAddresses = useUser.use.user_addresses();
-  const user_default_address = useUser.use.user_default_address();
-  const editUserDefaultAddress = useUser.use.editUserDefaultAddress();
+  const router = useRouter();
 
   useEffect(() => {
     fetchUserAddresses();
@@ -31,6 +34,15 @@ const UserSettingsAddress = () => {
       ) : (
         <div className="all-address">
           <div className="pb-[60px] m-[16px] flex flex-col gap-4">
+            <div className="hidden lg:flex w-full justify-end">
+              <Button
+                className="flex flex-row gap-2"
+                onClick={() => router.push(PATH_USER_ADDRESS_CREATE)}
+              >
+                <Plus /> {ADD_ADDRESS}
+              </Button>
+            </div>
+
             {userAddresses.map((address: IUserAddress, index) => (
               <UserAddressCard
                 key={`key:${String(index)} ${address.id.toString()} ${
@@ -45,10 +57,6 @@ const UserSettingsAddress = () => {
     </>
   );
 };
-
-const MY_ADDRESSES = 'My Addresses';
-const ADD_ADDRESS = 'Add Address';
-const PATH_USER_ADDRESS_CREATE = '/user/address/create';
 
 const UserSettingsAddressHeading = () => {
   const router = useRouter();
