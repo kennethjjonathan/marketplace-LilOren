@@ -7,7 +7,7 @@ interface SellerOrderCardProps {
 }
 
 const SellerOrderCard = ({ order_status }: SellerOrderCardProps) => {
-  const handleEditOrder = (order_status: string, order_id: number) => {
+  const handleEditOrder = (orderStatus: string, orderId: number) => {
     console.log('time to edit order');
   };
 
@@ -30,7 +30,7 @@ const SellerOrderCard = ({ order_status }: SellerOrderCardProps) => {
   };
 
   return (
-    <div className="w-[85vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw] p-2">
+    <div className="w-[100vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw] p-2 bg-white">
       {/* top content */}
       <div className="status-inv-number-buyer-ordertime flex flex-row mb-3">
         <div className="h-[20px] border-l-[6px] border-primary"></div>

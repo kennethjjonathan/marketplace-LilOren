@@ -1,7 +1,10 @@
 .sellerPortalOrder {
-  padding: 10px 24px 24px;
   min-height: 92vh;
   height: auto;
+
+  @media (min-width: 768px) {
+    padding: 0px 10px 24px 24px;
+  }
 }
 
 .shopname {
