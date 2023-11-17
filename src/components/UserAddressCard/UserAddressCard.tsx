@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Check } from 'lucide-react';
 import { IUserAddress } from '@/service/userAddress/userAddressService';
 import { Button } from '@/components/ui/button';
@@ -12,8 +12,12 @@ interface UserAddressCardProps {
 const UserAddressCard = ({ address }: UserAddressCardProps) => {
   const user_default_address = useUser.use.user_default_address();
   const editUserDefaultAddress = useUser.use.editUserDefaultAddress();
+  const fetchUserAddresses = useUser.use.fetchUserAddresses();
   const handleMainAddress = (address: IUserAddress) => {
     editUserDefaultAddress(address.id);
+    setTimeout(() => {
+      fetchUserAddresses();
+    }, 200);
   };
 
   return (

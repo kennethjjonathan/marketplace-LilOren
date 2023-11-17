@@ -37,6 +37,8 @@ export class UserAddressClient {
     const error = response?.error;
     if (error) {
       Utils.notify(response.message as ToastContent, 'error', 'light');
+    } else {
+      Utils.notify(response?.message as ToastContent, 'success', 'light');
     }
     return response;
   };
