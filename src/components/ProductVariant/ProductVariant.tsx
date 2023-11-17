@@ -4,19 +4,21 @@ import { Button } from '../ui/button';
 import { Trash2 } from 'lucide-react';
 import { IProdcutVariant } from '@/interface/addProduct';
 
+const maxOptLength: number = 3;
+const maxVariant: number = 2;
+
 const ProductVariant = () => {
-  const maxLength: number = 3;
   const [isVariantActive, setIsVariantActive] = useState<boolean>(false);
   const [noVarPrice, setNoVarPrice] = useState<number>(0);
   const [noVarStock, setNoVarStock] = useState<number>(0);
   const [variants, setVariants] = useState<IProdcutVariant[]>([
-    { variant_name: '', options: [''] },
+    { variant_name: '', options: [undefined] },
   ]);
-  const [stocks, setStocks] = useState<number[][]>(
-    new Array(maxLength).fill(new Array(maxLength).fill(0)),
-  );
   const [price, setPrice] = useState<number[][]>(
-    new Array(maxLength).fill(new Array(maxLength).fill(0)),
+    new Array(maxOptLength).fill(new Array(maxOptLength).fill(0)),
+  );
+  const [stocks, setStocks] = useState<number[][]>(
+    new Array(maxOptLength).fill(new Array(maxOptLength).fill(0)),
   );
 
   function handleVariantNameInput(
@@ -37,11 +39,11 @@ const ProductVariant = () => {
     const { value } = e.target;
     const newVariants = [...variants];
     if (
-      newVariants[biggerIndex].options[index] === '' &&
+      newVariants[biggerIndex].options[index] === undefined &&
       index === newVariants[biggerIndex].options.length - 1 &&
-      newVariants[biggerIndex].options.length < maxLength
+      newVariants[biggerIndex].options.length < maxOptLength
     ) {
-      newVariants[biggerIndex].options.push('');
+      newVariants[biggerIndex].options.push(undefined);
     }
     newVariants[biggerIndex].options[index] = value;
     setVariants(newVariants);
@@ -60,62 +62,77 @@ const ProductVariant = () => {
     } else {
       const newPrice = [...price];
       const newStocks = [...stocks];
-      for (let i = 0; i < maxLength; i++) {
+      for (let i = 0; i < maxOptLength; i++) {
         newPrice[i].splice(index, 1);
         newPrice[i].push(0);
         newStocks[i].splice(index, 1);
-        newPrice[i].push(0);
+        newStocks[i].push(0);
       }
       setPrice(newPrice);
       setStocks(newStocks);
     }
     const newVariants = [...variants];
     newVariants[biggerIndex].options.splice(index, 1);
+    const optionsLength = newVariants[biggerIndex].options.length;
+    if (
+      optionsLength < maxOptLength &&
+      newVariants[biggerIndex].options[optionsLength - 1] !== undefined
+    ) {
+      newVariants[biggerIndex].options.push(undefined);
+    }
     setVariants(newVariants);
   }
 
   function handleAddVariant() {
     const newVariants = [...variants];
-    newVariants.push({ variant_name: '', options: [''] });
+    newVariants.push({ variant_name: '', options: [undefined] });
     setVariants(newVariants);
+    setPrice(new Array(maxOptLength).fill(new Array(maxOptLength).fill(0)));
+    setStocks(new Array(maxOptLength).fill(new Array(maxOptLength).fill(0)));
   }
 
   function handlePriceInput(
     e: React.ChangeEvent<HTMLInputElement>,
     index0: number,
-    index1: number | undefined,
+    index1: number,
   ) {
     const { value } = e.target;
     const valNum = parseInt(value);
     const newPrice = [...price];
-    if (index1 !== undefined) {
-      const newSmallArray = [...newPrice[index0]];
-      newSmallArray[index1] = valNum;
-      newPrice[index0] = newSmallArray;
-      setPrice(newPrice);
-    }
+
+    const newSmallArray = [...newPrice[index0]];
+    newSmallArray[index1] = valNum;
+    newPrice[index0] = newSmallArray;
+    setPrice(newPrice);
   }
 
   function handleStockInput(
     e: React.ChangeEvent<HTMLInputElement>,
     index0: number,
-    index1: number | undefined,
+    index1: number,
   ) {
     const { value } = e.target;
     const valNum = parseInt(value);
     const newStocks = [...stocks];
-    if (index1 !== undefined) {
-      const newSmallArray = [...newStocks[index0]];
-      newSmallArray[index1] = valNum;
-      newStocks[index0] = newSmallArray;
-      setStocks(newStocks);
-    }
+    const newSmallArray = [...newStocks[index0]];
+    newSmallArray[index1] = valNum;
+    newStocks[index0] = newSmallArray;
+    setStocks(newStocks);
+  }
+
+  function handleDeleteVariant(biggerIndex: number) {
+    const newVariant = [...variants];
+    newVariant.splice(biggerIndex, 1);
+    setVariants(newVariant);
+    setPrice(new Array(maxOptLength).fill(new Array(maxOptLength).fill(0)));
+    setStocks(new Array(maxOptLength).fill(new Array(maxOptLength).fill(0)));
   }
 
   useEffect(() => {
     console.log('price', price);
     console.log('stock', stocks);
-  }, [price, stocks]);
+    console.log('variants', variants);
+  }, [price, stocks, variants]);
 
   if (!isVariantActive) {
     return (
@@ -145,6 +162,7 @@ const ProductVariant = () => {
       </div>
     );
   }
+
   return (
     <div>
       <div className="bg-gray-500 flex flex-col gap-3">
@@ -162,62 +180,95 @@ const ProductVariant = () => {
               {variant.options.map((option, index) => (
                 <div className="flex items-center gap-1" key={index}>
                   <Input
-                    value={option}
+                    value={option === undefined ? '' : option}
                     onChange={(e) => handleOptionChange(e, index, biggerIndex)}
                   />
                   <button
                     onClick={() => handleDeleteOptions(index, biggerIndex)}
+                    disabled={option === undefined}
+                    className="disabled:hidden"
                   >
                     <Trash2 />
                   </button>
                 </div>
               ))}
             </div>
+            <Button onClick={() => handleDeleteVariant(biggerIndex)}>
+              Delete Variant
+            </Button>
           </div>
         ))}
-        {variants.length < 2 && (
+        {variants.length < maxVariant && (
           <Button onClick={handleAddVariant}>Add Variant</Button>
         )}
         <div className="w-full flex gap-2">
-          <div>
-            <p>{variants[0].variant_name}</p>
-            {variants[0].options.map((option, index0) => {
-              if (option !== '') {
-                return (
-                  <div key={index0} className="flex border-2 border-green-500">
-                    <p className="bg-yellow-500">{option}</p>
-                    {variants[1] !== undefined && (
-                      <div className="flex flex-col">
-                        {variants[1].options.map((option, index1) => {
-                          if (option !== '') {
-                            return (
-                              <div key={index1} className="flex">
-                                <div className="bg-red-500">{option}</div>
-                                <Input
-                                  type="number"
-                                  value={price[index0][index1]}
-                                  onChange={(e) =>
-                                    handlePriceInput(e, index0, index1)
-                                  }
-                                />
-                                <Input
-                                  type="number"
-                                  value={stocks[index0][index1]}
-                                  onChange={(e) =>
-                                    handleStockInput(e, index0, index1)
-                                  }
-                                />
-                              </div>
-                            );
-                          } else return null;
-                        })}
-                      </div>
-                    )}
-                  </div>
-                );
-              } else return null;
-            })}
-          </div>
+          {variants.length > 1 ? (
+            <div>
+              <p>{variants[0].variant_name}</p>
+              {variants[0].options.map(
+                (option, index0) =>
+                  option !== undefined && (
+                    <div
+                      key={index0}
+                      className="flex border-2 border-green-500"
+                    >
+                      <p className="bg-yellow-500">{option}</p>
+                      {variants[1] !== undefined && (
+                        <div className="flex flex-col">
+                          {variants[1].options.map(
+                            (option, index1) =>
+                              option !== undefined && (
+                                <div key={index1} className="flex">
+                                  <div className="bg-red-500">{option}</div>
+                                  <Input
+                                    type="number"
+                                    value={price[index0][index1]}
+                                    onChange={(e) =>
+                                      handlePriceInput(e, index0, index1)
+                                    }
+                                  />
+                                  <Input
+                                    type="number"
+                                    value={stocks[index0][index1]}
+                                    onChange={(e) =>
+                                      handleStockInput(e, index0, index1)
+                                    }
+                                  />
+                                </div>
+                              ),
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ),
+              )}
+            </div>
+          ) : (
+            <div>
+              <p>{variants[0].variant_name}</p>
+              {variants[0].options.map(
+                (option, index0) =>
+                  option !== undefined && (
+                    <div
+                      key={index0}
+                      className="flex border-2 border-green-500"
+                    >
+                      <p className="bg-yellow-500">{option}</p>
+                      <Input
+                        type="number"
+                        value={price[index0][0]}
+                        onChange={(e) => handlePriceInput(e, index0, 0)}
+                      />
+                      <Input
+                        type="number"
+                        value={stocks[index0][0]}
+                        onChange={(e) => handleStockInput(e, index0, 0)}
+                      />
+                    </div>
+                  ),
+              )}
+            </div>
+          )}
           {variants.length > 1 && (
             <div>
               <p>{variants[1].variant_name}</p>

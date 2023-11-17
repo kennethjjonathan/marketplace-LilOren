@@ -1,4 +1,4 @@
 export interface IProdcutVariant {
   variant_name: string;
-  options: string[];
+  options: (string | undefined)[];
 }
