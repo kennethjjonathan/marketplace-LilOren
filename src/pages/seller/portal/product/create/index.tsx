@@ -2,6 +2,7 @@ import React, { ChangeEvent, ReactElement, useState } from 'react';
 import Image from 'next/image';
 import { Label } from '@radix-ui/react-label';
 import { ArrowUpFromLine, Info, XCircle } from 'lucide-react';
+import ProductVariant from '@/components/ProductVariant/ProductVariant';
 import SellerLayout from '@/components/SellerLayout/SellerLayout';
 import styles from './SellerPortalProductCreate.module.scss';
 
@@ -119,6 +120,16 @@ const SellerPortalProductCreate = () => {
             </div>
             <div className={``}></div>
           </form>
+        </section>
+      </div>
+      <div
+        className={`flex flex-col w-[80vw] sm:w-[90vw] md:w-[47vw] lg:w-[70vw] bg-white`}
+      >
+        <section
+          className={`product-information ${styles.add_product_section}`}
+        >
+          <p className={`${styles.section_title}`}>{'Product Information'}</p>
+          <ProductVariant />
         </section>
       </div>
     </div>
