@@ -122,14 +122,15 @@ const SellerPortalProductCreate = () => {
           </form>
         </section>
       </div>
+      {/* Product Variants */}
       <div
         className={`flex flex-col w-[80vw] sm:w-[90vw] md:w-[47vw] lg:w-[70vw] bg-white`}
       >
-        <section
-          className={`product-information ${styles.add_product_section}`}
-        >
+        <section className={`${styles.add_product_section}`}>
           <p className={`${styles.section_title}`}>{'Product Information'}</p>
-          <ProductVariant />
+          <div className="pb-3">
+            <ProductVariant />
+          </div>
         </section>
       </div>
     </div>
