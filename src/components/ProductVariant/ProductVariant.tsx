@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Plus, X } from 'lucide-react';
 import { IProdcutVariant } from '@/interface/addProduct';
 import { Label } from '../ui/label';
 import styles from './ProductVariant.module.css';
@@ -185,6 +185,13 @@ const ProductVariant = () => {
     setIsVariantActive(true);
   }
 
+  function handleDeactivateVariant() {
+    setNoVarPrice(0);
+    setNoVarStock(0);
+    setIsNoVarValid({ price: true, stock: true });
+    setIsVariantActive(false);
+  }
+
   if (!isVariantActive) {
     return (
       <div className="flex flex-col gap-3 w-full">
@@ -274,76 +281,170 @@ const ProductVariant = () => {
   }
 
   return (
-    <div>
-      <div className="bg-gray-500 flex flex-col gap-3">
-        {variants.map((variant, biggerIndex) => (
-          <div key={biggerIndex}>
-            <div className="flex items-center gap-2">
-              <p className="min-w-fit">Variant {`${biggerIndex + 1}`}:</p>
-              <Input
-                type="string"
-                value={variant.variant_name}
-                onChange={(e) => handleVariantNameInput(e, biggerIndex)}
-              />
-            </div>
-            <div className="grid grid-rows-2 grid-cols-3 w-full">
-              {variant.options.map((option, index) => (
-                <div className="flex items-center gap-1" key={index}>
-                  <Input
-                    value={option === undefined ? '' : option}
-                    onChange={(e) => handleOptionChange(e, index, biggerIndex)}
-                  />
-                  <button
-                    onClick={() => handleDeleteOptions(index, biggerIndex)}
-                    disabled={option === undefined}
-                    className="disabled:hidden"
-                  >
-                    <Trash2 />
-                  </button>
+    <div className="w-full flex flex-col gap-5">
+      <Button
+        size={'customBlank'}
+        variant={'outline'}
+        className="text-base px-3 py-2 w-fit"
+        onClick={handleDeactivateVariant}
+      >
+        Deactivate Variant
+      </Button>
+      <div className="flex flex-col gap-5">
+        <div className="w-full flex flex-col gap-5">
+          {variants.map((variant, biggerIndex) => (
+            <div
+              key={biggerIndex}
+              className="bg-gray-100 p-2 flex flex-col gap-3 relative"
+            >
+              <div className="flex items-center gap-2 w-full">
+                <Label
+                  className="min-w-fit text-right font-light text-xs lg:text-sm"
+                  htmlFor={`variant-${biggerIndex + 1}-title`}
+                >
+                  Variant {`${biggerIndex + 1}`}
+                  <span className="text-primary">{'* '}</span>:
+                </Label>
+                <Input
+                  placeholder="Ex: Color, Size"
+                  id={`variant-${biggerIndex + 1}-title`}
+                  type="text"
+                  value={variant.variant_name}
+                  onChange={(e) => handleVariantNameInput(e, biggerIndex)}
+                  className="w-96"
+                />
+              </div>
+              <div className="flex items-start gap-2 w-full">
+                <p className="min-w-fit text-right font-light text-xs lg:text-sm">
+                  Option&#40;s&#41;
+                  <span className="text-primary">{'* '}</span>:
+                </p>
+                <div className="grid grid-rows-2 grid-cols-2 gap-2 w-full">
+                  {variant.options.map((option, index) => (
+                    <div className="flex items-center gap-2" key={index}>
+                      <Input
+                        placeholder="Ex: Blue, S"
+                        value={option === undefined ? '' : option}
+                        onChange={(e) =>
+                          handleOptionChange(e, index, biggerIndex)
+                        }
+                        className="w-5/6"
+                      />
+                      <button
+                        onClick={() => handleDeleteOptions(index, biggerIndex)}
+                        disabled={option === undefined}
+                        className="disabled:hidden"
+                      >
+                        <Trash2 className="w-5 h-5 text-gray-500 opacity-80" />
+                      </button>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
+              {variants.length > 1 && (
+                <Button
+                  onClick={() => handleDeleteVariant(biggerIndex)}
+                  size={'customBlank'}
+                  variant={'destructive'}
+                  disabled={variants.length < 2}
+                  className="absolute right-2 top-2 px-2 py-1 text-base w-fit"
+                >
+                  <X className="w-5 h-5 mr-1" />
+                  Delete Variant
+                </Button>
+              )}
+              {variants.length < maxVariant && (
+                <Button
+                  disabled={variants.length > 1}
+                  size={'customBlank'}
+                  variant={'outline'}
+                  onClick={handleAddVariant}
+                  className="w-fit px-2 py-1 text-base disabled:hidden"
+                >
+                  <Plus className="w-5 h-5 mr-1" />
+                  Add Variant
+                </Button>
+              )}
             </div>
-            <Button onClick={() => handleDeleteVariant(biggerIndex)}>
-              Delete Variant
-            </Button>
+          ))}
+        </div>
+        <div className="w-full flex flex-col gap-2">
+          <div className="w-full flex">
+            {variants.length === 1 && (
+              <>
+                <p className="w-1/3 border-2 border-gray-100 text-base text-center py-2 font-light truncate">
+                  {variants[0].variant_name}
+                </p>
+                <p className="w-1/3 border-2 border-gray-100 text-base text-center py-2 font-light truncate">
+                  Price
+                </p>
+                <p className="w-1/3 border-2 border-gray-100 text-base text-center py-2 font-light truncate">
+                  Stock
+                </p>
+              </>
+            )}
+            {variants.length === 2 && (
+              <>
+                <p className="w-1/4 border-2 border-gray-100 text-base text-center py-2 font-light truncate">
+                  {variants[0].variant_name}
+                </p>
+                <p className="w-1/4 border-2 border-gray-100 text-base text-center py-2 font-light truncate">
+                  {variants[1].variant_name}
+                </p>
+                <p className="w-1/4 border-2 border-gray-100 text-base text-center py-2 font-light truncate">
+                  Price
+                </p>
+                <p className="w-1/4 border-2 border-gray-100 text-base text-center py-2 font-light truncate">
+                  Stock
+                </p>
+              </>
+            )}
           </div>
-        ))}
-        {variants.length < maxVariant && (
-          <Button onClick={handleAddVariant}>Add Variant</Button>
-        )}
-        <div className="w-full flex gap-2">
           {variants.length > 1 ? (
-            <div>
-              <p>{variants[0].variant_name}</p>
+            <div className="w-full">
               {variants[0].options.map(
                 (option, index0) =>
                   option !== undefined && (
-                    <div
-                      key={index0}
-                      className="flex border-2 border-green-500"
-                    >
-                      <p className="bg-yellow-500">{option}</p>
+                    <div key={index0} className="flex w-full min-h-fit">
+                      <p className="w-1/4 text-center min-h-full border-2 border-gray-100 flex justify-center items-center font-light truncate">
+                        {option}
+                      </p>
                       {variants[1] !== undefined && (
-                        <div className="flex flex-col">
+                        <div className="flex flex-col w-3/4">
                           {variants[1].options.map(
                             (option, index1) =>
                               option !== undefined && (
-                                <div key={index1} className="flex">
-                                  <div className="bg-red-500">{option}</div>
-                                  <Input
-                                    type="number"
-                                    value={price[index0][index1]}
-                                    onChange={(e) =>
-                                      handlePriceInput(e, index0, index1)
-                                    }
-                                  />
-                                  <Input
-                                    type="number"
-                                    value={stocks[index0][index1]}
-                                    onChange={(e) =>
-                                      handleStockInput(e, index0, index1)
-                                    }
-                                  />
+                                <div
+                                  key={index1}
+                                  className="flex w-full min-h-fit"
+                                >
+                                  <p className="w-1/3 text-center flex justify-center items-center min-h-full border-2 border-gray-100 font-light truncate">
+                                    {option}
+                                  </p>
+                                  <div className="w-1/3 p-2 border-2 border-gray-100 min-h-fit">
+                                    <Input
+                                      type="number"
+                                      className="h-12"
+                                      value={price[index0][index1]}
+                                      onChange={(e) =>
+                                        handlePriceInput(e, index0, index1)
+                                      }
+                                      onKeyDown={(e) => handleNumKeyDown(e)}
+                                      min={0}
+                                    />
+                                  </div>
+                                  <div className="w-1/3 p-2 border-2 border-gray-100 min-h-fit">
+                                    <Input
+                                      type="number"
+                                      className="h-12"
+                                      value={stocks[index0][index1]}
+                                      onChange={(e) =>
+                                        handleStockInput(e, index0, index1)
+                                      }
+                                      onKeyDown={(e) => handleNumKeyDown(e)}
+                                      min={0}
+                                    />
+                                  </div>
                                 </div>
                               ),
                           )}
@@ -354,34 +455,37 @@ const ProductVariant = () => {
               )}
             </div>
           ) : (
-            <div>
-              <p>{variants[0].variant_name}</p>
+            <div className="w-full">
               {variants[0].options.map(
                 (option, index0) =>
                   option !== undefined && (
-                    <div
-                      key={index0}
-                      className="flex border-2 border-green-500"
-                    >
-                      <p className="bg-yellow-500">{option}</p>
-                      <Input
-                        type="number"
-                        value={price[index0][0]}
-                        onChange={(e) => handlePriceInput(e, index0, 0)}
-                      />
-                      <Input
-                        type="number"
-                        value={stocks[index0][0]}
-                        onChange={(e) => handleStockInput(e, index0, 0)}
-                      />
+                    <div key={index0} className="flex w-full min-h-fit">
+                      <p className="w-1/3 text-center min-h-full border-2 border-gray-100 flex justify-center items-center font-light truncate">
+                        {option}
+                      </p>
+                      <div className="w-1/3 p-2 border-2 border-gray-100 min-h-fit">
+                        <Input
+                          type="number"
+                          className="h-12"
+                          value={price[index0][0]}
+                          onChange={(e) => handlePriceInput(e, index0, 0)}
+                          onKeyDown={(e) => handleNumKeyDown(e)}
+                          min={0}
+                        />
+                      </div>
+                      <div className="w-1/3 p-2 border-2 border-gray-100 min-h-fit">
+                        <Input
+                          type="number"
+                          className="h-12"
+                          value={stocks[index0][0]}
+                          onChange={(e) => handleStockInput(e, index0, 0)}
+                          onKeyDown={(e) => handleNumKeyDown(e)}
+                          min={0}
+                        />
+                      </div>
                     </div>
                   ),
               )}
-            </div>
-          )}
-          {variants.length > 1 && (
-            <div>
-              <p>{variants[1].variant_name}</p>
             </div>
           )}
         </div>
