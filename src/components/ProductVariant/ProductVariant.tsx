@@ -2,12 +2,16 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Trash2, Plus, X } from 'lucide-react';
-import { IProdcutVariant } from '@/interface/addProduct';
+import {
+  IIsProductVariantValid,
+  IProdcutVariant,
+} from '@/interface/addProduct';
 import { Label } from '../ui/label';
 import styles from './ProductVariant.module.css';
 
 const maxOptLength: number = 3;
 const maxVariant: number = 2;
+const maxVariantNameLength: number = 15;
 
 const ProductVariant = () => {
   const [isVariantActive, setIsVariantActive] = useState<boolean>(false);
@@ -23,11 +27,20 @@ const ProductVariant = () => {
   const [variants, setVariants] = useState<IProdcutVariant[]>([
     { variant_name: '', options: [undefined] },
   ]);
-  const [price, setPrice] = useState<number[][]>(
+  const [isVariantsValid, setIsVariantsValid] = useState<
+    IIsProductVariantValid[]
+  >([{ variant_name: true, options: [true] }]);
+  const [price, setPrice] = useState<(number | '')[][]>(
     new Array(maxOptLength).fill(new Array(maxOptLength).fill(0)),
   );
-  const [stocks, setStocks] = useState<number[][]>(
+  const [stocks, setStocks] = useState<(number | '')[][]>(
     new Array(maxOptLength).fill(new Array(maxOptLength).fill(0)),
+  );
+  const [isPriceValid, setIsPriceValid] = useState<boolean[][]>(
+    new Array(maxOptLength).fill(new Array(maxOptLength).fill(true)),
+  );
+  const [isStockValid, setIsStockValid] = useState<boolean[][]>(
+    new Array(maxOptLength).fill(new Array(maxOptLength).fill(true)),
   );
 
   function handleVariantNameInput(
@@ -35,9 +48,16 @@ const ProductVariant = () => {
     index: number,
   ) {
     const { value } = e.target;
-    const newVariants = [...variants];
-    newVariants[index].variant_name = value;
-    setVariants(newVariants);
+    if (value.length > maxVariantNameLength) return;
+    if (/^\s+$/.test(value) || value === '') {
+      const newVariants = [...variants];
+      newVariants[index].variant_name = '';
+      setVariants(newVariants);
+    } else {
+      const newVariants = [...variants];
+      newVariants[index].variant_name = value;
+      setVariants(newVariants);
+    }
   }
 
   function handleOptionChange(
@@ -64,21 +84,37 @@ const ProductVariant = () => {
       newPrice.splice(index, 1);
       newPrice.push([0, 0, 0]);
       setPrice(newPrice);
+      const newIsPriceValid = [...isPriceValid];
+      newIsPriceValid.splice(index, 1);
+      newIsPriceValid.push([true, true, true]);
+      setIsPriceValid(newIsPriceValid);
       const newStocks = [...stocks];
       newStocks.splice(index, 1);
       newStocks.push([0, 0, 0]);
       setStocks(newStocks);
+      const newIsStockValid = [...isStockValid];
+      newIsStockValid.splice(index, 1);
+      newIsStockValid.push([true, true, true]);
+      setIsStockValid(newIsStockValid);
     } else {
       const newPrice = [...price];
+      const newIsPriceValid = [...isPriceValid];
       const newStocks = [...stocks];
+      const newIsStockValid = [...isStockValid];
       for (let i = 0; i < maxOptLength; i++) {
         newPrice[i].splice(index, 1);
         newPrice[i].push(0);
+        newIsPriceValid[i].splice(index, 1);
+        newIsPriceValid[i].push(true);
         newStocks[i].splice(index, 1);
         newStocks[i].push(0);
+        newIsStockValid[i].splice(index, 1);
+        newIsStockValid[i].push(true);
       }
       setPrice(newPrice);
+      setIsPriceValid(newIsPriceValid);
       setStocks(newStocks);
+      setIsStockValid(newIsStockValid);
     }
     const newVariants = [...variants];
     newVariants[biggerIndex].options.splice(index, 1);
@@ -97,7 +133,13 @@ const ProductVariant = () => {
     newVariants.push({ variant_name: '', options: [undefined] });
     setVariants(newVariants);
     setPrice(new Array(maxOptLength).fill(new Array(maxOptLength).fill(0)));
+    setIsPriceValid(
+      new Array(maxOptLength).fill(new Array(maxOptLength).fill(true)),
+    );
     setStocks(new Array(maxOptLength).fill(new Array(maxOptLength).fill(0)));
+    setIsStockValid(
+      new Array(maxOptLength).fill(new Array(maxOptLength).fill(true)),
+    );
   }
 
   function handlePriceInput(
@@ -106,13 +148,28 @@ const ProductVariant = () => {
     index1: number,
   ) {
     const { value } = e.target;
+    if (value === '') {
+      const newPrice = [...price];
+      const newSmallArray = [...newPrice[index0]];
+      newSmallArray[index1] = value;
+      newPrice[index0] = newSmallArray;
+      setPrice(newPrice);
+      return;
+    }
     const valNum = parseInt(value);
-    const newPrice = [...price];
-
-    const newSmallArray = [...newPrice[index0]];
-    newSmallArray[index1] = valNum;
-    newPrice[index0] = newSmallArray;
-    setPrice(newPrice);
+    if (isNaN(valNum) || valNum < 0) {
+      const newPrice = [...price];
+      const newSmallArray = [...newPrice[index0]];
+      newSmallArray[index1] = 0;
+      newPrice[index0] = newSmallArray;
+      setPrice(newPrice);
+    } else {
+      const newPrice = [...price];
+      const newSmallArray = [...newPrice[index0]];
+      newSmallArray[index1] = valNum;
+      newPrice[index0] = newSmallArray;
+      setPrice(newPrice);
+    }
   }
 
   function handleStockInput(
@@ -121,12 +178,28 @@ const ProductVariant = () => {
     index1: number,
   ) {
     const { value } = e.target;
+    if (value === '') {
+      const newStocks = [...stocks];
+      const newSmallArray = [...newStocks[index0]];
+      newSmallArray[index1] = value;
+      newStocks[index0] = newSmallArray;
+      setStocks(newStocks);
+      return;
+    }
     const valNum = parseInt(value);
-    const newStocks = [...stocks];
-    const newSmallArray = [...newStocks[index0]];
-    newSmallArray[index1] = valNum;
-    newStocks[index0] = newSmallArray;
-    setStocks(newStocks);
+    if (isNaN(valNum) || valNum < 0) {
+      const newStocks = [...stocks];
+      const newSmallArray = [...newStocks[index0]];
+      newSmallArray[index1] = 0;
+      newStocks[index0] = newSmallArray;
+      setStocks(newStocks);
+    } else {
+      const newStocks = [...stocks];
+      const newSmallArray = [...newStocks[index0]];
+      newSmallArray[index1] = valNum;
+      newStocks[index0] = newSmallArray;
+      setStocks(newStocks);
+    }
   }
 
   function handleDeleteVariant(biggerIndex: number) {
@@ -134,7 +207,13 @@ const ProductVariant = () => {
     newVariant.splice(biggerIndex, 1);
     setVariants(newVariant);
     setPrice(new Array(maxOptLength).fill(new Array(maxOptLength).fill(0)));
+    setIsPriceValid(
+      new Array(maxOptLength).fill(new Array(maxOptLength).fill(true)),
+    );
     setStocks(new Array(maxOptLength).fill(new Array(maxOptLength).fill(0)));
+    setIsStockValid(
+      new Array(maxOptLength).fill(new Array(maxOptLength).fill(true)),
+    );
   }
 
   useEffect(() => {
@@ -178,10 +257,65 @@ const ProductVariant = () => {
     }
   }
 
+  function validateVarOnBlur(
+    inputValue: number | '',
+    key: 'price' | 'stock',
+    index0: number,
+    index1: number,
+  ) {
+    if (inputValue === '' || inputValue < 0) {
+      if (key === 'price') {
+        const newIsPriceValid = [...isPriceValid];
+        const newSmallArray = [...isPriceValid[index0]];
+        newSmallArray[index1] = false;
+        newIsPriceValid[index0] = newSmallArray;
+        setIsPriceValid(newIsPriceValid);
+      } else {
+        const newIsStockValid = [...isStockValid];
+        const newSmallArray = [...newIsStockValid[index0]];
+        newSmallArray[index1] = false;
+        newIsStockValid[index0] = newSmallArray;
+        setIsStockValid(newIsStockValid);
+      }
+    } else {
+      if (key === 'price') {
+        const newIsPriceValid = [...isPriceValid];
+        const newSmallArray = [...isPriceValid[index0]];
+        newSmallArray[index1] = true;
+        newIsPriceValid[index0] = newSmallArray;
+        setIsPriceValid(newIsPriceValid);
+      } else {
+        const newIsStockValid = [...isStockValid];
+        const newSmallArray = [...newIsStockValid[index0]];
+        newSmallArray[index1] = true;
+        newIsStockValid[index0] = newSmallArray;
+        setIsStockValid(newIsStockValid);
+      }
+    }
+  }
+
+  function validateVarNameOnBlur(inputValue: string, index: number) {
+    if (inputValue === '') {
+      const newIsVariantsValid = [...isVariantsValid];
+      newIsVariantsValid[index].variant_name = false;
+      setIsVariantsValid(newIsVariantsValid);
+    } else {
+      const newIsVariantsValid = [...isVariantsValid];
+      newIsVariantsValid[index].variant_name = true;
+      setIsVariantsValid(newIsVariantsValid);
+    }
+  }
+
   function handleActivateVariant() {
     setVariants([{ variant_name: '', options: [undefined] }]);
     setPrice(new Array(maxOptLength).fill(new Array(maxOptLength).fill(0)));
+    setIsPriceValid(
+      new Array(maxOptLength).fill(new Array(maxOptLength).fill(true)),
+    );
     setStocks(new Array(maxOptLength).fill(new Array(maxOptLength).fill(0)));
+    setIsStockValid(
+      new Array(maxOptLength).fill(new Array(maxOptLength).fill(true)),
+    );
     setIsVariantActive(true);
   }
 
@@ -305,14 +439,26 @@ const ProductVariant = () => {
                   Variant {`${biggerIndex + 1}`}
                   <span className="text-primary">{'* '}</span>:
                 </Label>
-                <Input
-                  placeholder="Ex: Color, Size"
-                  id={`variant-${biggerIndex + 1}-title`}
-                  type="text"
-                  value={variant.variant_name}
-                  onChange={(e) => handleVariantNameInput(e, biggerIndex)}
-                  className="w-96"
-                />
+                <div className="w-96 flex flex-col gap-1">
+                  <p className="w-full text-black text-xs">{`${variant.variant_name.length}/${maxVariantNameLength} characters`}</p>
+                  <Input
+                    placeholder="Ex: Color, Size"
+                    id={`variant-${biggerIndex + 1}-title`}
+                    type="text"
+                    value={variant.variant_name}
+                    onChange={(e) => handleVariantNameInput(e, biggerIndex)}
+                    isValid={isVariantsValid[biggerIndex].variant_name}
+                    onBlur={() =>
+                      validateVarNameOnBlur(variant.variant_name, biggerIndex)
+                    }
+                    className="w-full"
+                  />
+                  {!isVariantsValid[biggerIndex].variant_name && (
+                    <p className="w-full text-left text-xs text-destructive">
+                      Variant name cannot be empty
+                    </p>
+                  )}
+                </div>
               </div>
               <div className="flex items-start gap-2 w-full">
                 <p className="min-w-fit text-right font-light text-xs lg:text-sm">
@@ -368,7 +514,7 @@ const ProductVariant = () => {
             </div>
           ))}
         </div>
-        <div className="w-full flex flex-col gap-2">
+        <div className="w-full flex flex-col">
           <div className="w-full flex">
             {variants.length === 1 && (
               <>
@@ -421,29 +567,57 @@ const ProductVariant = () => {
                                   <p className="w-1/3 text-center flex justify-center items-center min-h-full border-2 border-gray-100 font-light truncate">
                                     {option}
                                   </p>
-                                  <div className="w-1/3 p-2 border-2 border-gray-100 min-h-fit">
+                                  <div className="w-1/3 p-2 border-2 border-gray-100 min-h-fit flex flex-col gap-2">
                                     <Input
                                       type="number"
-                                      className="h-12"
+                                      className={`${styles.hideIndicator} h-12`}
                                       value={price[index0][index1]}
                                       onChange={(e) =>
                                         handlePriceInput(e, index0, index1)
                                       }
-                                      onKeyDown={(e) => handleNumKeyDown(e)}
-                                      min={0}
-                                    />
-                                  </div>
-                                  <div className="w-1/3 p-2 border-2 border-gray-100 min-h-fit">
-                                    <Input
-                                      type="number"
-                                      className="h-12"
-                                      value={stocks[index0][index1]}
-                                      onChange={(e) =>
-                                        handleStockInput(e, index0, index1)
+                                      isValid={isPriceValid[index0][index1]}
+                                      onBlur={() =>
+                                        validateVarOnBlur(
+                                          price[index0][index1],
+                                          'price',
+                                          index0,
+                                          index1,
+                                        )
                                       }
                                       onKeyDown={(e) => handleNumKeyDown(e)}
                                       min={0}
                                     />
+                                    {!isPriceValid[index0][index1] && (
+                                      <p className="text-xs text-destructive w-full text-left">
+                                        Price cannot be empty
+                                      </p>
+                                    )}
+                                  </div>
+                                  <div className="w-1/3 p-2 border-2 border-gray-100 min-h-fit flex flex-col gap-2">
+                                    <Input
+                                      type="number"
+                                      className={`${styles.hideIndicator} h-12`}
+                                      value={stocks[index0][index1]}
+                                      onChange={(e) =>
+                                        handleStockInput(e, index0, index1)
+                                      }
+                                      isValid={isStockValid[index0][index1]}
+                                      onBlur={() =>
+                                        validateVarOnBlur(
+                                          stocks[index0][index1],
+                                          'stock',
+                                          index0,
+                                          index1,
+                                        )
+                                      }
+                                      onKeyDown={(e) => handleNumKeyDown(e)}
+                                      min={0}
+                                    />
+                                    {!isStockValid[index0][index1] && (
+                                      <p className="text-xs text-destructive w-full text-left">
+                                        Stock cannot be empty
+                                      </p>
+                                    )}
                                   </div>
                                 </div>
                               ),
@@ -463,25 +637,53 @@ const ProductVariant = () => {
                       <p className="w-1/3 text-center min-h-full border-2 border-gray-100 flex justify-center items-center font-light truncate">
                         {option}
                       </p>
-                      <div className="w-1/3 p-2 border-2 border-gray-100 min-h-fit">
+                      <div className="w-1/3 p-2 border-2 border-gray-100 min-h-fit flex flex-col gap-2">
                         <Input
                           type="number"
-                          className="h-12"
+                          className={`${styles.hideIndicator} h-12`}
                           value={price[index0][0]}
                           onChange={(e) => handlePriceInput(e, index0, 0)}
+                          isValid={isPriceValid[index0][0]}
+                          onBlur={() =>
+                            validateVarOnBlur(
+                              price[index0][0],
+                              'price',
+                              index0,
+                              0,
+                            )
+                          }
                           onKeyDown={(e) => handleNumKeyDown(e)}
                           min={0}
                         />
+                        {!isPriceValid[index0][0] && (
+                          <p className="text-xs text-destructive w-full text-left">
+                            Price cannot be empty
+                          </p>
+                        )}
                       </div>
-                      <div className="w-1/3 p-2 border-2 border-gray-100 min-h-fit">
+                      <div className="w-1/3 p-2 border-2 border-gray-100 min-h-fit flex flex-col gap-2">
                         <Input
                           type="number"
-                          className="h-12"
+                          className={`${styles.hideIndicator} h-12`}
                           value={stocks[index0][0]}
                           onChange={(e) => handleStockInput(e, index0, 0)}
+                          isValid={isStockValid[index0][0]}
+                          onBlur={() =>
+                            validateVarOnBlur(
+                              stocks[index0][0],
+                              'stock',
+                              index0,
+                              0,
+                            )
+                          }
                           onKeyDown={(e) => handleNumKeyDown(e)}
                           min={0}
                         />
+                        {!isStockValid[index0][0] && (
+                          <p className="text-xs text-destructive w-full text-left">
+                            Stock cannot be empty
+                          </p>
+                        )}
                       </div>
                     </div>
                   ),
