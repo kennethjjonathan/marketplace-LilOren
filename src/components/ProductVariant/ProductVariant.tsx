@@ -4,7 +4,10 @@ import { Button } from '../ui/button';
 import { Plus, X } from 'lucide-react';
 import {
   IIsProductVariantValid,
+  INonVariant,
   IProdcutVariant,
+  IVariantDefinition,
+  IVariantGroup,
 } from '@/interface/addProduct';
 import { Label } from '../ui/label';
 import styles from './ProductVariant.module.css';
@@ -310,7 +313,7 @@ const ProductVariant = () => {
     key: 'price' | 'stock',
     index0: number,
     index1: number,
-  ) {
+  ): boolean {
     if (key === 'price') {
       if (inputValue === '' || inputValue < 99) {
         const newIsPriceValid = [...isPriceValid];
@@ -318,14 +321,16 @@ const ProductVariant = () => {
         newSmallArray[index1] = false;
         newIsPriceValid[index0] = newSmallArray;
         setIsPriceValid(newIsPriceValid);
+        return false;
       } else if (isPriceValid[index0][index1] === true) {
-        return;
+        return true;
       } else {
         const newIsPriceValid = [...isPriceValid];
         const newSmallArray = [...newIsPriceValid[index0]];
         newSmallArray[index1] = true;
         newIsPriceValid[index0] = newSmallArray;
         setIsPriceValid(newIsPriceValid);
+        return true;
       }
     } else {
       if (inputValue === '' || inputValue < 0) {
@@ -334,14 +339,16 @@ const ProductVariant = () => {
         newSmallArray[index1] = false;
         newIsStockValid[index0] = newSmallArray;
         setIsStockValid(newIsStockValid);
+        return false;
       } else if (isStockValid[index0][index1]) {
-        return;
+        return true;
       } else {
         const newIsStockValid = [...isStockValid];
         const newSmallArray = [...newIsStockValid[index0]];
         newSmallArray[index1] = true;
         newIsStockValid[index0] = newSmallArray;
         setIsStockValid(newIsStockValid);
+        return false;
       }
     }
   }
@@ -416,13 +423,19 @@ const ProductVariant = () => {
       const newIsPriceValid = [...isPriceValid];
       const newIsStockValid = [...isStockValid];
       for (let i = 0; i < variants[0].options.length; i++) {
-        if (price[i][0] === '' || (price[i][0] as number) < 99) {
+        if (
+          variants[0].options[i] !== undefined &&
+          (price[i][0] === '' || (price[i][0] as number) < 99)
+        ) {
           isContinue = false;
           const newSmallArray = [...newIsPriceValid[i]];
           newSmallArray[0] = false;
           newIsPriceValid[i] = newSmallArray;
         }
-        if (stocks[i][0] === '' || (stocks[i][0] as number) < 0) {
+        if (
+          variants[0].options[i] !== undefined &&
+          (stocks[i][0] === '' || (stocks[i][0] as number) < 0)
+        ) {
           isContinue = false;
           const newSmallArray = [...newIsStockValid[i]];
           newSmallArray[0] = false;
@@ -445,7 +458,7 @@ const ProductVariant = () => {
             isContinue = false;
             const newSmallArray = [...newIsPriceValid[i]];
             newSmallArray[j] = false;
-            newIsPriceValid[j] = newSmallArray;
+            newIsPriceValid[i] = newSmallArray;
           }
           if (
             variants[0].options[i] !== undefined &&
@@ -470,11 +483,106 @@ const ProductVariant = () => {
     if (!isVariantActive && !validateNoVar()) {
       isContinue = false;
     }
+    if (isVariantActive && !validateVar()) {
+      isContinue = false;
+    }
     return isContinue;
   }
 
   function logEndProduct() {
-    validateVar();
+    if (!validateAll()) {
+      console.log('gagal');
+      return;
+    }
+
+    if (!isVariantActive) {
+      const payload: INonVariant[] = [
+        {
+          price: noVarPrice as number,
+          stock: noVarStock as number,
+        },
+      ];
+      console.log(payload);
+      return;
+    }
+
+    if (variants.length === 2) {
+      const variantTypes1: string[] = [];
+      for (let i = 0; i < variants[0].options.length; i++) {
+        if (variants[0].options[i] !== undefined) {
+          variantTypes1.push(variants[0].options[i] as string);
+        }
+      }
+      const variantTypes2: string[] = [];
+      for (let i = 0; i < variants[1].options.length; i++) {
+        if (variants[1].options[i] !== undefined) {
+          variantTypes2.push(variants[1].options[i] as string);
+        }
+      }
+      const variant_definition: IVariantDefinition = {
+        variant_group_1: {
+          name: variants[0].variant_name,
+          variant_types: variantTypes1,
+        },
+        variant_group_2: {
+          name: variants[1].variant_name,
+          variant_types: variantTypes2,
+        },
+      };
+      const variant_group: IVariantGroup[] = [];
+      for (let i = 0; i < variants[0].options.length; i++) {
+        for (let j = 0; j < variants[1].options.length; j++) {
+          if (
+            variants[0].options[i] !== undefined &&
+            variants[1].options[j] !== undefined
+          ) {
+            const variantGroup: IVariantGroup = {
+              variant_type_1: variants[0].options[i] as string,
+              variant_type_2: variants[1].options[j] as string,
+              price: price[i][j] as number,
+              stock: stocks[i][j] as number,
+            };
+            variant_group.push(variantGroup);
+          }
+        }
+      }
+      console.log({
+        variant_definition: variant_definition,
+        variants: variant_group,
+      });
+      return;
+    }
+
+    if (variants.length === 1) {
+      const variantTypes1: string[] = [];
+      for (let i = 0; i < variants[0].options.length; i++) {
+        if (variants[0].options[i] !== undefined) {
+          variantTypes1.push(variants[0].options[i] as string);
+        }
+      }
+      const variant_definition: IVariantDefinition = {
+        variant_group_1: {
+          name: variants[0].variant_name,
+          variant_types: variantTypes1,
+        },
+      };
+      const variant_group: IVariantGroup[] = [];
+      for (let i = 0; i < variants[0].options.length; i++) {
+        if (variants[0].options[i] !== undefined) {
+          const variantGroup: IVariantGroup = {
+            variant_type_1: variants[0].options[i] as string,
+            price: price[i][0] as number,
+            stock: stocks[i][0] as number,
+          };
+          variant_group.push(variantGroup);
+        }
+      }
+      console.log({
+        variant_definition: variant_definition,
+        variants: variant_group,
+      });
+      return;
+    }
   }
 
   if (!isVariantActive) {
@@ -563,6 +671,7 @@ const ProductVariant = () => {
             )}
           </div>
         </div>
+        <Button onClick={logEndProduct}>Log end Product</Button>
       </div>
     );
   }
