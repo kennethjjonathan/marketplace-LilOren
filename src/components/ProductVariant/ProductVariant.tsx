@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
-import { Trash2, Plus, X } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 import {
   IIsProductVariantValid,
   IProdcutVariant,
@@ -12,6 +12,7 @@ import styles from './ProductVariant.module.css';
 const maxOptLength: number = 3;
 const maxVariant: number = 2;
 const maxVariantNameLength: number = 15;
+const maxOptNameLength: number = 20;
 
 const ProductVariant = () => {
   const [isVariantActive, setIsVariantActive] = useState<boolean>(false);
@@ -66,16 +67,45 @@ const ProductVariant = () => {
     biggerIndex: number,
   ) {
     const { value } = e.target;
+    if (value.length > maxOptNameLength) return;
     const newVariants = [...variants];
+    const newIsVariantsValid = [...isVariantsValid];
     if (
+      !/^\s+$/.test(value) &&
+      value !== '' &&
       newVariants[biggerIndex].options[index] === undefined &&
       index === newVariants[biggerIndex].options.length - 1 &&
       newVariants[biggerIndex].options.length < maxOptLength
     ) {
       newVariants[biggerIndex].options.push(undefined);
+      newIsVariantsValid[biggerIndex].options.push(true);
     }
-    newVariants[biggerIndex].options[index] = value;
-    setVariants(newVariants);
+    if (
+      (/^\s+$/.test(value) || value === '') &&
+      newVariants[biggerIndex].options[index] === undefined
+    ) {
+      newVariants[biggerIndex].options[index] = undefined;
+      setVariants(newVariants);
+    } else {
+      newVariants[biggerIndex].options[index] = value;
+      setVariants(newVariants);
+    }
+  }
+
+  function validateOptOnBlur(
+    inputValue: string | undefined,
+    index: number,
+    biggerIndex: number,
+  ) {
+    if (inputValue === undefined) return;
+    const newIsVariantsValid = [...isVariantsValid];
+    if (inputValue === '') {
+      newIsVariantsValid[biggerIndex].options[index] = false;
+      setIsVariantsValid(newIsVariantsValid);
+    } else {
+      newIsVariantsValid[biggerIndex].options[index] = true;
+      setIsVariantsValid(newIsVariantsValid);
+    }
   }
 
   function handleDeleteOptions(index: number, biggerIndex: number) {
@@ -117,21 +147,28 @@ const ProductVariant = () => {
       setIsStockValid(newIsStockValid);
     }
     const newVariants = [...variants];
+    const newIsVariantsValid = [...isVariantsValid];
     newVariants[biggerIndex].options.splice(index, 1);
+    newIsVariantsValid[biggerIndex].options.splice(index, 1);
     const optionsLength = newVariants[biggerIndex].options.length;
     if (
       optionsLength < maxOptLength &&
       newVariants[biggerIndex].options[optionsLength - 1] !== undefined
     ) {
       newVariants[biggerIndex].options.push(undefined);
+      newIsVariantsValid[biggerIndex].options.push(true);
     }
     setVariants(newVariants);
+    setIsVariantsValid(newIsVariantsValid);
   }
 
   function handleAddVariant() {
     const newVariants = [...variants];
+    const newIsVariantsValid = [...isVariantsValid];
     newVariants.push({ variant_name: '', options: [undefined] });
+    newIsVariantsValid.push({ variant_name: true, options: [true] });
     setVariants(newVariants);
+    setIsVariantsValid(newIsVariantsValid);
     setPrice(new Array(maxOptLength).fill(new Array(maxOptLength).fill(0)));
     setIsPriceValid(
       new Array(maxOptLength).fill(new Array(maxOptLength).fill(true)),
@@ -204,8 +241,11 @@ const ProductVariant = () => {
 
   function handleDeleteVariant(biggerIndex: number) {
     const newVariant = [...variants];
+    const newIsVariantsValid = [...isVariantsValid];
     newVariant.splice(biggerIndex, 1);
+    newIsVariantsValid.splice(biggerIndex, 1);
     setVariants(newVariant);
+    setIsVariantsValid(newIsVariantsValid);
     setPrice(new Array(maxOptLength).fill(new Array(maxOptLength).fill(0)));
     setIsPriceValid(
       new Array(maxOptLength).fill(new Array(maxOptLength).fill(true)),
@@ -250,10 +290,18 @@ const ProductVariant = () => {
     validationObject: { stock: boolean; price: boolean },
     key: keyof { stock: boolean; price: boolean },
   ) {
-    if (inputValue === '' || inputValue < 0) {
-      setter({ ...validationObject, [key]: false });
-    } else {
-      setter({ ...validationObject, [key]: true });
+    if (key === 'price') {
+      if (inputValue === '' || inputValue < 99) {
+        setter({ ...validationObject, [key]: false });
+      } else {
+        setter({ ...validationObject, [key]: true });
+      }
+    } else if (key === 'stock') {
+      if (inputValue === '' || inputValue < 0) {
+        setter({ ...validationObject, [key]: false });
+      } else {
+        setter({ ...validationObject, [key]: true });
+      }
     }
   }
 
@@ -263,27 +311,31 @@ const ProductVariant = () => {
     index0: number,
     index1: number,
   ) {
-    if (inputValue === '' || inputValue < 0) {
-      if (key === 'price') {
+    if (key === 'price') {
+      if (inputValue === '' || inputValue < 99) {
         const newIsPriceValid = [...isPriceValid];
-        const newSmallArray = [...isPriceValid[index0]];
+        const newSmallArray = [...newIsPriceValid[index0]];
         newSmallArray[index1] = false;
         newIsPriceValid[index0] = newSmallArray;
         setIsPriceValid(newIsPriceValid);
+      } else if (isPriceValid[index0][index1] === true) {
+        return;
       } else {
+        const newIsPriceValid = [...isPriceValid];
+        const newSmallArray = [...newIsPriceValid[index0]];
+        newSmallArray[index1] = true;
+        newIsPriceValid[index0] = newSmallArray;
+        setIsPriceValid(newIsPriceValid);
+      }
+    } else {
+      if (inputValue === '' || inputValue < 0) {
         const newIsStockValid = [...isStockValid];
         const newSmallArray = [...newIsStockValid[index0]];
         newSmallArray[index1] = false;
         newIsStockValid[index0] = newSmallArray;
         setIsStockValid(newIsStockValid);
-      }
-    } else {
-      if (key === 'price') {
-        const newIsPriceValid = [...isPriceValid];
-        const newSmallArray = [...isPriceValid[index0]];
-        newSmallArray[index1] = true;
-        newIsPriceValid[index0] = newSmallArray;
-        setIsPriceValid(newIsPriceValid);
+      } else if (isStockValid[index0][index1]) {
+        return;
       } else {
         const newIsStockValid = [...isStockValid];
         const newSmallArray = [...newIsStockValid[index0]];
@@ -308,6 +360,7 @@ const ProductVariant = () => {
 
   function handleActivateVariant() {
     setVariants([{ variant_name: '', options: [undefined] }]);
+    setIsVariantsValid([{ variant_name: true, options: [true] }]);
     setPrice(new Array(maxOptLength).fill(new Array(maxOptLength).fill(0)));
     setIsPriceValid(
       new Array(maxOptLength).fill(new Array(maxOptLength).fill(true)),
@@ -324,6 +377,104 @@ const ProductVariant = () => {
     setNoVarStock(0);
     setIsNoVarValid({ price: true, stock: true });
     setIsVariantActive(false);
+  }
+
+  function validateNoVar(): boolean {
+    let isContinue: boolean = true;
+    if (noVarPrice === '' || noVarPrice < 99) {
+      isContinue = false;
+      setIsNoVarValid({ ...isNoVarValid, price: false });
+    }
+    if (noVarStock === '' || noVarStock < 0) {
+      isContinue = false;
+      setIsNoVarValid({ ...isNoVarValid, stock: false });
+    }
+    return isContinue;
+  }
+
+  function validateVar(): boolean {
+    let isContinue: boolean = true;
+    const newIsVariantsValid = [...isVariantsValid];
+    for (let i = 0; i < variants.length; i++) {
+      if (variants[i].variant_name === '') {
+        isContinue = false;
+        newIsVariantsValid[i].variant_name = false;
+      }
+      for (let j = 0; j < variants[i].options.length; j++) {
+        if (
+          (variants[i].options.length === 1 &&
+            variants[i].options[j] === undefined) ||
+          variants[i].options[j] === ''
+        ) {
+          isContinue = false;
+          newIsVariantsValid[i].options[j] = false;
+        }
+      }
+    }
+    setIsVariantsValid(newIsVariantsValid);
+    if (variants.length === 1) {
+      const newIsPriceValid = [...isPriceValid];
+      const newIsStockValid = [...isStockValid];
+      for (let i = 0; i < variants[0].options.length; i++) {
+        if (price[i][0] === '' || (price[i][0] as number) < 99) {
+          isContinue = false;
+          const newSmallArray = [...newIsPriceValid[i]];
+          newSmallArray[0] = false;
+          newIsPriceValid[i] = newSmallArray;
+        }
+        if (stocks[i][0] === '' || (stocks[i][0] as number) < 0) {
+          isContinue = false;
+          const newSmallArray = [...newIsStockValid[i]];
+          newSmallArray[0] = false;
+          newIsStockValid[i] = newSmallArray;
+        }
+      }
+      setIsPriceValid(newIsPriceValid);
+      setIsStockValid(newIsStockValid);
+    }
+    if (variants.length === 2) {
+      const newIsPriceValid = [...isPriceValid];
+      const newIsStockValid = [...isStockValid];
+      for (let i = 0; i < variants[0].options.length; i++) {
+        for (let j = 0; j < variants[1].options.length; j++) {
+          if (
+            variants[0].options[i] !== undefined &&
+            variants[1].options[j] !== undefined &&
+            (price[i][j] === '' || (price[i][j] as number) < 99)
+          ) {
+            isContinue = false;
+            const newSmallArray = [...newIsPriceValid[i]];
+            newSmallArray[j] = false;
+            newIsPriceValid[j] = newSmallArray;
+          }
+          if (
+            variants[0].options[i] !== undefined &&
+            variants[1].options[j] !== undefined &&
+            (stocks[i][j] === '' || (stocks[i][j] as number) < 0)
+          ) {
+            isContinue = false;
+            const newSmallArray = [...newIsStockValid[i]];
+            newSmallArray[j] = false;
+            newIsStockValid[i] = newSmallArray;
+          }
+        }
+      }
+      setIsPriceValid(newIsPriceValid);
+      setIsStockValid(newIsStockValid);
+    }
+    return isContinue;
+  }
+
+  function validateAll() {
+    let isContinue: boolean = true;
+    if (!isVariantActive && !validateNoVar()) {
+      isContinue = false;
+    }
+    return isContinue;
+  }
+
+  function logEndProduct() {
+    validateVar();
   }
 
   if (!isVariantActive) {
@@ -374,7 +525,9 @@ const ProductVariant = () => {
               isValid={isNoVarValid.price}
             />
             {!isNoVarValid.price && (
-              <p className="text-xs text-destructive">Price cannot be empty</p>
+              <p className="text-xs text-destructive">
+                Price cannot be empty and must be 99 minimum
+              </p>
             )}
           </div>
         </div>
@@ -440,7 +593,7 @@ const ProductVariant = () => {
                   <span className="text-primary">{'* '}</span>:
                 </Label>
                 <div className="w-96 flex flex-col gap-1">
-                  <p className="w-full text-black text-xs">{`${variant.variant_name.length}/${maxVariantNameLength} characters`}</p>
+                  <p className="w-full text-black text-xs pl-2">{`${variant.variant_name.length}/${maxVariantNameLength} characters`}</p>
                   <Input
                     placeholder="Ex: Color, Size"
                     id={`variant-${biggerIndex + 1}-title`}
@@ -468,20 +621,35 @@ const ProductVariant = () => {
                 <div className="grid grid-rows-2 grid-cols-2 gap-2 w-full">
                   {variant.options.map((option, index) => (
                     <div className="flex items-center gap-2" key={index}>
-                      <Input
-                        placeholder="Ex: Blue, S"
-                        value={option === undefined ? '' : option}
-                        onChange={(e) =>
-                          handleOptionChange(e, index, biggerIndex)
-                        }
-                        className="w-5/6"
-                      />
+                      <div className="w-5/6 flex flex-col gap-1">
+                        {option !== undefined && (
+                          <p className="w-full text-black text-xs pl-2">{`${option.length}/${maxOptNameLength} characters`}</p>
+                        )}
+                        <Input
+                          type="text"
+                          placeholder="Ex: Blue, S"
+                          value={option === undefined ? '' : option}
+                          onChange={(e) =>
+                            handleOptionChange(e, index, biggerIndex)
+                          }
+                          isValid={isVariantsValid[biggerIndex].options[index]}
+                          onBlur={() =>
+                            validateOptOnBlur(option, index, biggerIndex)
+                          }
+                          className="w-full"
+                        />
+                        {!isVariantsValid[biggerIndex].options[index] && (
+                          <p className="w-full text-left text-xs text-destructive">
+                            Option name cannot be empty
+                          </p>
+                        )}
+                      </div>
                       <button
                         onClick={() => handleDeleteOptions(index, biggerIndex)}
                         disabled={option === undefined}
                         className="disabled:hidden"
                       >
-                        <Trash2 className="w-5 h-5 text-gray-500 opacity-80" />
+                        <X className="w-5 h-5 text-gray-500 opacity-80" />
                       </button>
                     </div>
                   ))}
@@ -589,7 +757,8 @@ const ProductVariant = () => {
                                     />
                                     {!isPriceValid[index0][index1] && (
                                       <p className="text-xs text-destructive w-full text-left">
-                                        Price cannot be empty
+                                        Price cannot be empty and must be 99
+                                        minimum
                                       </p>
                                     )}
                                   </div>
@@ -657,7 +826,7 @@ const ProductVariant = () => {
                         />
                         {!isPriceValid[index0][0] && (
                           <p className="text-xs text-destructive w-full text-left">
-                            Price cannot be empty
+                            Price cannot be empty and must be 99 minimum
                           </p>
                         )}
                       </div>
@@ -692,6 +861,7 @@ const ProductVariant = () => {
           )}
         </div>
       </div>
+      <Button onClick={logEndProduct}>Log End Product</Button>
     </div>
   );
 };
