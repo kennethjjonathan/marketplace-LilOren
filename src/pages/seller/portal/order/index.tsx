@@ -1,12 +1,12 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useCallback, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import Divider from '@/components/Divider/Divider';
 import SellerLayout from '@/components/SellerLayout/SellerLayout';
 import SellerOrderCard from '@/components/SellerOrderCard/SellerOrderCard';
-import Tabs from '@/components/Tabs/Tabs';
 import DotsLoading from '@/components/DotsLoading/DotsLoading';
 import { useSeller } from '@/store/seller/useSeller';
-import { ISellerOrdersParams } from '@/service/sellerOrder/SellerOrderService';
+import { NextPageWithLayout } from '@/pages/_app';
 import styles from './SellerPortalOrder.module.scss';
 
 const data = [
@@ -54,37 +54,71 @@ const data = [
   },
 ];
 
-const SellerPortalOrder = () => {
-  const router = useRouter();
-  const { page, status } = router.query;
-  const [currentStatus, setCurrentStatus] = useState('');
+const SellerPortalOrder: NextPageWithLayout = () => {
+  const searchParams = useSearchParams();
+  const status = searchParams.get('status');
   const [currentPage, setCurrentPage] = useState(1);
   const fetchSellerOrders = useSeller.use.fetchSellerOrders();
   const seller_orders = useSeller.use.seller_orders();
   const loading_fetch_seller_orders =
     useSeller.use.loading_fetch_seller_orders();
+  const seller_current_page = useSeller.use.seller_current_page();
+  const router = useRouter();
 
-  useEffect(() => {
-    const params: ISellerOrdersParams = {
-      page: page as unknown as number,
-      status: status as string,
-    };
+  const handleChangeStatus = useCallback(async () => {
+    const params =
+      status === '' || status === null
+        ? {
+            page: 1,
+          }
+        : {
+            status: status,
+            page: 1,
+          };
     fetchSellerOrders(params);
     window.scrollTo({
       top: 0,
       behavior: 'smooth',
     });
-  }, [currentStatus, currentPage]);
+  }, [status, fetchSellerOrders]);
+
+  const handleChangePage = useCallback(() => {
+    const params =
+      status === '' || status === null
+        ? {
+            page: currentPage,
+          }
+        : {
+            status: status,
+            page: currentPage,
+          };
+    fetchSellerOrders(params);
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  }, [currentPage, status, fetchSellerOrders]);
+
+  useEffect(() => {
+    handleChangeStatus();
+    if (seller_current_page) {
+      router.push(`/seller/portal/order?status=${seller_current_page}&page=1`);
+    }
+  }, [handleChangeStatus, seller_current_page]);
+
+  useEffect(() => {
+    handleChangePage();
+  }, [handleChangePage]);
+
   return (
     <div className={`${styles.sellerPortalOrder}`}>
-      <Tabs
-        datas={data}
-        // currentTab={currentStatus}
-        // setCurrentTab={setCurrentStatus}
-      />
       {loading_fetch_seller_orders ? (
         <div className="w-[85vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw]">
           <DotsLoading />
+        </div>
+      ) : seller_orders.order_data.length === 0 ? (
+        <div className="flex justify-center pt-5 h-full w-[100vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw]">
+          Empty Data
         </div>
       ) : (
         <div className={`${styles.page_order}`}>
@@ -92,7 +126,7 @@ const SellerPortalOrder = () => {
             <Divider />
             {seller_orders.order_data.map((order_data, index) => (
               <SellerOrderCard
-                key={`key:${order_data.id.toString}-${order_data.status}`}
+                key={`key:${index.toString()}-${order_data.status}`}
                 order_data={order_data}
                 total_products={order_data.products.length}
                 index={index}
@@ -107,7 +141,7 @@ const SellerPortalOrder = () => {
 
 SellerPortalOrder.getLayout = function getLayout(page: ReactElement) {
   return (
-    <SellerLayout tabData={data!} header="Order List">
+    <SellerLayout tabData={data} header="Order List">
       {page}
     </SellerLayout>
   );

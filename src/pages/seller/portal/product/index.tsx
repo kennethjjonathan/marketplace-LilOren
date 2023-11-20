@@ -9,6 +9,7 @@ const data = [
   {
     id: 1,
     label: 'All Products',
+    status: 'All Products',
     href: '/seller/portal/product',
   },
 ];

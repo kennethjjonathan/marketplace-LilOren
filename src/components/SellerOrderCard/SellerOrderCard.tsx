@@ -1,7 +1,14 @@
-import React from 'react';
-import Image from 'next/image';
+import React, { useState } from 'react';
+import { ToastContent } from 'react-toastify';
 import { Button } from '@/components/ui/button';
+import AsyncButton from '@/components/AsyncButton/AsyncButton';
+import SellerOrderCourier from '@/components/SellerOrder/SellerOrderCourier';
+import SellerOrderAddress from '@/components/SellerOrder/SellerOrderAddress';
+import SellerOrderProductInfo from '@/components/SellerOrder/SellerOrderProductInfo';
+import SellerOrderDeliveryFormModal from '@/components/SellerOrderDeliveryFormModal/SellerOrderDeliveryFormModal';
 import { IOrderData } from '@/interface/sellerOrder';
+import { SellerOrderClient } from '@/service/sellerOrder/SellerOrderClient';
+import { useSeller } from '@/store/seller/useSeller';
 import { Utils } from '@/utils';
 
 interface SellerOrderCardProps {
@@ -15,8 +22,32 @@ const SellerOrderCard = ({
   index,
   total_products,
 }: SellerOrderCardProps) => {
-  const handleEditOrder = (orderStatus: string, orderId: number) => {
-    console.log('time to edit order');
+  const [showEstDays, setShowEstDays] = useState<boolean>(false);
+  const [loadingButton, setLoadingButton] = useState<boolean>(false);
+  const setSellerChangeStatus = useSeller.use.setSellerChangeStatus();
+
+  const handleEditOrder = async (orderStatus: string, orderId: number) => {
+    if (orderStatus === 'NEW') {
+      setLoadingButton(true);
+      const response = await SellerOrderClient.putOrderStatusToProcess(orderId);
+      if (response?.error) {
+        Utils.notify(
+          'failed to process a new order' as ToastContent,
+          'error',
+          'colored',
+        );
+      } else {
+        Utils.notify(
+          'success process a new order' as ToastContent,
+          'success',
+          'colored',
+        );
+      }
+      setLoadingButton(false);
+      setSellerChangeStatus('PROCESS');
+    } else {
+      setShowEstDays(true);
+    }
   };
 
   const handleGetAction = (order_status: string) => {
@@ -25,14 +56,6 @@ const SellerOrderCard = ({
       action = 'Process Order';
     } else if (order_status === 'PROCESS') {
       action = 'Process To Ship';
-    } else if (order_status === 'DELIVER') {
-      action = 'Process Order';
-    } else if (order_status === 'ARRIVE') {
-      action = 'Process Order';
-    } else if (order_status === 'RECEIVE') {
-      action = 'Process Order';
-    } else if (order_status === 'CANCEL') {
-      action = 'Process Order';
     }
     return action;
   };
@@ -90,51 +113,9 @@ const SellerOrderCard = ({
       </div>
       {/* product address courier */}
       <div className="product-address-courier flex mt-2 pb-2 lg:gap-8 items-start">
-        {/* product */}
-        <div className="product flex flex-row gap-4 lg:w-[25vw] border-2 border-red-200 w-full md:justify-start">
-          <Image
-            src={order_data.products[0].thumbnail_url}
-            width={100}
-            height={100}
-            alt="product"
-            className={'w-[75px] h-[75px]'}
-          />
-          <div className="flex flex-col">
-            {/* product name */}
-            <p className="text-[12px] text-elipsis line-clamp-2 w-full">
-              {`${order_data.products[0].product_name}`}
-            </p>
-            {/* product variant */}
-            <div className="product-variant quantity flex flex-row  gap-3 justify-between mt-2">
-              <p className="text-[12px] font-light">
-                {`${order_data.products[0].variant1_name} ${
-                  order_data.products[0].variant2_name &&
-                  '| ' + order_data.products[0].variant2_name
-                }`}
-              </p>
-              <p className="text-[12px] font-light">{`x${order_data.products[0].quantity}`}</p>
-            </div>
-            <p className="text-right text-[12px] font-medium mt-4">
-              {Utils.convertPrice(order_data.products[0].sub_total_price)}
-            </p>
-          </div>
-        </div>
-        {/* address */}
-        <div className="address lg:flex hidden lg:flex-col lg:w-[250px]">
-          <p className="font-bold text-[12px]">Address</p>
-          <div className="address-details text-[12px]">
-            <p className="receiver-name-phone">{`${order_data.receiver_name} (${order_data.receiver_phone_number})`}</p>
-            <p className="address">{order_data.address_detail}</p>
-            <p className="postal-code">{'13220'}</p>
-          </div>
-        </div>
-        {/* courier */}
-        <div className="courier lg:flex hidden lg:flex-col lg:w-[200px] h-full ">
-          <p className="font-bold text-[12px]">Courier</p>
-          <div className="courier-service text-[12px]">
-            <p className="courier detail">{`${order_data.courier_name} - Reguler`}</p>
-          </div>
-        </div>
+        <SellerOrderProductInfo order_data={order_data} />
+        <SellerOrderAddress order_data={order_data} />
+        <SellerOrderCourier order_data={order_data} />
       </div>
 
       <div className="border-b-[1px] lg:hidden"></div>
@@ -157,15 +138,29 @@ const SellerOrderCard = ({
           {Utils.convertPrice(order_data.total_price)}
         </p>
       </div>
-      <div className="w-full flex justify-end mt-4">
-        <Button
-          className="text-[12px] h-[30px] lg:h-[40px]"
-          variant={'default'}
-          onClick={() => handleEditOrder(order_data.status, 1)}
-        >
-          {handleGetAction(order_data.status)}
-        </Button>
-      </div>
+      {handleGetAction(order_data.status) && (
+        <div className="w-full flex justify-end mt-4">
+          {loadingButton ? (
+            <AsyncButton isLoading={true}>{'Processing'}</AsyncButton>
+          ) : (
+            <Button
+              className={` text-[12px] h-[30px] lg:h-[40px] ${
+                order_data.status === 'PROCESS' ? 'bg-yellow-500' : 'bg-primary'
+              }`}
+              variant={'default'}
+              onClick={() => handleEditOrder(order_data.status, order_data.id)}
+            >
+              {handleGetAction(order_data.status)}
+            </Button>
+          )}
+        </div>
+      )}
+      <SellerOrderDeliveryFormModal
+        order_data={order_data}
+        isVisible={showEstDays}
+        onClose={() => setShowEstDays(false)}
+        setShowEstDays={setShowEstDays}
+      />
     </div>
   );
 };
