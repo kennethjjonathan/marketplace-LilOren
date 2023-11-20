@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/router';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
-import { Utils } from '@/utils';
 import { useCart } from '@/store/cart/useCart';
 import { CartClient } from '@/service/cart/CartClient';
 import { ICartCheckedRequest } from '@/service/cart/CartService';
 import { ICart, ICartPrice } from '@/pages/user/cart';
+import { Utils } from '@/utils';
 
 interface CartLayoutProps {
   prices: ICartPrice;
@@ -13,6 +14,7 @@ interface CartLayoutProps {
 
 const CartLayout = ({ prices }: CartLayoutProps) => {
   const isMounted = useRef(false);
+  const router = useRouter();
   const [countMounted, setCountMounted] = useState(0);
   const [isAllChecked, setIsAllChecked] = useState(false);
   const all_checked = useCart.use.all_checked();
@@ -111,6 +113,7 @@ const CartLayout = ({ prices }: CartLayoutProps) => {
               variant={'default'}
               size={'customBlank'}
               className="w-[100px] lg:w-[200px] h-full p-2 text-sm sm:text-base lg:text-lg"
+              onClick={() => router.push('/user/cart/checkout')}
             >
               Check Out
             </Button>
