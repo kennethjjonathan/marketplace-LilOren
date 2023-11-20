@@ -1,8 +1,11 @@
-import React, { Dispatch } from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { IOrderData } from '@/interface/sellerOrder';
 import { Utils } from '@/utils';
+import { SellerOrderClient } from '@/service/sellerOrder/SellerOrderClient';
+import Modal from '../Modal/Modal';
+import { InputWithLabel } from '../InputWithLabel/InputWithLabel';
 
 interface SellerOrderCardProps {
   order_data: IOrderData;
@@ -15,8 +18,36 @@ const SellerOrderCard = ({
   index,
   total_products,
 }: SellerOrderCardProps) => {
-  const handleEditOrder = (orderStatus: string, orderId: number) => {
+  const [showEstDays, setShowEstDays] = useState<boolean>(false);
+  const [deliveryEstDays, setDeliveryEstDays] = useState<string>('1');
+  const [isDeliveryEstDaysValid, setIsDeliveryEstDaysValid] =
+    useState<boolean>(true);
+  const handleEditOrder = async (orderStatus: string, orderId: number) => {
+    console.log(orderStatus);
+    console.log(orderId);
+    if (orderStatus === 'NEW') {
+      //update to received order
+      await SellerOrderClient.putOrderStatusToProcess(orderId);
+    } else {
+      // update to process to ship with argument days
+      setShowEstDays(true);
+    }
     console.log('time to edit order');
+  };
+
+  const handleSubmitToDelivery = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    console.log('submit');
+  };
+
+  const validateData = (pattern: RegExp): boolean => {
+    const dataRegex = pattern;
+    if (!dataRegex.test(deliveryEstDays.toString())) {
+      setIsDeliveryEstDaysValid(false);
+      return false;
+    }
+    setIsDeliveryEstDaysValid(true);
+    return true;
   };
 
   const handleGetAction = (order_status: string) => {
@@ -149,14 +180,65 @@ const SellerOrderCard = ({
       {handleGetAction(order_data.status) && (
         <div className="w-full flex justify-end mt-4">
           <Button
-            className="text-[12px] h-[30px] lg:h-[40px]"
+            className={` text-[12px] h-[30px] lg:h-[40px] ${
+              order_data.status === 'PROCESS' ? 'bg-yellow-500' : 'bg-primary'
+            }`}
             variant={'default'}
-            onClick={() => handleEditOrder(order_data.status, 1)}
+            onClick={() => handleEditOrder(order_data.status, order_data.id)}
           >
             {handleGetAction(order_data.status)}
           </Button>
         </div>
       )}
+      <Modal
+        title="Delivery Estimate Days"
+        isVisible={showEstDays}
+        onClose={() => setShowEstDays(false)}
+        position="center"
+      >
+        <div className="bg-white w-[100vw] md:w-[50vw] rounded-xl p-3 h-[20vh] relative">
+          <form
+            onSubmit={handleSubmitToDelivery}
+            className="flex flex-col gap-4"
+          >
+            <InputWithLabel
+              type="number"
+              label={'Estimated Delivery (1/2/3 days)'}
+              id="delivery-est-days"
+              labelStyling="font-light"
+              value={deliveryEstDays}
+              min={1}
+              max={3}
+              onChange={(e) => setDeliveryEstDays(e.target.value)}
+              isValid={isDeliveryEstDaysValid}
+              onBlur={() => validateData(/^[1-3]{1}$/)}
+              onKeyDown={(e) =>
+                ['ArrowUp', 'ArrowDown', 'e', 'E', '+', '-', '.'].includes(
+                  e.key,
+                ) && e.preventDefault()
+              }
+              validation="Input only number 1 / 2 / 3"
+              required
+            />
+            {deliveryEstDays && (
+              <div className="absolute top-[40px] md:top-[52px] right-6">
+                <p className="text-muted-foreground">
+                  {parseInt(deliveryEstDays) > 1 ? 'Days' : 'Day'}
+                </p>
+              </div>
+            )}
+            <div className="w-full flex justify-end pt-3 absolute bottom-4 right-4">
+              <Button
+                type="submit"
+                disabled={deliveryEstDays === '' || deliveryEstDays.length > 1}
+                className="h-[30px] lg:h-[40px]"
+              >
+                {'Submit'}
+              </Button>
+            </div>
+          </form>
+        </div>
+      </Modal>
     </div>
   );
 };

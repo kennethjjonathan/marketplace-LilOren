@@ -56,7 +56,7 @@ export class SellerOrderService {
       if (response.status === 200) {
         const responseAPI: ISellerOrderResponse = {
           error: false,
-          message: 'success get',
+          message: 'success edit order status',
         };
         return responseAPI;
       }
