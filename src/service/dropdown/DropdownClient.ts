@@ -10,8 +10,17 @@ export class DropdownClient {
     );
     if (response.error) {
       Utils.notify('failed to get data' as ToastContent, 'error', 'light');
-    } else {
-      return response;
     }
+    return response;
+  };
+
+  static getCityByProvinceId = async (province_id: number) => {
+    const response = await DropdownServer.get(
+      `${CONSTANTS.BASEURL}/dropdowns/location-unit/provinces/${province_id}/districts`,
+    );
+    if (response.error) {
+      Utils.notify('failed get city data' as ToastContent, 'error', 'light');
+    }
+    return response;
   };
 }

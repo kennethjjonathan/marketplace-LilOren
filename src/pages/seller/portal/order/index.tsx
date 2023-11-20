@@ -9,9 +9,6 @@ import { useSeller } from '@/store/seller/useSeller';
 import { ISellerOrdersParams } from '@/service/sellerOrder/SellerOrderService';
 import styles from './SellerPortalOrder.module.scss';
 
-const EMPTY_ORDER = 'There are no orders yet, here';
-const EMPTY_ORDER_DESC =
-  'Keep your enthusiasm, good fortune will not go away as long as you never give up.';
 const data = [
   {
     id: 1,
@@ -63,6 +60,7 @@ const SellerPortalOrder = () => {
   const [currentStatus, setCurrentStatus] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const fetchSellerOrders = useSeller.use.fetchSellerOrders();
+  const seller_orders = useSeller.use.seller_orders();
   const loading_fetch_seller_orders =
     useSeller.use.loading_fetch_seller_orders();
 
@@ -92,7 +90,14 @@ const SellerPortalOrder = () => {
         <div className={`${styles.page_order}`}>
           <section className="w-[85vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw]">
             <Divider />
-            <SellerOrderCard order_status={status as string} />
+            {seller_orders.order_data.map((order_data, index) => (
+              <SellerOrderCard
+                key={`key:${order_data.id.toString}-${order_data.status}`}
+                order_data={order_data}
+                total_products={order_data.products.length}
+                index={index}
+              />
+            ))}
           </section>
         </div>
       )}
