@@ -7,6 +7,8 @@ import { SellerOrderClient } from '@/service/sellerOrder/SellerOrderClient';
 import Modal from '../Modal/Modal';
 import { InputWithLabel } from '../InputWithLabel/InputWithLabel';
 import { ToastContent } from 'react-toastify';
+import SellerOrderCourier from '../SellerOrder/SellerOrderCourier';
+import SellerOrderAddress from '../SellerOrder/SellerOrderAddress';
 
 interface SellerOrderCardProps {
   order_data: IOrderData;
@@ -152,21 +154,9 @@ const SellerOrderCard = ({
           </div>
         </div>
         {/* address */}
-        <div className="address lg:flex hidden lg:flex-col lg:w-[250px]">
-          <p className="font-bold text-[12px]">Address</p>
-          <div className="address-details text-[12px]">
-            <p className="receiver-name-phone">{`${order_data.receiver_name} (${order_data.receiver_phone_number})`}</p>
-            <p className="address">{order_data.address_detail}</p>
-            <p className="postal-code">{'13220'}</p>
-          </div>
-        </div>
+        <SellerOrderAddress order_data={order_data} />
         {/* courier */}
-        <div className="courier lg:flex hidden lg:flex-col lg:w-[200px] h-full ">
-          <p className="font-bold text-[12px]">Courier</p>
-          <div className="courier-service text-[12px]">
-            <p className="courier detail">{`${order_data.courier_name} - Reguler`}</p>
-          </div>
-        </div>
+        <SellerOrderCourier order_data={order_data} />
       </div>
 
       <div className="border-b-[1px] lg:hidden"></div>

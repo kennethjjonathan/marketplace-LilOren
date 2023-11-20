@@ -28,4 +28,26 @@ export class Utils {
     const check = isCheckedCarts.every((cart) => cart.is_checked === true);
     return check;
   };
+
+  static getDate = (date: string) => {
+    const d = new Date(date);
+    const day = d.getDay();
+    const month = d.getMonth();
+    const months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    const year = d.getFullYear();
+    return `${day} ${months[month]} ${year}`;
+  };
 }
