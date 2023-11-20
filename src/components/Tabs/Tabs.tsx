@@ -1,6 +1,7 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
-import { Button } from '../ui/button';
+import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { Button } from '../ui/button';
 
 interface IData {
   id: number;
@@ -11,37 +12,41 @@ interface IData {
 
 interface TabsProps {
   datas: IData[];
-  currentTab: string;
-  setCurrentTab: Dispatch<SetStateAction<string>>;
 }
-const Tabs = ({ datas, currentTab, setCurrentTab }: TabsProps) => {
-  const handleChangeTab = (current: string) => {
-    setCurrentTab(current);
-  };
+const Tabs = ({ datas }: TabsProps) => {
+  const searchParams = useSearchParams();
+  const status = searchParams.get('status');
+  const [currentTab, setCurrentTab] = useState<string>();
+
+  useEffect(() => {
+    if (status === null) {
+      setCurrentTab('');
+    } else {
+      setCurrentTab(status);
+    }
+  }, [status]);
 
   return (
-    <div className="bg-white shadow-sm rounded-t-xl flex gap-2 p-2 overflow-x-auto w-[100vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw]">
+    <div
+      className={`bg-white shadow-sm rounded-t-xl flex gap-2 p-2 overflow-x-auto`}
+    >
       {datas.map((data) => (
         <div key={`key:${data.id}`}>
           <Link href={data.href}>
             <Button
               variant={'ghost'}
-              className="p-0 hover:text-primary"
-              onClick={() => handleChangeTab(data.status!)}
+              size={'customBlank'}
+              className={`lg:hover:text-primary text-[12px] lg:text-[14px] p-4 ${
+                currentTab && currentTab === data.status && 'text-primary'
+              }`}
             >
-              <p
-                className={`text-[12px] lg:text-[14px] p-4 ${
-                  currentTab === data.status && 'text-primary'
-                }`}
-              >
-                {data.label}
-              </p>
+              {data.label}
             </Button>
           </Link>
           {currentTab === data.status && (
             <div
-              className={`border-2 border-primary rounded-xl translate-x- duration-150 ease-in-out`}
-            ></div>
+              className={`border-2 border-primary rounded-xl duration-150 ease-in-out`}
+            />
           )}
         </div>
       ))}

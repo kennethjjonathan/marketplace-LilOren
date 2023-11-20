@@ -79,8 +79,8 @@ const SellerPortalOrder = () => {
     <div className={`${styles.sellerPortalOrder}`}>
       <Tabs
         datas={data}
-        currentTab={currentStatus}
-        setCurrentTab={setCurrentStatus}
+        // currentTab={currentStatus}
+        // setCurrentTab={setCurrentStatus}
       />
       {loading_fetch_seller_orders ? (
         <div className="w-[85vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw]">
