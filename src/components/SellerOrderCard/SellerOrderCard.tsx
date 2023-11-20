@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Dispatch } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { IOrderData } from '@/interface/sellerOrder';
@@ -8,12 +8,14 @@ interface SellerOrderCardProps {
   order_data: IOrderData;
   index: number;
   total_products: number;
+  setShowModal: Dispatch<React.SetStateAction<boolean>>;
 }
 
 const SellerOrderCard = ({
   order_data,
   index,
   total_products,
+  setShowModal,
 }: SellerOrderCardProps) => {
   const handleEditOrder = (orderStatus: string, orderId: number) => {
     console.log('time to edit order');
@@ -91,7 +93,7 @@ const SellerOrderCard = ({
       {/* product address courier */}
       <div className="product-address-courier flex mt-2 pb-2 lg:gap-8 items-start">
         {/* product */}
-        <div className="product flex flex-row gap-4 lg:w-[25vw] border-2 border-red-200 w-full md:justify-start">
+        <div className="product flex flex-row gap-4 lg:w-[25vw] w-full md:justify-start">
           <Image
             src={order_data.products[0].thumbnail_url}
             width={100}

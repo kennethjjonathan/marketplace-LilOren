@@ -15,10 +15,6 @@ interface TabsProps {
   setCurrentTab: Dispatch<SetStateAction<string>>;
 }
 const Tabs = ({ datas, currentTab, setCurrentTab }: TabsProps) => {
-  const handleChangeTab = (current: string) => {
-    setCurrentTab(current);
-  };
-
   return (
     <div className="bg-white shadow-sm rounded-t-xl flex gap-2 p-2 overflow-x-auto w-[100vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw]">
       {datas.map((data) => (
@@ -27,7 +23,7 @@ const Tabs = ({ datas, currentTab, setCurrentTab }: TabsProps) => {
             <Button
               variant={'ghost'}
               className="p-0 hover:text-primary"
-              onClick={() => handleChangeTab(data.status!)}
+              onClick={() => setCurrentTab(data.status!)}
             >
               <p
                 className={`text-[12px] lg:text-[14px] p-4 ${

@@ -7,6 +7,7 @@ import Tabs from '@/components/Tabs/Tabs';
 import DotsLoading from '@/components/DotsLoading/DotsLoading';
 import { useSeller } from '@/store/seller/useSeller';
 import { ISellerOrdersParams } from '@/service/sellerOrder/SellerOrderService';
+import ModalSellerOrderProducts from '@/components/ModalSellerOrderProducts/ModalSellerOrderProducts';
 import styles from './SellerPortalOrder.module.scss';
 
 const data = [
@@ -58,6 +59,7 @@ const SellerPortalOrder = () => {
   const router = useRouter();
   const { page, status } = router.query;
   const [currentStatus, setCurrentStatus] = useState('');
+  const [showMoreProducts, setShowMoreProducts] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const fetchSellerOrders = useSeller.use.fetchSellerOrders();
   const seller_orders = useSeller.use.seller_orders();
@@ -96,11 +98,16 @@ const SellerPortalOrder = () => {
                 order_data={order_data}
                 total_products={order_data.products.length}
                 index={index}
+                setShowModal={setShowMoreProducts}
               />
             ))}
           </section>
         </div>
       )}
+      <ModalSellerOrderProducts
+        isVisible={showMoreProducts}
+        onClose={() => setShowMoreProducts(false)}
+      />
     </div>
   );
 };
