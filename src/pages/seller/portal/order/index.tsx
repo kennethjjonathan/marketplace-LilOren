@@ -92,15 +92,19 @@ const SellerPortalOrder = () => {
         <div className={`${styles.page_order}`}>
           <section className="w-[85vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw]">
             <Divider />
-            {seller_orders.order_data.map((order_data, index) => (
-              <SellerOrderCard
-                key={`key:${order_data.id.toString}-${order_data.status}`}
-                order_data={order_data}
-                total_products={order_data.products.length}
-                index={index}
-                setShowModal={setShowMoreProducts}
-              />
-            ))}
+            {seller_orders.order_data.length === 0 ? (
+              <>Empty Data</>
+            ) : (
+              seller_orders.order_data.map((order_data, index) => (
+                <SellerOrderCard
+                  key={`key:${order_data.id.toString}-${order_data.status}`}
+                  order_data={order_data}
+                  total_products={order_data.products.length}
+                  index={index}
+                  setShowModal={setShowMoreProducts}
+                />
+              ))
+            )}
           </section>
         </div>
       )}
