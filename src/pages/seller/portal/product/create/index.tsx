@@ -1,4 +1,4 @@
-import React, { ChangeEvent, ReactElement, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import ProductVariant from '@/components/ProductVariant/ProductVariant';
@@ -124,6 +124,7 @@ const SellerPortalProductCreate = () => {
       return;
     }
   }
+
   // ADD PHOTO
   const [remainingPhotos, setRemainingPhotos] = useState<number>(maxPhoto);
   const [tempProductPhotos, setTempProductPhotos] = useState<File[]>([]);
