@@ -15,7 +15,7 @@ export const defaultNavItems: NavItem[] = [
   },
   {
     label: 'Order',
-    href: '/seller/portal/order?page=1',
+    href: '/seller/portal/order',
     icon: <ClipboardList className="w-6 h-6" />,
   },
   {

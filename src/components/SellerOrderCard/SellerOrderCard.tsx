@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Dispatch } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { IOrderData } from '@/interface/sellerOrder';
@@ -25,14 +25,6 @@ const SellerOrderCard = ({
       action = 'Process Order';
     } else if (order_status === 'PROCESS') {
       action = 'Process To Ship';
-    } else if (order_status === 'DELIVER') {
-      action = 'Process Order';
-    } else if (order_status === 'ARRIVE') {
-      action = 'Process Order';
-    } else if (order_status === 'RECEIVE') {
-      action = 'Process Order';
-    } else if (order_status === 'CANCEL') {
-      action = 'Process Order';
     }
     return action;
   };
@@ -91,7 +83,7 @@ const SellerOrderCard = ({
       {/* product address courier */}
       <div className="product-address-courier flex mt-2 pb-2 lg:gap-8 items-start">
         {/* product */}
-        <div className="product flex flex-row gap-4 lg:w-[25vw] border-2 border-red-200 w-full md:justify-start">
+        <div className="product flex flex-row gap-4 lg:w-[25vw] w-full md:justify-start">
           <Image
             src={order_data.products[0].thumbnail_url}
             width={100}
@@ -107,10 +99,7 @@ const SellerOrderCard = ({
             {/* product variant */}
             <div className="product-variant quantity flex flex-row  gap-3 justify-between mt-2">
               <p className="text-[12px] font-light">
-                {`${order_data.products[0].variant1_name} ${
-                  order_data.products[0].variant2_name &&
-                  '| ' + order_data.products[0].variant2_name
-                }`}
+                {`${order_data.products[0].variant_name}`}
               </p>
               <p className="text-[12px] font-light">{`x${order_data.products[0].quantity}`}</p>
             </div>
@@ -157,15 +146,17 @@ const SellerOrderCard = ({
           {Utils.convertPrice(order_data.total_price)}
         </p>
       </div>
-      <div className="w-full flex justify-end mt-4">
-        <Button
-          className="text-[12px] h-[30px] lg:h-[40px]"
-          variant={'default'}
-          onClick={() => handleEditOrder(order_data.status, 1)}
-        >
-          {handleGetAction(order_data.status)}
-        </Button>
-      </div>
+      {handleGetAction(order_data.status) && (
+        <div className="w-full flex justify-end mt-4">
+          <Button
+            className="text-[12px] h-[30px] lg:h-[40px]"
+            variant={'default'}
+            onClick={() => handleEditOrder(order_data.status, 1)}
+          >
+            {handleGetAction(order_data.status)}
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

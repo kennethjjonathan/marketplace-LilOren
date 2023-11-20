@@ -1,8 +1,7 @@
 interface ISellerOrderProduct {
   product_name: string;
   thumbnail_url: string;
-  variant1_name: string;
-  variant2_name: string;
+  variant_name: string;
   sub_total_price: number;
   quantity: number;
 }

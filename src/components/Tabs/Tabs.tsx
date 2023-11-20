@@ -3,7 +3,7 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '../ui/button';
 
-interface IData {
+export interface IData {
   id: number;
   label: string;
   status: string;
@@ -12,8 +12,9 @@ interface IData {
 
 interface TabsProps {
   datas: IData[];
+  isSeller?: boolean;
 }
-const Tabs = ({ datas }: TabsProps) => {
+const Tabs = ({ datas, isSeller }: TabsProps) => {
   const searchParams = useSearchParams();
   const status = searchParams.get('status');
   const [currentTab, setCurrentTab] = useState<string>();
@@ -28,7 +29,9 @@ const Tabs = ({ datas }: TabsProps) => {
 
   return (
     <div
-      className={`bg-white shadow-sm rounded-t-xl flex gap-2 p-2 overflow-x-auto`}
+      className={`bg-white shadow-sm rounded-t-xl flex gap-2 p-2 overflow-x-auto ${
+        isSeller && 'w-[100vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw]'
+      } `}
     >
       {datas.map((data) => (
         <div key={`key:${data.id}`}>

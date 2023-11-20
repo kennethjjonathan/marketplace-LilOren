@@ -54,7 +54,8 @@ const Sidebar = ({
                     'bg-primary text-white':
                       router.pathname === item.href ||
                       router.pathname === `${item.href}/shipment` ||
-                      router.pathname === `${item.href}/create`,
+                      router.pathname === `${item.href}/create` ||
+                      router.pathname.includes(`${item.href}?`),
                   })}
                 >
                   {item.icon} {item.label}
