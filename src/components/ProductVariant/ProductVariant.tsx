@@ -5,7 +5,7 @@ import { Plus, X } from 'lucide-react';
 import {
   IIsProductVariantValid,
   INonVariant,
-  IProdcutVariant,
+  IProductVariant,
   IVariantDefinition,
   IVariantGroup,
 } from '@/interface/addProduct';
@@ -17,36 +17,68 @@ const maxVariant: number = 2;
 const maxVariantNameLength: number = 15;
 const maxOptNameLength: number = 20;
 
-const ProductVariant = () => {
-  const [isVariantActive, setIsVariantActive] = useState<boolean>(false);
-  const [noVarPrice, setNoVarPrice] = useState<number | ''>(0);
-  const [noVarStock, setNoVarStock] = useState<number | ''>(0);
-  const [isNoVarValid, setIsNoVarValid] = useState<{
+interface ProductVariantProps {
+  isVariantActive: boolean;
+  setIsVariantActive: Dispatch<SetStateAction<boolean>>;
+  noVarPrice: number | '';
+  setNoVarPrice: Dispatch<SetStateAction<number | ''>>;
+  noVarStock: number | '';
+  setNoVarStock: Dispatch<SetStateAction<number | ''>>;
+  isNoVarValid: {
     price: boolean;
     stock: boolean;
-  }>({
-    price: true,
-    stock: true,
-  });
-  const [variants, setVariants] = useState<IProdcutVariant[]>([
-    { variant_name: '', options: [undefined] },
-  ]);
-  const [isVariantsValid, setIsVariantsValid] = useState<
-    IIsProductVariantValid[]
-  >([{ variant_name: true, options: [true] }]);
-  const [price, setPrice] = useState<(number | '')[][]>(
-    new Array(maxOptLength).fill(new Array(maxOptLength).fill(0)),
-  );
-  const [stocks, setStocks] = useState<(number | '')[][]>(
-    new Array(maxOptLength).fill(new Array(maxOptLength).fill(0)),
-  );
-  const [isPriceValid, setIsPriceValid] = useState<boolean[][]>(
-    new Array(maxOptLength).fill(new Array(maxOptLength).fill(true)),
-  );
-  const [isStockValid, setIsStockValid] = useState<boolean[][]>(
-    new Array(maxOptLength).fill(new Array(maxOptLength).fill(true)),
-  );
+  };
+  setIsNoVarValid: Dispatch<
+    SetStateAction<{
+      price: boolean;
+      stock: boolean;
+    }>
+  >;
+  variants: IProductVariant[];
+  setVariants: Dispatch<SetStateAction<IProductVariant[]>>;
+  isVariantsValid: IIsProductVariantValid[];
+  setIsVariantsValid: Dispatch<SetStateAction<IIsProductVariantValid[]>>;
+  price: (number | '')[][];
+  setPrice: Dispatch<SetStateAction<(number | '')[][]>>;
+  stocks: (number | '')[][];
+  setStocks: Dispatch<SetStateAction<(number | '')[][]>>;
+  isPriceValid: boolean[][];
+  setIsPriceValid: Dispatch<SetStateAction<boolean[][]>>;
+  isStockValid: boolean[][];
+  setIsStockValid: Dispatch<SetStateAction<boolean[][]>>;
+  checkIfOptDuplicate: (
+    index: number | undefined,
+    biggerIndex: number,
+  ) => boolean;
+  checkIfNameDuplicate: (biggerIndex: number | undefined) => boolean;
+  logEndProduct: () => void;
+}
 
+const ProductVariant = ({
+  isVariantActive,
+  setIsVariantActive,
+  noVarPrice,
+  setNoVarPrice,
+  noVarStock,
+  setNoVarStock,
+  isNoVarValid,
+  setIsNoVarValid,
+  variants,
+  setVariants,
+  isVariantsValid,
+  setIsVariantsValid,
+  price,
+  setPrice,
+  stocks,
+  setStocks,
+  isPriceValid,
+  setIsPriceValid,
+  isStockValid,
+  setIsStockValid,
+  checkIfOptDuplicate,
+  checkIfNameDuplicate,
+  logEndProduct,
+}: ProductVariantProps) => {
   function handleVariantNameInput(
     e: React.ChangeEvent<HTMLInputElement>,
     index: number,
@@ -109,6 +141,7 @@ const ProductVariant = () => {
       newIsVariantsValid[biggerIndex].options[index] = true;
       setIsVariantsValid(newIsVariantsValid);
     }
+    checkIfOptDuplicate(index, biggerIndex);
   }
 
   function handleDeleteOptions(index: number, biggerIndex: number) {
@@ -259,12 +292,6 @@ const ProductVariant = () => {
     );
   }
 
-  useEffect(() => {
-    console.log('price', price);
-    console.log('stock', stocks);
-    console.log('variants', variants);
-  }, [price, stocks, variants]);
-
   function handleNumKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (['e', 'E', '+', '-', ' '].includes(e.key)) {
       e.preventDefault();
@@ -363,6 +390,7 @@ const ProductVariant = () => {
       newIsVariantsValid[index].variant_name = true;
       setIsVariantsValid(newIsVariantsValid);
     }
+    checkIfNameDuplicate(index);
   }
 
   function handleActivateVariant() {
@@ -384,205 +412,6 @@ const ProductVariant = () => {
     setNoVarStock(0);
     setIsNoVarValid({ price: true, stock: true });
     setIsVariantActive(false);
-  }
-
-  function validateNoVar(): boolean {
-    let isContinue: boolean = true;
-    if (noVarPrice === '' || noVarPrice < 99) {
-      isContinue = false;
-      setIsNoVarValid({ ...isNoVarValid, price: false });
-    }
-    if (noVarStock === '' || noVarStock < 0) {
-      isContinue = false;
-      setIsNoVarValid({ ...isNoVarValid, stock: false });
-    }
-    return isContinue;
-  }
-
-  function validateVar(): boolean {
-    let isContinue: boolean = true;
-    const newIsVariantsValid = [...isVariantsValid];
-    for (let i = 0; i < variants.length; i++) {
-      if (variants[i].variant_name === '') {
-        isContinue = false;
-        newIsVariantsValid[i].variant_name = false;
-      }
-      for (let j = 0; j < variants[i].options.length; j++) {
-        if (
-          (variants[i].options.length === 1 &&
-            variants[i].options[j] === undefined) ||
-          variants[i].options[j] === ''
-        ) {
-          isContinue = false;
-          newIsVariantsValid[i].options[j] = false;
-        }
-      }
-    }
-    setIsVariantsValid(newIsVariantsValid);
-    if (variants.length === 1) {
-      const newIsPriceValid = [...isPriceValid];
-      const newIsStockValid = [...isStockValid];
-      for (let i = 0; i < variants[0].options.length; i++) {
-        if (
-          variants[0].options[i] !== undefined &&
-          (price[i][0] === '' || (price[i][0] as number) < 99)
-        ) {
-          isContinue = false;
-          const newSmallArray = [...newIsPriceValid[i]];
-          newSmallArray[0] = false;
-          newIsPriceValid[i] = newSmallArray;
-        }
-        if (
-          variants[0].options[i] !== undefined &&
-          (stocks[i][0] === '' || (stocks[i][0] as number) < 0)
-        ) {
-          isContinue = false;
-          const newSmallArray = [...newIsStockValid[i]];
-          newSmallArray[0] = false;
-          newIsStockValid[i] = newSmallArray;
-        }
-      }
-      setIsPriceValid(newIsPriceValid);
-      setIsStockValid(newIsStockValid);
-    }
-    if (variants.length === 2) {
-      const newIsPriceValid = [...isPriceValid];
-      const newIsStockValid = [...isStockValid];
-      for (let i = 0; i < variants[0].options.length; i++) {
-        for (let j = 0; j < variants[1].options.length; j++) {
-          if (
-            variants[0].options[i] !== undefined &&
-            variants[1].options[j] !== undefined &&
-            (price[i][j] === '' || (price[i][j] as number) < 99)
-          ) {
-            isContinue = false;
-            const newSmallArray = [...newIsPriceValid[i]];
-            newSmallArray[j] = false;
-            newIsPriceValid[i] = newSmallArray;
-          }
-          if (
-            variants[0].options[i] !== undefined &&
-            variants[1].options[j] !== undefined &&
-            (stocks[i][j] === '' || (stocks[i][j] as number) < 0)
-          ) {
-            isContinue = false;
-            const newSmallArray = [...newIsStockValid[i]];
-            newSmallArray[j] = false;
-            newIsStockValid[i] = newSmallArray;
-          }
-        }
-      }
-      setIsPriceValid(newIsPriceValid);
-      setIsStockValid(newIsStockValid);
-    }
-    return isContinue;
-  }
-
-  function validateAll() {
-    let isContinue: boolean = true;
-    if (!isVariantActive && !validateNoVar()) {
-      isContinue = false;
-    }
-    if (isVariantActive && !validateVar()) {
-      isContinue = false;
-    }
-    return isContinue;
-  }
-
-  function logEndProduct() {
-    if (!validateAll()) {
-      console.log('gagal');
-      return;
-    }
-
-    if (!isVariantActive) {
-      const payload: INonVariant[] = [
-        {
-          price: noVarPrice as number,
-          stock: noVarStock as number,
-        },
-      ];
-      console.log(payload);
-      return;
-    }
-
-    if (variants.length === 2) {
-      const variantTypes1: string[] = [];
-      for (let i = 0; i < variants[0].options.length; i++) {
-        if (variants[0].options[i] !== undefined) {
-          variantTypes1.push(variants[0].options[i] as string);
-        }
-      }
-      const variantTypes2: string[] = [];
-      for (let i = 0; i < variants[1].options.length; i++) {
-        if (variants[1].options[i] !== undefined) {
-          variantTypes2.push(variants[1].options[i] as string);
-        }
-      }
-      const variant_definition: IVariantDefinition = {
-        variant_group_1: {
-          name: variants[0].variant_name,
-          variant_types: variantTypes1,
-        },
-        variant_group_2: {
-          name: variants[1].variant_name,
-          variant_types: variantTypes2,
-        },
-      };
-      const variant_group: IVariantGroup[] = [];
-      for (let i = 0; i < variants[0].options.length; i++) {
-        for (let j = 0; j < variants[1].options.length; j++) {
-          if (
-            variants[0].options[i] !== undefined &&
-            variants[1].options[j] !== undefined
-          ) {
-            const variantGroup: IVariantGroup = {
-              variant_type_1: variants[0].options[i] as string,
-              variant_type_2: variants[1].options[j] as string,
-              price: price[i][j] as number,
-              stock: stocks[i][j] as number,
-            };
-            variant_group.push(variantGroup);
-          }
-        }
-      }
-      console.log({
-        variant_definition: variant_definition,
-        variants: variant_group,
-      });
-      return;
-    }
-
-    if (variants.length === 1) {
-      const variantTypes1: string[] = [];
-      for (let i = 0; i < variants[0].options.length; i++) {
-        if (variants[0].options[i] !== undefined) {
-          variantTypes1.push(variants[0].options[i] as string);
-        }
-      }
-      const variant_definition: IVariantDefinition = {
-        variant_group_1: {
-          name: variants[0].variant_name,
-          variant_types: variantTypes1,
-        },
-      };
-      const variant_group: IVariantGroup[] = [];
-      for (let i = 0; i < variants[0].options.length; i++) {
-        if (variants[0].options[i] !== undefined) {
-          const variantGroup: IVariantGroup = {
-            variant_type_1: variants[0].options[i] as string,
-            price: price[i][0] as number,
-            stock: stocks[i][0] as number,
-          };
-          variant_group.push(variantGroup);
-        }
-      }
-      console.log({
-        variant_definition: variant_definition,
-        variants: variant_group,
-      });
-      return;
-    }
   }
 
   if (!isVariantActive) {
@@ -717,7 +546,7 @@ const ProductVariant = () => {
                   />
                   {!isVariantsValid[biggerIndex].variant_name && (
                     <p className="w-full text-left text-xs text-destructive">
-                      Variant name cannot be empty
+                      Variant name cannot be empty or duplicated
                     </p>
                   )}
                 </div>
@@ -749,7 +578,7 @@ const ProductVariant = () => {
                         />
                         {!isVariantsValid[biggerIndex].options[index] && (
                           <p className="w-full text-left text-xs text-destructive">
-                            Option name cannot be empty
+                            Option name cannot be empty or duplicated
                           </p>
                         )}
                       </div>

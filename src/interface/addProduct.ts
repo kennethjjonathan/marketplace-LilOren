@@ -1,4 +1,4 @@
-export interface IProdcutVariant {
+export interface IProductVariant {
   variant_name: string;
   options: (string | undefined)[];
 }
