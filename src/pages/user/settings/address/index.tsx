@@ -1,67 +1,32 @@
-import React, { ReactElement, useEffect, useState } from 'react';
-import { ArrowLeft, Check, MoreHorizontal } from 'lucide-react';
+import React, { ReactElement, useEffect } from 'react';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { ArrowLeft, Plus } from 'lucide-react';
 import UserSettingsLayout from '@/components/UserSettingsLayout/UserSettingsLayout';
 import BackButton from '@/components/BackButton/BackButton';
-import styles from './UserSettingsAddress.module.scss';
 import { Button } from '@/components/ui/button';
-import ButtonWithIcon from '@/components/ButtonWithIcon/ButtonWithIcon';
-import Head from 'next/head';
 import SkeletonUserAddress from '@/components/SkeletonUserAddress/SkeletonUserAddress';
+import { useUser } from '@/store/user/useUser';
+import { IUserAddress } from '@/service/userAddress/userAddressService';
+import UserAddressCard from '@/components/UserAddressCard/UserAddressCard';
 
-interface IUserAddress {
-  id: number;
-  addressLabel: string;
-  receiverName: string;
-  phoneNumber: string;
-  fullAddress: string;
-}
-
-const userAddresses: IUserAddress[] = [
-  {
-    id: 1,
-    addressLabel: 'Rumah',
-    receiverName: 'Endriyani Rahayu',
-    phoneNumber: '081291268917 ',
-    fullAddress: 'JL Rawamangun Muka II Blok E 51 RT 006/ RW 012',
-  },
-  {
-    id: 2,
-    addressLabel: 'Rumah',
-    receiverName: 'Endradi Wulandari',
-    phoneNumber: '081291268917 ',
-    fullAddress: 'JL Rawamangun Muka II Blok E 51 RT 006/ RW 012',
-  },
-];
+const MY_ADDRESSES = 'My Addresses';
+const ADD_ADDRESS = 'Add Address';
+const PATH_USER_ADDRESS_CREATE = '/user/address/create';
 
 const UserSettingsAddress = () => {
-  const [currentAddress, setCurrentAddress] = useState<IUserAddress>(
-    userAddresses[0],
-  );
-  const [userSelectedAddress, setUserSelectedAddress] = useState<IUserAddress>(
-    userAddresses[0],
-  );
-  const [loadingChangeMainAddress, setLoadingChangeMainAddress] =
-    useState<boolean>(false);
-  const [loadingFetchUserAddress, setLoadingFetchUserAddress] =
-    useState<boolean>(false);
-
-  const handleMainAddress = (address: IUserAddress) => {
-    setLoadingChangeMainAddress(true);
-    console.log(address);
-    setLoadingChangeMainAddress(false);
-  };
+  const loading_fetch_user_addresses =
+    useUser.use.loading_ferch_user_addresses();
+  const fetchUserAddresses = useUser.use.fetchUserAddresses();
+  const userAddresses = useUser.use.user_addresses();
+  const router = useRouter();
 
   useEffect(() => {
-    setLoadingFetchUserAddress(true);
-
-    setTimeout(() => {
-      setLoadingFetchUserAddress(false);
-    }, 1000);
+    fetchUserAddresses();
   }, []);
   return (
     <>
-      {loadingFetchUserAddress ? (
+      {loading_fetch_user_addresses ? (
         <>
           <SkeletonUserAddress />
           <SkeletonUserAddress />
@@ -69,89 +34,29 @@ const UserSettingsAddress = () => {
       ) : (
         <div className="all-address">
           <div className="pb-[60px] m-[16px] flex flex-col gap-4">
-            {userAddresses.map((address: IUserAddress, index) => (
-              <div
-                key={`key:${String(index)} ${address.addressLabel} ${
-                  address.receiverName
-                }`}
-                className="address-card-item flex gap-2 hover:cursor-pointer"
-                onClick={() => setCurrentAddress(address)}
-                onKeyDown={() => setCurrentAddress(address)}
+            <div className="hidden lg:flex w-full justify-end">
+              <Button
+                className="flex flex-row gap-2"
+                onClick={() => router.push(PATH_USER_ADDRESS_CREATE)}
               >
-                <div className="address-card flex-grow">
-                  <section
-                    className={`${styles.card} ${
-                      currentAddress?.id == address.id && styles.selected
-                    }`}
-                  >
-                    <div className={`info-container flex`}>
-                      <div
-                        className={`${styles.info_container} ${styles.info} flex-grow`}
-                      >
-                        <div className={`title ${styles.title}`}>
-                          <p
-                            className={`${styles.text_title} ${styles.heading} ${styles.text}`}
-                          >
-                            {address.addressLabel}
-                          </p>
-                        </div>
-                        <p className={`${styles.receiver_name}`}>
-                          {address.receiverName}
-                        </p>
-                        <p
-                          className={`${styles.full_address} ${styles.heading}`}
-                        >
-                          {address.fullAddress}
-                        </p>
-                      </div>
-                      {address.id === currentAddress.id && (
-                        <div className={`icons`}>
-                          <Check className={`text-primary`} />
-                        </div>
-                      )}
-                    </div>
-                    <div className={`action-button ${styles.action_buttons}`}>
-                      <ButtonWithIcon
-                        variant={'outline'}
-                        className="py-0 px-2 w-full text-muted-foreground flex justify-center items-center"
-                        href="/"
-                      >
-                        {'Edit Address'}
-                      </ButtonWithIcon>
-                      {address.id === userSelectedAddress.id && (
-                        <Button
-                          className="py-0 px-2 w-fit text-muted-foreground flex justify-center items-center"
-                          variant={'outline'}
-                          onClick={() => handleMainAddress(currentAddress)}
-                        >
-                          <MoreHorizontal />
-                        </Button>
-                      )}
-                    </div>
-                  </section>
-                </div>
-              </div>
-            ))}
-          </div>
-          {loadingChangeMainAddress ? (
-            <>LoadingButton</>
-          ) : (
-            <div className="h-[60px] bg-white w-full flex justify-center items-center text-ellipsis whitespace-nowrap overflow-hidden px-4 pt-4 pb-4 fixed shadow-[0_-1px_6px_0_rgba(141,150,170,0.4)] bottom-0 lg:hidden right-0">
-              <Button className="w-full" type="button" variant={'default'}>
-                {'Select Address'}
+                <Plus /> {ADD_ADDRESS}
               </Button>
             </div>
-          )}
+
+            {userAddresses.map((address: IUserAddress, index) => (
+              <UserAddressCard
+                key={`key:${String(index)} ${address.id.toString()} ${
+                  address.receiver_name
+                }`}
+                address={address}
+              />
+            ))}
+          </div>
         </div>
       )}
     </>
   );
 };
-
-const PATH_USER = '/user';
-const MY_ADDRESSES = 'My Addresses';
-const ADD_ADDRESS = 'Add Address';
-const PATH_USER_ADDRESS_CREATE = '/user/address/create';
 
 const UserSettingsAddressHeading = () => {
   const router = useRouter();

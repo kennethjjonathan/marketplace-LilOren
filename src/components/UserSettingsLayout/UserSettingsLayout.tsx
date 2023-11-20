@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { Dispatch, ReactNode, SetStateAction, useState } from 'react';
 import Navigation from '../Navigation/Navigation';
 import UserPresentation from '../UserPresentation/UserPresentation';
 import styles from './UserSettingsLayout.module.scss';
@@ -8,18 +8,20 @@ import Tabs from '../Tabs/Tabs';
 interface UserSettingsLayoutProps {
   children: ReactNode;
   component: ReactNode;
-  currentTab?: string;
+  currentTab: string;
 }
 
 const data = [
   {
     id: 1,
     label: 'Info',
+    status: 'Info',
     href: '/user',
   },
   {
     id: 2,
     label: 'My Address',
+    status: 'My Address',
     href: '/user/settings/address',
   },
 ];
@@ -30,6 +32,7 @@ const UserSettingsLayout = ({
   currentTab,
 }: UserSettingsLayoutProps) => {
   const router = useRouter();
+  const [currentTabItem, setCurrentTabItem] = useState(currentTab);
   return (
     <div>
       <div className="hidden lg:block">

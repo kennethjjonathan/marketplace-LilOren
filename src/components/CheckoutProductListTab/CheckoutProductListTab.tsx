@@ -13,8 +13,8 @@ const CheckoutProductListTab = ({ item }: CheckoutProductListTabProps) => {
       <div className="flex mt-1 items-start gap-2">
         <div className="relative aspect-square rounded-md overflow-hidden h-24 sm:h-28">
           <Image
-            src={item.image}
-            alt={`${item.name}'s photo`}
+            src={item.image_url}
+            alt={`${item.product_name}'s photo`}
             fill
             style={{ objectFit: 'cover' }}
             sizes="(max-width: 768px) 30vw, 20vw"
@@ -22,9 +22,9 @@ const CheckoutProductListTab = ({ item }: CheckoutProductListTabProps) => {
         </div>
         <div className="flex flex-col flex-1 gap-1">
           <p className="text-gray-500 text-sm leading-tight sm:text-base">
-            {item.name}
+            {item.product_name}
           </p>
-          <p className="text-gray-500 text-xs leading-none sm:text-sm">{`Variant: ${item.variant}`}</p>
+          <p className="text-gray-500 text-xs leading-none sm:text-sm">{`Variant: ${item.variant1_name}`}</p>
           <p className="font-semibold text-base sm:text-lg">{`${item.quantity} x ${item.base_price}`}</p>
         </div>
       </div>

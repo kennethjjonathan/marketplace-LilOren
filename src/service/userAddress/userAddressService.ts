@@ -1,4 +1,5 @@
-import axios from 'axios';
+import axiosInstance from '@/lib/axiosInstance';
+import CONSTANS from './constants';
 
 export interface IUserAddressRequest {
   receiver_name: string;
@@ -11,34 +12,94 @@ export interface IUserAddressRequest {
   postal_code: string;
 }
 
+export interface IUserAddress {
+  id: number;
+  receiver_name: string;
+  address: string;
+  postal_code: string;
+  receiver_phone_number: string;
+}
+
 export interface IUserAddressResponse {
   error?: boolean;
   message?: string;
+  data: IUserAddress[];
 }
 
 export class UserAddressService {
   static post = async (url: string, payload: IUserAddressRequest) => {
     try {
-      const responseAPI = await axios({
+      const responseAPI = await axiosInstance({
         method: 'POST',
         url: url,
         data: payload,
       });
+      console.log(responseAPI);
       if (responseAPI.status === 201) {
         const response: IUserAddressResponse = {
           error: false,
-          message: 'created',
+          message: CONSTANS.success_created,
+          data: [],
         };
         return response;
       }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const response: IUserAddressResponse = {
-          error: true,
-          message: error.message,
+    } catch (error: any) {
+      console.log(error);
+      const response: IUserAddressResponse = {
+        error: true,
+        message: error.response.data.message,
+        data: [],
+      };
+      return response;
+    }
+  };
+
+  static get = async (url: string) => {
+    try {
+      const response = await axiosInstance({
+        method: 'GET',
+        url: url,
+      });
+      if (response.status === 200) {
+        const responseAPI: IUserAddressResponse = {
+          error: false,
+          message: 'success',
+          data: response.data.data,
         };
-        return response;
+        return responseAPI;
       }
+    } catch (error: any) {
+      const responseAPI: IUserAddressResponse = {
+        error: true,
+        message: 'failed get user addresses',
+        data: [],
+      };
+      return responseAPI;
+    }
+  };
+
+  static put = async (url: string, payload: { id: number }) => {
+    try {
+      const response = await axiosInstance({
+        method: 'PUT',
+        url: url,
+        data: payload,
+      });
+      if (response.status === 200) {
+        const responseAPI: IUserAddressResponse = {
+          error: false,
+          message: CONSTANS.success_edit,
+          data: [],
+        };
+        return responseAPI;
+      }
+    } catch (error: any) {
+      const responseAPI: IUserAddressResponse = {
+        error: true,
+        message: CONSTANS.failed_edit,
+        data: [],
+      };
+      return responseAPI;
     }
   };
 }

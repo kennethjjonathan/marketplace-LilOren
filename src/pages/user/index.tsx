@@ -9,13 +9,18 @@ import UserSettingsLayout from '@/components/UserSettingsLayout/UserSettingsLayo
 import styles from './User.module.scss';
 import Head from 'next/head';
 import UserPresentation from '@/components/UserPresentation/UserPresentation';
+import axios from 'axios';
 
 const User: NextPageWithLayout = () => {
   const router = useRouter();
   const [showSetAddressModal, setShowSetAddressModal] =
     useState<boolean>(false);
-  const handleLogout = () => {
-    console.log('logout');
+  const handleLogout = async () => {
+    await axios({
+      method: 'POST',
+      url: 'http://localhost/vm1/api/auth/logout',
+      withCredentials: true,
+    });
   };
 
   return (
@@ -81,7 +86,7 @@ const User: NextPageWithLayout = () => {
 
 User.getLayout = function getLayout(page: ReactElement) {
   return (
-    <UserSettingsLayout currentTab="My Biodata" component={<UserHeading />}>
+    <UserSettingsLayout currentTab="Info" component={<UserHeading />}>
       {page}
     </UserSettingsLayout>
   );

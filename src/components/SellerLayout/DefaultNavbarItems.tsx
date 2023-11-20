@@ -5,12 +5,12 @@ import { NavItem } from './Sidebar';
 export const defaultNavItems: NavItem[] = [
   {
     label: 'Home',
-    href: '/seller/portal/home',
+    href: '/seller/portal',
     icon: <Home className="w-6 h-6" />,
   },
   {
     label: 'Product',
-    href: '/seller/product',
+    href: '/seller/portal/product',
     icon: <Package className="w-6 h-6" />,
   },
   {

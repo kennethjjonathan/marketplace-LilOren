@@ -1,46 +1,54 @@
-import React, { useState } from 'react';
-import { Button } from '../ui/button';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 
-interface IData {
+export interface IData {
   id: number;
   label: string;
-  href?: string;
+  status: string;
+  href: string;
 }
 
 interface TabsProps {
   datas: IData[];
+  isSeller?: boolean;
 }
-const Tabs = ({ datas }: TabsProps) => {
-  const [currentTab, setCCurrentTab] = useState(1);
-  const [selectedTab, setSelectedTab] = useState(null);
-  const handleChangeTab = (id: number) => {
-    setCCurrentTab(id);
-  };
+const Tabs = ({ datas, isSeller }: TabsProps) => {
+  const searchParams = useSearchParams();
+  const status = searchParams.get('status');
+  const [currentTab, setCurrentTab] = useState<string>();
+  useEffect(() => {
+    if (status === null) {
+      setCurrentTab('');
+    } else {
+      setCurrentTab(status);
+    }
+  }, [status]);
 
   return (
-    <div className="bg-white shadow-sm rounded-t-xl flex gap-2 p-2 overflow-x-auto w-[80vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw]">
+    <div
+      className={`bg-white shadow-sm rounded-t-xl flex gap-2 p-2 overflow-x-auto ${
+        isSeller && 'w-[100vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw]'
+      } `}
+    >
       {datas.map((data) => (
         <div key={`key:${data.id}`}>
-          <Link href={data.href ? data.href : '/'}>
+          <Link href={data.href}>
             <Button
               variant={'ghost'}
-              className="p-0 hover:text-primary"
-              onClick={() => handleChangeTab(data.id)}
+              size={'customBlank'}
+              className={`lg:hover:text-primary text-[12px] lg:text-[14px] p-4 ${
+                currentTab && currentTab === data.status && 'text-primary'
+              }`}
             >
-              <p
-                className={`text-[12px] lg:text-[14px] p-4 ${
-                  currentTab === data.id && 'text-primary'
-                }`}
-              >
-                {data.label}
-              </p>
+              {data.label}
             </Button>
           </Link>
-          {currentTab === data.id && (
+          {currentTab === data.status && (
             <div
-              className={`border-2 border-primary rounded-xl translate-x- duration-150 ease-in-out`}
-            ></div>
+              className={`border-2 border-primary rounded-xl duration-150 ease-in-out`}
+            />
           )}
         </div>
       ))}
