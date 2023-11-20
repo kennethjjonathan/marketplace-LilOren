@@ -66,38 +66,49 @@ const SellerPortalOrder: NextPageWithLayout = () => {
   const router = useRouter();
 
   const handleChangeStatus = useCallback(async () => {
-    fetchSellerOrders({
-      status: status as string,
-      page: 1,
-    });
+    const params =
+      status === '' || status === null
+        ? {
+            page: 1,
+          }
+        : {
+            status: status,
+            page: 1,
+          };
+    fetchSellerOrders(params);
     window.scrollTo({
       top: 0,
       behavior: 'smooth',
     });
-  }, [status]);
+  }, [status, fetchSellerOrders]);
 
   const handleChangePage = useCallback(() => {
-    fetchSellerOrders({
-      status: status as string,
-      page: currentPage,
-    });
+    const params =
+      status === '' || status === null
+        ? {
+            page: currentPage,
+          }
+        : {
+            status: status,
+            page: currentPage,
+          };
+    fetchSellerOrders(params);
     window.scrollTo({
       top: 0,
       behavior: 'smooth',
     });
-  }, [currentPage]);
+  }, [currentPage, status, fetchSellerOrders]);
 
   useEffect(() => {
     handleChangeStatus();
-  }, [handleChangeStatus]);
+    if (seller_current_page) {
+      router.push(`/seller/portal/order?status=${seller_current_page}&page=1`);
+    }
+  }, [handleChangeStatus, seller_current_page]);
 
   useEffect(() => {
     handleChangePage();
   }, [handleChangePage]);
-
-  useEffect(() => {
-    router.push(`/seller/portal/order?status=${seller_current_page}&page=1`);
-  }, [seller_current_page]);
 
   return (
     <div className={`${styles.sellerPortalOrder}`}>
