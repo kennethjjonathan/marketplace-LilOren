@@ -37,7 +37,7 @@ export class SellerOrderClient {
     cart_id: number,
   ) => {
     const response = await SellerOrderService.put(
-      `${CONSTANTS.BASEURL}/order/seller/${cart_id}/deliver`,
+      `/orders/seller/${cart_id}/deliver`,
       data,
     );
     return response;

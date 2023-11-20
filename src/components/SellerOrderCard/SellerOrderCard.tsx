@@ -6,6 +6,7 @@ import { Utils } from '@/utils';
 import { SellerOrderClient } from '@/service/sellerOrder/SellerOrderClient';
 import Modal from '../Modal/Modal';
 import { InputWithLabel } from '../InputWithLabel/InputWithLabel';
+import { ToastContent } from 'react-toastify';
 
 interface SellerOrderCardProps {
   order_data: IOrderData;
@@ -23,21 +24,32 @@ const SellerOrderCard = ({
   const [isDeliveryEstDaysValid, setIsDeliveryEstDaysValid] =
     useState<boolean>(true);
   const handleEditOrder = async (orderStatus: string, orderId: number) => {
-    console.log(orderStatus);
-    console.log(orderId);
     if (orderStatus === 'NEW') {
-      //update to received order
       await SellerOrderClient.putOrderStatusToProcess(orderId);
     } else {
-      // update to process to ship with argument days
       setShowEstDays(true);
     }
-    console.log('time to edit order');
   };
 
-  const handleSubmitToDelivery = (e: React.SyntheticEvent) => {
+  const handleSubmitToDelivery = async (e: React.SyntheticEvent) => {
+    setShowEstDays(false);
     e.preventDefault();
     console.log('submit');
+    const response = await SellerOrderClient.putOrderStatusToDeliver(
+      {
+        est_days: parseInt(deliveryEstDays),
+      },
+      order_data.id,
+    );
+    if (response?.error) {
+      Utils.notify('Failed process delivery' as ToastContent, 'error', 'light');
+    } else {
+      Utils.notify(
+        'Success process order to delivery' as ToastContent,
+        'success',
+        'colored',
+      );
+    }
   };
 
   const validateData = (pattern: RegExp): boolean => {
