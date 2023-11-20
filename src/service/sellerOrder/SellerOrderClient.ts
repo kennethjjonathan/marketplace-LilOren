@@ -18,7 +18,7 @@ export class SellerOrderClient {
 
   static putOrderStatusToProcess = async (order_id: number) => {
     const response = await SellerOrderService.put(
-      `${CONSTANTS.BASEURL}/orders/seller/${order_id}/process`,
+      `/orders/seller/${order_id}/process`,
     );
     return response;
   };

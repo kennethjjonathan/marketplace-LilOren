@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
+import { ToastContent } from 'react-toastify';
 import { Button } from '@/components/ui/button';
-import { SellerOrderClient } from '@/service/sellerOrder/SellerOrderClient';
+import AsyncButton from '@/components/AsyncButton/AsyncButton';
 import SellerOrderCourier from '@/components/SellerOrder/SellerOrderCourier';
 import SellerOrderAddress from '@/components/SellerOrder/SellerOrderAddress';
 import SellerOrderProductInfo from '@/components/SellerOrder/SellerOrderProductInfo';
 import SellerOrderDeliveryFormModal from '@/components/SellerOrderDeliveryFormModal/SellerOrderDeliveryFormModal';
 import { IOrderData } from '@/interface/sellerOrder';
+import { SellerOrderClient } from '@/service/sellerOrder/SellerOrderClient';
+import { useSeller } from '@/store/seller/useSeller';
 import { Utils } from '@/utils';
 
 interface SellerOrderCardProps {
@@ -20,9 +23,28 @@ const SellerOrderCard = ({
   total_products,
 }: SellerOrderCardProps) => {
   const [showEstDays, setShowEstDays] = useState<boolean>(false);
+  const [loadingButton, setLoadingButton] = useState<boolean>(false);
+  const setSellerChangeStatus = useSeller.use.setSellerChangeStatus();
+
   const handleEditOrder = async (orderStatus: string, orderId: number) => {
     if (orderStatus === 'NEW') {
-      await SellerOrderClient.putOrderStatusToProcess(orderId);
+      setLoadingButton(true);
+      const response = await SellerOrderClient.putOrderStatusToProcess(orderId);
+      if (response?.error) {
+        Utils.notify(
+          'failed to process a new order' as ToastContent,
+          'error',
+          'colored',
+        );
+      } else {
+        Utils.notify(
+          'success process a new order' as ToastContent,
+          'success',
+          'colored',
+        );
+      }
+      setLoadingButton(false);
+      setSellerChangeStatus('PROCESS');
     } else {
       setShowEstDays(true);
     }
@@ -118,15 +140,19 @@ const SellerOrderCard = ({
       </div>
       {handleGetAction(order_data.status) && (
         <div className="w-full flex justify-end mt-4">
-          <Button
-            className={` text-[12px] h-[30px] lg:h-[40px] ${
-              order_data.status === 'PROCESS' ? 'bg-yellow-500' : 'bg-primary'
-            }`}
-            variant={'default'}
-            onClick={() => handleEditOrder(order_data.status, order_data.id)}
-          >
-            {handleGetAction(order_data.status)}
-          </Button>
+          {loadingButton ? (
+            <AsyncButton isLoading={true}>{'Processing'}</AsyncButton>
+          ) : (
+            <Button
+              className={` text-[12px] h-[30px] lg:h-[40px] ${
+                order_data.status === 'PROCESS' ? 'bg-yellow-500' : 'bg-primary'
+              }`}
+              variant={'default'}
+              onClick={() => handleEditOrder(order_data.status, order_data.id)}
+            >
+              {handleGetAction(order_data.status)}
+            </Button>
+          )}
         </div>
       )}
       <SellerOrderDeliveryFormModal
