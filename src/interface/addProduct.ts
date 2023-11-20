@@ -30,3 +30,10 @@ export interface IVariantGroup {
   price: number;
   stock: number;
 }
+
+export interface IProductInformation {
+  product_name: string;
+  product_desc: string;
+  weight: number | '';
+  selected_category: string[];
+}

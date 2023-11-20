@@ -1,41 +1,132 @@
 import React, { ChangeEvent, ReactElement, useState } from 'react';
-import Image from 'next/image';
-import { Label } from '@radix-ui/react-label';
-import { ArrowUpFromLine, Info, XCircle } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import ProductVariant from '@/components/ProductVariant/ProductVariant';
 import SellerLayout from '@/components/SellerLayout/SellerLayout';
-import styles from './SellerPortalProductCreate.module.scss';
 import {
   IProductVariant,
   IIsProductVariantValid,
   IVariantGroup,
   IVariantDefinition,
   INonVariant,
+  IProductInformation,
 } from '@/interface/addProduct';
+import PhotosArray from '@/components/PhotosArray/PhotosArray';
+import { Textarea } from '@/components/ui/textarea';
 
+const maxPhoto: number = 6;
+const maxNameLength: number = 255;
+const maxDescLength: number = 3000;
+const minDescLength: number = 20;
 const maxOptLength: number = 3;
 
 const SellerPortalProductCreate = () => {
-  const [productInformation, setProductInformation] = useState({
-    product_images: [],
-    product_name: '',
-    product_desc: '',
-    selected_category: [],
+  const [productInformation, setProductInformation] =
+    useState<IProductInformation>({
+      product_name: '',
+      product_desc: '',
+      weight: '',
+      selected_category: [],
+    });
+  const [isProductInformationValid, setIsProductInformationValid] = useState({
+    product_name: true,
+    product_desc: true,
+    weight: true,
+    selected_category: true,
   });
-  const [remainingPhotos, setRemainingPhotos] = useState<number>(6);
+
+  function handleChangeProductInfoString(
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    key: keyof IProductInformation,
+  ) {
+    const { value } = e.target;
+    if (key === 'product_name' && value.length > maxNameLength) return;
+    if (key === 'product_desc' && value.length > maxDescLength) return;
+    if (/^\s+$/.test(value) || value === '') {
+      setProductInformation({ ...productInformation, [key]: '' });
+      return;
+    } else {
+      setProductInformation({ ...productInformation, [key]: value });
+    }
+  }
+
+  function handleChangeWeight(e: React.ChangeEvent<HTMLInputElement>) {
+    if (e.target.value === '') {
+      setProductInformation({ ...productInformation, weight: e.target.value });
+      return;
+    }
+    const inputValue = parseInt(e.target.value);
+    if (isNaN(inputValue) || inputValue < 0) {
+      setProductInformation({ ...productInformation, weight: 0 });
+    } else {
+      setProductInformation({ ...productInformation, weight: inputValue });
+    }
+  }
+
+  function handleNumKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (['e', 'E', '+', '-', ' '].includes(e.key)) {
+      e.preventDefault();
+    }
+  }
+
+  function validateOnBlur(key: keyof IProductInformation) {
+    if (key === 'product_name' && productInformation.product_name === '') {
+      setIsProductInformationValid({
+        ...isProductInformationValid,
+        [key]: false,
+      });
+      return;
+    } else if (
+      key === 'product_name' &&
+      productInformation.product_name !== ''
+    ) {
+      setIsProductInformationValid({
+        ...isProductInformationValid,
+        [key]: true,
+      });
+      return;
+    }
+
+    if (
+      key === 'weight' &&
+      (productInformation.weight === '' || productInformation.weight < 1)
+    ) {
+      setIsProductInformationValid({
+        ...isProductInformationValid,
+        [key]: false,
+      });
+      return;
+    } else if (key === 'weight' && (productInformation.weight as number) >= 1) {
+      setIsProductInformationValid({
+        ...isProductInformationValid,
+        [key]: true,
+      });
+      return;
+    }
+
+    if (
+      key === 'product_desc' &&
+      productInformation.product_desc.length < minDescLength
+    ) {
+      setIsProductInformationValid({
+        ...isProductInformationValid,
+        [key]: false,
+      });
+      return;
+    } else if (
+      key === 'product_desc' &&
+      productInformation.product_desc.length >= minDescLength
+    ) {
+      setIsProductInformationValid({
+        ...isProductInformationValid,
+        [key]: true,
+      });
+      return;
+    }
+  }
+  // ADD PHOTO
+  const [remainingPhotos, setRemainingPhotos] = useState<number>(maxPhoto);
   const [tempProductPhotos, setTempProductPhotos] = useState<File[]>([]);
-  const handleAddPhoto = (e: ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = e.target.files as FileList;
-    setTempProductPhotos([...tempProductPhotos, selectedFiles?.[0]]);
-    setRemainingPhotos((prev) => prev - 1);
-  };
-  const handleRemovePhoto = (indexToRemove: number) => {
-    setTempProductPhotos([
-      ...tempProductPhotos.slice(0, indexToRemove),
-      ...tempProductPhotos.slice(indexToRemove + 1),
-    ]);
-    setRemainingPhotos((prev) => prev + 1);
-  };
 
   // PRODUCT VARIANT -- START
   const [isVariantActive, setIsVariantActive] = useState<boolean>(false);
@@ -371,131 +462,136 @@ const SellerPortalProductCreate = () => {
   // PRODUCT VARIANT -- END
 
   return (
-    <div className={`${styles.sellerPortalProductCreate}`}>
-      <div
-        className={`flex flex-col w-[80vw] sm:w-[90vw] md:w-[47vw] lg:w-[70vw] bg-white`}
-      >
-        <section
-          className={`product-information ${styles.add_product_section}`}
-        >
-          <p className={`${styles.section_title}`}>{'Product Information'}</p>
-          <form>
-            <div className={`flex flex-col w-fit`}>
-              {/* Product Photos */}
-              <div className="flex flex-row">
-                <Label
-                  htmlFor={'index'}
-                  className="font-light w-full text-[10px] lg:text-[12px] md:text-base flex flex-row gap-2"
-                >
-                  <>
-                    <p className="text-[12px] lg:text-[14px]">
-                      {'Product Photos'}
-                    </p>
-                    <span className="text-primary">{' *'}</span>
-                  </>
-                  <div className={`${styles.product_icon} hidden lg:block`}>
-                    <Info size={15} className="text-muted-foreground" />
-                    <div
-                      className={`${styles.product_info} bg-white sm:w-[350px] md:w-[400px] lg:w-[500px] text-[12px] absolute p-6 rounded-xl border-2 duration-500 before:ease-in-out after:ease-in-out `}
-                    >
-                      <span>
-                        Image format .jpg .jpeg .png and minimum size 300 x
-                        300px (For optimal images use a minimum size of 700 x
-                        700 px)
-                      </span>
-                      <span>
-                        {
-                          "Select a product photo. Upload min. 3 photos that are interesting and different from each other to attract buyers' attention."
-                        }
-                      </span>
-                    </div>
-                  </div>
-                </Label>
-              </div>
-              <div className={`input-photos flex flex-wrap`}>
-                {tempProductPhotos.map(
-                  (file, index) =>
-                    file && (
-                      <div
-                        key={`key-${index.toString()}`}
-                        className="relative p-3"
-                      >
-                        <Image
-                          src={file && URL.createObjectURL(file)}
-                          width={200}
-                          height={200}
-                          alt={'product'}
-                          className="border-2 border-dashed flex flex-col justify-center items-center h-[75px] w-[75px] gap-2 hover:border-primary duration-500 before:ease-in-out after:ease-in-out hover:text-primary hover:bg-primary/5 lg:h-[100px] lg:w-[100px] rounded-lg"
-                        />
-                        <XCircle
-                          className="text-white bg-destructive hover:bg-red-700 h-fit w-fit rounded-full absolute top-1 right-1"
-                          onClick={() => handleRemovePhoto(index)}
-                        />
-                      </div>
-                    ),
-                )}
-                {remainingPhotos !== 0 && (
-                  <div className="p-3">
-                    <label
-                      className="border-2 border-dashed flex flex-col justify-center items-center h-[75px] w-[75px] gap-2 hover:border-primary duration-500 before:ease-in-out after:ease-in-out text-primary hover:bg-primary/5 lg:h-[100px] lg:w-[100px] rounded-lg mr"
-                      htmlFor={`key-image:${tempProductPhotos.length - 1}`}
-                    >
-                      <ArrowUpFromLine />
-                      <p className="text-[10px] lg:text-[12px] font-bold">{`${remainingPhotos} / 6`}</p>
-                      <p className="text-[10px] lg:text-[12px]">Upload Photo</p>
-                    </label>
-                    <input
-                      accept="image/png, image/jpeg, image/jpg"
-                      onChange={(e) => handleAddPhoto(e)}
-                      type="file"
-                      id={`key-image:${tempProductPhotos.length - 1}`}
-                      name="filename"
-                      hidden
-                      required
-                    />
-                  </div>
-                )}
-              </div>
+    <div className="w-[70vw] flex flex-col gap-8">
+      <section className="bg-white w-full rounded-xl p-8 shadow-lg">
+        <p className="font-bold text-[12px] lg:text-[16px] pb-4">
+          {'Product Information'}
+        </p>
+        <div className="flex flex-col w-full gap-4">
+          <div className="flex flex-col gap-1 w-full">
+            <p className="w-full font-light text-xs pl-40">{`${productInformation.product_name.length} / ${maxNameLength} characters`}</p>
+            <div className="flex items-center gap-2 w-full">
+              <Label
+                className="min-w-fit w-40 text-right font-light text-xs lg:text-sm"
+                htmlFor="product-name"
+              >
+                Product name
+                <span className="text-primary">{'* '}</span>:
+              </Label>
+              <Input
+                id="product-name"
+                type="text"
+                className="w-full"
+                value={productInformation.product_name}
+                onChange={(e) =>
+                  handleChangeProductInfoString(e, 'product_name')
+                }
+                isValid={isProductInformationValid.product_name}
+                onBlur={() => validateOnBlur('product_name')}
+                required
+              />
             </div>
-            <div className={``}></div>
-          </form>
-        </section>
-      </div>
-      {/* Product Variants -- START */}
-      <div
-        className={`flex flex-col w-[80vw] sm:w-[90vw] md:w-[47vw] lg:w-[70vw] bg-white`}
-      >
-        <section className={`${styles.add_product_section}`}>
-          <p className={`${styles.section_title}`}>{'Product Information'}</p>
-          <div className="pb-3">
-            <ProductVariant
-              isVariantActive={isVariantActive}
-              setIsVariantActive={setIsVariantActive}
-              noVarPrice={noVarPrice}
-              setNoVarPrice={setNoVarPrice}
-              noVarStock={noVarStock}
-              setNoVarStock={setNoVarStock}
-              isNoVarValid={isNoVarValid}
-              setIsNoVarValid={setIsNoVarValid}
-              variants={variants}
-              setVariants={setVariants}
-              isVariantsValid={isVariantsValid}
-              setIsVariantsValid={setIsVariantsValid}
-              price={price}
-              setPrice={setPrice}
-              stocks={stocks}
-              setStocks={setStocks}
-              isPriceValid={isPriceValid}
-              setIsPriceValid={setIsPriceValid}
-              isStockValid={isStockValid}
-              setIsStockValid={setIsStockValid}
-              checkIfOptDuplicate={checkIfOptDuplicate}
-              checkIfNameDuplicate={checkIfNameDuplicate}
-              logEndProduct={logEndProduct}
-            />
+            {!isProductInformationValid.product_name && (
+              <p className="w-full text-destructive text-xs pl-40">
+                Name cannot be empty
+              </p>
+            )}
           </div>
-        </section>
-      </div>
+          <div className="flex flex-col gap-1 w-full">
+            <p className="w-full font-light text-xs pl-40">{`(gram)`}</p>
+            <div className="flex items-center gap-2 w-full">
+              <Label
+                className="min-w-fit w-40 text-right font-light text-xs lg:text-sm"
+                htmlFor="product-weight"
+              >
+                Product weight
+                <span className="text-primary">{'* '}</span>:
+              </Label>
+              <Input
+                id="product-weight"
+                type="number"
+                className="w-full"
+                value={productInformation.weight}
+                onChange={(e) => handleChangeWeight(e)}
+                isValid={isProductInformationValid.weight}
+                onBlur={() => validateOnBlur('weight')}
+                min={0}
+                onKeyDown={(e) => handleNumKeyDown(e)}
+                onWheel={(e) => e.currentTarget.blur()}
+                required
+              />
+            </div>
+            {!isProductInformationValid.weight && (
+              <p className="w-full text-destructive text-xs pl-40">
+                Weight cannot be empty or below 1
+              </p>
+            )}
+          </div>
+          <PhotosArray
+            tempProductPhotos={tempProductPhotos}
+            setTempProductPhotos={setTempProductPhotos}
+            remainingPhotos={remainingPhotos}
+            setRemainingPhotos={setRemainingPhotos}
+          />
+          <div className="flex flex-col gap-1 w-full">
+            <div className="flex items-end w-full justify-between">
+              <Label
+                className="min-w-fit text-right font-light text-xs lg:text-sm"
+                htmlFor="product-description"
+              >
+                Product description
+                <span className="text-primary">{'* '}</span>:
+              </Label>
+              <p className="w-fit font-light text-xs">{`${productInformation.product_desc.length} / ${maxDescLength} characters`}</p>
+            </div>
+            <Textarea
+              id="product-description"
+              className="w-full h-60"
+              value={productInformation.product_desc}
+              onChange={(e) => handleChangeProductInfoString(e, 'product_desc')}
+              isValid={isProductInformationValid.product_desc}
+              onBlur={() => validateOnBlur('product_desc')}
+              required
+            />
+            {!isProductInformationValid.product_desc && (
+              <p className="w-full text-destructive text-xs">
+                {`Description cannot be less than ${minDescLength} characters`}
+              </p>
+            )}
+          </div>
+        </div>
+      </section>
+      {/* Product Variants -- START */}
+      <section className="bg-white w-full rounded-xl p-8 shadow-lg">
+        <p className="font-bold text-[12px] lg:text-[16px] pb-4">
+          {'Price & Stock'}
+        </p>
+        <ProductVariant
+          isVariantActive={isVariantActive}
+          setIsVariantActive={setIsVariantActive}
+          noVarPrice={noVarPrice}
+          setNoVarPrice={setNoVarPrice}
+          noVarStock={noVarStock}
+          setNoVarStock={setNoVarStock}
+          isNoVarValid={isNoVarValid}
+          setIsNoVarValid={setIsNoVarValid}
+          variants={variants}
+          setVariants={setVariants}
+          isVariantsValid={isVariantsValid}
+          setIsVariantsValid={setIsVariantsValid}
+          price={price}
+          setPrice={setPrice}
+          stocks={stocks}
+          setStocks={setStocks}
+          isPriceValid={isPriceValid}
+          setIsPriceValid={setIsPriceValid}
+          isStockValid={isStockValid}
+          setIsStockValid={setIsStockValid}
+          checkIfOptDuplicate={checkIfOptDuplicate}
+          checkIfNameDuplicate={checkIfNameDuplicate}
+          logEndProduct={logEndProduct}
+        />
+      </section>
       {/* Product Variants -- END */}
     </div>
   );
