@@ -1,12 +1,13 @@
 import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/router';
 import Divider from '@/components/Divider/Divider';
 import SellerLayout from '@/components/SellerLayout/SellerLayout';
 import SellerOrderCard from '@/components/SellerOrderCard/SellerOrderCard';
 import DotsLoading from '@/components/DotsLoading/DotsLoading';
 import { useSeller } from '@/store/seller/useSeller';
-import styles from './SellerPortalOrder.module.scss';
 import { NextPageWithLayout } from '@/pages/_app';
+import styles from './SellerPortalOrder.module.scss';
 
 const data = [
   {
@@ -61,6 +62,8 @@ const SellerPortalOrder: NextPageWithLayout = () => {
   const seller_orders = useSeller.use.seller_orders();
   const loading_fetch_seller_orders =
     useSeller.use.loading_fetch_seller_orders();
+  const seller_current_page = useSeller.use.seller_current_page();
+  const router = useRouter();
 
   const handleChangeStatus = useCallback(async () => {
     fetchSellerOrders({
@@ -92,6 +95,10 @@ const SellerPortalOrder: NextPageWithLayout = () => {
     handleChangePage();
   }, [handleChangePage]);
 
+  useEffect(() => {
+    router.push(`/seller/portal/order?status=${seller_current_page}&page=1`);
+  }, [seller_current_page]);
+
   return (
     <div className={`${styles.sellerPortalOrder}`}>
       {loading_fetch_seller_orders ? (
@@ -99,14 +106,16 @@ const SellerPortalOrder: NextPageWithLayout = () => {
           <DotsLoading />
         </div>
       ) : seller_orders.order_data.length === 0 ? (
-        <>Empty</>
+        <div className="flex justify-center pt-5 h-full w-[100vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw]">
+          Empty Data
+        </div>
       ) : (
         <div className={`${styles.page_order}`}>
           <section className="w-[85vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw]">
             <Divider />
             {seller_orders.order_data.map((order_data, index) => (
               <SellerOrderCard
-                key={`key:${order_data.id.toString}-${order_data.status}`}
+                key={`key:${index.toString()}-${order_data.status}`}
                 order_data={order_data}
                 total_products={order_data.products.length}
                 index={index}
