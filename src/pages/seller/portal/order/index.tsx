@@ -1,5 +1,4 @@
 import React, { ReactElement, useCallback, useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
 import { useSearchParams } from 'next/navigation';
 import Divider from '@/components/Divider/Divider';
 import SellerLayout from '@/components/SellerLayout/SellerLayout';
@@ -8,7 +7,6 @@ import DotsLoading from '@/components/DotsLoading/DotsLoading';
 import { useSeller } from '@/store/seller/useSeller';
 import styles from './SellerPortalOrder.module.scss';
 import { NextPageWithLayout } from '@/pages/_app';
-import axiosInstance from '@/lib/axiosInstance';
 
 const data = [
   {
