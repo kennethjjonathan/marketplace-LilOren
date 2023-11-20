@@ -27,7 +27,7 @@ const SellerLayout = ({ children, header, tabData }: SellerLayoutProps) => {
             <Store className="mr-4 text-muted-foreground" />
             {header}
           </div>
-          <Tabs isSeller datas={tabData} />
+          <Tabs isSeller datas={tabData!} />
           {children}
         </div>
       </div>
