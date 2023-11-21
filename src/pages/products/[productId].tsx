@@ -36,7 +36,7 @@ const ProductPage = ({
   isVariant,
 }: ProductPageProps) => {
   const router = useRouter();
-  const [quantity, setQuantity] = useState<number>(1);
+  const [quantity, setQuantity] = useState<number | ''>(1);
   const [group1, setGroup1] = useState<IVariantType>(
     productPage.variant_group1.variant_types[0],
   );
@@ -141,6 +141,13 @@ const ProductPage = ({
         'colored',
       );
       return;
+    } else if (quantity === '' || quantity < 0) {
+      Utils.notify(
+        'Please enter the right amount of quantity',
+        'default',
+        'colored',
+      );
+      return;
     } else if (variant !== undefined && variant.stock < quantity) {
       Utils.notify(
         "Your quantity is more than the product's stock",
@@ -159,7 +166,6 @@ const ProductPage = ({
     } else if (variant && isVariant) {
       payload.product_variant_id = variant.id;
     }
-
     try {
       const response = await axiosInstance.post(
         `${CONSTANTS.BASEURL}/carts/add-product`,
@@ -192,7 +198,7 @@ const ProductPage = ({
 
   return (
     <>
-      <section className="flex flex-col justify-center items-center w-full bg-white roboto-text">
+      <section className="flex flex-col justify-center items-center w-full bg-white">
         <div className="w-full md:w-[75vw] pt-5 pb-[5.5rem]">
           <div className="w-full flex flex-col gap-6 lg:flex-row">
             <div className="w-full lg:w-1/3">
