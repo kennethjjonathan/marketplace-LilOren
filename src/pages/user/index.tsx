@@ -1,20 +1,34 @@
-import React, { Fragment, ReactElement, ReactNode, useState } from 'react';
+import React, {
+  Fragment,
+  ReactElement,
+  ReactNode,
+  useEffect,
+  useState,
+} from 'react';
+import axios from 'axios';
 import { ArrowLeft, KeyRound, Store } from 'lucide-react';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 import { NextPageWithLayout } from '../_app';
 import { Button } from '@/components/ui/button';
-import AddAddressModal from '../../components/AddAddressModal/AddAddressModal';
+import AddAddressModal from '@/components/AddAddressModal/AddAddressModal';
 import BackButton from '@/components/BackButton/BackButton';
 import UserSettingsLayout from '@/components/UserSettingsLayout/UserSettingsLayout';
-import styles from './User.module.scss';
-import Head from 'next/head';
 import UserPresentation from '@/components/UserPresentation/UserPresentation';
-import axios from 'axios';
+import { useUser } from '@/store/user/useUser';
+import { useSearchParams } from 'next/navigation';
+import styles from './User.module.scss';
 
 const User: NextPageWithLayout = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const status = searchParams.get('status');
+  const fetchUserDetails = useUser.use.fetchUserDetails();
+  const user_details = useUser.use.user_details();
+  const loading_fetch_user_details = useUser.use.loading_fetch_user_details();
   const [showSetAddressModal, setShowSetAddressModal] =
     useState<boolean>(false);
+
   const handleLogout = async () => {
     await axios({
       method: 'POST',
@@ -22,6 +36,16 @@ const User: NextPageWithLayout = () => {
       withCredentials: true,
     });
   };
+
+  useEffect(() => {
+    if (status === '' || status === null) {
+      fetchUserDetails();
+    }
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  }, [status]);
 
   return (
     <>
