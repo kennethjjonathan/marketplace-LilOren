@@ -3,16 +3,15 @@ import axios from 'axios';
 import { ArrowLeft, KeyRound, Store } from 'lucide-react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import { useSearchParams } from 'next/navigation';
 import { NextPageWithLayout } from '../_app';
 import { Button } from '@/components/ui/button';
-import AddAddressModal from '@/components/AddAddressModal/AddAddressModal';
 import BackButton from '@/components/BackButton/BackButton';
 import UserSettingsLayout from '@/components/UserSettingsLayout/UserSettingsLayout';
 import UserPresentation from '@/components/UserPresentation/UserPresentation';
 import { useUser } from '@/store/user/useUser';
-import { useSearchParams } from 'next/navigation';
-import styles from './User.module.scss';
 import AsyncButton from '@/components/AsyncButton/AsyncButton';
+import styles from './User.module.scss';
 
 const User: NextPageWithLayout = () => {
   const router = useRouter();
@@ -81,13 +80,13 @@ const User: NextPageWithLayout = () => {
                 title={'My Address'}
                 icon={<Store />}
                 description={'Atur alamat pengiriman belanjaan'}
-                onClick={() => router.push('/user/settings/address')}
+                onClick={() => router.push('/user/address?status=Address')}
               />
               <UserSetting
-                title={'Change Password'}
+                title={'Reset Password'}
                 icon={<KeyRound />}
-                description={'Atur password akun Anda'}
-                onClick={() => router.push('/user/settings/password')}
+                description={'Reset password akun Anda'}
+                onClick={() => router.push('/forget-password')}
               />
             </ul>
           </div>

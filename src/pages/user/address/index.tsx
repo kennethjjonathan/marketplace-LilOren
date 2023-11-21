@@ -1,8 +1,9 @@
-import React, { ReactElement, useEffect } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { ArrowLeft, Plus } from 'lucide-react';
 import UserSettingsLayout from '@/components/UserSettingsLayout/UserSettingsLayout';
+import AddAddressModal from '@/components/AddAddressModal/AddAddressModal';
 import BackButton from '@/components/BackButton/BackButton';
 import { Button } from '@/components/ui/button';
 import SkeletonUserAddress from '@/components/SkeletonUserAddress/SkeletonUserAddress';
@@ -21,10 +22,11 @@ const UserSettingsAddress: NextPageWithLayout = () => {
   const fetchUserAddresses = useUser.use.fetchUserAddresses();
   const userAddresses = useUser.use.user_addresses();
   const router = useRouter();
+  const [showAddAddressModal, setShowAddAddressModal] = useState(false);
 
   useEffect(() => {
     fetchUserAddresses();
-  }, []);
+  }, [showAddAddressModal]);
   return (
     <>
       {loading_fetch_user_addresses ? (
@@ -38,7 +40,7 @@ const UserSettingsAddress: NextPageWithLayout = () => {
             <div className="hidden lg:flex w-full justify-end">
               <Button
                 className="flex flex-row gap-2"
-                onClick={() => router.push(PATH_USER_ADDRESS_CREATE)}
+                onClick={() => setShowAddAddressModal(true)}
               >
                 <Plus /> {ADD_ADDRESS}
               </Button>
@@ -53,6 +55,11 @@ const UserSettingsAddress: NextPageWithLayout = () => {
               />
             ))}
           </div>
+          <AddAddressModal
+            isVisible={showAddAddressModal}
+            onClose={() => setShowAddAddressModal(false)}
+            setShowModal={setShowAddAddressModal}
+          />
         </div>
       )}
     </>

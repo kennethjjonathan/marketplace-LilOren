@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, useEffect } from 'react';
+import React, { useState, ChangeEvent, useEffect, Dispatch } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import { ToastContent } from 'react-toastify';
@@ -20,9 +20,9 @@ import TextAreaWithLabel from '@/components/TextAreaWithLabel/TextAreaWithLabel'
 import AsyncButton from '@/components/AsyncButton/AsyncButton';
 import { UserAddressClient } from '@/service/userAddress/userAddressClient';
 import { DropdownClient } from '@/service/dropdown/DropdownClient';
-import styles from './AddAddressForm.module.scss';
 import { IDropdownData } from '@/service/dropdown/DropdownService';
 import { IAddAddressData } from '@/interface/user';
+import styles from './AddAddressForm.module.scss';
 
 const RECEIVER_NAME = 'Receiver Name';
 const PHONE_NUMBER = 'Phone Number';
@@ -30,9 +30,14 @@ const PROVINCE_NAME = 'Province';
 const CITY_NAME = 'City';
 const SUB_DISTRICT_NAME = 'Sub District';
 const SUB_FROM_SUB_DISTRICT_NAME = 'Sub from Sub District';
-const PATH_USER_SETTINGS_ADDRESS = '/user/settings/address?status=Address';
+const PATH_USER_SETTINGS_ADDRESS = '/user/address?status=Address';
 
-const AddAddressForm = () => {
+interface AddAddressFormProps {
+  setShowAddAddressModal?: Dispatch<React.SetStateAction<boolean>>;
+}
+
+const AddAddressForm = ({ setShowAddAddressModal }: AddAddressFormProps) => {
+  console.log(setShowAddAddressModal);
   const [provinces, setProvinces] = useState<IDropdownData[]>([]);
   const [cities, setCities] = useState<IDropdownData[]>([]);
   const [loadingFetchProvince, setLoadingFetchProvince] =
@@ -132,6 +137,9 @@ const AddAddressForm = () => {
     }
     router.push(PATH_USER_SETTINGS_ADDRESS);
     setLoadingSubmit(false);
+    if (setShowAddAddressModal) {
+      setShowAddAddressModal(false);
+    }
   };
 
   useEffect(() => {
@@ -141,7 +149,7 @@ const AddAddressForm = () => {
 
   return (
     <form
-      className="bg-white overflow-y-auto pb-[100px]"
+      className="bg-white overflow-y-auto pb-[100px] lg:pb-2"
       onSubmit={handleSubmit}
     >
       <div className="mb-6 mt-6 px-[14px] flex flex-col gap-4">
@@ -155,8 +163,8 @@ const AddAddressForm = () => {
           maxLength={50}
           onChange={(e) => handleChange(e, 'receiver_name')}
           isValid={isDataValid.receiver_name}
-          onBlur={() => validateData('receiver_name', /^[a-zA-Z\s]+$/)}
-          validation="Must not be a blank"
+          onBlur={() => validateData('receiver_name', /^[a-zA-Z\s]{3,20}$/)}
+          validation="Contains only alphabet with 3-20 chars"
           required
         />
         <InputWithLabel
@@ -178,34 +186,36 @@ const AddAddressForm = () => {
       <div className="divider bg-accent h-2"></div>
       <div className="mb-6 mt-6 px-[14px] flex flex-col gap-4">
         {/* Province */}
-        <Label className="font-light w-full md:text-base">
-          {PROVINCE_NAME}
-          <span className="text-primary">{' *'}</span>
-        </Label>
-        <Select required onValueChange={(e) => handleChangeProvince(e)}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select a province" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup className="h-[200px] overflow-y-scroll">
-              <SelectLabel>{'Province'}</SelectLabel>
-              {provinces.map((province, index) => (
-                <SelectItem
-                  key={`key:${province.label} ${index.toString()}`}
-                  value={String(province.value)}
-                >
-                  {province.label}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        <div className="flex flex-col gap-1">
+          <Label className="font-light w-full md:text-base">
+            {PROVINCE_NAME}
+            <span className="text-primary">{' *'}</span>
+          </Label>
+          <Select required onValueChange={(e) => handleChangeProvince(e)}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select a province" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup className="h-[200px] overflow-y-scroll">
+                <SelectLabel>{'Province'}</SelectLabel>
+                {provinces.map((province, index) => (
+                  <SelectItem
+                    key={`key:${province.label} ${index.toString()}`}
+                    value={String(province.value)}
+                  >
+                    {province.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
         {/* City */}
         {loadingFetchCity ? (
           <SkeletonSelect label="City" />
         ) : (
           cities.length !== 0 && (
-            <>
+            <div className="flex flex-col gap-1">
               <Label className="font-light w-full md:text-base">
                 {CITY_NAME}
                 <span className="text-primary">{' *'}</span>
@@ -228,87 +238,114 @@ const AddAddressForm = () => {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-            </>
+            </div>
           )
         )}
         {addAddressData.city_id !== 0 && (
-          <>
-            <InputWithLabel
-              type="text"
-              label={SUB_DISTRICT_NAME}
-              id="sub-district"
-              labelStyling="font-light"
-              value={addAddressData.sub_district}
-              minLength={1}
-              maxLength={50}
-              onChange={(e) => handleChange(e, 'sub_district')}
-              isValid={isDataValid.sub_district}
-              onBlur={() => validateData('sub_district', /^[a-zA-Z\s]+$/)}
-              validation="Must not be a blank"
-              required
-            />
-            <InputWithLabel
-              type="text"
-              label={SUB_FROM_SUB_DISTRICT_NAME}
-              id="sub-from-sub-district"
-              labelStyling="font-light"
-              value={addAddressData.sub_sub_district}
-              minLength={1}
-              maxLength={50}
-              onChange={(e) => handleChange(e, 'sub_sub_district')}
-              isValid={isDataValid.sub_sub_district}
-              onBlur={() => validateData('sub_sub_district', /^[a-zA-Z\s]+$/)}
-              validation="Must not be a blank"
-              required
-            />
-            <InputWithLabel
-              type="number"
-              label="Zip Code"
-              id="zip-code"
-              labelStyling="font-light"
-              value={addAddressData.postal_code}
-              minLength={5}
-              maxLength={10}
-              onChange={(e) => handleChange(e, 'postal_code')}
-              onKeyDown={(e) => handleNumber(e)}
-              isValid={isDataValid.postal_code}
-              onBlur={() => validateData('postal_code', /^\+?\d{5,15}$/)}
-              validation="Please enter a valid zip code"
-              required
-            />
-            <TextAreaWithLabel
-              id={'full-address'}
-              label={'Full Address'}
-              labelStyling="font-light"
-              value={addAddressData.address}
-              minLength={1}
-              maxLength={500}
-              onChange={(e) => handleChange(e, 'address')}
-              isValid={isDataValid.address}
-              onBlur={() => validateData('address', /^[#.0-9a-zA-Z\s,-]+$/)}
-              validation="Must not be a blank"
-              required
-            />
-          </>
+          <div className="flex lg:flex-row flex-col gap-4 justify-between w-full">
+            <div className="flex flex-col lg:flex-col gap-4 w-full">
+              <InputWithLabel
+                type="text"
+                label={SUB_DISTRICT_NAME}
+                id="sub-district"
+                labelStyling="font-light"
+                value={addAddressData.sub_district}
+                minLength={1}
+                maxLength={50}
+                onChange={(e) => handleChange(e, 'sub_district')}
+                isValid={isDataValid.sub_district}
+                onBlur={() => validateData('sub_district', /^[a-zA-Z\s]+$/)}
+                validation="Must not be a blank"
+                required
+              />
+              <InputWithLabel
+                type="text"
+                label={SUB_FROM_SUB_DISTRICT_NAME}
+                id="sub-from-sub-district"
+                labelStyling="font-light"
+                value={addAddressData.sub_sub_district}
+                minLength={1}
+                maxLength={50}
+                onChange={(e) => handleChange(e, 'sub_sub_district')}
+                isValid={isDataValid.sub_sub_district}
+                onBlur={() => validateData('sub_sub_district', /^[a-zA-Z\s]+$/)}
+                validation="Must not be a blank"
+                required
+              />
+            </div>
+            <div className="flex flex-col lg:flex-col w-full gap-4">
+              <InputWithLabel
+                type="number"
+                label="Zip Code"
+                id="zip-code"
+                labelStyling="font-light"
+                value={addAddressData.postal_code}
+                minLength={5}
+                maxLength={10}
+                onChange={(e) => handleChange(e, 'postal_code')}
+                onKeyDown={(e) => handleNumber(e)}
+                isValid={isDataValid.postal_code}
+                onBlur={() => validateData('postal_code', /^\+?\d{5,15}$/)}
+                validation="Please enter a valid zip code"
+                required
+              />
+              <TextAreaWithLabel
+                id={'full-address'}
+                label={'Full Address'}
+                labelStyling="font-light"
+                value={addAddressData.address}
+                minLength={1}
+                maxLength={500}
+                onChange={(e) => handleChange(e, 'address')}
+                isValid={isDataValid.address}
+                onBlur={() => validateData('address', /^[#.0-9a-zA-Z\s,-]+$/)}
+                validation="Must not be a blank"
+                required
+              />
+            </div>
+          </div>
         )}
       </div>
       {loadingSubmit ? (
-        <div className={styles.button_wrapper}>
-          <AsyncButton className="w-full" isLoading={true}>
-            {'Submit'}
-          </AsyncButton>
-        </div>
+        <>
+          <div className="hidden lg:flex justify-center">
+            <AsyncButton className="w-[100px]" isLoading={true}>
+              {'Submit'}
+            </AsyncButton>
+          </div>
+          <div className={styles.button_wrapper}>
+            <AsyncButton className="w-full" isLoading={true}>
+              {'Submit'}
+            </AsyncButton>
+          </div>
+        </>
       ) : (
-        <div className={styles.button_wrapper}>
-          <Button
-            disabled={!Object.values(addAddressData).every((val) => val !== '')}
-            className="w-full"
-            type="submit"
-            variant={'default'}
-          >
-            {'Submit'}
-          </Button>
-        </div>
+        <>
+          <div className="hidden lg:flex justify-center">
+            <Button
+              disabled={
+                !Object.values(addAddressData).every((val) => val !== '')
+              }
+              className="w-[100px]"
+              type="submit"
+              variant={'default'}
+            >
+              {'Submit'}
+            </Button>
+          </div>
+          <div className={styles.button_wrapper}>
+            <Button
+              disabled={
+                !Object.values(addAddressData).every((val) => val !== '')
+              }
+              className="w-full"
+              type="submit"
+              variant={'default'}
+            >
+              {'Submit'}
+            </Button>
+          </div>
+        </>
       )}
     </form>
   );
