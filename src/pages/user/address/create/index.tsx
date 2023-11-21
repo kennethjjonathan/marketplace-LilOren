@@ -35,7 +35,7 @@ const CITY_NAME = 'City';
 const SUB_DISTRICT_NAME = 'Sub District';
 const SUB_FROM_SUB_DISTRICT_NAME = 'Sub from Sub District';
 const ADDRESS_DETAILS = 'Address Details';
-const PATH_USER_SETTINGS_ADDRESS = '/user/settings/address';
+const PATH_USER_SETTINGS_ADDRESS = '/user/settings/address?status=Address';
 
 export interface IAddAddressData {
   receiver_name: string;

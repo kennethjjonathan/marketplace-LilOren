@@ -18,6 +18,7 @@ import UserPresentation from '@/components/UserPresentation/UserPresentation';
 import { useUser } from '@/store/user/useUser';
 import { useSearchParams } from 'next/navigation';
 import styles from './User.module.scss';
+import AsyncButton from '@/components/AsyncButton/AsyncButton';
 
 const User: NextPageWithLayout = () => {
   const router = useRouter();
@@ -28,13 +29,19 @@ const User: NextPageWithLayout = () => {
   const loading_fetch_user_details = useUser.use.loading_fetch_user_details();
   const [showSetAddressModal, setShowSetAddressModal] =
     useState<boolean>(false);
+  const [loadingLogout, setLoadingLogout] = useState(false);
 
   const handleLogout = async () => {
+    setLoadingLogout(true);
     await axios({
       method: 'POST',
       url: 'http://localhost/vm1/api/auth/logout',
       withCredentials: true,
     });
+    setTimeout(() => {
+      router.push('/');
+      setLoadingLogout(true);
+    }, 200);
   };
 
   useEffect(() => {
@@ -93,9 +100,13 @@ const User: NextPageWithLayout = () => {
             </div>
             <div className=""></div>
             <div className="lilOren__user__logout w-full flex justify-center items-center pt-[17px] lg:hidden">
-              <Button variant={'outline'} onClick={() => handleLogout()}>
-                {'Logout'}
-              </Button>
+              {loadingLogout ? (
+                <AsyncButton isLoading={true}>{'Logout'}</AsyncButton>
+              ) : (
+                <Button variant={'outline'} onClick={() => handleLogout()}>
+                  {'Logout'}
+                </Button>
+              )}
             </div>
           </div>
         </div>
