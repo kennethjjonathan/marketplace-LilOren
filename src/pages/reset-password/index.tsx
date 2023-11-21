@@ -1,17 +1,17 @@
 import AsyncButton from '@/components/AsyncButton/AsyncButton';
 import { InputWithLabel } from '@/components/InputWithLabel/InputWithLabel';
 import { redisClient } from '@/lib/redis';
+import { authClient } from '@/service/auth/AuthClient';
 import { Utils } from '@/utils';
 import { GetServerSideProps } from 'next';
 import Image from 'next/image';
 import { FormEventHandler, PropsWithoutRef, useState } from 'react';
-import { ToastContent } from 'react-toastify';
 
 type Props = {
   code: string;
 };
 
-function SignInPage({}: PropsWithoutRef<Props>) {
+function SignInPage({ code: reset_code }: PropsWithoutRef<Props>) {
   const [loading, setLoading] = useState<boolean>(false);
   const [password, setPassword] = useState<string>('');
   const [passwordConfirmation, setPasswordConfirmation] = useState<string>('');
@@ -31,11 +31,19 @@ function SignInPage({}: PropsWithoutRef<Props>) {
       setPasswordValidation(`Password should be >= 8 character long`);
     }
 
-    Utils.notify(
-      'Successfully reset password' as ToastContent,
-      'success',
-      'colored',
-    );
+    setLoading(true);
+    await authClient
+      .resetPassword({
+        password,
+        reset_code,
+      })
+      .then((res) => {
+        Utils.notify('Successfully reset password', 'success', 'colored');
+      })
+      .catch((err) => {
+        Utils.notify(err.request.message, 'error', 'colored');
+      });
+    setLoading(false);
   };
 
   return (
