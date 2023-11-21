@@ -13,7 +13,7 @@ const SellerProfileSnippet = ({ seller }: SellerProfileSnippetProps) => {
     <div className="flex items-center gap-2 w-full sm:gap-5 px-2">
       <div className="rounded-full aspect-square relative w-1/5 overflow-hidden lg:w-2/12 xl:w-1/12 ">
         <Image
-          src={seller.profile_picture_url || '/Logo_.svg'}
+          src={seller.profile_picture_url || '/blank-profile.webp'}
           alt="Shop's profile pict"
           fill
           sizes="(max-width: 768px) 50vw, 33vw"

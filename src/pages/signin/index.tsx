@@ -95,15 +95,22 @@ function SignInPage({ providers }: SignInPageProps) {
         password: registerData.password,
       };
       const response = await UserClient.postSignIn(registerData);
-      if (response.data.error) {
-        handleErrorAuthResponse(response.data.data.message);
+      Utils.notify('Your sign in is successful', 'success', 'colored');
+      if (router.query.prev) {
+        router.replace(router.query.prev as string);
+      } else {
+        router.replace('/');
+      }
+    } catch (error: any) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        handleErrorAuthResponse(error.response.data.message);
         return;
       }
-      Utils.notify('Your sign in is successful', 'success', 'colored');
-      router.push('/');
-    } catch (error: any) {
-      handleErrorAuthResponse(error.response.data.message);
-      // Utils.notify(error.message, 'error', 'colored');
+      Utils.handleGeneralError(error);
       console.error(error);
     } finally {
       setIsLoading(false);

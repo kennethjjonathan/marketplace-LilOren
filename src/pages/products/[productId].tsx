@@ -19,6 +19,7 @@ import TypeSelector from '@/components/TypeSelector/TypeSelector';
 import { Utils } from '@/utils';
 import axiosInstance from '@/lib/axiosInstance';
 import { useRouter } from 'next/router';
+import { useUser } from '@/store/user/useUser';
 
 interface ProductPageProps {
   productPage: IProductPage;
@@ -35,6 +36,8 @@ const ProductPage = ({
   isGroup2Variant,
   isVariant,
 }: ProductPageProps) => {
+  const user_details = useUser.use.user_details();
+  const fetchUserDetails = useUser.use.fetchUserDetails();
   const router = useRouter();
   const [quantity, setQuantity] = useState<number | ''>(1);
   const [group1, setGroup1] = useState<IVariantType>(
@@ -52,6 +55,7 @@ const ProductPage = ({
   const [variant, setVariant] = useState<IProductVariant | undefined>(
     undefined,
   );
+  const [isAddLoading, setIsAddLoading] = useState<boolean>(false);
 
   function handleChooseGroup1(type: IVariantType) {
     if (group1.type_name !== 'default' && group1.type_id === type.type_id) {
@@ -130,10 +134,18 @@ const ProductPage = ({
   }
 
   useEffect(() => {
+    fetchUserDetails();
     setInitialAvailable();
   }, []);
 
   async function handleAddToCart() {
+    if (user_details.username === '') {
+      router.push({
+        pathname: '/signin',
+        query: { prev: `/products/${router.query.productId}` },
+      });
+      return;
+    }
     if (variant === undefined && isVariant) {
       Utils.notify(
         'Please choose the options for the product',
@@ -166,15 +178,16 @@ const ProductPage = ({
     } else if (variant && isVariant) {
       payload.product_variant_id = variant.id;
     }
+    setIsAddLoading(true);
     try {
       const response = await axiosInstance.post(
-        `${CONSTANTS.BASEURL}/carts/add-product`,
+        `${CONSTANTS.BASEURL}/carts`,
         payload,
-        { withCredentials: true },
       );
       Utils.notify('Successfully added to cart', 'success', 'colored');
     } catch (error: any) {
-      if (error.data && error.data.message === CONSTANTS.ALREADY_LOGGED_OUT) {
+      console.log(error);
+      if (error === CONSTANTS.ALREADY_LOGGED_OUT) {
         Utils.notify(
           'Your token has expired, please sign in again',
           'default',
@@ -183,16 +196,22 @@ const ProductPage = ({
         router.push('/signin');
         return;
       }
-      if (error.response.status === 401) {
+      if (
+        error.message &&
+        error.message === CONSTANTS.CANNOT_ADD_MORE_THAN_STOCK &&
+        variant &&
+        quantity <= variant.stock
+      ) {
         Utils.notify(
-          'Your token has expired, please sign in again',
+          'You might already have the product in the cart, please check it.',
           'default',
           'colored',
         );
-        router.push('/signin');
         return;
       }
-      Utils.notify(error.response.data.message, 'error', 'colored');
+      Utils.handleGeneralError(error);
+    } finally {
+      setIsAddLoading(false);
     }
   }
 
@@ -312,6 +331,7 @@ const ProductPage = ({
         variant={variant}
         handleAddToCart={handleAddToCart}
         isVariant={isVariant}
+        isAddLoading={isAddLoading}
       />
     </>
   );

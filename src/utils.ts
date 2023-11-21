@@ -32,6 +32,47 @@ export class Utils {
     return check;
   };
 
+  static handleGeneralError = (error: any) => {
+    if (typeof error == 'string') {
+      toast(error, {
+        type: 'error',
+        position: toast.POSITION.TOP_RIGHT,
+        theme: 'colored',
+      });
+      return;
+    }
+    if (error.message) {
+      toast(error.message, {
+        type: 'error',
+        position: toast.POSITION.TOP_RIGHT,
+        theme: 'colored',
+      });
+      return;
+    }
+    if (error.response && error.response.data && error.response.data.message) {
+      toast(error.response.data.message, {
+        type: 'error',
+        position: toast.POSITION.TOP_RIGHT,
+        theme: 'colored',
+      });
+      return;
+    }
+    if (error.response && error.response.statusText) {
+      toast(error.response.statusText, {
+        type: 'error',
+        position: toast.POSITION.TOP_RIGHT,
+        theme: 'colored',
+      });
+      return;
+    }
+    toast('Uh-oh something went wrong!', {
+      type: 'error',
+      position: toast.POSITION.TOP_RIGHT,
+      theme: 'colored',
+    });
+    return;
+  };
+
   static getDate = (date: string) => {
     const d = new Date(date);
     const day = d.getDay();

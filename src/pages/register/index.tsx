@@ -161,15 +161,18 @@ function RegisterPage({ providers }: RegisterPageProps) {
         password: registerData.password,
       };
       const response = await UserClient.postRegister(newRegisterData);
-      if (response.data.error) {
-        handleErrorAuthResponse(response.data.data.message);
-        return;
-      }
       Utils.notify('Register is successful', 'success', 'colored');
       router.push('/signin');
     } catch (error: any) {
-      handleErrorAuthResponse(error.response.data.message);
-      // Utils.notify(error.message, 'error', 'colored');
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        handleErrorAuthResponse(error.response.data.message);
+        return;
+      }
+      Utils.handleGeneralError(error);
       console.error(error);
     } finally {
       setIsLoading(false);

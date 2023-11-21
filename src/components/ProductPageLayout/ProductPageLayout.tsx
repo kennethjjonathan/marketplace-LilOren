@@ -10,6 +10,7 @@ interface ProductPageLayoutProps {
   variant: IProductVariant | undefined;
   handleAddToCart: () => void;
   isVariant: boolean;
+  isAddLoading: boolean;
 }
 
 const ProductPageLayout = ({
@@ -18,6 +19,7 @@ const ProductPageLayout = ({
   variant,
   handleAddToCart,
   isVariant,
+  isAddLoading,
 }: ProductPageLayoutProps) => {
   const [isMaxValid, setIsMaxValid] = useState<boolean>(true);
   function handleVariantChange() {
@@ -103,9 +105,15 @@ const ProductPageLayout = ({
             size={'customBlank'}
             className="w-full sm:w-52 h-full p-2 text-lg"
             onClick={handleAddToCart}
-            disabled={variant === undefined && isVariant}
+            disabled={
+              (variant === undefined && isVariant) || isAddLoading === true
+            }
           >
-            Add to Cart
+            {!isAddLoading ? (
+              <p>Add to Cart</p>
+            ) : (
+              <div className="border-4 border-primary-foreground aspect-square border-t-transparent rounded-full animate-spin w-6" />
+            )}
           </Button>
         </div>
       </div>
