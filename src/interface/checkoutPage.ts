@@ -62,7 +62,3 @@ export interface ICheckoutWallet {
   is_active: boolean;
   balance: number;
 }
-
-// export interface IRequestOrder {
-//   order
-// }

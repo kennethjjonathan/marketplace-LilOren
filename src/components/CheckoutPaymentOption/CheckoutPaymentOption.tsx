@@ -96,7 +96,10 @@ const CheckoutPaymentOption = ({
                         Balance is insufficient.
                       </p>
                     )}
-                  <Link href={'/'} className="truncate text-gray-500">
+                  <Link
+                    href={'/wallet'}
+                    className="truncate text-gray-500 duration-300 hover:text-primary hover:underline"
+                  >
                     Top-Up Wallet
                   </Link>
                 </div>
@@ -141,7 +144,12 @@ const CheckoutPaymentOption = ({
                 PIN must be 6 digits!
               </p>
             )}
-            <PinInput pins={pins} setPins={setPins} onEnter={handlePay} />
+            <PinInput
+              pins={pins}
+              setPins={setPins}
+              onEnter={handlePay}
+              isLoading={isPaymentLoading}
+            />
           </div>
           <div className="flex gap-2 w-full justify-end">
             <Button

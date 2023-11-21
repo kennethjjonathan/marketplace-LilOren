@@ -287,12 +287,18 @@ const CheckoutPage: NextPageWithLayout = () => {
     }
     setIsPaymentLoading(true);
     try {
-      const stepupResponse = await axiosInstance.post(
-        `${CONSTANTS.BASEURL}/auth/payment-token`,
-        { wallet_pin: pins.join('') },
-      );
-      console.log(stepupResponse);
-    } catch (error) {
+      const payload = {
+        order_deliveries: couriers,
+        buyer_address_id: chosenAddress!.id,
+      };
+      await axiosInstance.post(`/auth/payment-token`, {
+        wallet_pin: pins.join(''),
+      });
+      await axiosInstance.post(`/orders`, payload);
+      Utils.notify('Your order is created successfully', 'success', 'colored');
+      router.replace('/user/order-detail');
+    } catch (error: any) {
+      Utils.handleGeneralError(error);
       console.error(error);
     } finally {
       setIsPaymentLoading(false);
