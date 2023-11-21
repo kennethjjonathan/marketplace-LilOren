@@ -48,7 +48,7 @@ function SignInPage() {
         <h1 className="font-bold text-2xl text-primary sm:hidden">LilOren</h1>
         <div className="rounded-lg w-full flex flex-col items-baseline justify-center">
           <h1 className="font-light text-xl w-full text-left lg:text-2xl">
-            Reset Password Code Request
+            Request Reset Password Code
           </h1>
           <form
             className="mt-5 flex flex-col gap-3 w-full"
