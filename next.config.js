@@ -29,6 +29,7 @@ const nextConfig = {
     ],
   },
   output: 'standalone',
+  basePath: process.env.NODE_ENV === 'production' ? '/vm1' : undefined,
 };
 
 module.exports = nextConfig;

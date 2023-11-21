@@ -23,9 +23,10 @@ import DotsLoading from '@/components/DotsLoading/DotsLoading';
 import SkeletonSelect from '@/components/SkeletonSelect/SkeletonSelect';
 import TextAreaWithLabel from '@/components/TextAreaWithLabel/TextAreaWithLabel';
 import AsyncButton from '@/components/AsyncButton/AsyncButton';
-import CONSTANTS from '@/constants/constants';
 import { UserAddressClient } from '@/service/userAddress/userAddressClient';
+import { DropdownClient } from '@/service/dropdown/DropdownClient';
 import styles from './UserAddressCreate.module.scss';
+import { IDropdownData } from '@/service/dropdown/DropdownService';
 
 const RECEIVER_NAME = 'Receiver Name';
 const PHONE_NUMBER = 'Phone Number';
@@ -34,34 +35,22 @@ const CITY_NAME = 'City';
 const SUB_DISTRICT_NAME = 'Sub District';
 const SUB_FROM_SUB_DISTRICT_NAME = 'Sub from Sub District';
 const ADDRESS_DETAILS = 'Address Details';
-const PATH_USER_SETTINGS_ADDRESS = '/user/settings/address';
+const PATH_USER_SETTINGS_ADDRESS = '/user/settings/address?status=Address';
 
 export interface IAddAddressData {
   receiver_name: string;
   receiver_phone_number: string;
-  province_id: string;
-  city_id: string;
+  province_id: number;
+  city_id: number;
   sub_district: string;
   sub_sub_district: string;
   postal_code: string;
   address: string;
 }
-export interface IROProvince {
-  province_id: number;
-  province: string;
-}
-export interface ICity {
-  city_id: string;
-  province_id: string;
-  province: string;
-  type: string;
-  city_name: string;
-  postal_code: string;
-}
 
 const UserAddressCreate = () => {
-  const [provinces, setProvinces] = useState<IROProvince[]>([]);
-  const [cities, setCities] = useState<ICity[]>([]);
+  const [provinces, setProvinces] = useState<IDropdownData[]>([]);
+  const [cities, setCities] = useState<IDropdownData[]>([]);
   const [loadingFetchProvince, setLoadingFetchProvince] =
     useState<boolean>(false);
   const [loadingFetchCity, setLoadingFetchCity] = useState<boolean>(false);
@@ -71,8 +60,8 @@ const UserAddressCreate = () => {
   const [addAddressData, setAddAddressData] = useState<IAddAddressData>({
     receiver_name: '',
     receiver_phone_number: '',
-    province_id: '',
-    city_id: '',
+    province_id: 0,
+    city_id: 0,
     sub_district: '',
     sub_sub_district: '',
     postal_code: '',
@@ -92,12 +81,8 @@ const UserAddressCreate = () => {
 
   const fetchProvince = async () => {
     try {
-      const response = await axios({
-        method: 'GET',
-        url: CONSTANTS.RO_API_PROVINCE,
-      });
-
-      const provinces: IROProvince[] = response.data.data.rajaongkir.results;
+      const response = await DropdownClient.getProvinces();
+      const provinces: IDropdownData[] = response.data;
       setProvinces(provinces);
       setLoadingFetchProvince(false);
     } catch (error) {
@@ -110,12 +95,9 @@ const UserAddressCreate = () => {
 
   const handleChangeProvince = async (e: string) => {
     setLoadingFetchCity(true);
-    setAddAddressData({ ...addAddressData, ['province_id']: e });
-    const response = await axios({
-      method: 'GET',
-      url: `${CONSTANTS.RO_API_CITY}/${e}`,
-    });
-    const cities = response.data.data.rajaongkir.results;
+    setAddAddressData({ ...addAddressData, ['province_id']: parseInt(e) });
+    const response = await DropdownClient.getCityByProvinceId(parseInt(e));
+    const cities = response.data;
     setCities(cities);
     setLoadingFetchCity(false);
   };
@@ -128,7 +110,7 @@ const UserAddressCreate = () => {
   };
 
   const handleChangeCity = (e: string) => {
-    setAddAddressData({ ...addAddressData, ['city_id']: e });
+    setAddAddressData({ ...addAddressData, ['city_id']: parseInt(e) });
   };
 
   const handleNumber = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -144,7 +126,7 @@ const UserAddressCreate = () => {
     pattern: RegExp,
   ): boolean => {
     const dataRegex = pattern;
-    if (!dataRegex.test(addAddressData[key])) {
+    if (!dataRegex.test(addAddressData[key].toString())) {
       setIsDataValid({ ...isDataValid, [key]: false });
       return false;
     }
@@ -230,12 +212,12 @@ const UserAddressCreate = () => {
               <SelectContent>
                 <SelectGroup className="h-[200px] overflow-y-scroll">
                   <SelectLabel>{'Province'}</SelectLabel>
-                  {provinces.map((province) => (
+                  {provinces.map((province, index) => (
                     <SelectItem
-                      key={`key:${province.province}`}
-                      value={String(province.province_id)}
+                      key={`key:${province.label} ${index.toString()}`}
+                      value={String(province.value)}
                     >
-                      {province.province}
+                      {province.label}
                     </SelectItem>
                   ))}
                 </SelectGroup>
@@ -258,12 +240,12 @@ const UserAddressCreate = () => {
                     <SelectContent>
                       <SelectGroup className="h-[200px] overflow-y-scroll">
                         <SelectLabel>{'City'}</SelectLabel>
-                        {cities.map((city) => (
+                        {cities.map((city, index) => (
                           <SelectItem
-                            key={`key:${city.city_id}`}
-                            value={String(city.city_id)}
+                            key={`key:${city.label} ${index.toString()}`}
+                            value={String(city.value)}
                           >
-                            {city.city_name}
+                            {city.label}
                           </SelectItem>
                         ))}
                       </SelectGroup>
@@ -272,7 +254,7 @@ const UserAddressCreate = () => {
                 </>
               )
             )}
-            {addAddressData.city_id !== '' && (
+            {addAddressData.city_id !== 0 && (
               <>
                 <InputWithLabel
                   type="text"

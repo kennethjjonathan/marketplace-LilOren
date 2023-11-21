@@ -16,6 +16,7 @@
   .info_container.info {
     -webkit-box-flex: 1;
     flex-grow: 1;
+    flex-direction: column;
 
     .full_address {
       white-space: normal;
@@ -25,9 +26,28 @@
       -webkit-box-orient: vertical;
       overflow: hidden;
       text-overflow: ellipsis;
-      margin-bottom: 18px;
       word-break: break-word;
       font-weight: 400;
+      @media (min-width: 768px) {
+        font-size: 16px;
+      }
+    }
+
+    .phone_number {
+      white-space: normal;
+      width: 100%;
+      display: -webkit-box;
+      font-weight: 400;
+      @media (min-width: 768px) {
+        font-size: 16px;
+      }
+    }
+
+    .postal_code {
+      font-weight: 400;
+      @media (min-width: 768px) {
+        font-size: 16px;
+      }
     }
 
     .title {
@@ -76,7 +96,7 @@
 
 .heading {
   font-weight: 700;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 16px;
   margin: 4px 4px 4px 0px;
 }
@@ -85,7 +105,11 @@
   display: block;
   position: relative;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 18px;
   line-height: 18px;
   margin: 0px 0px 4px;
+
+  @media (min-width: 768px) {
+    font-size: 20px;
+  }
 }

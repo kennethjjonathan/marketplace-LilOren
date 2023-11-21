@@ -1,27 +1,58 @@
-import React, { Fragment, ReactElement, ReactNode, useState } from 'react';
+import React, {
+  Fragment,
+  ReactElement,
+  ReactNode,
+  useEffect,
+  useState,
+} from 'react';
+import axios from 'axios';
 import { ArrowLeft, KeyRound, Store } from 'lucide-react';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 import { NextPageWithLayout } from '../_app';
 import { Button } from '@/components/ui/button';
-import AddAddressModal from '../../components/AddAddressModal/AddAddressModal';
+import AddAddressModal from '@/components/AddAddressModal/AddAddressModal';
 import BackButton from '@/components/BackButton/BackButton';
 import UserSettingsLayout from '@/components/UserSettingsLayout/UserSettingsLayout';
-import styles from './User.module.scss';
-import Head from 'next/head';
 import UserPresentation from '@/components/UserPresentation/UserPresentation';
-import axios from 'axios';
+import { useUser } from '@/store/user/useUser';
+import { useSearchParams } from 'next/navigation';
+import styles from './User.module.scss';
+import AsyncButton from '@/components/AsyncButton/AsyncButton';
 
 const User: NextPageWithLayout = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const status = searchParams.get('status');
+  const fetchUserDetails = useUser.use.fetchUserDetails();
+  const user_details = useUser.use.user_details();
+  const loading_fetch_user_details = useUser.use.loading_fetch_user_details();
   const [showSetAddressModal, setShowSetAddressModal] =
     useState<boolean>(false);
+  const [loadingLogout, setLoadingLogout] = useState(false);
+
   const handleLogout = async () => {
+    setLoadingLogout(true);
     await axios({
       method: 'POST',
       url: 'http://localhost/vm1/api/auth/logout',
       withCredentials: true,
     });
+    setTimeout(() => {
+      router.push('/');
+      setLoadingLogout(true);
+    }, 200);
   };
+
+  useEffect(() => {
+    if (status === '' || status === null) {
+      fetchUserDetails();
+    }
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  }, [status]);
 
   return (
     <>
@@ -69,9 +100,13 @@ const User: NextPageWithLayout = () => {
             </div>
             <div className=""></div>
             <div className="lilOren__user__logout w-full flex justify-center items-center pt-[17px] lg:hidden">
-              <Button variant={'outline'} onClick={() => handleLogout()}>
-                {'Logout'}
-              </Button>
+              {loadingLogout ? (
+                <AsyncButton isLoading={true}>{'Logout'}</AsyncButton>
+              ) : (
+                <Button variant={'outline'} onClick={() => handleLogout()}>
+                  {'Logout'}
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -86,7 +121,7 @@ const User: NextPageWithLayout = () => {
 
 User.getLayout = function getLayout(page: ReactElement) {
   return (
-    <UserSettingsLayout currentTab="My Biodata" component={<UserHeading />}>
+    <UserSettingsLayout currentTab="Info" component={<UserHeading />}>
       {page}
     </UserSettingsLayout>
   );
