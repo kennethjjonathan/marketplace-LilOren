@@ -4,6 +4,7 @@ import { IUserAddress } from '@/service/userAddress/userAddressService';
 import { Button } from '@/components/ui/button';
 import { useUser } from '@/store/user/useUser';
 import styles from './UserAddressCard.module.scss';
+import { useRouter } from 'next/router';
 
 interface UserAddressCardProps {
   address: IUserAddress;
@@ -13,6 +14,7 @@ const UserAddressCard = ({ address }: UserAddressCardProps) => {
   const user_default_address = useUser.use.user_default_address();
   const editUserDefaultAddress = useUser.use.editUserDefaultAddress();
   const fetchUserAddresses = useUser.use.fetchUserAddresses();
+  const router = useRouter();
   const handleMainAddress = (address: IUserAddress) => {
     editUserDefaultAddress(address.id);
     setTimeout(() => {
@@ -65,6 +67,9 @@ const UserAddressCard = ({ address }: UserAddressCardProps) => {
               <Button
                 variant={'link'}
                 className="pl-0 pr-2 border-r-[1px] py-0 h-[20px]"
+                onClick={() =>
+                  router.push(`/user/address/update/${address.id}`)
+                }
               >
                 {'Edit'}
               </Button>
