@@ -296,7 +296,7 @@ const CheckoutPage: NextPageWithLayout = () => {
       });
       await axiosInstance.post(`/orders`, payload);
       Utils.notify('Your order is created successfully', 'success', 'colored');
-      router.replace('/user/order-detail');
+      router.replace('/user/order-detail?page=1');
     } catch (error: any) {
       Utils.handleGeneralError(error);
       console.error(error);
