@@ -39,6 +39,9 @@ function SignInPage({ code: reset_code }: PropsWithoutRef<Props>) {
       })
       .then((res) => {
         Utils.notify('Successfully reset password', 'success', 'colored');
+
+        setPassword('');
+        setPasswordConfirmation('');
       })
       .catch((err) => {
         Utils.notify(err.request.message, 'error', 'colored');
