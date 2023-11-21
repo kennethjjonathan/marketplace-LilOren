@@ -21,7 +21,7 @@ const Modal = ({ isVisible, onClose, children, position }: ModalProps) => {
     <div
       className={`modal fade fixed inset-0 bg-black bg-opacity-50 flex flex-col items-center z-50 left-0 top-0 gap-4 bg-background shadow-lg transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500
       inset-x-0 bottom-0  data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom ${
-        position ? 'justify-center' : 'justify-end'
+        position ? 'justify-center hidden lg:flex' : 'justify-end'
       }`}
       id="wrapper"
       onClick={(e) => handleCloseModal(e)}

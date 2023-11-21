@@ -33,3 +33,14 @@ export interface IUserDetails {
   cart_count: number;
   profile_picture_url: string;
 }
+
+export interface IAddAddressData {
+  receiver_name: string;
+  receiver_phone_number: string;
+  province_id: number;
+  city_id: number;
+  sub_district: string;
+  sub_sub_district: string;
+  postal_code: string;
+  address: string;
+}
