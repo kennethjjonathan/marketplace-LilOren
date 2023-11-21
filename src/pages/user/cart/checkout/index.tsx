@@ -23,6 +23,7 @@ import CONSTANTS from '@/constants/constants';
 import { ICheckout } from '@/interface/checkoutPage';
 import { Utils } from '@/utils';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 const dummyData: ICheckout[] = [
   {
@@ -108,6 +109,7 @@ const CheckoutPage: NextPageWithLayout = () => {
     balance: 0,
   });
   const [updateToggle, setUpdateToggle] = useState<boolean>(false);
+  const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
 
   async function handleCourierChange(
     shop_id: number,
@@ -297,6 +299,18 @@ const CheckoutPage: NextPageWithLayout = () => {
     }
   }
 
+  async function handleChangeAddress() {
+    if (couriers === undefined || chosenAddress === undefined) return;
+    try {
+      const newRequestSummary: IRequestSummary = {
+        order_deliveries: couriers,
+        buyer_address_id: chosenAddress.id,
+      };
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   useEffect(() => {
     setInitialStates();
   }, []);
@@ -304,6 +318,28 @@ const CheckoutPage: NextPageWithLayout = () => {
   useEffect(() => {
     getWallet();
   }, [updateToggle]);
+
+  useEffect(() => {
+    console.log('masuk');
+  }, [chosenAddress]);
+
+  if (checkouts === undefined || checkouts.length === 0) {
+    return (
+      <section className="flex flex-col justify-center items-center w-full bg-white pb-5">
+        <div className="w-full md:w-[75vw] lg:px-2 lg:pt-5 flex flex-col justify-center items-center gap-5">
+          <p className="w-full text-center mt-10 text-lg lg:text-xl px-2">
+            Seems like you don&apos;t have any items at checkout yet.
+          </p>
+          <Link
+            href="/user/cart"
+            className="text-primary underline text-base px-2"
+          >
+            Go to Cart Page
+          </Link>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="flex flex-col justify-center items-center w-full bg-white pb-5">

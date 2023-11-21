@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Check } from 'lucide-react';
 import { IUserAddress } from '@/service/userAddress/userAddressService';
 import { Button } from '@/components/ui/button';

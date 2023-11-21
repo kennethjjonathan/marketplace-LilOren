@@ -45,39 +45,6 @@ export class Utils {
     });
   };
 
-  static handleGeneralError = (error: any) => {
-    if (error.response && error.response.data && error.response.data.message) {
-      toast(error.response.data.message, {
-        type: 'error',
-        position: toast.POSITION.TOP_RIGHT,
-        theme: 'colored',
-      });
-      return;
-    }
-    if (error.response && error.response.statusText) {
-      toast(error.response.statusText, {
-        type: 'error',
-        position: toast.POSITION.TOP_RIGHT,
-        theme: 'colored',
-      });
-      return;
-    }
-    if (error.message) {
-      toast(error.message, {
-        type: 'error',
-        position: toast.POSITION.TOP_RIGHT,
-        theme: 'colored',
-      });
-      return;
-    }
-    toast('Uh-oh something went wrong!', {
-      type: 'error',
-      position: toast.POSITION.TOP_RIGHT,
-      theme: 'colored',
-    });
-    return;
-  };
-
   static isAllCartCheck = (isCheckedCarts: ICheckedCart[]) => {
     const check = isCheckedCarts.every((cart) => cart.is_checked === true);
     return check;

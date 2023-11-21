@@ -186,7 +186,6 @@ const ProductPage = ({
       );
       Utils.notify('Successfully added to cart', 'success', 'colored');
     } catch (error: any) {
-      console.log(error);
       if (error === CONSTANTS.ALREADY_LOGGED_OUT) {
         Utils.notify(
           'Your token has expired, please sign in again',
