@@ -71,7 +71,7 @@ Home.getLayout = function getLayout(page: ReactElement) {
 export const getServerSideProps: GetServerSideProps<Props> = async (_) => {
   let res: IRecommendedProductResponse;
   try {
-    res = await HomeClient.getRecommendedProduct();
+    res = (await HomeClient.getRecommendedProduct())!;
   } catch (e) {
     return {
       props: {

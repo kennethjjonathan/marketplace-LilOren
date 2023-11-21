@@ -22,6 +22,12 @@ export type IRecommendedProduct = {
   rating: number;
 };
 
+export interface ITopCategory {
+  category_id: number;
+  category_name: string;
+  image_url: string;
+}
+
 type State = {
   cart_in_home: ICartHome[];
   loading_fetch_cart_in_home: boolean;

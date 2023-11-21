@@ -1,37 +1,42 @@
 import axiosInstance from '@/lib/axiosInstance';
 import { ICartHome, IRecommendedProduct } from '@/store/home/useHome';
 
-export interface ICartHomeResponse {
+type ConstructResponse<D> = {
   error: boolean;
   message?: string;
-  data?: ICartHome[];
-}
+  data?: D;
+};
 
-export interface IRecommendedProductResponse {
-  error: boolean;
-  message?: string;
-  data?: IRecommendedProduct[];
-}
+export type ICartHomeResponse = ConstructResponse<ICartHome[]>;
+export type IRecommendedProductResponse = ConstructResponse<
+  IRecommendedProduct[]
+>;
+export type ITopCategoryResponse = ConstructResponse<{}>;
+
+type Responses =
+  | ICartHomeResponse
+  | IRecommendedProductResponse
+  | ITopCategoryResponse;
 
 export class HomeService {
-  static get = async (url: string) => {
+  static get = async <Response extends Responses>(url: string) => {
     try {
       const response = await axiosInstance({
         method: 'GET',
         url: url,
       });
       if (response.status === 200) {
-        const responseAPI: ICartHomeResponse | IRecommendedProductResponse = {
+        const responseAPI = {
           error: false,
           data: response.data.data,
-        };
+        } as Response;
         return responseAPI;
       }
     } catch (error: any) {
-      const responseAPI = {
+      const responseAPI: Response = {
         error: true,
         data: [],
-      };
+      } as any;
       return responseAPI;
     }
   };
