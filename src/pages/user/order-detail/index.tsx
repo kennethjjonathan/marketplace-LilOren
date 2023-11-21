@@ -1,5 +1,5 @@
-import { NextPageWithLayout } from '@/pages/_app';
 import React, { ReactElement, useCallback, useEffect, useState } from 'react';
+import { NextPageWithLayout } from '@/pages/_app';
 import Layout from '@/components/Layout/Layout';
 import axiosInstance from '@/lib/axiosInstance';
 import { IOrderItem } from '@/interface/orderDetailPage';
@@ -8,6 +8,7 @@ import PaginationNav from '@/components/PaginationNav/PaginationNav';
 import { useSearchParams } from 'next/navigation';
 import DotsLoading from '@/components/DotsLoading/DotsLoading';
 import OrderDetailLayout from '@/components/OrderDetailLayout/OrderDetailLayout';
+import { Utils } from '@/utils';
 
 const OrderDetailPage: NextPageWithLayout = () => {
   const searchParams = useSearchParams();
@@ -31,12 +32,13 @@ const OrderDetailPage: NextPageWithLayout = () => {
       console.log(response.data);
       setOrderItems(response.data.data.order);
       setTotalPage(response.data.data.pagination.total_page);
-      setCurrentPage(response.data.data.pagination.current_page);
+      setCurrentPage(1);
       window.scrollTo({
         top: 0,
         behavior: 'smooth',
       });
     } catch (error) {
+      Utils.handleGeneralError(error);
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -60,6 +62,7 @@ const OrderDetailPage: NextPageWithLayout = () => {
         behavior: 'smooth',
       });
     } catch (error) {
+      Utils.handleGeneralError(error);
       console.error(error);
     } finally {
       setIsLoading(false);

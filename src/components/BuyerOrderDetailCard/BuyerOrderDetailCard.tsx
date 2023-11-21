@@ -9,6 +9,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Button } from '../ui/button';
+import axiosInstance from '@/lib/axiosInstance';
 
 interface BuyerOrderDetailCardProps {
   orderItem: IOrderItem;
@@ -16,6 +17,7 @@ interface BuyerOrderDetailCardProps {
 
 const BuyerOrderDetailCard = ({ orderItem }: BuyerOrderDetailCardProps) => {
   const [isAddDetailOpen, setIsAddDetailOpen] = useState<boolean>(false);
+  const [isActionLoading, setIsActionLoading] = useState<boolean>(false);
   function parseStatus(inputString: string): string {
     switch (inputString) {
       case 'NEW':
@@ -34,6 +36,29 @@ const BuyerOrderDetailCard = ({ orderItem }: BuyerOrderDetailCardProps) => {
         return '';
     }
   }
+
+  async function handleSpecialAction() {
+    if (orderItem.status !== 'NEW' && orderItem.status !== 'ARRIVE') {
+      return;
+    }
+    let specEndPoint: string = '';
+    if (orderItem.status === 'NEW') {
+      specEndPoint = 'cancel';
+    } else {
+      specEndPoint = 'receive';
+    }
+
+    setIsActionLoading(true);
+    try {
+      console.log(`/orders/${orderItem.id}/${specEndPoint}`);
+      await axiosInstance.put(`/orders/${orderItem.id}/${specEndPoint}`);
+    } catch (error) {
+      Utils.handleGeneralError(error);
+      console.error(error);
+    } finally {
+      setIsActionLoading(false);
+    }
+  }
   return (
     <>
       <div className="flex flex-col w-full border-[1px] border-gray-100">
@@ -41,9 +66,9 @@ const BuyerOrderDetailCard = ({ orderItem }: BuyerOrderDetailCardProps) => {
           <p className="border-l-[5px] border-primary p-0 pl-1 pt-0.5 text-xs font-bold text-left lg:text-sm 2xl:text-base">
             {parseStatus(orderItem.status)}
           </p>
-          <div className="flex items-center gap-2 justify-between w-fit">
+          <div className="flex items-center gap-2 justify-between w-fit max-w-full">
             <p className="text-sm md:text-base truncate text-gray-500">
-              18 Okt 2023
+              {`Estimated arrival: ${Utils.getDate(orderItem.eta)}`}
             </p>
             <div className="bg-gray-300 aspect-square w-1 rounded-full md:w-1.5" />
             <Popover open={isAddDetailOpen} onOpenChange={setIsAddDetailOpen}>
@@ -54,7 +79,7 @@ const BuyerOrderDetailCard = ({ orderItem }: BuyerOrderDetailCardProps) => {
                   onClick={() => setIsAddDetailOpen(true)}
                   className="text-sm md:text-base font-normal"
                 >
-                  Address Detail
+                  Delivery Detail
                 </Button>
               </PopoverTrigger>
               <PopoverContent>
@@ -91,6 +116,14 @@ const BuyerOrderDetailCard = ({ orderItem }: BuyerOrderDetailCardProps) => {
                       {orderItem.courier_name}
                     </p>
                   </div>
+                  <div>
+                    <p className="text-xs font-semibold leading-none lg:text-sm xl:text-lg">
+                      Delivery Fee:
+                    </p>
+                    <p className="text-sm leading-tight line-clamp-2 text-ellipsis lg:text-base xl:text-xl">
+                      {Utils.convertPrice(orderItem.delivery_cost)}
+                    </p>
+                  </div>
                 </div>
               </PopoverContent>
             </Popover>
@@ -104,6 +137,31 @@ const BuyerOrderDetailCard = ({ orderItem }: BuyerOrderDetailCardProps) => {
             <BuyerOrderDetailCardItem key={index} item={item} />
           ))}
         </div>
+        {(orderItem.status === 'NEW' || orderItem.status === 'ARRIVE') && (
+          <div className="w-full p-2 flex items-center justify-end">
+            {orderItem.status === 'NEW' ? (
+              <Button
+                variant={'destructive'}
+                onClick={handleSpecialAction}
+                disabled={isActionLoading}
+              >
+                {isActionLoading ? (
+                  <div className="border-4 border-destructive-foreground border-t-transparent rounded-full animate-spin aspect-square h-4" />
+                ) : (
+                  <p>Cancel Order</p>
+                )}
+              </Button>
+            ) : (
+              <Button onClick={handleSpecialAction} disabled={isActionLoading}>
+                {isActionLoading ? (
+                  <div className="border-4 border-primary-foreground-foreground border-t-transparent rounded-full animate-spin aspect-square h-4" />
+                ) : (
+                  <p>Confirm Receive</p>
+                )}
+              </Button>
+            )}
+          </div>
+        )}
         <div className="w-full p-2 bg-primary-foreground lg:flex lg:justify-end">
           <div className="w-fit lg:w-1/6">
             <p className="font-semibold text-xs text-gray-500 lg:text-base">

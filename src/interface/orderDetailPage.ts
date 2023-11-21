@@ -1,5 +1,7 @@
 export interface IOrderItem {
   id: number;
+  eta: string;
+  delivery_cost: number;
   status: string;
   products: IOrderProductItem[];
   receiver_name: string;
