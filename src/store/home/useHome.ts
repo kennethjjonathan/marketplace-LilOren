@@ -1,6 +1,6 @@
+import { HomeClient } from '@/service/home/HomeClient';
 import { create } from 'zustand';
 import { createZusSelector } from '../useSelector';
-import { HomeClient } from '@/service/home/HomeClient';
 
 export interface ICartHome {
   product_name: string;
@@ -8,6 +8,19 @@ export interface ICartHome {
   price: number;
   quantity: number;
 }
+
+export type IRecommendedProduct = {
+  product_code: string;
+  image_url: string;
+  name: string;
+  base_price: number;
+  discounted_price: number;
+  discount?: number;
+  total_sold: number;
+  shop_location: string;
+  shop_name: string;
+  rating: number;
+};
 
 type State = {
   cart_in_home: ICartHome[];
@@ -24,7 +37,7 @@ const useHomeBase = create<State & Actions>((set) => ({
   fetchCartInHome: async () => {
     set(() => ({ loading_fetch_cart_in_home: true }));
     const response = await HomeClient.getCartInHome();
-    const data = response?.data;
+    const data = response?.data as ICartHome[];
     set(() => ({ cart_in_home: data }));
     set(() => ({ loading_fetch_cart_in_home: false }));
   },

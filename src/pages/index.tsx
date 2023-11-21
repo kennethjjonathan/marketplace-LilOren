@@ -1,165 +1,22 @@
-import { ReactElement } from 'react';
-import Link from 'next/link';
-import { ChevronRight } from 'lucide-react';
-import { NextPageWithLayout } from './_app';
-import Layout from '@/components/Layout/Layout';
-import PromotionCarousel from '@/components/PromotionCarousel/PromotionCarousel';
 import ButtonWithIcon from '@/components/ButtonWithIcon/ButtonWithIcon';
 import HomeCategoryList from '@/components/HomeCategoryList/HomeCategoryList';
+import Layout from '@/components/Layout/Layout';
+import PromotionCarousel from '@/components/PromotionCarousel/PromotionCarousel';
 import RecommendedProductCard from '@/components/RecommendedProductCard/RecommendedProductCard';
+import { HomeClient } from '@/service/home/HomeClient';
+import { IRecommendedProductResponse } from '@/service/home/HomeService';
+import { IRecommendedProduct } from '@/store/home/useHome';
+import { ChevronRight } from 'lucide-react';
+import { GetServerSideProps } from 'next';
+import Link from 'next/link';
+import { ReactElement } from 'react';
+import { NextPageWithLayout } from './_app';
 
-const recommendationProducts: {
-  image: string;
-  name: string;
-  base_price: number;
-  discounted_price: number;
-  discount?: number;
-  totalSold?: number;
-  shop: {
-    shop_loc: string;
-    shop_name: string;
-    rating_average: number;
-    total_sold: number;
-  };
-}[] = [
-  {
-    image:
-      'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//92/MTA-5070654/dc_dc_trase_tx_m_shoe_adys300126-bgm_black-gum_full02_g0b376j9.jpg',
-    name: 'ACMIC DIGIMAX SuperMini Digital 10000mAh Power Bank (QC4 + PD + VOOC)',
-    base_price: 799000,
-    discounted_price: 295000,
-    discount: 63,
-    totalSold: 72,
-    shop: {
-      shop_loc: 'Jakarta Timur',
-      shop_name: 'Unilever',
-      rating_average: 4.9,
-      total_sold: 720,
-    },
-  },
-  {
-    image:
-      'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//92/MTA-5070654/dc_dc_trase_tx_m_shoe_adys300126-bgm_black-gum_full02_g0b376j9.jpg',
-    name: 'ACMIC DIGIMAX SuperMini Digital 10000mAh Power Bank (QC4 + PD + VOOC)',
-    base_price: 799000,
-    discounted_price: 295000,
-    discount: 63,
-    totalSold: 72,
-    shop: {
-      shop_loc: 'Jakarta Timur',
-      shop_name: 'Unilever',
-      rating_average: 4.9,
-      total_sold: 720,
-    },
-  },
-  {
-    image:
-      'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//92/MTA-5070654/dc_dc_trase_tx_m_shoe_adys300126-bgm_black-gum_full02_g0b376j9.jpg',
-    name: 'ACMIC DIGIMAX SuperMini Digital 10000mAh Power Bank (QC4 + PD + VOOC)',
-    base_price: 799000,
-    discounted_price: 295000,
-    discount: 63,
-    totalSold: 72,
-    shop: {
-      shop_loc: 'Jakarta Timur',
-      shop_name: 'Unilever',
-      rating_average: 4.9,
-      total_sold: 720,
-    },
-  },
-  {
-    image:
-      'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//92/MTA-5070654/dc_dc_trase_tx_m_shoe_adys300126-bgm_black-gum_full02_g0b376j9.jpg',
-    name: 'ACMIC DIGIMAX SuperMini Digital 10000mAh Power Bank (QC4 + PD + VOOC)',
-    base_price: 799000,
-    discounted_price: 295000,
-    discount: 63,
-    totalSold: 72,
-    shop: {
-      shop_loc: 'Jakarta Timur',
-      shop_name: 'Unilever',
-      rating_average: 4.9,
-      total_sold: 720,
-    },
-  },
-  {
-    image:
-      'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//92/MTA-5070654/dc_dc_trase_tx_m_shoe_adys300126-bgm_black-gum_full02_g0b376j9.jpg',
-    name: 'ACMIC DIGIMAX SuperMini Digital 10000mAh Power Bank (QC4 + PD + VOOC)',
-    base_price: 799000,
-    discounted_price: 295000,
-    discount: 63,
-    totalSold: 72,
-    shop: {
-      shop_loc: 'Jakarta Timur',
-      shop_name: 'Unilever',
-      rating_average: 4.9,
-      total_sold: 720,
-    },
-  },
-  {
-    image:
-      'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//92/MTA-5070654/dc_dc_trase_tx_m_shoe_adys300126-bgm_black-gum_full02_g0b376j9.jpg',
-    name: 'ACMIC DIGIMAX SuperMini Digital 10000mAh Power Bank (QC4 + PD + VOOC)',
-    base_price: 799000,
-    discounted_price: 295000,
-    discount: 63,
-    totalSold: 72,
-    shop: {
-      shop_loc: 'Jakarta Timur',
-      shop_name: 'Unilever',
-      rating_average: 4.9,
-      total_sold: 720,
-    },
-  },
-  {
-    image:
-      'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//92/MTA-5070654/dc_dc_trase_tx_m_shoe_adys300126-bgm_black-gum_full02_g0b376j9.jpg',
-    name: 'ACMIC DIGIMAX SuperMini Digital 10000mAh Power Bank (QC4 + PD + VOOC)',
-    base_price: 799000,
-    discounted_price: 295000,
-    discount: 63,
-    totalSold: 72,
-    shop: {
-      shop_loc: 'Jakarta Timur',
-      shop_name: 'Unilever',
-      rating_average: 4.9,
-      total_sold: 720,
-    },
-  },
-  {
-    image:
-      'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//92/MTA-5070654/dc_dc_trase_tx_m_shoe_adys300126-bgm_black-gum_full02_g0b376j9.jpg',
-    name: 'ACMIC DIGIMAX SuperMini Digital 10000mAh Power Bank (QC4 + PD + VOOC)',
-    base_price: 799000,
-    discounted_price: 295000,
-    discount: 63,
-    totalSold: 72,
-    shop: {
-      shop_loc: 'Jakarta Timur',
-      shop_name: 'Unilever',
-      rating_average: 4.9,
-      total_sold: 720,
-    },
-  },
-  {
-    image:
-      'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//92/MTA-5070654/dc_dc_trase_tx_m_shoe_adys300126-bgm_black-gum_full02_g0b376j9.jpg',
-    name: 'ACMIC DIGIMAX SuperMini Digital 10000mAh Power Bank (QC4 + PD + VOOC)',
-    base_price: 799000,
-    discounted_price: 295000,
-    discount: 63,
-    totalSold: 72,
-    shop: {
-      shop_loc: 'Jakarta Timur',
-      shop_name: 'Unilever',
-      rating_average: 4.9,
-      total_sold: 720,
-    },
-  },
-];
+type Props = {
+  products: IRecommendedProduct[];
+};
 
-const Home: NextPageWithLayout = () => {
+const Home: NextPageWithLayout<Props> = ({ products }: Props) => {
   return (
     <div className="flex flex-col justify-center items-center w-full bg-primary-foreground">
       <main className="w-full flex flex-col justify-center items-center">
@@ -190,12 +47,13 @@ const Home: NextPageWithLayout = () => {
           </div>
 
           <div className="HomeRecomProduct grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
-            {recommendationProducts.map((product, index) => (
-              <RecommendedProductCard
-                product={product}
-                key={`key:${product.name},${index.toString()}`}
-              />
-            ))}
+            {products &&
+              products.map((product, index) => (
+                <RecommendedProductCard
+                  product={product}
+                  key={`key:${product.name},${index.toString()}`}
+                />
+              ))}
           </div>
           <ButtonWithIcon variant={'outline'} href="/" className="mt-5">
             {'See More'}
@@ -208,6 +66,33 @@ const Home: NextPageWithLayout = () => {
 
 Home.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
+};
+
+export const getServerSideProps: GetServerSideProps<Props> = async (_) => {
+  let res: IRecommendedProductResponse;
+  try {
+    res = await HomeClient.getRecommendedProduct();
+  } catch (e) {
+    return {
+      props: {
+        products: [],
+      },
+    };
+  }
+
+  if (res.error) {
+    return {
+      props: {
+        products: [],
+      },
+    };
+  }
+
+  return {
+    props: {
+      products: res.data!,
+    },
+  };
 };
 
 export default Home;
