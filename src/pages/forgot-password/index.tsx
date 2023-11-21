@@ -2,13 +2,11 @@ import AsyncButton from '@/components/AsyncButton/AsyncButton';
 import { InputWithLabel } from '@/components/InputWithLabel/InputWithLabel';
 import { authClient } from '@/service/auth/AuthClient';
 import { Utils } from '@/utils';
-import { GetServerSideProps } from 'next';
-import { getProviders } from 'next-auth/react';
 import Image from 'next/image';
-import { FormEventHandler, PropsWithoutRef, useState } from 'react';
+import { FormEventHandler, useState } from 'react';
 import { ToastContent } from 'react-toastify';
 
-function SignInPage({}: PropsWithoutRef<Record<string, unknown>>) {
+function SignInPage() {
   const [email, setEmail] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -16,8 +14,7 @@ function SignInPage({}: PropsWithoutRef<Record<string, unknown>>) {
     e.preventDefault();
 
     setLoading(true);
-
-    const res = await authClient
+    await authClient
       .requestResetPassword({
         email,
       })
@@ -27,6 +24,7 @@ function SignInPage({}: PropsWithoutRef<Record<string, unknown>>) {
           'success',
           'colored',
         );
+
         setEmail('');
       })
       .catch((err) => {
@@ -63,6 +61,7 @@ function SignInPage({}: PropsWithoutRef<Record<string, unknown>>) {
               labelStyling="font-light"
               value={email}
               onChange={(ev) => setEmail(ev.target.value)}
+              disabled={loading}
               required
             />
             <AsyncButton className="text-sm lg:text-base" type="submit">
@@ -76,11 +75,3 @@ function SignInPage({}: PropsWithoutRef<Record<string, unknown>>) {
 }
 
 export default SignInPage;
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  return {
-    props: {
-      providers: await getProviders(),
-    },
-  };
-};
