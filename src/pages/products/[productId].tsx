@@ -202,7 +202,7 @@ const ProductPage = ({
         <div className="w-full md:w-[75vw] pt-5 pb-[5.5rem]">
           <div className="w-full flex flex-col gap-6 lg:flex-row">
             <div className="w-full lg:w-1/3">
-              {/* <ImageCarousel mediaArray={productPage.product_media} /> */}
+              <ImageCarousel mediaArray={productPage.product_media} />
             </div>
             <div className="flex-1 px-2 flex flex-col gap-4">
               <div className="flex flex-col gap-2">

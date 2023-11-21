@@ -204,13 +204,13 @@ function RegisterPage({ providers }: RegisterPageProps) {
   };
 
   return (
-    <section className="bg-gradient-to-t from-[#FF7337] to-[#F99116] flex flex-col justify-center items-center gap-5 sm:min-h-screen sm:py-6 xl:flex-row xl:justify-between xl:gap-10 xl:px-40 xl:items-start xl:py-20">
+    <section className="bg-gradient-to-t from-[#FF7337] to-[#F99116] flex flex-col justify-center items-center gap-5 min-h-screen sm:py-6 xl:flex-row xl:justify-between xl:gap-10 xl:px-40 xl:items-start xl:py-20">
       <div className="hidden sm:flex flex-col items-center justify-center xl:justify-start xl:min-h-full xl:flex-1 xl:gap-40">
         <h1 className="font-bold text-3xl text-primary-foreground lg:text-4xl xl:w-full xl:text-left">
           LilOren
         </h1>
         <div className="hidden relative aspect-square w-[470px] xl:block">
-          <Image src={'/Logo_.svg'} alt="Google's logo" fill sizes="40vw" />
+          <Image src={'/Logo_.svg'} alt="LilOren's logo" fill sizes="40vw" />
         </div>
       </div>
       <div className="container pb-16 pt-6 flex flex-col items-center justify-center gap-5 bg-primary-foreground sm:max-w-lg sm:pb-6 sm:rounded-lg xl:my-auto">
