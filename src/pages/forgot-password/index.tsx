@@ -64,7 +64,11 @@ function SignInPage() {
               disabled={loading}
               required
             />
-            <AsyncButton className="text-sm lg:text-base" type="submit">
+            <AsyncButton
+              className="text-sm lg:text-base"
+              type="submit"
+              disabled={loading}
+            >
               Request
             </AsyncButton>
           </form>
