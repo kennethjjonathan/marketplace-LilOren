@@ -16,7 +16,6 @@ const refreshAccessToken = async () => {
     return response;
   } catch (error: any) {
     return error;
-    return error;
   }
 };
 
@@ -44,7 +43,7 @@ axiosInstance.interceptors.response.use(
         return Promise.reject(_error);
       }
     } else {
-      return Promise.reject(err);
+      return Promise.reject(JSON.parse(err.request.response));
     }
   },
 );
