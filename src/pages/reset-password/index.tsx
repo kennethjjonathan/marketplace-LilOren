@@ -1,5 +1,6 @@
 import AsyncButton from '@/components/AsyncButton/AsyncButton';
 import { InputWithLabel } from '@/components/InputWithLabel/InputWithLabel';
+import { redisClient } from '@/lib/redis';
 import { Utils } from '@/utils';
 import { GetServerSideProps } from 'next';
 import Image from 'next/image';
@@ -101,6 +102,13 @@ export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
   const code = ctx.query.code;
 
   if (!code) {
+    return {
+      notFound: true,
+    };
+  }
+
+  const res = await redisClient.EXISTS(`reset_password:${code}`);
+  if (!res) {
     return {
       notFound: true,
     };
