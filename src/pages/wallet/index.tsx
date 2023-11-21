@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { GetServerSideProps } from 'next';
 import cookie from 'cookie';
 import { Eye, EyeOff, Coins, Lock, History, AlertTriangle } from 'lucide-react';
@@ -7,6 +7,10 @@ import Layout from '@/components/Layout/Layout';
 import CONSTANTS from '@/constants/constants';
 import { Utils } from '@/utils';
 import ActivatePinWarning from '@/components/ActivatePinWarning/ActivatePinWarning';
+import { IWalletInfo } from '@/interface/walletPage';
+import axiosInstance from '@/lib/axiosInstance';
+import { useRouter } from 'next/router';
+import TopUpModal from '@/components/TopUpModal/TopUpModal';
 export interface IWalletHistory {
   title: string;
   from: string | null;
@@ -35,17 +39,44 @@ const dummyArray: IWalletHistory[] = [
   },
 ];
 
-const dummyHaveUserRegistered: boolean = false;
-
-const WalletPage = (props: any) => {
-  const balance: number = 1000000000000000000000000000000000000000;
-  const WalletID: number = 123456789;
+const WalletPage = () => {
+  const router = useRouter();
+  const [wallet, setWallet] = useState<IWalletInfo>();
+  const [updateToggle, setUpdateToggle] = useState<boolean>(false);
   const [isHide, setIsHide] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isTopUpOpen, setIsTopUpOpen] = useState<boolean>(false);
+
+  async function getWallet() {
+    try {
+      const response = await axiosInstance(
+        `${CONSTANTS.BASEURL}/wallets/personal/info`,
+      );
+      console.log(response);
+      setWallet(response.data.data);
+    } catch (error: any) {
+      if (
+        error &&
+        error.response &&
+        error.response.data &&
+        error.response.data.message &&
+        error.response.data.message === CONSTANTS.WALLET_NOT_ACTIVATED
+      ) {
+        setWallet({ is_active: false, balance: 0 });
+      } else {
+        Utils.handleGeneralError(error);
+      }
+    }
+  }
+
+  useEffect(() => {
+    getWallet();
+  }, [updateToggle]);
+
   return (
     <section className="w-full ">
       <div className="w-full md:w-[75vw] mx-auto px-1 py-5 flex flex-col gap-5">
-        <div className="w-full rounded-md bg-gradient-to-t from-primary to-yellow-500 p-2 text-primary-foreground shadow-lg">
+        <div className="w-full rounded-md bg-gradient-to-t from-yellow-500 to-primary p-2 text-primary-foreground shadow-lg">
           <div className="flex items-center gap-2">
             <p className="text-lg font-semibold">Balance</p>
             <button onClick={() => setIsHide((prev) => !prev)}>
@@ -55,22 +86,35 @@ const WalletPage = (props: any) => {
                 <Eye className="w-6 h-6" />
               )}
             </button>
-            {!dummyHaveUserRegistered && (
-              <ActivatePinWarning isOpen={isOpen} setIsOpen={setIsOpen} />
+            {wallet && wallet.is_active === false && (
+              <ActivatePinWarning
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
+                setUpdateToggle={setUpdateToggle}
+              />
             )}
           </div>
-          <p className="text-2xl mt-3 truncate">
-            {isHide ? '***********' : Utils.convertPrice(balance)}
-          </p>
+          {wallet && (
+            <p className="text-2xl mt-3 truncate">
+              {isHide ? '***********' : Utils.convertPrice(wallet.balance)}
+            </p>
+          )}
           <div className="w-full flex flex-col items-end mt-5">
-            <p className="text-sm">Wallet ID:</p>
-            <p className="text-lg">{WalletID}</p>
+            <button className="text-lg">Seller withdraw</button>
           </div>
           <div className="w-full border-t-[1px] flex justify-between border-primary-foreground pt-3 mt-5">
-            <button className="w-full flex flex-col items-center justify-center gap-1">
+            <button
+              className="w-full flex flex-col items-center justify-center gap-1"
+              onClick={() => setIsTopUpOpen(true)}
+            >
               <Coins className="w-8 h-8" />
               <p>Top Up</p>
             </button>
+            <TopUpModal
+              isOpen={isTopUpOpen}
+              setIsOpen={setIsTopUpOpen}
+              setUpdateToggle={setUpdateToggle}
+            />
             <div className="bg-primary-foreground min-h-full w-[1px] rounded-md" />
             <button className="w-full flex flex-col items-center justify-center gap-1">
               <Lock className="w-8 h-8" />

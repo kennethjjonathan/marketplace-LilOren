@@ -1,6 +1,4 @@
 .hideIndicator::-webkit-outer-spin-button,
 .hideIndicator::-webkit-inner-spin-button {
   appearance: none;
-  display: none;
-  background-color: red;
 }

@@ -5,7 +5,6 @@ import React, {
   useRef,
   useState,
 } from 'react';
-
 import styles from './PinInput.module.css';
 
 interface PinInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -39,21 +38,24 @@ const PinInput = ({
     }
     setPins(newPins);
   }
+
   function handleKeyDown(
     e: React.KeyboardEvent<HTMLInputElement>,
     index: number,
   ) {
     currentActiveIndex = index;
+
+    if (['e', 'E', '+', '-', ' '].includes(e.key)) {
+      e.preventDefault();
+    }
     if (e.key === 'Tab') {
       e.preventDefault();
       setActiveIndex(currentActiveIndex + 1);
     }
     if (e.key === 'Backspace' && !pins[index]) {
-      e.preventDefault();
       setActiveIndex(currentActiveIndex - 1);
     }
     if (e.key === 'Enter') {
-      e.preventDefault();
       onEnter();
     }
   }
@@ -72,7 +74,9 @@ const PinInput = ({
           onKeyDown={(e) => handleKeyDown(e, index)}
           value={pins[index]}
           disabled={isLoading}
-          className={` ${styles.hideIndicator} aspect-square w-8 border-[1px] rounded bg-transparent outline-none text-center text-xl border-gray-500 focus:border-black focus:text-black text-gray-500 opacity-60 focus:opacity-100`}
+          onWheel={(e) => e.currentTarget.blur()}
+          className={` ${styles.hideIndicator} aspect-square w-10 border-[1px] rounded bg-transparent outline-none text-center text-xl border-gray-500 focus:border-black focus:text-black text-gray-500 opacity-60 focus:opacity-100 sm:w-12 sm:text-2xl`}
+          {...props}
         />
       ))}
     </div>
