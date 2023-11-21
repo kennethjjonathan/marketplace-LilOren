@@ -51,7 +51,10 @@ const BuyerOrderDetailCard = ({ orderItem }: BuyerOrderDetailCardProps) => {
     setIsActionLoading(true);
     try {
       console.log(`/orders/${orderItem.id}/${specEndPoint}`);
-      await axiosInstance.put(`/orders/${orderItem.id}/${specEndPoint}`);
+      const response = await axiosInstance.put(
+        `/orders/${orderItem.id}/${specEndPoint}`,
+      );
+      console.log(response);
     } catch (error) {
       Utils.handleGeneralError(error);
       console.error(error);
