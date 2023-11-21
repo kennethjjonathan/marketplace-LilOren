@@ -34,7 +34,6 @@ export class UserAddressService {
         url: url,
         data: payload,
       });
-      console.log(responseAPI);
       if (responseAPI.status === 201) {
         const response: IUserAddressResponse = {
           error: false,
@@ -44,10 +43,9 @@ export class UserAddressService {
         return response;
       }
     } catch (error: any) {
-      console.log(error);
       const response: IUserAddressResponse = {
         error: true,
-        message: error.response.data.message,
+        message: error.message,
         data: [],
       };
       return response;

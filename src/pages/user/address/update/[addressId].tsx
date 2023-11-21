@@ -2,18 +2,13 @@ import React, { ReactElement } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { ArrowLeft } from 'lucide-react';
+import { NextPageWithLayout } from '@/pages/_app';
 import BackButton from '@/components/BackButton/BackButton';
 import UserSettingsLayout from '@/components/UserSettingsLayout/UserSettingsLayout';
-import AddAddressForm from '@/components/AddAddressForm/AddAddressForm';
 
-const ADDRESS_DETAILS = 'Address Details';
-
-const UserAddressCreate = () => {
-  return (
-    <div className="h-[90vh]">
-      <AddAddressForm />
-    </div>
-  );
+const UserAddressUpdate: NextPageWithLayout = () => {
+  const router = useRouter();
+  return <div>{router.query.addressId}</div>;
 };
 
 const UserAddressCreateHeading = () => {
@@ -42,11 +37,11 @@ const UserAddressCreateHeading = () => {
       <div className="lg:hidden UserSettingsAddressCreate__navbar w-[100%] min-w-auto flex items-center top-0 h-[52px] border-b-[1px] sticky bg-white">
         <BackButton
           icon={<ArrowLeft size={24} />}
-          onClick={() => router.push('/user/address?status=Address')}
+          onClick={() => router.push('/user/settings/address')}
         />
         <div>
           <p className="user__address__heading block relative font-medium m-0 text-[16px]">
-            {ADDRESS_DETAILS}
+            {'Edit Address'}
           </p>
         </div>
       </div>
@@ -54,15 +49,15 @@ const UserAddressCreateHeading = () => {
   );
 };
 
-UserAddressCreate.getLayout = function getLayout(page: ReactElement) {
+UserAddressUpdate.getLayout = function getLayout(page: ReactElement) {
   return (
     <UserSettingsLayout
       component={<UserAddressCreateHeading />}
-      currentTab={'My Bio'}
+      currentTab={'Edit Address'}
     >
       {page}
     </UserSettingsLayout>
   );
 };
 
-export default UserAddressCreate;
+export default UserAddressUpdate;

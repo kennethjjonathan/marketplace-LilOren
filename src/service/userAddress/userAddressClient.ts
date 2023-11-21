@@ -1,7 +1,7 @@
 import CONSTANTS from '@/constants/constants';
-import { IAddAddressData } from '@/pages/user/address/create';
 import { Utils } from '@/utils';
 import { ToastContent } from 'react-toastify';
+import { IAddAddressData } from '@/interface/user';
 import { UserAddressService } from './userAddressService';
 
 export class UserAddressClient {

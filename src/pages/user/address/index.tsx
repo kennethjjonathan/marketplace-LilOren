@@ -1,8 +1,9 @@
-import React, { ReactElement, useEffect } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { ArrowLeft, Plus } from 'lucide-react';
 import UserSettingsLayout from '@/components/UserSettingsLayout/UserSettingsLayout';
+import AddAddressModal from '@/components/AddAddressModal/AddAddressModal';
 import BackButton from '@/components/BackButton/BackButton';
 import { Button } from '@/components/ui/button';
 import SkeletonUserAddress from '@/components/SkeletonUserAddress/SkeletonUserAddress';
@@ -21,10 +22,11 @@ const UserSettingsAddress: NextPageWithLayout = () => {
   const fetchUserAddresses = useUser.use.fetchUserAddresses();
   const userAddresses = useUser.use.user_addresses();
   const router = useRouter();
+  const [showAddAddressModal, setShowAddAddressModal] = useState(false);
 
   useEffect(() => {
     fetchUserAddresses();
-  }, []);
+  }, [showAddAddressModal]);
   return (
     <>
       {loading_fetch_user_addresses ? (
@@ -38,7 +40,7 @@ const UserSettingsAddress: NextPageWithLayout = () => {
             <div className="hidden lg:flex w-full justify-end">
               <Button
                 className="flex flex-row gap-2"
-                onClick={() => router.push(PATH_USER_ADDRESS_CREATE)}
+                onClick={() => setShowAddAddressModal(true)}
               >
                 <Plus /> {ADD_ADDRESS}
               </Button>
@@ -53,6 +55,11 @@ const UserSettingsAddress: NextPageWithLayout = () => {
               />
             ))}
           </div>
+          <AddAddressModal
+            isVisible={showAddAddressModal}
+            onClose={() => setShowAddAddressModal(false)}
+            setShowModal={setShowAddAddressModal}
+          />
         </div>
       )}
     </>
@@ -77,7 +84,7 @@ const UserSettingsAddressHeading = () => {
           content="Mal online terbesar Indonesia, tempat berkumpulnya toko / online shop terpercaya se Indonesia. Jual beli online semakin aman dan nyaman di LilOren."
         ></meta>
       </Head>
-      <div className="lg:hidden UserSettingsAddress__navbar w-[100%] min-w-auto flex items-center top-0 h-[52px] border-b-[1px] sticky bg-white">
+      <div className="lg:hidden UserSettingsAddress__navbar w-[100%] min-w-auto flex items-center top-0 h-[52px] border-b-[1px] sticky bg-white z-50">
         <BackButton
           id="back-button"
           icon={<ArrowLeft size={24} />}

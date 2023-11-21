@@ -37,7 +37,7 @@ const UserSettingsLayout = ({
 }: UserSettingsLayoutProps) => {
   return (
     <div className={currentTab}>
-      <div className="hidden lg:block">
+      <div className="hidden lg:block relative">
         <Navigation />
       </div>
       <div className="flex justify-center items-center">
