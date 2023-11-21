@@ -19,6 +19,7 @@ import EmptyCart from '@/components/EmptyCart/EmptyCart';
 import { ICartHome, useHome } from '@/store/home/useHome';
 import CartInHome from '@/components/CartInHome/CartInHome';
 import styles from './Navigation.module.scss';
+import { useUser } from '@/store/user/useUser';
 
 const components: {
   title: string;
@@ -98,6 +99,9 @@ const Navigation = () => {
   const [searchKey, setSearchKey] = useState<string>('');
   const cartInHome = useHome.use.cart_in_home();
   const fetchCartInHome = useHome.use.fetchCartInHome();
+  const user_details = useUser.use.user_details();
+  const fetchUserDetails = useUser.use.fetchUserDetails();
+  const loading_fetch_user_details = useUser.use.loading_fetch_user_details();
 
   const handleSearchProduct = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -105,26 +109,31 @@ const Navigation = () => {
 
   useEffect(() => {
     fetchCartInHome();
+    fetchUserDetails();
   }, []);
 
   return (
     <div className={styles.navigation}>
-      <div className="lg:hidden md:w-[80vw] text-right pb-2">
-        {user.firstName === '' && (
-          <>
-            <ButtonWithIcon variant={'link'} href={'/login'}>
-              {'Login'}
-            </ButtonWithIcon>
-            <ButtonWithIcon
-              variant={'link'}
-              href={'/register'}
-              className="text-muted-foreground"
-            >
-              {'Register'}
-            </ButtonWithIcon>
-          </>
-        )}
-      </div>
+      {loading_fetch_user_details ? (
+        <div className="lg:hidden md:w-[80vw] text-right pb-2"></div>
+      ) : (
+        <div className="lg:hidden md:w-[80vw] text-right pb-2">
+          {user_details.username === '' && (
+            <>
+              <ButtonWithIcon variant={'link'} href={'/signin'}>
+                {'Login'}
+              </ButtonWithIcon>
+              <ButtonWithIcon
+                variant={'link'}
+                href={'/register'}
+                className="text-muted-foreground"
+              >
+                {'Register'}
+              </ButtonWithIcon>
+            </>
+          )}
+        </div>
+      )}
       <div className={styles.navigationContent}>
         <div className={styles.logo}>LOGO</div>
         <div className={styles.searchInput}>
@@ -139,9 +148,9 @@ const Navigation = () => {
             <NavigationMenuItem>
               <NavigationMenuTrigger>
                 <div className="cartWrapper relative w-full">
-                  {user.firstName && products.length !== 0 && (
+                  {user_details.username && cartInHome.length !== 0 && (
                     <div className="absolute right-0 w-[18px] h-[18px] pb-[19px] border-white bg-destructive text-white font-bold text-[10px] text-center rounded-full">
-                      {products.length}
+                      {cartInHome.length}
                     </div>
                   )}
 
@@ -151,15 +160,15 @@ const Navigation = () => {
                 </div>
               </NavigationMenuTrigger>
               <NavigationMenuContent>
-                {user.firstName ? (
-                  <CartInHome products={products} />
+                {user_details.username ? (
+                  <CartInHome products={cartInHome} />
                 ) : (
                   <EmptyCart />
                 )}
               </NavigationMenuContent>
             </NavigationMenuItem>
             {/* My Shop */}
-            {user.isSeller ? (
+            {user_details.is_seller ? (
               <NavigationMenuItem>
                 <NavigationMenuTrigger>
                   <div className="flex md:flex-row md:gap-3 items-center">
@@ -218,13 +227,13 @@ const Navigation = () => {
             {/* My Account */}
             <NavigationMenuItem>
               {/* check if user is logged in or not */}
-              {user.firstName !== '' ? (
+              {user_details.username !== '' ? (
                 <NavigationMenuTrigger>
                   <div className="flex md:flex-row md:gap-3 items-center">
                     <ButtonWithIcon href="/user" variant={'ghost'}>
                       <User2 />
                       <p className="hidden md:hidden lg:block font-light pl-3">
-                        {user.firstName}
+                        {user_details.username}
                       </p>
                     </ButtonWithIcon>
                   </div>
