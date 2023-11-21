@@ -1,5 +1,6 @@
 const CONSTANTS = {
   BASEURL: process.env.BASEURL,
+  CANNOT_ADD_MORE_THAN_STOCK: 'Cannot add quantity more than stock',
   ALREADY_LOGGED_OUT: 'User already logged out',
   RO_BASEURL: 'https://api.rajaongkir.com/starter',
   RO_API_PROVINCE: '/api/rajaongkirprovince',
