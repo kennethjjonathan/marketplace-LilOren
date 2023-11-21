@@ -29,19 +29,19 @@ const User: NextPageWithLayout = () => {
   const loading_fetch_user_details = useUser.use.loading_fetch_user_details();
   const [showSetAddressModal, setShowSetAddressModal] =
     useState<boolean>(false);
-    const [loadingLogout, setLoadingLogout] = useState(false)
+  const [loadingLogout, setLoadingLogout] = useState(false);
 
   const handleLogout = async () => {
-    setLoadingLogout(true)
+    setLoadingLogout(true);
     await axios({
       method: 'POST',
       url: 'http://localhost/vm1/api/auth/logout',
       withCredentials: true,
     });
-    setTimeout(()=>{
-        router.push("/");
-        setLoadingLogout(true)
-    },200)
+    setTimeout(() => {
+      router.push('/');
+      setLoadingLogout(true);
+    }, 200);
   };
 
   useEffect(() => {
@@ -100,15 +100,13 @@ const User: NextPageWithLayout = () => {
             </div>
             <div className=""></div>
             <div className="lilOren__user__logout w-full flex justify-center items-center pt-[17px] lg:hidden">
-              {loadingLogout?
-                <AsyncButton isLoading={true}>
-                  {"Logout"}
-                </AsyncButton>
-              :
+              {loadingLogout ? (
+                <AsyncButton isLoading={true}>{'Logout'}</AsyncButton>
+              ) : (
                 <Button variant={'outline'} onClick={() => handleLogout()}>
                   {'Logout'}
                 </Button>
-              }
+              )}
             </div>
           </div>
         </div>
