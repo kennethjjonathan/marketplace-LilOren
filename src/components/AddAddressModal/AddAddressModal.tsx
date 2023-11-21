@@ -1,7 +1,7 @@
 import React from 'react';
-import Modal from '../Modal/Modal';
-import { Plus } from 'lucide-react';
 import { useRouter } from 'next/router';
+import { Plus } from 'lucide-react';
+import Modal from '@/components/Modal/Modal';
 
 interface AddAddressModalProps {
   isVisible: boolean;
@@ -10,7 +10,12 @@ interface AddAddressModalProps {
 
 const AddAddressModal = ({ isVisible, onClose }: AddAddressModalProps) => {
   return (
-    <Modal isVisible={isVisible} onClose={onClose} title="Add Address">
+    <Modal
+      isVisible={isVisible}
+      onClose={onClose}
+      title="Add Address"
+      position="center"
+    >
       <div className="bg-white w-full pt-3 rounded-t-xl">
         <div className="modal_header addresss__header px-4 mt-[10px] text-[18px] font-normal">
           <p className="modal_heading">
@@ -27,7 +32,7 @@ const AddAddressModal = ({ isVisible, onClose }: AddAddressModalProps) => {
           </div>
         </div>
         <div className="body__slider flex overflow-x-auto px-4 scrolling-touch">
-          <SliderItem />
+          {/* <SliderItem /> */}
           <AddNewAddress />
         </div>
       </div>

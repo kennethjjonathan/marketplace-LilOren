@@ -77,7 +77,7 @@ const UserSettingsAddressHeading = () => {
           content="Mal online terbesar Indonesia, tempat berkumpulnya toko / online shop terpercaya se Indonesia. Jual beli online semakin aman dan nyaman di LilOren."
         ></meta>
       </Head>
-      <div className="lg:hidden UserSettingsAddress__navbar w-[100%] min-w-auto flex items-center top-0 h-[52px] border-b-[1px] sticky bg-white">
+      <div className="lg:hidden UserSettingsAddress__navbar w-[100%] min-w-auto flex items-center top-0 h-[52px] border-b-[1px] sticky bg-white z-50">
         <BackButton
           id="back-button"
           icon={<ArrowLeft size={24} />}

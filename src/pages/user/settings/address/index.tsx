@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { ArrowLeft, Plus } from 'lucide-react';
@@ -9,6 +9,7 @@ import SkeletonUserAddress from '@/components/SkeletonUserAddress/SkeletonUserAd
 import { useUser } from '@/store/user/useUser';
 import { IUserAddress } from '@/service/userAddress/userAddressService';
 import UserAddressCard from '@/components/UserAddressCard/UserAddressCard';
+import AddAddressModal from '@/components/AddAddressModal/AddAddressModal';
 
 const MY_ADDRESSES = 'My Addresses';
 const ADD_ADDRESS = 'Add Address';
@@ -20,6 +21,7 @@ const UserSettingsAddress = () => {
   const fetchUserAddresses = useUser.use.fetchUserAddresses();
   const userAddresses = useUser.use.user_addresses();
   const router = useRouter();
+  const [showAddAddressModal, setShowAddAddressModal] = useState(false);
 
   useEffect(() => {
     fetchUserAddresses();
@@ -37,7 +39,7 @@ const UserSettingsAddress = () => {
             <div className="hidden lg:flex w-full justify-end">
               <Button
                 className="flex flex-row gap-2"
-                onClick={() => router.push(PATH_USER_ADDRESS_CREATE)}
+                onClick={() => setShowAddAddressModal(true)}
               >
                 <Plus /> {ADD_ADDRESS}
               </Button>
@@ -52,6 +54,10 @@ const UserSettingsAddress = () => {
               />
             ))}
           </div>
+          <AddAddressModal
+            isVisible={showAddAddressModal}
+            onClose={() => setShowAddAddressModal(false)}
+          />
         </div>
       )}
     </>
@@ -80,7 +86,7 @@ const UserSettingsAddressHeading = () => {
         <BackButton
           id="back-button"
           icon={<ArrowLeft size={24} />}
-          onClick={() => router.back()}
+          onClick={() => router.push('/user')}
         />
         <div>
           <p className="user__address__heading block relative font-medium m-0 text-[16px]">
