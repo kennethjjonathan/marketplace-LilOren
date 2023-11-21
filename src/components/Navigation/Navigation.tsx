@@ -28,15 +28,15 @@ const components: {
 }[] = [
   {
     title: 'My Profile',
-    href: '/user',
+    href: '/user?status=Info',
   },
   {
     title: 'My Order',
-    href: '/',
+    href: '/user/order-detail',
   },
   {
     title: 'Whislist',
-    href: '/docs/primitives/hover-card',
+    href: '/user/wishlist?status=Wishlist',
   },
 ];
 
