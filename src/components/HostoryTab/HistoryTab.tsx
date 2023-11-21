@@ -1,6 +1,6 @@
-import { IWalletHistory } from '@/pages/wallet';
 import { Utils } from '@/utils';
 import React from 'react';
+import { IWalletHistory } from '@/interface/walletPage';
 
 interface WalletHistoryTabProps {
   history: IWalletHistory;
@@ -13,19 +13,21 @@ const WalletHistoryTab = ({ history }: WalletHistoryTabProps) => {
         <p className="font-semibold line-clamp-2 text-ellipsis">
           {history.title}
         </p>
-        <p className="text-xs text-gray-500">{history.date}</p>
+        <p className="text-xs text-gray-500">
+          {Utils.getDDMonthYYYYTime(history.date)}
+        </p>
       </div>
       <div className="flex flex-col items-end gap-1">
         <p
           className={`${
-            history.isGain ? 'text-green-500' : 'text-destructive'
+            history.is_debit ? 'text-green-500' : 'text-destructive'
           }`}
-        >{`${history.isGain ? '+' : '-'}${Utils.convertPrice(
+        >{`${history.is_debit ? '+' : '-'}${Utils.convertPrice(
           history.amount,
         )}`}</p>
-        <p className="text-xs text-gray-500">{`${
-          history.isGain ? 'from' : 'to'
-        }: ${history.isGain ? history.from : history.to}`}</p>
+        {!history.is_debit && history.shop_name && (
+          <p className="text-xs text-gray-500">{`to: ${history.shop_name}`}</p>
+        )}
       </div>
     </div>
   );

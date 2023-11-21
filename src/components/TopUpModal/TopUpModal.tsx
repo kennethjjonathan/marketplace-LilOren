@@ -34,6 +34,9 @@ const TopUpModal = ({
     if (['e', 'E', '+', '-', ' '].includes(e.key)) {
       e.preventDefault();
     }
+    if (e.key === 'Enter') {
+      handleTopUp();
+    }
   }
   function handleAmoutnInput(e: React.ChangeEvent<HTMLInputElement>) {
     const { value } = e.target;
@@ -141,12 +144,14 @@ const TopUpModal = ({
                 Please enter your PIN:
               </p>
             )}
-            <PinInput
-              pins={pins}
-              setPins={setPins}
-              onEnter={handleTopUp}
-              isLoading={isTopUpLoading}
-            />
+            <div className="w-full flex justify-center items-center">
+              <PinInput
+                pins={pins}
+                setPins={setPins}
+                onEnter={handleTopUp}
+                isLoading={isTopUpLoading}
+              />
+            </div>
           </div>
         </div>
         <div className="flex justify-end items-center gap-3">
