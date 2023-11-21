@@ -1,27 +1,12 @@
-import Image from 'next/image';
-import React from 'react';
-import Link from 'next/link';
-import { Star } from 'lucide-react';
+import { IRecommendedProduct } from '@/store/home/useHome';
 import { Utils } from '@/utils';
+import { Star } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
 import styles from './RecommendedProductCard.module.scss';
 
-export interface IRecommendedProductList {
-  image: string;
-  name: string;
-  base_price: number;
-  discounted_price: number;
-  discount?: number;
-  totalSold?: number;
-  shop: {
-    shop_loc: string;
-    shop_name: string;
-    rating_average: number;
-    total_sold: number;
-  };
-}
-
 interface RecommendedProductCardProps {
-  product: IRecommendedProductList;
+  product: IRecommendedProduct;
 }
 
 const RecommendedProductCard = ({ product }: RecommendedProductCardProps) => {
@@ -36,10 +21,10 @@ const RecommendedProductCard = ({ product }: RecommendedProductCardProps) => {
             <div className={styles.container_card}>
               <div className={styles.container}>
                 <div className={styles.image}>
-                  <Link href={'/'}>
+                  <Link href={`/products/${product.product_code}`}>
                     <div className={`img_container block w-[100%]`}></div>
                     <Image
-                      src={product.image}
+                      src={product.image_url}
                       width={500}
                       height={500}
                       alt={'image'}
@@ -77,10 +62,10 @@ const RecommendedProductCard = ({ product }: RecommendedProductCardProps) => {
                       <div className={`${styles.shop_wrapper}`}>
                         <div className={`${styles.shop_and_location}`}>
                           <span className={`${styles.shop_loc}`}>
-                            {product.shop.shop_loc}
+                            {product.shop_location}
                           </span>
                           <span className={`${styles.shop_name}`}>
-                            {product.shop.shop_name}
+                            {product.shop_name}
                           </span>
                         </div>
                       </div>
@@ -93,11 +78,11 @@ const RecommendedProductCard = ({ product }: RecommendedProductCardProps) => {
                           className={'text-[#FFDF00] flex-shrink mr-[2px]'}
                         />
                         <span className={`${styles.shop_rating_average}`}>
-                          {product.shop.rating_average}
+                          {product.rating}
                         </span>
                         <span className={`${styles.separator}`}></span>
                         <span className={`${styles.shop_label}`}>
-                          {product.shop.total_sold}+ terjual
+                          {product.total_sold}+ terjual
                         </span>
                       </div>
                     </div>

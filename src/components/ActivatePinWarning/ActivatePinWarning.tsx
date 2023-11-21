@@ -9,9 +9,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-
 import PinInput from '@/components/PinInput/PinInput';
-
 import styles from './ActivatePinWarning.module.css';
 import AsyncButton from '../AsyncButton/AsyncButton';
 import { Button } from '../ui/button';
@@ -19,7 +17,6 @@ import axiosInstance from '@/lib/axiosInstance';
 import CONSTANTS from '@/constants/constants';
 
 import { Utils } from '@/utils';
-import { ICheckoutWallet } from '@/interface/checkoutPage';
 
 interface ActivatePinWarningProps {
   isOpen: boolean;
