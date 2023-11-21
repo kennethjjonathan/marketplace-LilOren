@@ -1,22 +1,51 @@
-import React, { Fragment, ReactElement, ReactNode, useState } from 'react';
+import React, { ReactElement, ReactNode, useEffect, useState } from 'react';
+import axios from 'axios';
 import { ArrowLeft, KeyRound, Store } from 'lucide-react';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
+import { useSearchParams } from 'next/navigation';
 import { NextPageWithLayout } from '../_app';
 import { Button } from '@/components/ui/button';
-import AddAddressModal from '../../components/AddAddressModal/AddAddressModal';
 import BackButton from '@/components/BackButton/BackButton';
 import UserSettingsLayout from '@/components/UserSettingsLayout/UserSettingsLayout';
-import styles from './User.module.scss';
-import Head from 'next/head';
 import UserPresentation from '@/components/UserPresentation/UserPresentation';
+import { useUser } from '@/store/user/useUser';
+import AsyncButton from '@/components/AsyncButton/AsyncButton';
+import styles from './User.module.scss';
 
 const User: NextPageWithLayout = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const status = searchParams.get('status');
+  const fetchUserDetails = useUser.use.fetchUserDetails();
+  const user_details = useUser.use.user_details();
+  const loading_fetch_user_details = useUser.use.loading_fetch_user_details();
   const [showSetAddressModal, setShowSetAddressModal] =
     useState<boolean>(false);
-  const handleLogout = () => {
-    console.log('logout');
+  const [loadingLogout, setLoadingLogout] = useState(false);
+
+  const handleLogout = async () => {
+    setLoadingLogout(true);
+    await axios({
+      method: 'POST',
+      url: 'http://localhost/vm1/api/auth/logout',
+      withCredentials: true,
+    });
+    setTimeout(() => {
+      router.push('/');
+      setLoadingLogout(true);
+    }, 200);
   };
+
+  useEffect(() => {
+    if (status === '' || status === null) {
+      fetchUserDetails();
+    }
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  }, [status]);
 
   return (
     <>
@@ -39,49 +68,47 @@ const User: NextPageWithLayout = () => {
           content="Mal online terbesar Indonesia, tempat berkumpulnya toko / online shop terpercaya se Indonesia. Jual beli online semakin aman dan nyaman di LilOren."
         ></meta>
       </Head>
-      <Fragment>
-        <div className="lg:flex lg:justify-center lg:items-center w-[100vw] bg-white">
-          <div className="bg-accent flex flex-col justify-start h-[100vh] lg:w-[75vw] lg:p-4 lg:bg-transparent lg:hidden">
-            <UserPresentation />
-            <div className="lilOren__user__setting pt-[17px] bg-white lg:bg-transparent lg:w-[350px] lg:hidden">
-              <span id="account-setting-section" className="font-bold px-4">
-                {'Account Settings'}
-              </span>
-              <ul className="lilOren__user__account__setting__list mt-[5px]">
-                <UserSetting
-                  title={'My Address'}
-                  icon={<Store />}
-                  description={'Atur alamat pengiriman belanjaan'}
-                  onClick={() => router.push('/user/settings/address')}
-                />
-                <UserSetting
-                  title={'Change Password'}
-                  icon={<KeyRound />}
-                  description={'Atur password akun Anda'}
-                  onClick={() => router.push('/user/settings/password')}
-                />
-              </ul>
-            </div>
-            <div className=""></div>
-            <div className="lilOren__user__logout w-full flex justify-center items-center pt-[17px] lg:hidden">
+      <div className="lg:flex lg:justify-center lg:items-center w-[100vw] bg-white">
+        <div className="bg-accent flex flex-col justify-start h-[100vh] lg:w-[75vw] lg:p-4 lg:bg-transparent lg:hidden">
+          <UserPresentation />
+          <div className="lilOren__user__setting pt-[17px] bg-white lg:bg-transparent lg:w-[350px] lg:hidden">
+            <span id="account-setting-section" className="font-bold px-4">
+              {'Account Settings'}
+            </span>
+            <ul className="lilOren__user__account__setting__list mt-[5px]">
+              <UserSetting
+                title={'My Address'}
+                icon={<Store />}
+                description={'Atur alamat pengiriman belanjaan'}
+                onClick={() => router.push('/user/address?status=Address')}
+              />
+              <UserSetting
+                title={'Reset Password'}
+                icon={<KeyRound />}
+                description={'Reset password akun Anda'}
+                onClick={() => router.push('/forget-password')}
+              />
+            </ul>
+          </div>
+          <div className=""></div>
+          <div className="lilOren__user__logout w-full flex justify-center items-center pt-[17px] lg:hidden">
+            {loadingLogout ? (
+              <AsyncButton isLoading={true}>{'Logout'}</AsyncButton>
+            ) : (
               <Button variant={'outline'} onClick={() => handleLogout()}>
                 {'Logout'}
               </Button>
-            </div>
+            )}
           </div>
         </div>
-        <AddAddressModal
-          isVisible={showSetAddressModal}
-          onClose={() => setShowSetAddressModal(false)}
-        />
-      </Fragment>
+      </div>
     </>
   );
 };
 
 User.getLayout = function getLayout(page: ReactElement) {
   return (
-    <UserSettingsLayout currentTab="My Biodata" component={<UserHeading />}>
+    <UserSettingsLayout currentTab="Info" component={<UserHeading />}>
       {page}
     </UserSettingsLayout>
   );

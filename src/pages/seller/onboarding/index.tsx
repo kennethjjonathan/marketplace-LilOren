@@ -8,7 +8,7 @@ import RegisterSeller from '../../../../public/seller-portal.svg';
 import { Button } from '@/components/ui/button';
 import styles from './SellerOnboarding.module.scss';
 import BackButton from '@/components/BackButton/BackButton';
-import UserSettingsLayout from '@/components/UserSettingsLayout/UserSettingsLayout';
+import SellerOnboardingLayout from '@/components/SellerOnboardingLayout/SellerOnboardingLayout';
 
 const START_REGISTERED =
   'To get started, register as a seller by providing the necessary information.';
@@ -18,19 +18,32 @@ const WELCOME_TO_LILOREN = 'Welcome to LilOren!';
 const SellerOnboarding: NextPageWithLayout = () => {
   const router = useRouter();
   return (
-    <>
-      <div>
+    <div className="lg:h-[100vh] lg:flex lg:flex-col lg:gap-8 lg:pt-5">
+      <div className="lg:bg-white">
         <div className={styles.seller_portal_header}>
           <Image
             src={RegisterSeller}
             width={500}
             height={500}
             alt={'start-registered-as-seller'}
+            className="lg:rounded-2xl w-full sm:w-[300px] md:w-[350px] md:lg:w-[300px]"
           />
           <div className="w-[300px] mt-8">
             <p className="font-ligt text-center">{START_REGISTERED}</p>
           </div>
         </div>
+      </div>
+      <div
+        className={`hidden w-full items-center justify-center lg:flex lg:pt-4`}
+      >
+        <Button
+          className="w-[200px]"
+          type="submit"
+          variant={'default'}
+          onClick={() => router.push('/seller/onboarding/form')}
+        >
+          {'Start Registration'}
+        </Button>
       </div>
       <div className={styles.button_wrapper}>
         <Button
@@ -42,7 +55,7 @@ const SellerOnboarding: NextPageWithLayout = () => {
           {'Start Registration'}
         </Button>
       </div>
-    </>
+    </div>
   );
 };
 
@@ -86,9 +99,9 @@ const SellerOnboardingHeading = () => {
 
 SellerOnboarding.getLayout = function getLayout(page: ReactElement) {
   return (
-    <UserSettingsLayout component={<SellerOnboardingHeading />}>
+    <SellerOnboardingLayout component={<SellerOnboardingHeading />}>
       {page}
-    </UserSettingsLayout>
+    </SellerOnboardingLayout>
   );
 };
 

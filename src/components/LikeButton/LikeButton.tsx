@@ -18,8 +18,8 @@ const LikeButton = ({
       onClick={() => setIsLiked((prev) => !prev)}
     >
       <Heart
-        className={`aspect-square w-6 duration-300 lg:hover:text-blue-500 focus:outline-none sm:w-8 xl:w-9 ${
-          isLiked ? 'fill-red-500 text-red-500' : 'text-black'
+        className={`aspect-square w-5 duration-300 lg:hover:text-blue-500 focus:outline-none sm:w-8 xl:w-9 ${
+          isLiked ? 'fill-red-500 text-red-500' : 'text-muted-foreground'
         }`}
       />
       {likedAmount && (

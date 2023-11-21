@@ -10,10 +10,10 @@ interface SellerProfileSnippetProps {
 
 const SellerProfileSnippet = ({ seller }: SellerProfileSnippetProps) => {
   return (
-    <div className="px-2 flex items-center gap-2 w-full sm:gap-5 rounded-md shadow-lg border-[1px] p-2">
+    <div className="flex items-center gap-2 w-full sm:gap-5 px-2">
       <div className="rounded-full aspect-square relative w-1/5 overflow-hidden lg:w-2/12 xl:w-1/12 ">
         <Image
-          src={seller.profile_picture_url}
+          src={seller.profile_picture_url || '/blank-profile.webp'}
           alt="Shop's profile pict"
           fill
           sizes="(max-width: 768px) 50vw, 33vw"
@@ -28,9 +28,6 @@ const SellerProfileSnippet = ({ seller }: SellerProfileSnippetProps) => {
           </p>
         </div>
         <div className="flex items-center justify-start gap-2">
-          <Button size="customBlank" className="text-base px-2 py-1 sm:text-lg">
-            Chat now
-          </Button>
           <Button size="customBlank" className="text-base px-2 py-1 sm:text-lg">
             View Shop
           </Button>

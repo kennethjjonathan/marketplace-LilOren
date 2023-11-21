@@ -1,0 +1,7 @@
+.label {
+  @apply text-[12px] lg:text-[14px] text-muted-foreground font-bold text-left;
+}
+
+.product_name {
+  @apply w-[30vw];
+}

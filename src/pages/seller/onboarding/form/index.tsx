@@ -1,4 +1,10 @@
-import React, { ChangeEvent, ReactElement, useEffect, useState } from 'react';
+import React, {
+  ChangeEvent,
+  Fragment,
+  ReactElement,
+  useEffect,
+  useState,
+} from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { ArrowLeft } from 'lucide-react';
@@ -23,6 +29,7 @@ import { Utils } from '@/utils';
 import { ToastContainer, ToastContent } from 'react-toastify';
 import AsyncButton from '@/components/AsyncButton/AsyncButton';
 import DotsLoading from '@/components/DotsLoading/DotsLoading';
+import SellerOnboardingLayout from '@/components/SellerOnboardingLayout/SellerOnboardingLayout';
 
 export interface IShopInfoFormData {
   shop_name: string;
@@ -84,7 +91,7 @@ const SellerOnboardingForm = () => {
   const fetchUserDetails = () => {
     setTimeout(() => {
       setLoadingFetchUserDetails(false);
-    }, 2000);
+    }, 500);
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>, key: string) => {
@@ -110,17 +117,19 @@ const SellerOnboardingForm = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoadingPost(true);
-    const responseSubmit = await SellerMerchantClient.create(shopInfoFormData);
-    const error = responseSubmit?.error;
-    const message = responseSubmit?.message;
-
-    if (error) {
-      Utils.notify(message as ToastContent, 'error', 'light');
-    } else {
-      Utils.notify(message as ToastContent, 'success', 'light');
+    if (!showEditAddress) {
+      setLoadingPost(true);
+      const responseSubmit =
+        await SellerMerchantClient.create(shopInfoFormData);
+      const error = responseSubmit?.error;
+      const message = responseSubmit?.message;
+      if (error) {
+        Utils.notify(message as ToastContent, 'error', 'light');
+      } else {
+        Utils.notify(message as ToastContent, 'success', 'light');
+      }
+      setLoadingPost(false);
     }
-    setLoadingPost(false);
   };
 
   const setAddress = (address_id: string) => {
@@ -137,115 +146,142 @@ const SellerOnboardingForm = () => {
   }, []);
 
   return (
-    <div className="h-[90vh]">
-      <ToastContainer />
-      {loadingFetchUserDetails ? (
-        <DotsLoading />
-      ) : (
-        <form className="bg-white pb-[100px]" onSubmit={handleSubmit}>
-          <div className="mb-6 mt-6 px-[14px] flex flex-col gap-4">
-            <InputWithLabel
-              type="text"
-              label={SHOP_NAME}
-              id="shop-name"
-              labelStyling="font-light"
-              value={shopInfoFormData.shop_name}
-              minLength={5}
-              maxLength={30}
-              onChange={(e) => handleChange(e, 'shop_name')}
-              isValid={isDataValid.shop_name}
-              onBlur={() => validateData('shop_name', /^.{5,35}$/)}
-              validation="Please enter 5 - 30 characters"
-              required
-            />
-          </div>
-          <div className="divider bg-accent h-2"></div>
-          <div className="mb-6 mt-6 px-[14px] flex flex-col gap-4">
-            <Label className="font-light w-full md:text-base">
-              {SHOP_ADDRESS}
-              <span className="text-primary">{' *'}</span>
-            </Label>
-            <div className="detail address text-[14px]">
-              <div className="">
-                <p className="font-bold ">{selectedAddress.receiver_name}</p>
-                <p>{selectedAddress.address}</p>
-                <p>{selectedAddress.postal_code}</p>
-              </div>
-              <Button
-                className="pl-0"
-                variant={'link'}
-                onClick={() => setShowEditAddress(true)}
-              >
-                {'Edit'}
-              </Button>
-            </div>
-          </div>
-          {loadingPost ? (
-            <div className={styles.button_wrapper}>
-              <AsyncButton className="w-full" isLoading={true}>
-                {'Submit'}
-              </AsyncButton>
-            </div>
-          ) : (
-            <div className={styles.button_wrapper}>
-              <Button
-                disabled={
-                  !Object.values(shopInfoFormData).every((val) => val !== '')
-                }
-                className="w-full"
-                type="submit"
-                variant={'default'}
-              >
-                {'Register Shop'}
-              </Button>
-            </div>
-          )}
-          <Modal
-            title={'Edit Address'}
-            isVisible={showEditAddress}
-            onClose={() => setShowEditAddress(false)}
+    <Fragment>
+      <div className="h-[90vh] lg:flex lg:justify-center lg:w-full lg:bg-primary-foreground">
+        <ToastContainer />
+        {loadingFetchUserDetails ? (
+          <DotsLoading />
+        ) : (
+          <form
+            className="bg-white pb-[100px] lg:pb-2 lg:w-[30vw] flex flex-col justify-center lg:border-[1px] rounded-xl lg:h-fit lg:mt-[100px]"
+            onSubmit={handleSubmit}
           >
-            <div className="Edit Address bg-white w-full rounded-t-2xl pt-6 h-[50vh] px-4 flex flex-col gap-4 justify-between">
-              {/* Address */}
-              <div className="">
-                <p className="Edit Address Title mb-4">{'Edit Address'}</p>
-                <Label className="font-light w-full md:text-base">
-                  {SHOP_ADDRESS}
-                </Label>
-                <Select onValueChange={(e) => handleChangeAddress(e)}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select a Address" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup className="h-fit w-[90vw] overflow-y-scroll">
-                      <SelectLabel>{'Address'}</SelectLabel>
-                      {userAddresses.map((address) => (
-                        <SelectItem
-                          className="text-left"
-                          key={`key:${address.address}`}
-                          value={String(address.id)}
-                        >
-                          {address.address}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="h-[60px] bg-white w-full pr-8 flex justify-center items-center text-ellipsis whitespace-nowrap overflow-hidden fixed bottom-0">
+            <div className="mb-6 mt-6 px-[14px] flex flex-col gap-4">
+              <InputWithLabel
+                type="text"
+                label={SHOP_NAME}
+                id="shop-name"
+                labelStyling="font-light"
+                value={shopInfoFormData.shop_name}
+                minLength={5}
+                maxLength={30}
+                onChange={(e) => handleChange(e, 'shop_name')}
+                isValid={isDataValid.shop_name}
+                onBlur={() => validateData('shop_name', /^.{5,35}$/)}
+                validation="Please enter 5 - 30 characters"
+                required
+              />
+            </div>
+            <div className="divider bg-accent h-2"></div>
+            <div className="mb-6 mt-6 px-[14px] flex flex-col gap-4">
+              <Label className="font-light w-full md:text-base">
+                {SHOP_ADDRESS}
+                <span className="text-primary">{' *'}</span>
+              </Label>
+              <div className="detail address text-[14px]">
+                <div className="">
+                  <p className="font-bold ">{selectedAddress.receiver_name}</p>
+                  <p>{selectedAddress.address}</p>
+                  <p>{selectedAddress.postal_code}</p>
+                </div>
                 <Button
-                  disabled={shopInfoFormData.address_id === ''}
-                  onClick={() => setAddress(shopInfoFormData.address_id)}
-                  className={'bottom-0 w-full'}
+                  className="pl-0"
+                  variant={'link'}
+                  onClick={() => setShowEditAddress(true)}
                 >
-                  {'Save'}
+                  {'Edit'}
                 </Button>
               </div>
             </div>
-          </Modal>
-        </form>
-      )}
-    </div>
+            {loadingPost ? (
+              <div className={styles.button_wrapper}>
+                <AsyncButton className="w-full" isLoading={true}>
+                  {'Submit'}
+                </AsyncButton>
+              </div>
+            ) : (
+              <>
+                <div
+                  className={
+                    'hidden w-full lg:flex justify-end items-center pr-3'
+                  }
+                >
+                  <Button
+                    disabled={
+                      !Object.values(shopInfoFormData).every(
+                        (val) => val !== '',
+                      )
+                    }
+                    className="w-[150px]"
+                    type="submit"
+                    variant={'default'}
+                  >
+                    {'Register Shop'}
+                  </Button>
+                </div>
+                <div className={styles.button_wrapper}>
+                  <Button
+                    disabled={
+                      !Object.values(shopInfoFormData).every(
+                        (val) => val !== '',
+                      )
+                    }
+                    className="w-full"
+                    type="submit"
+                    variant={'default'}
+                  >
+                    {'Register Shop'}
+                  </Button>
+                </div>
+              </>
+            )}
+          </form>
+        )}
+        <Modal
+          title={'Edit Address'}
+          isVisible={showEditAddress}
+          onClose={() => setShowEditAddress(false)}
+        >
+          <div className="Edit Address bg-white w-full rounded-t-2xl pt-6 h-[50vh] px-4 flex flex-col gap-4 justify-between">
+            {/* Address */}
+            <div className="">
+              <p className="Edit Address Title mb-4">{'Edit Address'}</p>
+              <Label className="font-light w-full md:text-base">
+                {SHOP_ADDRESS}
+              </Label>
+              <Select onValueChange={(e) => handleChangeAddress(e)}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a Address" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup className="h-fit w-[90vw] overflow-y-scroll">
+                    <SelectLabel>{'Address'}</SelectLabel>
+                    {userAddresses.map((address) => (
+                      <SelectItem
+                        className="text-left"
+                        key={`key:${address.address}`}
+                        value={String(address.id)}
+                      >
+                        {address.address}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="h-[60px] bg-white w-full pr-8 flex justify-center items-center text-ellipsis whitespace-nowrap overflow-hidden fixed bottom-0">
+              <Button
+                disabled={shopInfoFormData.address_id === ''}
+                onClick={() => setAddress(shopInfoFormData.address_id)}
+                className={'bottom-0 w-full'}
+              >
+                {'Save'}
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      </div>
+    </Fragment>
   );
 };
 
@@ -291,9 +327,9 @@ const SellerOnboardingFormHeading = () => {
 
 SellerOnboardingForm.getLayout = function getLayout(page: ReactElement) {
   return (
-    <UserSettingsLayout component={<SellerOnboardingFormHeading />}>
+    <SellerOnboardingLayout component={<SellerOnboardingFormHeading />}>
       {page}
-    </UserSettingsLayout>
+    </SellerOnboardingLayout>
   );
 };
 

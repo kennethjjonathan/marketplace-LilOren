@@ -45,3 +45,9 @@ export interface IProductPage {
   low_price: number;
   is_variant: boolean;
 }
+
+export interface IAddToCart {
+  product_variant_id: number;
+  seller_id: number;
+  quantity: number;
+}

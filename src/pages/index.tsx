@@ -193,7 +193,7 @@ const Home: NextPageWithLayout = () => {
             {recommendationProducts.map((product, index) => (
               <RecommendedProductCard
                 product={product}
-                key={`key:${product},${index}`}
+                key={`key:${product.name},${index.toString()}`}
               />
             ))}
           </div>

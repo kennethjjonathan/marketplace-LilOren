@@ -1,7 +1,3 @@
 .divider {
-  width: 100%;
-  height: 8px;
-  background-color: var(--NN50, #f0f3f7);
-  border: 0px;
-  margin: 0px;
+  @apply w-[100%] h-2 bg-primary-foreground border-0 m-0;
 }

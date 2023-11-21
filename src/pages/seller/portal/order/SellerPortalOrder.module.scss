@@ -1,7 +1,5 @@
 .sellerPortalOrder {
-  padding: 10px 24px 24px;
-  min-height: 92vh;
-  height: auto;
+  @apply bg-primary-foreground min-h-[92vh] h-auto;
 }
 
 .shopname {
@@ -22,5 +20,5 @@
 }
 
 .page_order {
-  @apply bg-white;
+  @apply bg-primary-foreground w-[85vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw];
 }
