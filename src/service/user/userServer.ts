@@ -1,5 +1,6 @@
-import { IRegister, ISignIn } from '@/interface/user';
 import axios from 'axios';
+import { IRegister, ISignIn } from '@/interface/user';
+import axiosInstance from '@/lib/axiosInstance';
 
 export class UserServer {
   static async post(url: string, payload: IRegister | ISignIn) {
@@ -24,4 +25,28 @@ export class UserServer {
       return responseAPI;
     }
   }
+
+  static get = async (url: string) => {
+    try {
+      const response = await axiosInstance({
+        method: 'GET',
+        url: url,
+      });
+      if (response.status === 200) {
+        const responseAPI = {
+          error: false,
+          data: response.data.data,
+          message: 'success get data',
+        };
+        return responseAPI;
+      }
+    } catch (error: any) {
+      const responseAPI = {
+        error: true,
+        data: {},
+        message: 'error get user details',
+      };
+      return responseAPI;
+    }
+  };
 }

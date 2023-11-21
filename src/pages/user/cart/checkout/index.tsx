@@ -10,7 +10,7 @@ import CheckoutLayout from '@/components/CheckoutLayout/CheckoutLayout';
 const CheckoutPage: NextPageWithLayout = () => {
   return (
     <>
-      <section className="flex flex-col justify-center items-center w-full bg-white roboto-text">
+      <section className="flex flex-col justify-center items-center w-full bg-white">
         <div className="w-full md:w-[75vw] px-2 pt-5 pb-20 flex flex-col gap-2">
           <CheckoutAddressOption />
           {/* <OrderCard items={dummyArray} /> */}
