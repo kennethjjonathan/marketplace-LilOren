@@ -1,23 +1,22 @@
-import React, { useState } from 'react';
-import { GetServerSideProps } from 'next';
-import Image from 'next/image';
-import {
-  signIn,
-  getProviders,
-  ClientSafeProvider,
-  LiteralUnion,
-} from 'next-auth/react';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { BuiltInProviderType } from 'next-auth/providers/index';
 import AsyncButton from '@/components/AsyncButton/AsyncButton';
 import GoogleButton from '@/components/GoogleButton/GoogleButton';
 import { InputWithLabel } from '@/components/InputWithLabel/InputWithLabel';
-import { LogIn } from 'lucide-react';
-import { IErrorResponse } from '@/interface/user';
+import { IErrorResponse, ISignIn } from '@/interface/user';
 import { UserClient } from '@/service/user/userClient';
 import { Utils } from '@/utils';
-import { ISignIn } from '@/interface/user';
+import { LogIn } from 'lucide-react';
+import { GetServerSideProps } from 'next';
+import { BuiltInProviderType } from 'next-auth/providers/index';
+import {
+  ClientSafeProvider,
+  LiteralUnion,
+  getProviders,
+  signIn,
+} from 'next-auth/react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import React, { useState } from 'react';
 
 interface SignInPageProps {
   providers: Record<LiteralUnion<BuiltInProviderType>, ClientSafeProvider>;
@@ -208,6 +207,10 @@ function SignInPage({ providers }: SignInPageProps) {
             Register
           </Link>
         </p>
+
+        <Link href="/forgot-password" className="font-normal underline">
+          Forgot Password
+        </Link>
       </div>
     </section>
   );

@@ -4,6 +4,7 @@ const CONSTANTS = {
   RO_BASEURL: 'https://api.rajaongkir.com/starter',
   RO_API_PROVINCE: '/api/rajaongkirprovince',
   RO_API_CITY: '/api/rajaongkir',
+  REDIS_URL: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
   CATEGORY_LIST: [
     {
       title: 'Electronic',
