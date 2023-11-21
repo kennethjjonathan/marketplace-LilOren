@@ -15,7 +15,11 @@ export class Utils {
     return data.length === 0 || data === '' || data === 0;
   };
 
-  static notify = (message: ToastContent, type: TypeOptions, theme: Theme) => {
+  static notify = <Message extends ToastContent>(
+    message: Message,
+    type: TypeOptions,
+    theme: Theme,
+  ) => {
     toast(message, {
       type: type,
       position: toast.POSITION.TOP_RIGHT,

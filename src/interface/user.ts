@@ -25,3 +25,11 @@ export interface IAuthReturnData {
   data: IMessageReponse | null;
   message: string;
 }
+export interface IUserDetails {
+  user_id: number;
+  username: string;
+  is_seller: boolean;
+  is_pin_set: boolean;
+  cart_count: number;
+  profile_picture_url: string;
+}
