@@ -172,7 +172,7 @@ const Navigation = () => {
               <NavigationMenuItem>
                 <NavigationMenuTrigger>
                   <div className="flex md:flex-row md:gap-3 items-center">
-                    <ButtonWithIcon href="/user" variant={'ghost'}>
+                    <ButtonWithIcon href="/user?status=Info" variant={'ghost'}>
                       <Store />
                       <p className="hidden md:hidden lg:block font-light pl-3">
                         {'My Shop'}
@@ -230,7 +230,7 @@ const Navigation = () => {
               {user_details.username !== '' ? (
                 <NavigationMenuTrigger>
                   <div className="flex md:flex-row md:gap-3 items-center">
-                    <ButtonWithIcon href="/user" variant={'ghost'}>
+                    <ButtonWithIcon href="/user?status=Info" variant={'ghost'}>
                       <User2 />
                       <p className="hidden md:hidden lg:block font-light pl-3">
                         {user_details.username}
@@ -240,7 +240,7 @@ const Navigation = () => {
                 </NavigationMenuTrigger>
               ) : (
                 <div className="hidden lg:flex flex-row gap-2 pl-2">
-                  <ButtonWithIcon href={'/login'}>{'Login'}</ButtonWithIcon>
+                  <ButtonWithIcon href={'/signin'}>{'Login'}</ButtonWithIcon>
                   <ButtonWithIcon variant={'outline'} href={'/register'}>
                     {'Register'}
                   </ButtonWithIcon>
