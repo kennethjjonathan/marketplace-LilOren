@@ -44,7 +44,8 @@ const PinInput = ({
     index: number,
   ) {
     currentActiveIndex = index;
-    if (['e', 'E', '+', '-'].includes(e.key)) {
+
+    if (['e', 'E', '+', '-', ' '].includes(e.key)) {
       e.preventDefault();
     }
     if (e.key === 'Tab') {
@@ -73,6 +74,7 @@ const PinInput = ({
           onKeyDown={(e) => handleKeyDown(e, index)}
           value={pins[index]}
           disabled={isLoading}
+          onWheel={(e) => e.currentTarget.blur()}
           className={` ${styles.hideIndicator} aspect-square w-10 border-[1px] rounded bg-transparent outline-none text-center text-xl border-gray-500 focus:border-black focus:text-black text-gray-500 opacity-60 focus:opacity-100 sm:w-12 sm:text-2xl`}
           {...props}
         />

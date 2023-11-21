@@ -109,7 +109,7 @@ const CheckoutPage: NextPageWithLayout = () => {
     balance: 0,
   });
   const [updateToggle, setUpdateToggle] = useState<boolean>(false);
-  const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
+  const [isAllPriceLoading, setIsAllPriceLoading] = useState<boolean>(false);
 
   async function handleCourierChange(
     shop_id: number,
@@ -300,14 +300,16 @@ const CheckoutPage: NextPageWithLayout = () => {
   }
 
   async function handleChangeAddress() {
-    if (couriers === undefined || chosenAddress === undefined) return;
+    if (chosenAddress === undefined || couriers === undefined) return;
+    setIsAllPriceLoading(true);
+    setIsSummaryLoading(true);
     try {
-      const newRequestSummary: IRequestSummary = {
-        order_deliveries: couriers,
-        buyer_address_id: chosenAddress.id,
-      };
+      await getSummary(chosenAddress, couriers);
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsAllPriceLoading(false);
+      setIsSummaryLoading(false);
     }
   }
 
@@ -320,7 +322,7 @@ const CheckoutPage: NextPageWithLayout = () => {
   }, [updateToggle]);
 
   useEffect(() => {
-    console.log('masuk');
+    handleChangeAddress();
   }, [chosenAddress]);
 
   if (checkouts === undefined || checkouts.length === 0) {
@@ -362,6 +364,7 @@ const CheckoutPage: NextPageWithLayout = () => {
                 isCourierValid={
                   couriersValid ? couriersValid[index] : undefined
                 }
+                isAllPriceLoading={isAllPriceLoading}
               />
             ))}
         </div>

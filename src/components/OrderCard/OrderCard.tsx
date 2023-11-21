@@ -27,6 +27,7 @@ interface OrderCardProps {
   ) => void;
   checkoutSummary: ICheckoutSummary;
   isCourierValid: boolean | undefined;
+  isAllPriceLoading: boolean;
 }
 
 const OrderCard = ({
@@ -36,6 +37,7 @@ const OrderCard = ({
   handleCouriersChange,
   checkoutSummary,
   isCourierValid,
+  isAllPriceLoading,
 }: OrderCardProps) => {
   const [orderSummary, setOrderSummary] = useState<IOrderSummary>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -108,8 +110,8 @@ const OrderCard = ({
             </p>
           )}
         </div>
-        {isLoading && <OrderSumsSkeleton />}
-        {!isLoading && orderSummary && (
+        {(isLoading || isAllPriceLoading) && <OrderSumsSkeleton />}
+        {!isLoading && !isAllPriceLoading && orderSummary && (
           <div className="w-full bg-primary-foreground py-2 max-w-sm px-1">
             {orderSummary.sub_total_product > 0 && (
               <p className="text-gray-600 text-xs sm:text-sm">{`product(s): ${Utils.convertPrice(
