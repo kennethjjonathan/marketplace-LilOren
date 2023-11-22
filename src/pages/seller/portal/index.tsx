@@ -1,6 +1,6 @@
-import React, { ReactElement } from 'react';
-import { NextPageWithLayout } from '@/pages/_app';
 import SellerLayout from '@/components/SellerLayout/SellerLayout';
+import { NextPageWithLayout } from '@/pages/_app';
+import { ReactElement } from 'react';
 
 const SellerHome: NextPageWithLayout = () => {
   return <div></div>;
