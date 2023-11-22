@@ -1,8 +1,7 @@
 import { create } from 'zustand';
 import { createZusSelector } from '../useSelector';
-import { IUserAddress } from '@/service/userAddress/userAddressService';
 import { UserAddressClient } from '@/service/userAddress/userAddressClient';
-import { IUserDetails } from '@/interface/user';
+import { IUserAddress, IUserDetails } from '@/interface/user';
 import { UserClient } from '@/service/user/userClient';
 
 type State = {
