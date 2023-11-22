@@ -215,7 +215,7 @@ function SignInPage({ providers }: SignInPageProps) {
           </Link>
         </p>
 
-        <Link href="/reset-password" className="font-normal underline">
+        <Link href="/forgot-password" className="font-normal underline">
           Forgot Password
         </Link>
       </div>
