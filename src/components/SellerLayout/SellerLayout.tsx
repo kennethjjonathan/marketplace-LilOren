@@ -1,9 +1,9 @@
-import React, { ReactNode, useState } from 'react';
 import { Store } from 'lucide-react';
-import Navbar from './Navbar';
-import Sidebar from './Sidebar';
-import styles from './SellerLayout.module.scss';
+import { ReactNode, useState } from 'react';
 import Tabs, { IData } from '../Tabs/Tabs';
+import Navbar from './Navbar';
+import styles from './SellerLayout.module.scss';
+import Sidebar from './Sidebar';
 
 interface SellerLayoutProps {
   children: ReactNode;
@@ -27,7 +27,7 @@ const SellerLayout = ({ children, header, tabData }: SellerLayoutProps) => {
             <Store className="mr-4 text-muted-foreground" />
             {header}
           </div>
-          <Tabs isSeller datas={tabData!} />
+          {tabData && <Tabs isSeller datas={tabData!} />}
           {children}
         </div>
       </div>
