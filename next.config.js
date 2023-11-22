@@ -26,6 +26,9 @@ const nextConfig = {
         hostname: 'down-aka-id.img.susercontent.com',
         port: '',
       },
+      {
+        hostname: 'cf.shopee.sg',
+      },
     ],
   },
   output: 'standalone',
