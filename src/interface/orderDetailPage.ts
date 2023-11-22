@@ -15,11 +15,7 @@ export interface IOrderItem {
 export interface IOrderProductItem {
   product_name: string;
   thumbnail_url: string;
-  variant1_name: string;
-  variant2_name: string;
+  variant_name: string;
   sub_total_price: number;
   quantity: number;
-  base_price: number;
-  discounted_price: number;
-  discount: number;
 }
