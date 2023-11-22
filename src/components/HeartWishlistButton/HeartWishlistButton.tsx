@@ -1,6 +1,7 @@
 import React from 'react';
 import { Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useWishlist } from '@/store/wishlist/useWishlist';
 
 interface HeartWishlistButtonProps {
   product_code: string;
@@ -11,6 +12,7 @@ const HeartWishlistButton = ({
   product_code,
   is_in_wishlist,
 }: HeartWishlistButtonProps) => {
+  const fetchUserWishlist = useWishlist.use.fetchUserWishlist();
   const handleRemoveFromWishlist = () => {};
 
   const handleAddToWishlist = () => {};

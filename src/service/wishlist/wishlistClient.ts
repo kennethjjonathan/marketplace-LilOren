@@ -9,4 +9,19 @@ export class WishlistClient {
     );
     return response;
   };
+
+  static addToWishlist = async (data: { product_code: string }) => {
+    const response = await WishlistServer.post(
+      `${CONSTANTS.BASEURL}/wishlist`,
+      data,
+    );
+    return response;
+  };
+
+  static removeFromWishlist = async (wishlist_id: number) => {
+    const response = await WishlistServer.delete(
+      `${CONSTANTS.BASEURL}/wishlist/${wishlist_id}`,
+    );
+    return response;
+  };
 }

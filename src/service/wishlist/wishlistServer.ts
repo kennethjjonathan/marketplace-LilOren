@@ -2,6 +2,55 @@ import { IWishlistResponse } from '@/interface/wishlist';
 import axiosInstance from '@/lib/axiosInstance';
 
 export class WishlistServer {
+  static post = async (url: string, data: { product_code: string }) => {
+    try {
+      const response = await axiosInstance({
+        method: 'POST',
+        url: url,
+        data: data,
+      });
+      if (response.status === 200) {
+        const responseAPI: IWishlistResponse = {
+          error: false,
+          message: 'success add to wishlist',
+          data: undefined,
+        };
+        return responseAPI;
+      }
+    } catch (error: any) {
+      const responseAPI: IWishlistResponse = {
+        error: true,
+        message: 'failed add to wishlist',
+        data: undefined,
+      };
+      return responseAPI;
+    }
+  };
+
+  static delete = async (url: string) => {
+    try {
+      const response = await axiosInstance({
+        method: 'DELETE',
+        url: url,
+      });
+      if (response.status === 200) {
+        const responseAPI: IWishlistResponse = {
+          error: false,
+          message: 'success removed from wishlist',
+          data: undefined,
+        };
+        return responseAPI;
+      }
+    } catch (error: any) {
+      const responseAPI: IWishlistResponse = {
+        error: true,
+        message: 'failed removed from wishlist',
+        data: undefined,
+      };
+      return responseAPI;
+    }
+  };
+
   static get = async (
     url: string,
     params: {
@@ -25,7 +74,7 @@ export class WishlistServer {
     } catch (error: any) {
       const responseAPI: IWishlistResponse = {
         error: true,
-        message: 'failed get user addresses',
+        message: 'failed get user wishlist',
         data: undefined,
       };
       return responseAPI;
