@@ -1,6 +1,6 @@
 import React, { ReactElement, ReactNode, useEffect, useState } from 'react';
 import axios from 'axios';
-import { ArrowLeft, KeyRound, Store } from 'lucide-react';
+import { ArrowLeft, Heart, KeyRound, Store } from 'lucide-react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { useSearchParams } from 'next/navigation';
@@ -79,14 +79,20 @@ const User: NextPageWithLayout = () => {
               <UserSetting
                 title={'My Address'}
                 icon={<Store />}
-                description={'Atur alamat pengiriman belanjaan'}
+                description={'Set the grocery delivery address'}
                 onClick={() => router.push('/user/address?status=Address')}
+              />
+              <UserSetting
+                title={'My Wishlist'}
+                icon={<Heart />}
+                description={''}
+                onClick={() => router.push('/user/wishlist')}
               />
               <UserSetting
                 title={'Reset Password'}
                 icon={<KeyRound />}
                 description={'Reset password akun Anda'}
-                onClick={() => router.push('/forget-password')}
+                onClick={() => router.push('/forgot-password')}
               />
             </ul>
           </div>
