@@ -8,10 +8,14 @@ import { Star } from 'lucide-react';
 import HeartWishlistButton from '../HeartWishlistButton/HeartWishlistButton';
 
 interface WishlistProductCardProps {
-  product: IWishlistItem;
+  item: IWishlistItem;
+  current_page: number;
 }
 
-const WishlistProductCard = ({ product }: WishlistProductCardProps) => {
+const WishlistProductCard = ({
+  item,
+  current_page,
+}: WishlistProductCardProps) => {
   return (
     <div className={styles.product}>
       <div className={styles.product_feed}>
@@ -21,13 +25,15 @@ const WishlistProductCard = ({ product }: WishlistProductCardProps) => {
               <div className={styles.container}>
                 <div className={styles.image}>
                   <HeartWishlistButton
+                    wishlist_id={item.id}
                     is_in_wishlist={true}
-                    product_code={product.product_code}
+                    product_code={item.product_code}
+                    current_page={current_page}
                   />
-                  <Link href={`/products/${product.product_code}`}>
+                  <Link href={`/products/${item.product_code}`}>
                     <div className={`img_container block w-[100%]`}></div>
                     <Image
-                      src={product.thumbnail_url}
+                      src={item.thumbnail_url}
                       width={500}
                       height={500}
                       alt={'image'}
@@ -37,28 +43,28 @@ const WishlistProductCard = ({ product }: WishlistProductCardProps) => {
                 </div>
                 <div className={`${styles.content}`}>
                   <Link
-                    href={`/products/${product.product_code}`}
+                    href={`/products/${item.product_code}`}
                     className={`${styles.info_content}`}
                   >
                     <div className={`${styles.product_name}`}>
-                      {product.product_name}
+                      {item.product_name}
                     </div>
                     <div>
                       <div>
                         <div className={`${styles.product_price}`}>
                           {Utils.convertPrice(
-                            product.discount_price !== 0
-                              ? product.discount_price
-                              : product.base_price,
+                            item.discount_price !== 0
+                              ? item.discount_price
+                              : item.base_price,
                           )}
                         </div>
-                        {product.discount !== 0 && (
+                        {item.discount !== 0 && (
                           <div className={`${styles.slash_price}`}>
                             <div className={`${styles.label_slash_price}`}>
-                              {Utils.convertPrice(product.base_price)}
+                              {Utils.convertPrice(item.base_price)}
                             </div>
                             <div className={`${styles.badge_slash_price}`}>
-                              {`${product.discount!}%`}
+                              {`${item.discount!}%`}
                             </div>
                           </div>
                         )}
@@ -68,10 +74,10 @@ const WishlistProductCard = ({ product }: WishlistProductCardProps) => {
                       <div className={`${styles.shop_wrapper}`}>
                         <div className={`${styles.shop_and_location}`}>
                           <span className={`${styles.shop_loc}`}>
-                            {product.district_name}
+                            {item.district_name}
                           </span>
                           <span className={`${styles.shop_name}`}>
-                            {product.shop_name}
+                            {item.shop_name}
                           </span>
                         </div>
                       </div>

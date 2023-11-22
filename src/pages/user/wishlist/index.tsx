@@ -13,7 +13,7 @@ import WishlistProductCard from '@/components/WishlistProductCard/WishlistProduc
 
 const UserWishlist: NextPageWithLayout = () => {
   const searchParams = useSearchParams();
-  const status = searchParams.get('page');
+  const page = searchParams.get('page');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const user_wishlist = useWishlist.use.user_wishlist();
   const fetchUserWishlist = useWishlist.use.fetchUserWishlist();
@@ -21,8 +21,16 @@ const UserWishlist: NextPageWithLayout = () => {
     useWishlist.use.loading_fetch_user_wishlist();
 
   const handleChangePage = useCallback(async () => {
-    fetchUserWishlist({ page: currentPage });
+    let params = 0;
+    if (page === '' || page === null) {
+      params = currentPage;
+    }
+    fetchUserWishlist({ page: params });
   }, [currentPage]);
+
+  useEffect(() => {
+    handleChangePage();
+  }, [handleChangePage]);
 
   useEffect(() => {
     fetchUserWishlist({ page: currentPage });
@@ -35,7 +43,11 @@ const UserWishlist: NextPageWithLayout = () => {
   ) : (
     <div className="w-full grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 pt-4">
       {user_wishlist.items.map((item) => (
-        <WishlistProductCard key={`key:${item.id}`} product={item} />
+        <WishlistProductCard
+          key={`key:${item.id}`}
+          item={item}
+          current_page={currentPage}
+        />
       ))}
     </div>
   );
