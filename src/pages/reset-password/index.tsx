@@ -118,6 +118,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
     };
   }
 
+  await redisClient.connect();
   const res = await redisClient.EXISTS(`reset_password:${code}`);
   if (!res) {
     return {

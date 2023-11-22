@@ -4,5 +4,3 @@ import { createClient } from 'redis';
 export const redisClient = createClient({
   url: CONSTANTS.REDIS_URL,
 });
-
-redisClient.connect();
