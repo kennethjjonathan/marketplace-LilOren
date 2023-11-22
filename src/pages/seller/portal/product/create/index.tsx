@@ -8,7 +8,6 @@ import {
   IIsProductVariantValid,
   IVariantGroup,
   IVariantDefinition,
-  INonVariant,
   IProductInformation,
   IProductCategory,
 } from '@/interface/addProduct';
