@@ -865,7 +865,6 @@ const SellerPortalProductCreate = () => {
                         <SelectItem
                           value={category.value.toString()}
                           key={index}
-                          defaultChecked={index === 0}
                         >
                           {category.label}
                         </SelectItem>
