@@ -1,5 +1,5 @@
 import { Theme, ToastContent, TypeOptions, toast } from 'react-toastify';
-import { ICart, ICartItem } from './pages/user/cart';
+import CONSTANTS from './constants/constants';
 import { ICheckedCart } from './store/cart/useCart';
 
 export class Utils {
@@ -16,7 +16,11 @@ export class Utils {
     return data.length === 0 || data === '' || data === 0;
   };
 
-  static notify = (message: ToastContent, type: TypeOptions, theme: Theme) => {
+  static notify = <Message extends ToastContent>(
+    message: Message,
+    type: TypeOptions,
+    theme: Theme,
+  ) => {
     toast(message, {
       type: type,
       position: toast.POSITION.TOP_RIGHT,
@@ -24,8 +28,147 @@ export class Utils {
     });
   };
 
+  static notifyTokenExp = () => {
+    toast(CONSTANTS.TOKEN_HAS_EXPIRED, {
+      type: 'info',
+      position: toast.POSITION.TOP_RIGHT,
+      theme: 'colored',
+    });
+  };
+
+  static notifyGeneralError = (message: string) => {
+    toast(message, {
+      type: 'error',
+      position: toast.POSITION.TOP_RIGHT,
+      theme: 'colored',
+    });
+  };
+
   static isAllCartCheck = (isCheckedCarts: ICheckedCart[]) => {
     const check = isCheckedCarts.every((cart) => cart.is_checked === true);
     return check;
+  };
+
+  static handleGeneralError = (error: any) => {
+    if (typeof error == 'string') {
+      toast(error, {
+        type: 'error',
+        position: toast.POSITION.TOP_RIGHT,
+        theme: 'colored',
+      });
+      return;
+    }
+    if (error.message) {
+      toast(error.message, {
+        type: 'error',
+        position: toast.POSITION.TOP_RIGHT,
+        theme: 'colored',
+      });
+      return;
+    }
+    if (error.response && error.response.data && error.response.data.message) {
+      toast(error.response.data.message, {
+        type: 'error',
+        position: toast.POSITION.TOP_RIGHT,
+        theme: 'colored',
+      });
+      return;
+    }
+    if (error.response && error.response.statusText) {
+      toast(error.response.statusText, {
+        type: 'error',
+        position: toast.POSITION.TOP_RIGHT,
+        theme: 'colored',
+      });
+      return;
+    }
+    toast('Uh-oh something went wrong!', {
+      type: 'error',
+      position: toast.POSITION.TOP_RIGHT,
+      theme: 'colored',
+    });
+    return;
+  };
+
+  static getDate = (date: string) => {
+    const d = new Date(date);
+    const day = d.getDay();
+    const month = d.getMonth();
+    const months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    const year = d.getFullYear();
+    return `${day} ${months[month]} ${year}`;
+  };
+
+  static getDDMonthYYYYTime = (d: string) => {
+    const months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    const date = new Date(d);
+    let result: string = '';
+    const day = date.getDay().toString();
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    const time = date.toLocaleTimeString('it-IT').slice(0, -3);
+    result += day + ' ' + month + ' ' + year + ', ' + time;
+    return result;
+  };
+
+  static getDateAndTime = (d: string) => {
+    const months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    const days = [
+      'Sunday',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+    ];
+    const date = new Date(d);
+
+    let result = '';
+    const day = days[date.getDay()];
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    const time = date.toLocaleTimeString('US-id');
+    result += day + ' ' + month + ' ' + year + ', ' + time;
+    return result;
   };
 }

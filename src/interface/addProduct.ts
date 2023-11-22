@@ -25,7 +25,7 @@ export interface IVariantDefinition {
 }
 
 export interface IVariantGroup {
-  variant_type_1: string;
+  variant_type_1?: string;
   variant_type_2?: string;
   price: number;
   stock: number;
@@ -35,5 +35,23 @@ export interface IProductInformation {
   product_name: string;
   product_desc: string;
   weight: number | '';
-  selected_category: string[];
+}
+
+export interface IProductCategory {
+  label: string;
+  value: number;
+}
+
+export interface IAddProductRequest {
+  product_name: string;
+  description: string;
+  image_url: string[];
+  weight: number;
+  is_variant: boolean;
+  product_category_id: {
+    level_1: number;
+    level_2: number;
+  };
+  variant_definition: IVariantDefinition;
+  variants: IVariantGroup[];
 }

@@ -1,13 +1,10 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Plus, X } from 'lucide-react';
 import {
   IIsProductVariantValid,
-  INonVariant,
   IProductVariant,
-  IVariantDefinition,
-  IVariantGroup,
 } from '@/interface/addProduct';
 import { Label } from '../ui/label';
 import styles from './ProductVariant.module.css';
@@ -51,7 +48,6 @@ interface ProductVariantProps {
     biggerIndex: number,
   ) => boolean;
   checkIfNameDuplicate: (biggerIndex: number | undefined) => boolean;
-  logEndProduct: () => void;
 }
 
 const ProductVariant = ({
@@ -77,7 +73,6 @@ const ProductVariant = ({
   setIsStockValid,
   checkIfOptDuplicate,
   checkIfNameDuplicate,
-  logEndProduct,
 }: ProductVariantProps) => {
   function handleVariantNameInput(
     e: React.ChangeEvent<HTMLInputElement>,
@@ -460,6 +455,7 @@ const ProductVariant = ({
                 )
               }
               isValid={isNoVarValid.price}
+              onWheel={(e) => e.currentTarget.blur()}
             />
             {!isNoVarValid.price && (
               <p className="text-xs text-destructive">
@@ -494,13 +490,13 @@ const ProductVariant = ({
                 )
               }
               isValid={isNoVarValid.stock}
+              onWheel={(e) => e.currentTarget.blur()}
             />
             {!isNoVarValid.stock && (
               <p className="text-xs text-destructive">Stock cannot be empty</p>
             )}
           </div>
         </div>
-        <Button onClick={logEndProduct}>Log end Product</Button>
       </div>
     );
   }
@@ -692,6 +688,7 @@ const ProductVariant = ({
                                       }
                                       onKeyDown={(e) => handleNumKeyDown(e)}
                                       min={0}
+                                      onWheel={(e) => e.currentTarget.blur()}
                                     />
                                     {!isPriceValid[index0][index1] && (
                                       <p className="text-xs text-destructive w-full text-left">
@@ -719,6 +716,7 @@ const ProductVariant = ({
                                       }
                                       onKeyDown={(e) => handleNumKeyDown(e)}
                                       min={0}
+                                      onWheel={(e) => e.currentTarget.blur()}
                                     />
                                     {!isStockValid[index0][index1] && (
                                       <p className="text-xs text-destructive w-full text-left">
@@ -761,6 +759,7 @@ const ProductVariant = ({
                           }
                           onKeyDown={(e) => handleNumKeyDown(e)}
                           min={0}
+                          onWheel={(e) => e.currentTarget.blur()}
                         />
                         {!isPriceValid[index0][0] && (
                           <p className="text-xs text-destructive w-full text-left">
@@ -785,6 +784,7 @@ const ProductVariant = ({
                           }
                           onKeyDown={(e) => handleNumKeyDown(e)}
                           min={0}
+                          onWheel={(e) => e.currentTarget.blur()}
                         />
                         {!isStockValid[index0][0] && (
                           <p className="text-xs text-destructive w-full text-left">
@@ -799,7 +799,6 @@ const ProductVariant = ({
           )}
         </div>
       </div>
-      <Button onClick={logEndProduct}>Log End Product</Button>
     </div>
   );
 };

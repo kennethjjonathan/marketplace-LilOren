@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import ProductVariant from '@/components/ProductVariant/ProductVariant';
@@ -10,9 +10,25 @@ import {
   IVariantDefinition,
   INonVariant,
   IProductInformation,
+  IProductCategory,
 } from '@/interface/addProduct';
 import PhotosArray from '@/components/PhotosArray/PhotosArray';
 import { Textarea } from '@/components/ui/textarea';
+import styles from './SellerPortalProductCreate.module.scss';
+import { Utils } from '@/utils';
+import axiosInstance from '@/lib/axiosInstance';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import imageUploadder from '@/lib/imageUploadder';
+import { useRouter } from 'next/router';
 
 const maxPhoto: number = 6;
 const maxNameLength: number = 255;
@@ -21,18 +37,18 @@ const minDescLength: number = 20;
 const maxOptLength: number = 3;
 
 const SellerPortalProductCreate = () => {
+  const router = useRouter();
+  const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [productInformation, setProductInformation] =
     useState<IProductInformation>({
       product_name: '',
       product_desc: '',
       weight: '',
-      selected_category: [],
     });
   const [isProductInformationValid, setIsProductInformationValid] = useState({
     product_name: true,
     product_desc: true,
     weight: true,
-    selected_category: true,
   });
 
   function handleChangeProductInfoString(
@@ -69,13 +85,14 @@ const SellerPortalProductCreate = () => {
     }
   }
 
-  function validateOnBlur(key: keyof IProductInformation) {
+  function validateOnBlur(key: keyof IProductInformation): boolean | undefined {
     if (key === 'product_name' && productInformation.product_name === '') {
+      console.log('masuk name');
       setIsProductInformationValid({
         ...isProductInformationValid,
         [key]: false,
       });
-      return;
+      return false;
     } else if (
       key === 'product_name' &&
       productInformation.product_name !== ''
@@ -84,7 +101,7 @@ const SellerPortalProductCreate = () => {
         ...isProductInformationValid,
         [key]: true,
       });
-      return;
+      return true;
     }
 
     if (
@@ -95,13 +112,13 @@ const SellerPortalProductCreate = () => {
         ...isProductInformationValid,
         [key]: false,
       });
-      return;
+      return false;
     } else if (key === 'weight' && (productInformation.weight as number) >= 1) {
       setIsProductInformationValid({
         ...isProductInformationValid,
         [key]: true,
       });
-      return;
+      return true;
     }
 
     if (
@@ -112,7 +129,7 @@ const SellerPortalProductCreate = () => {
         ...isProductInformationValid,
         [key]: false,
       });
-      return;
+      return false;
     } else if (
       key === 'product_desc' &&
       productInformation.product_desc.length >= minDescLength
@@ -121,13 +138,62 @@ const SellerPortalProductCreate = () => {
         ...isProductInformationValid,
         [key]: true,
       });
-      return;
+      return true;
     }
   }
 
   // ADD PHOTO
   const [remainingPhotos, setRemainingPhotos] = useState<number>(maxPhoto);
   const [tempProductPhotos, setTempProductPhotos] = useState<File[]>([]);
+
+  // PRODUCT CATEGORY
+  const [category1, setCategory1] = useState<string | undefined>(undefined);
+  const [category2, setCategory2] = useState<string | undefined>(undefined);
+  const [category1Options, setCatgeory1Options] = useState<IProductCategory[]>(
+    [],
+  );
+  const [category2Options, setCatgeory2Options] = useState<IProductCategory[]>(
+    [],
+  );
+  const [isCatFetchLoading, setIsCatFetchLoading] = useState<boolean>(false);
+  const [isCategoryValid, setIsCategoryValid] = useState<boolean>(true);
+
+  async function getCategory1Options() {
+    try {
+      const response = await axiosInstance(
+        `/dropdowns/products/top-categories`,
+      );
+      setCatgeory1Options(response.data.data);
+    } catch (error) {
+      Utils.handleGeneralError(error);
+      console.error(error);
+    }
+  }
+
+  async function handleCategory1Change(value: string) {
+    setIsCatFetchLoading(true);
+    setCategory2(undefined);
+    try {
+      const response = await axiosInstance(
+        `/dropdowns/products/child-category?parent_id=${value}`,
+      );
+      setCatgeory2Options(response.data.data);
+      setCategory1(value);
+    } catch (error) {
+      Utils.handleGeneralError(error);
+    } finally {
+      setIsCatFetchLoading(false);
+    }
+  }
+
+  function handleCategory2Change(value: string) {
+    setCategory2(value);
+    setIsCategoryValid(true);
+  }
+
+  useEffect(() => {
+    getCategory1Options();
+  }, []);
 
   // PRODUCT VARIANT -- START
   const [isVariantActive, setIsVariantActive] = useState<boolean>(false);
@@ -365,23 +431,191 @@ const SellerPortalProductCreate = () => {
     }
     return isContinue;
   }
-  function logEndProduct() {
+  // function buildVariant() {
+  //   if (!isVariantActive) {
+  //     const payload: INonVariant[] = [
+  //       {
+  //         price: noVarPrice as number,
+  //         stock: noVarStock as number,
+  //       },
+  //     ];
+  //     return payload;
+  //   }
+
+  //   if (variants.length === 2) {
+  //     const variantTypes1: string[] = [];
+  //     for (let i = 0; i < variants[0].options.length; i++) {
+  //       if (variants[0].options[i] !== undefined) {
+  //         variantTypes1.push(variants[0].options[i] as string);
+  //       }
+  //     }
+  //     const variantTypes2: string[] = [];
+  //     for (let i = 0; i < variants[1].options.length; i++) {
+  //       if (variants[1].options[i] !== undefined) {
+  //         variantTypes2.push(variants[1].options[i] as string);
+  //       }
+  //     }
+  //     const variant_definition: IVariantDefinition = {
+  //       variant_group_1: {
+  //         name: variants[0].variant_name,
+  //         variant_types: variantTypes1,
+  //       },
+  //       variant_group_2: {
+  //         name: variants[1].variant_name,
+  //         variant_types: variantTypes2,
+  //       },
+  //     };
+  //     const variant_group: IVariantGroup[] = [];
+  //     for (let i = 0; i < variants[0].options.length; i++) {
+  //       for (let j = 0; j < variants[1].options.length; j++) {
+  //         if (
+  //           variants[0].options[i] !== undefined &&
+  //           variants[1].options[j] !== undefined
+  //         ) {
+  //           const variantGroup: IVariantGroup = {
+  //             variant_type_1: variants[0].options[i] as string,
+  //             variant_type_2: variants[1].options[j] as string,
+  //             price: price[i][j] as number,
+  //             stock: stocks[i][j] as number,
+  //           };
+  //           variant_group.push(variantGroup);
+  //         }
+  //       }
+  //     }
+  //     return {
+  //       variant_definition: variant_definition,
+  //       variants: variant_group,
+  //     };
+  //   }
+
+  //   if (variants.length === 1) {
+  //     const variantTypes1: string[] = [];
+  //     for (let i = 0; i < variants[0].options.length; i++) {
+  //       if (variants[0].options[i] !== undefined) {
+  //         variantTypes1.push(variants[0].options[i] as string);
+  //       }
+  //     }
+  //     const variant_definition: IVariantDefinition = {
+  //       variant_group_1: {
+  //         name: variants[0].variant_name,
+  //         variant_types: variantTypes1,
+  //       },
+  //     };
+  //     const variant_group: IVariantGroup[] = [];
+  //     for (let i = 0; i < variants[0].options.length; i++) {
+  //       if (variants[0].options[i] !== undefined) {
+  //         const variantGroup: IVariantGroup = {
+  //           variant_type_1: variants[0].options[i] as string,
+  //           price: price[i][0] as number,
+  //           stock: stocks[i][0] as number,
+  //         };
+  //         variant_group.push(variantGroup);
+  //       }
+  //     }
+  //     return {
+  //       variant_definition: variant_definition,
+  //       variants: variant_group,
+  //     };
+  //   }
+  // }
+  // PRODUCT VARIANT -- END
+
+  function validateRequestBody(): boolean {
+    let isContinue: boolean = true;
+    const newIsProductInformationValid = { ...isProductInformationValid };
+    if (productInformation.product_name === '') {
+      newIsProductInformationValid.product_name = false;
+      isContinue = false;
+    }
+    if (productInformation.weight === '' || productInformation.weight < 1) {
+      newIsProductInformationValid.weight = false;
+      isContinue = false;
+    }
+    if (productInformation.product_desc.length < minDescLength) {
+      newIsProductInformationValid.product_desc = false;
+      isContinue = false;
+    }
+    setIsProductInformationValid(newIsProductInformationValid);
+    if (tempProductPhotos.length === 0) {
+      Utils.notify('Product must have at least 1 photo', 'warning', 'colored');
+      isContinue = false;
+    }
+    if (category1 === undefined || category2 === undefined) {
+      setIsCategoryValid(false);
+      isContinue = false;
+    }
     if (!validateAll()) {
-      console.log('gagal');
-      return;
+      isContinue = false;
+    }
+    return isContinue;
+  }
+
+  async function createRequestBody() {
+    const imageUrl = [];
+    for (let i = 0; i < tempProductPhotos.length; i++) {
+      const response = await imageUploadder(tempProductPhotos[i]);
+      imageUrl.push(response);
     }
 
     if (!isVariantActive) {
-      const payload: INonVariant[] = [
-        {
-          price: noVarPrice as number,
-          stock: noVarStock as number,
+      const reqBody = {
+        product_name: productInformation.product_name,
+        description: productInformation.product_desc,
+        weight: productInformation.weight,
+        image_url: imageUrl,
+        is_variant: isVariantActive,
+        product_category_id: {
+          level_1: parseInt(category1!),
+          level_2: parseInt(category2!),
         },
-      ];
-      console.log(payload);
-      return;
+        variants: [
+          {
+            price: noVarPrice as number,
+            stock: noVarStock as number,
+          },
+        ],
+      };
+      return reqBody;
     }
-
+    if (variants.length === 1) {
+      const variantTypes1: string[] = [];
+      for (let i = 0; i < variants[0].options.length; i++) {
+        if (variants[0].options[i] !== undefined) {
+          variantTypes1.push(variants[0].options[i] as string);
+        }
+      }
+      const variant_definition: IVariantDefinition = {
+        variant_group_1: {
+          name: variants[0].variant_name,
+          variant_types: variantTypes1,
+        },
+      };
+      const variant_group: IVariantGroup[] = [];
+      for (let i = 0; i < variants[0].options.length; i++) {
+        if (variants[0].options[i] !== undefined) {
+          const variantGroup: IVariantGroup = {
+            variant_type_1: variants[0].options[i] as string,
+            price: price[i][0] as number,
+            stock: stocks[i][0] as number,
+          };
+          variant_group.push(variantGroup);
+        }
+      }
+      const reqBody = {
+        product_name: productInformation.product_name,
+        description: productInformation.product_desc,
+        weight: productInformation.weight,
+        image_url: imageUrl,
+        is_variant: isVariantActive,
+        product_category_id: {
+          level_1: parseInt(category1!),
+          level_2: parseInt(category2!),
+        },
+        variant_definition: variant_definition,
+        variants: variant_group,
+      };
+      return reqBody;
+    }
     if (variants.length === 2) {
       const variantTypes1: string[] = [];
       for (let i = 0; i < variants[0].options.length; i++) {
@@ -422,45 +656,46 @@ const SellerPortalProductCreate = () => {
           }
         }
       }
-      console.log({
+      const reqBody = {
+        product_name: productInformation.product_name,
+        description: productInformation.product_desc,
+        weight: productInformation.weight,
+        image_url: imageUrl,
+        is_variant: isVariantActive,
+        product_category_id: {
+          level_1: parseInt(category1!),
+          level_2: parseInt(category2!),
+        },
         variant_definition: variant_definition,
         variants: variant_group,
-      });
+      };
+      return reqBody;
+    }
+  }
+
+  async function postFormBody() {
+    setIsPageLoading(true);
+    if (!validateRequestBody()) {
+      setIsPageLoading(false);
+      return false;
+    }
+
+    const reqBody = await createRequestBody();
+
+    if (reqBody === undefined) {
       return;
     }
 
-    if (variants.length === 1) {
-      const variantTypes1: string[] = [];
-      for (let i = 0; i < variants[0].options.length; i++) {
-        if (variants[0].options[i] !== undefined) {
-          variantTypes1.push(variants[0].options[i] as string);
-        }
-      }
-      const variant_definition: IVariantDefinition = {
-        variant_group_1: {
-          name: variants[0].variant_name,
-          variant_types: variantTypes1,
-        },
-      };
-      const variant_group: IVariantGroup[] = [];
-      for (let i = 0; i < variants[0].options.length; i++) {
-        if (variants[0].options[i] !== undefined) {
-          const variantGroup: IVariantGroup = {
-            variant_type_1: variants[0].options[i] as string,
-            price: price[i][0] as number,
-            stock: stocks[i][0] as number,
-          };
-          variant_group.push(variantGroup);
-        }
-      }
-      console.log({
-        variant_definition: variant_definition,
-        variants: variant_group,
-      });
-      return;
+    try {
+      await axiosInstance.post(`/merchant/product`, reqBody);
+      Utils.notify('Successfully added the product', 'success', 'colored');
+      router.push('/seller/portal/product');
+    } catch (error) {
+      Utils.handleGeneralError(error);
+    } finally {
+      setIsPageLoading(false);
     }
   }
-  // PRODUCT VARIANT -- END
 
   return (
     <div className="w-[70vw] flex flex-col gap-8">
@@ -511,12 +746,12 @@ const SellerPortalProductCreate = () => {
               <Input
                 id="product-weight"
                 type="number"
-                className="w-full"
+                className={`${styles.hideIndicator} w-full`}
                 value={productInformation.weight}
                 onChange={(e) => handleChangeWeight(e)}
                 isValid={isProductInformationValid.weight}
                 onBlur={() => validateOnBlur('weight')}
-                min={0}
+                min={1}
                 onKeyDown={(e) => handleNumKeyDown(e)}
                 onWheel={(e) => e.currentTarget.blur()}
                 required
@@ -562,6 +797,88 @@ const SellerPortalProductCreate = () => {
           </div>
         </div>
       </section>
+      {/* Product Category -- START */}
+      <section className="bg-white w-full rounded-xl p-8 shadow-lg">
+        <p className="font-bold text-[12px] lg:text-[16px] pb-1">
+          {'Product Category'}
+        </p>
+        <p
+          className={`font-light pb-4 text-sm ${
+            isCategoryValid ? 'text-gray-500' : 'text-destructive'
+          }`}
+        >
+          {'Product must have category 1 and category 2'}
+        </p>
+        <div className="w-full flex flex-col gap-5">
+          {category1Options.length !== 0 && (
+            <div className="flex flex-col gap-1 w-full">
+              <div className="flex items-end w-full justify-between">
+                <Label
+                  className="min-w-fit text-right font-light text-xs lg:text-sm"
+                  htmlFor="product-category-1"
+                >
+                  Product Category 1<span className="text-primary">{' *'}</span>
+                  :
+                </Label>
+              </div>
+              <Select onValueChange={(value) => handleCategory1Change(value)}>
+                <SelectTrigger id="product-category-1" className="mt-1">
+                  <SelectValue placeholder="Category 1" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Category 1</SelectLabel>
+                    {category1Options.map((category, index) => (
+                      <SelectItem value={category.value.toString()} key={index}>
+                        {category.label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+          {!isCatFetchLoading &&
+            category1 !== undefined &&
+            category2Options.length !== 0 && (
+              <div className="flex flex-col gap-1 w-full">
+                <div className="flex items-end w-full justify-between">
+                  <Label
+                    className="min-w-fit text-right font-light text-xs lg:text-sm"
+                    htmlFor="product-category-2"
+                  >
+                    Product Category 2
+                    <span className="text-primary">{' *'}</span>:
+                  </Label>
+                </div>
+                <Select onValueChange={(value) => handleCategory2Change(value)}>
+                  <SelectTrigger
+                    id="product-category-2"
+                    className="mt-1"
+                    disabled={category1 === undefined}
+                  >
+                    <SelectValue placeholder="Category 2" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Category 2</SelectLabel>
+                      {category2Options.map((category, index) => (
+                        <SelectItem
+                          value={category.value.toString()}
+                          key={index}
+                          defaultChecked={index === 0}
+                        >
+                          {category.label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+        </div>
+      </section>
+      {/* Product Category -- END */}
       {/* Product Variants -- START */}
       <section className="bg-white w-full rounded-xl p-8 shadow-lg">
         <p className="font-bold text-[12px] lg:text-[16px] pb-4">
@@ -583,6 +900,7 @@ const SellerPortalProductCreate = () => {
           price={price}
           setPrice={setPrice}
           stocks={stocks}
+          bg-white
           setStocks={setStocks}
           isPriceValid={isPriceValid}
           setIsPriceValid={setIsPriceValid}
@@ -590,10 +908,23 @@ const SellerPortalProductCreate = () => {
           setIsStockValid={setIsStockValid}
           checkIfOptDuplicate={checkIfOptDuplicate}
           checkIfNameDuplicate={checkIfNameDuplicate}
-          logEndProduct={logEndProduct}
         />
       </section>
       {/* Product Variants -- END */}
+      <section className="w-full flex justify-center items-center">
+        <Button
+          size={'customBlank'}
+          className="w-full text-xl py-3"
+          disabled={isPageLoading}
+          onClick={postFormBody}
+        >
+          {isPageLoading ? (
+            <div className="border-4 border-primary-foreground border-t-transparent animate-spin aspect-square h-6 rounded-full" />
+          ) : (
+            <p>Add Product</p>
+          )}
+        </Button>
+      </section>
     </div>
   );
 };

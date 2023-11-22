@@ -1,9 +1,13 @@
 const CONSTANTS = {
   BASEURL: process.env.BASEURL,
-  ALREADY_LOGGED_OUT: 'User already logged out',
+  CANNOT_ADD_MORE_THAN_STOCK: 'Cannot add quantity more than stock',
+  ALREADY_LOGGED_OUT: 'RefreshTokenExpired',
+  WALLET_NOT_ACTIVATED: 'Not yet activate wallet',
+  TOKEN_HAS_EXPIRED: 'Your token has expired, please sign in again',
   RO_BASEURL: 'https://api.rajaongkir.com/starter',
   RO_API_PROVINCE: '/api/rajaongkirprovince',
   RO_API_CITY: '/api/rajaongkir',
+  REDIS_URL: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
   CATEGORY_LIST: [
     {
       title: 'Electronic',
