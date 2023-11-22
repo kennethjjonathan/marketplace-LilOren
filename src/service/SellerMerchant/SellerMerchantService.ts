@@ -1,3 +1,4 @@
+import axiosInstance from '@/lib/axiosInstance';
 import axios from 'axios';
 
 export interface ISellerMerchantRequest {
@@ -13,7 +14,7 @@ export interface ISellerMerchantResponse {
 export class SellerMerchantService {
   static post = async (url: string, payload: ISellerMerchantRequest) => {
     try {
-      const response = await axios({
+      const response = await axiosInstance({
         method: 'POST',
         url: url,
         data: payload,

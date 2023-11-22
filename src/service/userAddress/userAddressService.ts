@@ -1,5 +1,6 @@
 import axiosInstance from '@/lib/axiosInstance';
 import CONSTANS from './constants';
+import { IUserAddress } from '@/interface/user';
 
 export interface IUserAddressRequest {
   receiver_name: string;
@@ -10,14 +11,6 @@ export interface IUserAddressRequest {
   sub_district: string;
   sub_sub_district: string;
   postal_code: string;
-}
-
-export interface IUserAddress {
-  id: number;
-  receiver_name: string;
-  address: string;
-  postal_code: string;
-  receiver_phone_number: string;
 }
 
 export interface IUserAddressResponse {
