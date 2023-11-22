@@ -1,6 +1,7 @@
 import CONSTANTS from '@/constants/constants';
 import { IRegister, ISignIn } from '@/interface/user';
 import axios from 'axios';
+import { UserServer } from './userServer';
 
 export class UserClient {
   static async postRegister(data: IRegister) {
@@ -22,4 +23,9 @@ export class UserClient {
     });
     return response;
   }
+
+  static getUserDetails = async () => {
+    const response = await UserServer.get(`${CONSTANTS.BASEURL}/auth/user`);
+    return response;
+  };
 }

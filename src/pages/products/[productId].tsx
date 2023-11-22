@@ -8,6 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import SellerProfileSnippet from '@/components/SellerProfileSnippet/SellerProfileSnippet';
 import ProductDetailDesc from '@/components/ProductDetailDesc/ProductDetailDesc';
 import {
+  IAddToCart,
   IProductPage,
   IProductVariant,
   IVariantType,
@@ -18,12 +19,14 @@ import TypeSelector from '@/components/TypeSelector/TypeSelector';
 import { Utils } from '@/utils';
 import axiosInstance from '@/lib/axiosInstance';
 import { useRouter } from 'next/router';
+import { useUser } from '@/store/user/useUser';
 
 interface ProductPageProps {
   productPage: IProductPage;
   highestDiscount: number;
   isGroup1Variant: boolean;
   isGroup2Variant: boolean;
+  isVariant: boolean;
 }
 
 const ProductPage = ({
@@ -31,9 +34,12 @@ const ProductPage = ({
   highestDiscount,
   isGroup1Variant,
   isGroup2Variant,
+  isVariant,
 }: ProductPageProps) => {
+  const user_details = useUser.use.user_details();
+  const fetchUserDetails = useUser.use.fetchUserDetails();
   const router = useRouter();
-  const [quantity, setQuantity] = useState<number>(1);
+  const [quantity, setQuantity] = useState<number | ''>(1);
   const [group1, setGroup1] = useState<IVariantType>(
     productPage.variant_group1.variant_types[0],
   );
@@ -49,6 +55,7 @@ const ProductPage = ({
   const [variant, setVariant] = useState<IProductVariant | undefined>(
     undefined,
   );
+  const [isAddLoading, setIsAddLoading] = useState<boolean>(false);
 
   function handleChooseGroup1(type: IVariantType) {
     if (group1.type_name !== 'default' && group1.type_id === type.type_id) {
@@ -127,39 +134,94 @@ const ProductPage = ({
   }
 
   useEffect(() => {
+    fetchUserDetails();
     setInitialAvailable();
   }, []);
 
   async function handleAddToCart() {
+    if (user_details.username === '') {
+      router.push({
+        pathname: '/signin',
+        query: { prev: `/products/${router.query.productId}` },
+      });
+      return;
+    }
+    if (variant === undefined && isVariant) {
+      Utils.notify(
+        'Please choose the options for the product',
+        'default',
+        'colored',
+      );
+      return;
+    } else if (quantity === '' || quantity < 0) {
+      Utils.notify(
+        'Please enter the right amount of quantity',
+        'default',
+        'colored',
+      );
+      return;
+    } else if (variant !== undefined && variant.stock < quantity) {
+      Utils.notify(
+        "Your quantity is more than the product's stock",
+        'default',
+        'colored',
+      );
+      return;
+    }
+    const payload: IAddToCart = {
+      product_variant_id: -1,
+      seller_id: productPage.shop.id,
+      quantity: quantity,
+    };
+    if (!isVariant) {
+      payload.product_variant_id = productPage.product_variant[0].id;
+    } else if (variant && isVariant) {
+      payload.product_variant_id = variant.id;
+    }
+    setIsAddLoading(true);
     try {
       const response = await axiosInstance.post(
-        `${CONSTANTS.BASEURL}/cart/add-product`,
-        {
-          product_variant_id: 4,
-          seller_id: 1,
-          quantity: 5,
-        },
-        { withCredentials: true },
+        `${CONSTANTS.BASEURL}/carts`,
+        payload,
       );
+      Utils.notify('Successfully added to cart', 'success', 'colored');
     } catch (error: any) {
-      if (error.data.message === CONSTANTS.ALREADY_LOGGED_OUT) {
+      console.log(error);
+      if (error === CONSTANTS.ALREADY_LOGGED_OUT) {
         Utils.notify(
-          'Your token has expired, please log in again',
+          'Your token has expired, please sign in again',
           'default',
           'colored',
         );
         router.push('/signin');
+        return;
       }
+      if (
+        error.message &&
+        error.message === CONSTANTS.CANNOT_ADD_MORE_THAN_STOCK &&
+        variant &&
+        quantity <= variant.stock
+      ) {
+        Utils.notify(
+          'You might already have the product in the cart, please check it.',
+          'default',
+          'colored',
+        );
+        return;
+      }
+      Utils.handleGeneralError(error);
+    } finally {
+      setIsAddLoading(false);
     }
   }
 
   return (
     <>
-      <section className="flex flex-col justify-center items-center w-full bg-white roboto-text">
+      <section className="flex flex-col justify-center items-center w-full bg-white">
         <div className="w-full md:w-[75vw] pt-5 pb-[5.5rem]">
           <div className="w-full flex flex-col gap-6 lg:flex-row">
             <div className="w-full lg:w-1/3">
-              {/* <ImageCarousel mediaArray={productPage.product_media} /> */}
+              <ImageCarousel mediaArray={productPage.product_media} />
             </div>
             <div className="flex-1 px-2 flex flex-col gap-4">
               <div className="flex flex-col gap-2">
@@ -268,6 +330,8 @@ const ProductPage = ({
         setQuantity={setQuantity}
         variant={variant}
         handleAddToCart={handleAddToCart}
+        isVariant={isVariant}
+        isAddLoading={isAddLoading}
       />
     </>
   );
@@ -404,6 +468,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   let highestDiscount: number = 0;
   let isGroup1Variant: boolean | null = null;
   let isGroup2Variant: boolean | null = null;
+  let isVariant: boolean = false;
 
   try {
     const response = await fetch(
@@ -432,6 +497,9 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     } else {
       isGroup2Variant = false;
     }
+    if (productPage.product_variant.length > 1) {
+      isVariant = true;
+    }
   }
 
   if (!productPage) {
@@ -446,6 +514,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       highestDiscount: highestDiscount,
       isGroup1Variant: isGroup1Variant,
       isGroup2Variant: isGroup2Variant,
+      isVariant: isVariant,
     },
   };
 };

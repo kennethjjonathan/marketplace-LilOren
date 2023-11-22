@@ -1,22 +1,36 @@
-import React from 'react';
-import styles from './UserPresentation.module.scss';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
-import { Button } from '../ui/button';
 import { Pencil, PlusCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import DotsLoading from '@/components/DotsLoading/DotsLoading';
+import { IUserDetails } from '@/interface/user';
+import { useUser } from '@/store/user/useUser';
+import styles from './UserPresentation.module.scss';
 
 const UserPresentation = () => {
-  return (
+  const user_details = useUser.use.user_details();
+  const fetchUserDetails = useUser.use.fetchUserDetails();
+  const loading_fetch_user_details = useUser.use.loading_fetch_user_details();
+
+  useEffect(() => {
+    fetchUserDetails();
+  }, []);
+  return loading_fetch_user_details ? (
+    <DotsLoading />
+  ) : (
     <div className={styles.liloren__user__presentation}>
       <Image
-        src={
-          'https://images.tokopedia.net/img/cache/300/tPxBYm/2023/1/20/17d1d6b7-50c0-4c06-b16e-3fd60feb70a8.jpg'
-        }
+        src={`${
+          user_details.profile_picture_url
+            ? user_details.profile_picture_url
+            : '/blank-profile.webp'
+        }`}
         alt={'user__profpic'}
         width={500}
         height={500}
         className={'rounded-full h-[64px] w-[64px]'}
       />
-      <UserInfo />
+      <UserInfo user_details={user_details} />
       <div className="flex ml-auto items-center lg:hidden">
         <Pencil className="text-muted-foreground" />
       </div>
@@ -24,12 +38,16 @@ const UserPresentation = () => {
   );
 };
 
-const UserInfo = () => {
+interface UserInfoProps {
+  user_details: IUserDetails;
+}
+
+const UserInfo = ({ user_details }: UserInfoProps) => {
   return (
     <div className={styles.lilOren__user__info}>
       <div className={styles.lilOren__user__name__container}>
         <span className={styles.lilOren__user__info__firstname}>
-          {'Endriyani'}
+          {user_details.username}
         </span>
       </div>
       <div className="lilOren__user__phone__container"></div>

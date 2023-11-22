@@ -1,10 +1,16 @@
 import axiosInstance from '@/lib/axiosInstance';
-import { ICartHome } from '@/store/home/useHome';
+import { ICartHome, IRecommendedProduct } from '@/store/home/useHome';
 
 export interface ICartHomeResponse {
   error: boolean;
   message?: string;
   data?: ICartHome[];
+}
+
+export interface IRecommendedProductResponse {
+  error: boolean;
+  message?: string;
+  data?: IRecommendedProduct[];
 }
 
 export class HomeService {
@@ -15,7 +21,7 @@ export class HomeService {
         url: url,
       });
       if (response.status === 200) {
-        const responseAPI: ICartHomeResponse = {
+        const responseAPI: ICartHomeResponse | IRecommendedProductResponse = {
           error: false,
           data: response.data.data,
         };

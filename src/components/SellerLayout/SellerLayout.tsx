@@ -1,18 +1,14 @@
-import React, { ReactNode, useState } from 'react';
 import { Store } from 'lucide-react';
+import { ReactNode, useState } from 'react';
+import Tabs, { IData } from '../Tabs/Tabs';
 import Navbar from './Navbar';
-import Sidebar from './Sidebar';
 import styles from './SellerLayout.module.scss';
-import Tabs from '../Tabs/Tabs';
+import Sidebar from './Sidebar';
 
 interface SellerLayoutProps {
   children: ReactNode;
   header: string;
-  tabData?: {
-    id: number;
-    label: string;
-    href?: string;
-  }[];
+  tabData?: IData[];
 }
 
 const SellerLayout = ({ children, header, tabData }: SellerLayoutProps) => {
@@ -26,12 +22,12 @@ const SellerLayout = ({ children, header, tabData }: SellerLayoutProps) => {
         <div className="shadow-md bg-zinc-50">
           <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />
         </div>
-        <div className="flex flex-col pt-[10px] lg:pl-[24px] pb-[24px]">
-          <div className={`${styles.shopname} text-muted-foreground`}>
+        <div className="bg-primary-foreground flex flex-col pt-[10px] md:pl-[24px] pb-[24px]">
+          <div className={`${styles.shopname} text-muted-foreground pl-[24px]`}>
             <Store className="mr-4 text-muted-foreground" />
             {header}
           </div>
-          {/* {tabData && <Tabs datas={tabData!} />} */}
+          {tabData && <Tabs isSeller datas={tabData!} />}
           {children}
         </div>
       </div>

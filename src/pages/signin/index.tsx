@@ -1,23 +1,22 @@
-import React, { useState } from 'react';
-import { GetServerSideProps } from 'next';
-import Image from 'next/image';
-import {
-  signIn,
-  getProviders,
-  ClientSafeProvider,
-  LiteralUnion,
-} from 'next-auth/react';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { BuiltInProviderType } from 'next-auth/providers/index';
 import AsyncButton from '@/components/AsyncButton/AsyncButton';
 import GoogleButton from '@/components/GoogleButton/GoogleButton';
 import { InputWithLabel } from '@/components/InputWithLabel/InputWithLabel';
-import { LogIn } from 'lucide-react';
-import { IErrorResponse } from '@/interface/user';
+import { IErrorResponse, ISignIn } from '@/interface/user';
 import { UserClient } from '@/service/user/userClient';
 import { Utils } from '@/utils';
-import { ISignIn } from '@/interface/user';
+import { LogIn } from 'lucide-react';
+import { GetServerSideProps } from 'next';
+import { BuiltInProviderType } from 'next-auth/providers/index';
+import {
+  ClientSafeProvider,
+  LiteralUnion,
+  getProviders,
+  signIn,
+} from 'next-auth/react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import React, { useState } from 'react';
 
 interface SignInPageProps {
   providers: Record<LiteralUnion<BuiltInProviderType>, ClientSafeProvider>;
@@ -96,15 +95,22 @@ function SignInPage({ providers }: SignInPageProps) {
         password: registerData.password,
       };
       const response = await UserClient.postSignIn(registerData);
-      if (response.data.error) {
-        handleErrorAuthResponse(response.data.data.message);
+      Utils.notify('Your sign in is successful', 'success', 'colored');
+      if (router.query.prev) {
+        router.replace(router.query.prev as string);
+      } else {
+        router.replace('/');
+      }
+    } catch (error: any) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        handleErrorAuthResponse(error.response.data.message);
         return;
       }
-      Utils.notify('Your sign in is successful', 'success', 'colored');
-      router.push('/');
-    } catch (error: any) {
-      handleErrorAuthResponse(error.response.data.message);
-      // Utils.notify(error.message, 'error', 'colored');
+      Utils.handleGeneralError(error);
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -135,13 +141,13 @@ function SignInPage({ providers }: SignInPageProps) {
   };
 
   return (
-    <section className="bg-gradient-to-t from-[#FF7337] to-[#F99116] flex flex-col justify-center items-center gap-5 sm:min-h-screen sm:py-6 xl:flex-row xl:justify-between xl:gap-10 xl:px-40 xl:items-start xl:py-20">
+    <section className="bg-gradient-to-t from-[#FF7337] to-[#F99116] flex flex-col justify-center items-center gap-5 min-h-screen sm:py-6 xl:flex-row xl:justify-between xl:gap-10 xl:px-40 xl:items-start xl:py-20">
       <div className="hidden sm:flex flex-col items-center justify-center xl:justify-start xl:min-h-full xl:flex-1 xl:gap-40">
         <h1 className="font-bold text-3xl text-primary-foreground lg:text-4xl xl:w-full xl:text-left">
           LilOren
         </h1>
         <div className="hidden relative aspect-square w-[470px] xl:block">
-          <Image src={'/Logo_.svg'} alt="Google's logo" fill sizes="40vw" />
+          <Image src={'/Logo_.svg'} alt="LilOren's logo" fill sizes="40vw" />
         </div>
       </div>
       <div className="container pb-16 pt-6 flex flex-col items-center justify-center gap-5 bg-primary-foreground sm:max-w-lg sm:pb-6 sm:rounded-lg xl:my-auto">
@@ -208,6 +214,10 @@ function SignInPage({ providers }: SignInPageProps) {
             Register
           </Link>
         </p>
+
+        <Link href="/forgot-password" className="font-normal underline">
+          Forgot Password
+        </Link>
       </div>
     </section>
   );
