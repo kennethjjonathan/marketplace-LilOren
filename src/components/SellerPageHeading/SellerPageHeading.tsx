@@ -1,9 +1,14 @@
+import { ISellerDetails } from '@/store/sellerPage/sellerPage';
 import Image from 'next/image';
 import React from 'react';
 
-const SellerPageHeading = () => {
+interface SellerPageHeadingProps {
+  sellerPage: ISellerDetails;
+}
+
+const SellerPageHeading = ({ sellerPage }: SellerPageHeadingProps) => {
   return (
-    <div className="flex flex-col lg:flex-row w-full border-[1px] border-red-200">
+    <div className="flex flex-col lg:flex-row w-full">
       {/* Seller Info Name, Since When, Total Products */}
       <div className="flex flex-row items-center gap-3">
         {/* Image */}
@@ -16,8 +21,12 @@ const SellerPageHeading = () => {
         />
         {/* Name | since  */}
         <div className="flex flex-col">
-          <p className="font-bold text-[18px]">{'Hyouka'}</p>
-          <p className="font-normal text-muted-foreground">Since: 2013</p>
+          <p className="font-bold text-[16px] md:text-[18px]">
+            {sellerPage.shop_name}
+          </p>
+          <p className="font-normal text-muted-foreground text-[14px] md:text-[16px]">
+            {sellerPage.years}
+          </p>
         </div>
       </div>
     </div>
