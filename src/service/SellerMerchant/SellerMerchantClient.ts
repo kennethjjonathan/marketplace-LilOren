@@ -13,7 +13,7 @@ export class SellerMerchantClient {
     };
 
     const response = await SellerMerchantService.post(
-      `${CONSTANTS.BASEURL}/${CONSTANTS.URL_MERCHANT}/create`,
+      `${CONSTANTS.BASEURL}/merchant`,
       data,
     );
 

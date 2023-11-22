@@ -44,3 +44,11 @@ export interface IAddAddressData {
   postal_code: string;
   address: string;
 }
+
+export interface IUserAddress {
+  id: number;
+  receiver_name: string;
+  address: string;
+  postal_code: string;
+  receiver_phone_number: string;
+}

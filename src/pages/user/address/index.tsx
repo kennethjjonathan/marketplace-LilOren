@@ -2,6 +2,7 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { ArrowLeft, Plus } from 'lucide-react';
+import { IUserAddress } from '@/interface/user';
 import UserSettingsLayout from '@/components/UserSettingsLayout/UserSettingsLayout';
 import AddAddressModal from '@/components/AddAddressModal/AddAddressModal';
 import BackButton from '@/components/BackButton/BackButton';
@@ -9,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import SkeletonUserAddress from '@/components/SkeletonUserAddress/SkeletonUserAddress';
 import UserAddressCard from '@/components/UserAddressCard/UserAddressCard';
 import { useUser } from '@/store/user/useUser';
-import { IUserAddress } from '@/service/userAddress/userAddressService';
 import { NextPageWithLayout } from '@/pages/_app';
 
 const MY_ADDRESSES = 'My Addresses';
