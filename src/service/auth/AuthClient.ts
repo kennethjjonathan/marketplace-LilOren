@@ -24,4 +24,10 @@ export const authClient = {
       data: payload,
     });
   },
+  async logout() {
+    return await axiosInstance({
+      method: 'POST',
+      url: '/auth/logout',
+    });
+  },
 };
