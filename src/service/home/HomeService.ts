@@ -1,5 +1,9 @@
 import axiosInstance from '@/lib/axiosInstance';
-import { ICartHome, IRecommendedProduct } from '@/store/home/useHome';
+import {
+  ICartHome,
+  IRecommendedProduct,
+  ITopCategory,
+} from '@/store/home/useHome';
 
 type ConstructResponse<D> = {
   error: boolean;
@@ -11,7 +15,7 @@ export type ICartHomeResponse = ConstructResponse<ICartHome[]>;
 export type IRecommendedProductResponse = ConstructResponse<
   IRecommendedProduct[]
 >;
-export type ITopCategoryResponse = ConstructResponse<{}>;
+export type ITopCategoryResponse = ConstructResponse<ITopCategory[]>;
 
 type Responses =
   | ICartHomeResponse

@@ -4,8 +4,7 @@ import Layout from '@/components/Layout/Layout';
 import PromotionCarousel from '@/components/PromotionCarousel/PromotionCarousel';
 import RecommendedProductCard from '@/components/RecommendedProductCard/RecommendedProductCard';
 import { HomeClient } from '@/service/home/HomeClient';
-import { IRecommendedProductResponse } from '@/service/home/HomeService';
-import { IRecommendedProduct } from '@/store/home/useHome';
+import { IRecommendedProduct, ITopCategory } from '@/store/home/useHome';
 import { ChevronRight } from 'lucide-react';
 import { GetServerSideProps } from 'next';
 import Link from 'next/link';
@@ -13,10 +12,11 @@ import { ReactElement } from 'react';
 import { NextPageWithLayout } from './_app';
 
 type Props = {
-  products: IRecommendedProduct[];
+  products?: IRecommendedProduct[];
+  categories?: ITopCategory[];
 };
 
-const Home: NextPageWithLayout<Props> = ({ products }: Props) => {
+const Home: NextPageWithLayout<Props> = ({ products, categories }: Props) => {
   return (
     <div className="flex flex-col justify-center items-center w-full bg-primary-foreground">
       <main className="w-full flex flex-col justify-center items-center">
@@ -28,7 +28,7 @@ const Home: NextPageWithLayout<Props> = ({ products }: Props) => {
           ]}
         />
         <section className="home-category-list bg-white mt-3 lg:mt-5 md:w-[75vw]">
-          <HomeCategoryList />
+          {categories && <HomeCategoryList categories={categories} />}
         </section>
         <section className="recommendedProductList flex flex-col justify-center items-center w-full mt-3 lg:mt-5 md:w-[75vw]">
           <div className="flex flex-row justify-between w-full">
@@ -69,28 +69,13 @@ Home.getLayout = function getLayout(page: ReactElement) {
 };
 
 export const getServerSideProps: GetServerSideProps<Props> = async (_) => {
-  let res: IRecommendedProductResponse;
-  try {
-    res = (await HomeClient.getRecommendedProduct())!;
-  } catch (e) {
-    return {
-      props: {
-        products: [],
-      },
-    };
-  }
-
-  if (res.error) {
-    return {
-      props: {
-        products: [],
-      },
-    };
-  }
+  const recommendeds = await HomeClient.getRecommendedProduct();
+  const categories = await HomeClient.getCategories();
 
   return {
     props: {
-      products: res.data!,
+      products: recommendeds?.data,
+      categories: categories?.data,
     },
   };
 };
