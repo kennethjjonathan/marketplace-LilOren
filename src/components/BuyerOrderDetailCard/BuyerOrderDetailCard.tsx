@@ -1,5 +1,5 @@
 import { IOrderItem } from '@/interface/orderDetailPage';
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import Divider from '../Divider/Divider';
 import BuyerOrderDetailCardItem from '../BuyerOrderDetailCardItem/BuyerOrderDetailCardItem';
 import { Utils } from '@/utils';
@@ -13,9 +13,13 @@ import axiosInstance from '@/lib/axiosInstance';
 
 interface BuyerOrderDetailCardProps {
   orderItem: IOrderItem;
+  setUpdateToggle: Dispatch<SetStateAction<boolean>>;
 }
 
-const BuyerOrderDetailCard = ({ orderItem }: BuyerOrderDetailCardProps) => {
+const BuyerOrderDetailCard = ({
+  orderItem,
+  setUpdateToggle,
+}: BuyerOrderDetailCardProps) => {
   const [isAddDetailOpen, setIsAddDetailOpen] = useState<boolean>(false);
   const [isActionLoading, setIsActionLoading] = useState<boolean>(false);
   function parseStatus(inputString: string): string {
@@ -50,11 +54,9 @@ const BuyerOrderDetailCard = ({ orderItem }: BuyerOrderDetailCardProps) => {
 
     setIsActionLoading(true);
     try {
-      console.log(`/orders/${orderItem.id}/${specEndPoint}`);
-      const response = await axiosInstance.put(
-        `/orders/${orderItem.id}/${specEndPoint}`,
-      );
-      console.log(response);
+      await axiosInstance.put(`/orders/${orderItem.id}/${specEndPoint}`);
+      Utils.notify('Order successfully updated', 'success', 'colored');
+      setUpdateToggle((prev) => !prev);
     } catch (error) {
       Utils.handleGeneralError(error);
       console.error(error);
