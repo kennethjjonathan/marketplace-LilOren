@@ -13,3 +13,8 @@ export type SortOptions =
   | 'Highest price'
   | 'Latest'
   | 'Oldest';
+
+export interface ICategory {
+  label: string;
+  value: number;
+}

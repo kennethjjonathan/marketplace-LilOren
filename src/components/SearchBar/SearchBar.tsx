@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import styles from './SearchBar.module.scss';
 import { Search } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 const SearchBar = () => {
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
   const [keyword, setKeyword] = useState<string>('');
@@ -17,8 +18,16 @@ const SearchBar = () => {
   }
 
   function handleSearch(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === 'Enter' && keyword !== '') {
-      router.push(`/search?search_term=${keyword}&page=1`);
+    if (e.key === 'Enter' && keyword !== '' && pathname !== '/search') {
+      router.push(
+        `/search?search_term=${keyword}&page=1&sort_by=price&sort_desc=false`,
+      );
+    }
+    if (e.key === 'Enter' && pathname === '/search') {
+      const params = new URLSearchParams(searchParams);
+      params.set('search_term', keyword);
+      params.set('page', '1');
+      router.replace(`${pathname}?${params.toString()}`);
     }
   }
 
