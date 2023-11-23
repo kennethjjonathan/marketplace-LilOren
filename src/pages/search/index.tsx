@@ -1,22 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, ReactElement } from 'react';
 import { NextPageWithLayout } from '../_app';
 import Layout from '@/components/Layout/Layout';
-import { ReactElement } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { IRecommendedProduct } from '@/store/home/useHome';
 import { Utils } from '@/utils';
 import axiosInstance from '@/lib/axiosInstance';
 import RecommendedProductCard from '@/components/RecommendedProductCard/RecommendedProductCard';
-import { useRouter } from 'next/router';
 import SearchFilter from '@/components/SearchFilter/SearchFilter';
-import PaginationNav from '@/components/PaginationNav/PaginationNav';
+import SearchPagination from '@/components/SearchPagination/SearchPagination';
+import DotsLoading from '@/components/DotsLoading/DotsLoading';
 
 const SearchPage: NextPageWithLayout = () => {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [products, setProducts] = useState<IRecommendedProduct[]>([]);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [totalPage, setTotalPage] = useState<number>(5);
+  const [totalPage, setTotalPage] = useState<number>(1);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchParams = new URLSearchParams();
@@ -53,16 +51,19 @@ const SearchPage: NextPageWithLayout = () => {
       fetchParams.set('max_price', max_price);
     }
     async function getProducts() {
+      setIsLoading(true);
       try {
         const response = await axiosInstance(
           `/products?${fetchParams.toString()}`,
         );
         console.log(response);
         setProducts(response.data.data.products);
-        setTotalPage(response.data.data.totalPage);
+        setTotalPage(response.data.data.total_page);
       } catch (error) {
         Utils.handleGeneralError(error);
         console.error(error);
+      } finally {
+        setIsLoading(false);
       }
     }
     getProducts();
@@ -70,22 +71,24 @@ const SearchPage: NextPageWithLayout = () => {
 
   return (
     <div className="w-full">
-      <div className="w-full md:w-[75vw] mx-auto">
-        <div className="w-full md:my-5 px-2">
+      <div className="w-full md:w-[75vw] mx-auto sm:flex sm:gap-2 sm:mt-5">
+        <div className="w-full px-2 sm:w-fit">
           <SearchFilter />
         </div>
-        <div className="w-full grid grid-cols-2">
-          {products &&
-            products.map((product, index) => (
-              <RecommendedProductCard key={index} product={product} />
-            ))}
-        </div>
-        <div className="w-full flex items-center py-3 justify-center">
-          <PaginationNav
-            totalPage={totalPage}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-          />
+        <div className="w-full sm:flex-1">
+          {isLoading && <DotsLoading />}
+          {!isLoading && products && (
+            <>
+              <div className="w-full grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {products.map((product, index) => (
+                  <RecommendedProductCard key={index} product={product} />
+                ))}
+              </div>
+              <div className="w-full flex items-center py-3 justify-center">
+                <SearchPagination totalPage={totalPage} />
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

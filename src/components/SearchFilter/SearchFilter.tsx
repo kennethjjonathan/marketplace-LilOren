@@ -31,6 +31,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import { Input } from '../ui/input';
 import styles from './SearchFilter.module.scss';
+import { ScrollArea, ScrollBar } from '../ui/scroll-area';
 
 const sortOptions: SortOptions[] = [
   'Lowest price',
@@ -315,8 +316,8 @@ const SearchFilter = () => {
     const params = new URLSearchParams(searchParams);
     params.delete('province');
     params.delete('districts');
-    params.delete('sort_by');
-    params.delete('sort_desc');
+    params.set('sort_by', 'price');
+    params.set('sort_desc', 'false');
     params.delete('category1');
     params.delete('category');
     params.delete('min_price');
@@ -333,14 +334,18 @@ const SearchFilter = () => {
     getProvinces();
     getCategory1();
   }, []);
+
   return (
     <>
-      <div className="w-full max-w-full flex items-center">
-        <div className="w-full overflow-x-auto flex items-center flex-1 space-x-2 py-5">
+      <div className="w-full max-w-full flex items-center sm:flex-col sm:items-start sm:sticky sm:top-20 sm:bottom-20">
+        <p className="font-semibold text-lg px-1 hidden sm:block lg:text-xl">
+          Filter
+        </p>
+        <div className="w-full overflow-x-auto flex items-center flex-1 space-x-2 py-5 sm:flex-col sm:items-start sm:space-x-0 sm:space-y-2 sm:py-2 lg:px-1">
           <Button
             size={'customBlank'}
             variant={'outline'}
-            className="p-1.5"
+            className="p-1.5 lg:w-full"
             onClick={() => setIsLocationOpen(true)}
           >
             By Location
@@ -348,7 +353,7 @@ const SearchFilter = () => {
           <Button
             size={'customBlank'}
             variant={'outline'}
-            className="p-1.5"
+            className="p-1.5 lg:w-full"
             onClick={() => setIsCategoryOpen(true)}
           >
             By Category
@@ -356,28 +361,107 @@ const SearchFilter = () => {
           <Button
             size={'customBlank'}
             variant={'outline'}
-            className="p-1.5"
+            className="p-1.5 lg:hidden"
             onClick={() => setIsPriceOpen(true)}
           >
             By Price
           </Button>
+          <div className="hidden lg:block">
+            <div className="w-full flex justify-between">
+              <p className="font-semibold text-sm">Price</p>
+              <Button
+                variant={'link'}
+                size={'customBlank'}
+                className="p-1"
+                onClick={clearPriceFilter}
+              >
+                Clear Price
+              </Button>
+            </div>
+            <div className="w-full mt-1 flex flex-col gap-1">
+              <Label
+                className="w-full text-left font-bold"
+                htmlFor="min-price-input-lg"
+              >
+                Min-Price
+              </Label>
+              <Input
+                min={0}
+                id="min-price-input-lg"
+                type="number"
+                value={minPrice}
+                onChange={(e) => handleNumInput(e, setMinPrice)}
+                className={styles.hideIndicator}
+                onKeyDown={(e) => handleNumKeyDown(e)}
+                onWheel={(e) => e.currentTarget.blur()}
+              />
+            </div>
+            <div className="w-full mt-1 flex flex-col gap-1">
+              <Label
+                className="w-full text-left font-bold"
+                htmlFor="max-price-input-lg"
+              >
+                Max-Price
+              </Label>
+              <Input
+                min={0}
+                id="max-price-input-lg"
+                type="number"
+                value={maxPrice}
+                onChange={(e) => handleNumInput(e, setMaxPrice)}
+                className={styles.hideIndicator}
+                onKeyDown={(e) => handleNumKeyDown(e)}
+                onWheel={(e) => e.currentTarget.blur()}
+              />
+            </div>
+            <div className="w-full mt-3">
+              <Button
+                variant={'default'}
+                className="w-full"
+                onClick={applyPriceFilter}
+              >
+                Apply Price
+              </Button>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center gap-2 pl-2">
+        <div className="flex items-center gap-2 pl-2 sm:pl-0 sm:flex-col lg:w-full lg:items-start">
           <Button
             size={'customBlank'}
             variant={'outline'}
-            className="p-1.5"
+            className="p-1.5 lg:hidden"
             onClick={() => setIsOrderOpen(true)}
           >
             <ArrowDownUp className="w-5 h-5" />
           </Button>
+          <div className="hidden lg:block w-full">
+            <p className="font-semibold text-sm">Sort</p>
+            <RadioGroup
+              className="w-full divide-y-[1px] divide-gray-300"
+              defaultValue={chosenOrder}
+              onValueChange={(value: SortOptions) => handleOrderChange(value)}
+            >
+              {sortOptions.map((option) => (
+                <div
+                  className="flex items-center gap-2 py-2 pt-3 min-w-full"
+                  key={option}
+                >
+                  <RadioGroupItem value={option} id={option} />
+                  <Label htmlFor={option} className="text-xs">
+                    {option}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
           <Button
             size={'customBlank'}
             variant={'outline'}
             className="p-1.5"
             onClick={cleanAllFilter}
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5 lg:hidden" />
+            <p className="hidden lg:block text-sm">Clear Filter</p>
           </Button>
         </div>
       </div>
@@ -392,7 +476,7 @@ const SearchFilter = () => {
               onClick={clearLoactionFilter}
               variant={'outline'}
               size={'customBlank'}
-              className="p-1"
+              className="p-1 lg:text-lg"
             >
               Clear
             </Button>
@@ -400,7 +484,7 @@ const SearchFilter = () => {
           {provinceArray.length !== 0 && (
             <div className="w-full mt-3 flex flex-col gap-3">
               <Label
-                className="w-full text-left font-bold"
+                className="w-full text-left font-bold lg:text-lg"
                 htmlFor="province-dropdown"
               >
                 Select a Province
@@ -413,14 +497,18 @@ const SearchFilter = () => {
                     : undefined
                 }
               >
-                <SelectTrigger id="province-dropdown">
+                <SelectTrigger id="province-dropdown" className="lg:text-lg">
                   <SelectValue placeholder="Select a province" />
                 </SelectTrigger>
-                <SelectContent className="max-h-[15rem]">
+                <SelectContent className="max-h-[15rem] lg:max-h-96">
                   <SelectGroup>
-                    <SelectLabel>Provinces</SelectLabel>
+                    <SelectLabel className="lg:text-lg">Provinces</SelectLabel>
                     {provinceArray.map((province, index) => (
-                      <SelectItem key={index} value={province.value.toString()}>
+                      <SelectItem
+                        key={index}
+                        value={province.value.toString()}
+                        className="lg:text-lg"
+                      >
                         {province.label}
                       </SelectItem>
                     ))}
@@ -433,28 +521,34 @@ const SearchFilter = () => {
             chosenProvince !== undefined &&
             districtArray.length !== 0 && (
               <div className="w-full mt-3 flex flex-col gap-3">
-                <Label className="w-full text-left font-bold">
+                <Label className="w-full text-left font-bold lg:text-lg">
                   Select district <span className="text-primary">{' *'}</span>
                 </Label>
-                <div className="w-full flex flex-col h-56 overflow-y-auto border-[1px] border-gray-300 p-2 divide-y-[1px]">
-                  {districtArray.map((district, index) => (
-                    <div key={index} className="flex items-center gap-2 py-2">
-                      <Checkbox
-                        checked={chosenDistrict.includes(
-                          district.value.toString(),
-                        )}
-                        id={district.label}
-                        onCheckedChange={(checked: boolean) =>
-                          handleDistrictChange(
-                            checked,
+                <ScrollArea className="border-[1px] border-gray-100">
+                  <div className="w-full flex flex-col h-56 p-2 divide-y-[1px] lg:h-80">
+                    {districtArray.map((district, index) => (
+                      <div key={index} className="flex items-center gap-2 py-2">
+                        <Checkbox
+                          checked={chosenDistrict.includes(
                             district.value.toString(),
-                          )
-                        }
-                      />
-                      <Label htmlFor={district.label}>{district.label}</Label>
-                    </div>
-                  ))}
-                </div>
+                          )}
+                          id={district.label}
+                          onCheckedChange={(checked: boolean) =>
+                            handleDistrictChange(
+                              checked,
+                              district.value.toString(),
+                            )
+                          }
+                          className="lg:aspect-square lg:w-5 lg:h-5"
+                        />
+                        <Label htmlFor={district.label} className="lg:text-lg">
+                          {district.label}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                  <ScrollBar orientation="vertical" />
+                </ScrollArea>
               </div>
             )}
         </SheetContent>
@@ -470,7 +564,7 @@ const SearchFilter = () => {
             <Button
               variant={'outline'}
               size={'customBlank'}
-              className="p-1"
+              className="p-1 lg:text-lg"
               onClick={clearCategoryFilter}
             >
               Clear
@@ -479,7 +573,7 @@ const SearchFilter = () => {
           {category1Array.length !== 0 && (
             <div className="w-full mt-3 flex flex-col gap-3">
               <Label
-                className="w-full text-left font-bold"
+                className="w-full text-left font-bold lg:text-lg"
                 htmlFor="category-1-dropdown"
               >
                 Select Category 1
@@ -488,16 +582,17 @@ const SearchFilter = () => {
                 defaultValue={chosenCategory1}
                 onValueChange={(value) => handleCategory1Change(value)}
               >
-                <SelectTrigger id="category-1-dropdown">
+                <SelectTrigger id="category-1-dropdown" className="lg:text-lg">
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent className="max-h-[15rem]">
                   <SelectGroup>
-                    <SelectLabel>Category 1</SelectLabel>
+                    <SelectLabel className="lg:text-lg">Category 1</SelectLabel>
                     {category1Array.map((category) => (
                       <SelectItem
                         key={category.label}
                         value={category.value.toString()}
+                        className="lg:text-lg"
                       >
                         {category.label}
                       </SelectItem>
@@ -512,7 +607,7 @@ const SearchFilter = () => {
             category2Array.length !== 0 && (
               <div className="w-full mt-3 flex flex-col gap-3">
                 <Label
-                  className="w-full text-left font-bold"
+                  className="w-full text-left font-bold lg:text-lg"
                   htmlFor="category-2-dropdown"
                 >
                   Select Category 2 <span className="text-primary">{' *'}</span>
@@ -521,16 +616,22 @@ const SearchFilter = () => {
                   defaultValue={chosenCategory2}
                   onValueChange={(value) => handleChoseCategory2(value)}
                 >
-                  <SelectTrigger id="category-2-dropdown">
+                  <SelectTrigger
+                    id="category-2-dropdown"
+                    className="lg:text-lg"
+                  >
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
                   <SelectContent className="max-h-[15rem]">
                     <SelectGroup>
-                      <SelectLabel>Category 2</SelectLabel>
+                      <SelectLabel className="lg:text-lg">
+                        Category 2
+                      </SelectLabel>
                       {category2Array.map((category) => (
                         <SelectItem
                           key={category.label}
                           value={category.value.toString()}
+                          className="lg:text-lg"
                         >
                           {category.label}
                         </SelectItem>
