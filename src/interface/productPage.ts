@@ -44,6 +44,7 @@ export interface IProductPage {
   high_price: number;
   low_price: number;
   is_variant: boolean;
+  is_in_wishlist: boolean;
 }
 
 export interface IAddToCart {

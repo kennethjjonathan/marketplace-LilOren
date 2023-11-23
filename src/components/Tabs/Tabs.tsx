@@ -28,7 +28,7 @@ const Tabs = ({ datas, isSeller }: TabsProps) => {
 
   return (
     <div
-      className={`bg-white shadow-sm rounded-t-xl flex gap-2 p-2 overflow-x-auto ${
+      className={`bg-primary-foreground shadow-sm rounded-t-xl flex gap-2 p-2 overflow-x-auto ${
         isSeller && 'w-[100vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw]'
       } `}
     >

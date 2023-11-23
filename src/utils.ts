@@ -1,4 +1,5 @@
 import { Theme, ToastContent, TypeOptions, toast } from 'react-toastify';
+import CONSTANTS from './constants/constants';
 import { ICheckedCart } from './store/cart/useCart';
 
 export class Utils {
@@ -24,6 +25,22 @@ export class Utils {
       type: type,
       position: toast.POSITION.TOP_RIGHT,
       theme: theme,
+    });
+  };
+
+  static notifyTokenExp = () => {
+    toast(CONSTANTS.TOKEN_HAS_EXPIRED, {
+      type: 'info',
+      position: toast.POSITION.TOP_RIGHT,
+      theme: 'colored',
+    });
+  };
+
+  static notifyGeneralError = (message: string) => {
+    toast(message, {
+      type: 'error',
+      position: toast.POSITION.TOP_RIGHT,
+      theme: 'colored',
     });
   };
 
