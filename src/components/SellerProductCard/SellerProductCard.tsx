@@ -71,22 +71,28 @@ const SellerProductCard = ({ product, shop_name }: SellerProductCardProps) => {
                           </span>
                         </div>
                       </div>
-                      {/* <div
+                      <div
                         className={`${styles.shop_rating_average_and_label}`}
                       >
-                        <Star
-                          size={15}
-                          fill={'#FFDF00'}
-                          className={'text-[#FFDF00] flex-shrink mr-[2px]'}
-                        />
-                        <span className={`${styles.shop_rating_average}`}>
-                          {product.shop.rating_average}
-                        </span>
-                        <span className={`${styles.separator}`}></span>
-                        <span className={`${styles.shop_label}`}>
-                          {product.shop.total_sold}+ terjual
-                        </span>
-                      </div> */}
+                        {product.rating !== 0 && (
+                          <>
+                            <Star
+                              size={15}
+                              fill={'#FFDF00'}
+                              className={'text-[#FFDF00] flex-shrink mr-[2px]'}
+                            />
+                            <span className={`${styles.shop_rating_average}`}>
+                              {product.rating}
+                            </span>
+                            <span className={`${styles.separator}`}></span>
+                          </>
+                        )}
+                        {product.count_purchased !== 0 && (
+                          <span className={`${styles.shop_label}`}>
+                            {product.count_purchased} sold
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </Link>
                 </div>

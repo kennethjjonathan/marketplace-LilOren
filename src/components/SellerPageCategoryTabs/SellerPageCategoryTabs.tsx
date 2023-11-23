@@ -14,40 +14,43 @@ import PaginationNav from '@/components//PaginationNav/PaginationNav';
 import { IPagination } from '@/interface/pagination';
 
 interface SellerPageCategoryTabsProps {
-  setSortByPriceDesc: Dispatch<React.SetStateAction<string>>;
   setCurrentPage: Dispatch<React.SetStateAction<number>>;
   setActiveFilter: Dispatch<React.SetStateAction<string>>;
   shop_name: string;
   sort_desc: string;
   seller_pagination: IPagination;
+  sort_by: string;
 }
 
 const SellerPageCategoryTabs = ({
-  setSortByPriceDesc,
   setCurrentPage,
   setActiveFilter,
   shop_name,
   sort_desc,
   seller_pagination,
+  sort_by,
 }: SellerPageCategoryTabsProps) => {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState('MostRecent');
+  const [activeTab, setActiveTab] = useState('BestSeller');
   const [labelSortPrice, setLabelSortPrice] = useState('Price');
 
   const handleSortByPrice = (e: string) => {
     setActiveTab('Price');
-    setSortByPriceDesc(e);
     router.push(`/shop/${shop_name}?sort_by=price&sort_desc=${e}`);
   };
   const handleFilterBy = (menu: string) => {
     setActiveTab(menu);
     setActiveFilter(menu);
     if (menu === 'MostRecent') {
-      router.push(`/shop/${shop_name}?`);
+      router.push(`/shop/${shop_name}?sort_desc=true`);
+    }
+
+    if (menu === 'BestSeller') {
+      router.push(`/shop/${shop_name}`);
     }
   };
   useEffect(() => {
-    if (sort_desc == 'false' || sort_desc == 'true') {
+    if (sort_by === 'Price' && (sort_desc == 'false' || sort_desc == 'true')) {
       setActiveTab('Price');
       sort_desc === 'false'
         ? setLabelSortPrice('Price: Low to High')

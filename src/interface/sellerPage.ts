@@ -6,4 +6,6 @@ export interface ISellerProduct {
   discount_price: number;
   discount: number;
   district_name: string;
+  rating: number;
+  count_purchased: number;
 }

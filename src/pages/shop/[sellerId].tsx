@@ -1,4 +1,10 @@
-import React, { ReactElement, useCallback, useState, useEffect } from 'react';
+import React, {
+  ReactElement,
+  useCallback,
+  useState,
+  useEffect,
+  useRef,
+} from 'react';
 import { GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import CONSTANTS from '@/constants/constants';
@@ -19,32 +25,42 @@ const SellerPage = ({ sellerPage }: SellerPageProps) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [sortByPriceDesc, setSortByPriceDesc] = useState<string>('true');
   const [activeFilter, setActiveFilter] = useState('');
+  const tabsRef = useRef(null);
   const l = useSellerPage.use.loading_fetch_seller_details();
   const fetchSellerDetails = useSellerPage.use.fetchSellerDetails();
   const seller_details = useSellerPage.use.seller_details();
   const setSellerDetails = useSellerPage.use.setSellerDetails();
 
-  const handleChangeSortBy = useCallback(async () => {
-    let params = '?';
-    if (sortByPriceDesc === 'false' && sort_by === '' && sort_desc === '') {
-      params += `sort_by=price&sort_desc=false`;
-    } else if (sort_by && sort_desc)
-      params += `sort_by=${sort_by}&sort_desc=${sort_desc}`;
-    fetchSellerDetails(sellerPage.shop_name, params);
-  }, [sortByPriceDesc, sort_by, sort_desc]);
-
-  const handleMostRecent = useCallback(async () => {
+  const handleFilter = useCallback(async () => {
     let params = '';
+    if (
+      sort_by === null &&
+      sort_desc === 'true' &&
+      activeFilter === 'MostRecent'
+    ) {
+      params = '?sort_desc=true';
+    }
+    if (sort_by === 'price') {
+      params = '?sort_by=price';
+      if (sort_desc === 'false') {
+        params += '&sort_desc=false';
+      }
+    }
     fetchSellerDetails(sellerPage.shop_name, params);
-  }, [activeFilter]);
+    handleScroll(tabsRef);
+  }, [activeFilter, sort_by, sort_desc]);
+
+  const handleScroll = (ref: any) => {
+    window.scrollTo({
+      top: ref.offsetTop,
+      left: 0,
+      behavior: 'smooth',
+    });
+  };
 
   useEffect(() => {
-    handleChangeSortBy();
-  }, [handleChangeSortBy]);
-
-  useEffect(() => {
-    handleMostRecent();
-  }, [handleMostRecent]);
+    handleFilter();
+  }, [handleFilter]);
 
   useEffect(() => {
     setSellerDetails(sellerPage);
@@ -60,14 +76,17 @@ const SellerPage = ({ sellerPage }: SellerPageProps) => {
       {/* Content Below */}
       <div className="flex flex-row">
         <div className="flex flex-col">
-          <div className="flex flex-col justify-center w-full md:w-[75vw] sticky top-0 z-50 bg-white pb-4">
+          <div
+            className="flex flex-col justify-center w-full md:w-[75vw] sticky top-0 z-50 bg-white pb-4"
+            ref={tabsRef}
+          >
             <SellerPageCategoryTabs
               shop_name={seller_details.shop_name}
-              setSortByPriceDesc={setSortByPriceDesc}
               sort_desc={sort_desc as string}
               seller_pagination={seller_details.pagination}
               setCurrentPage={setCurrentPage}
               setActiveFilter={setActiveFilter}
+              sort_by={sort_by as string}
             />
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 md:w-[75vw]  mt-2">
