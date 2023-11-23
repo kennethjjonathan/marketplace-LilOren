@@ -3,12 +3,14 @@ import Image from 'next/image';
 import { MapPin } from 'lucide-react';
 import { ISeller } from '@/interface/productPage';
 import { Button } from '../ui/button';
+import { useRouter } from 'next/router';
 
 interface SellerProfileSnippetProps {
   seller: ISeller;
 }
 
 const SellerProfileSnippet = ({ seller }: SellerProfileSnippetProps) => {
+  const router = useRouter();
   return (
     <div className="flex items-center gap-2 w-full sm:gap-5 px-2">
       <div className="rounded-full aspect-square relative w-1/5 overflow-hidden lg:w-2/12 xl:w-1/12 ">
@@ -28,7 +30,11 @@ const SellerProfileSnippet = ({ seller }: SellerProfileSnippetProps) => {
           </p>
         </div>
         <div className="flex items-center justify-start gap-2">
-          <Button size="customBlank" className="text-base px-2 py-1 sm:text-lg">
+          <Button
+            onClick={() => router.push(`/shop/${seller.name}`)}
+            size="customBlank"
+            className="text-base px-2 py-1 sm:text-lg"
+          >
             View Shop
           </Button>
         </div>

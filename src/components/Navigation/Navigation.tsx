@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Utils } from '@/utils';
+import React, { useEffect } from 'react';
 
-import { cn } from '@/lib/utils';
+import ButtonWithIcon from '@/components/ButtonWithIcon/ButtonWithIcon';
+import CartInHome from '@/components/CartInHome/CartInHome';
+import EmptyCart from '@/components/EmptyCart/EmptyCart';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -11,102 +10,57 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
-import { Search, ShoppingCart, Store, User2 } from 'lucide-react';
-import ButtonWithIcon from '@/components/ButtonWithIcon/ButtonWithIcon';
-import EmptyCart from '@/components/EmptyCart/EmptyCart';
-import { ICartHome, useHome } from '@/store/home/useHome';
-import CartInHome from '@/components/CartInHome/CartInHome';
-import styles from './Navigation.module.scss';
+import { cn } from '@/lib/utils';
+import { authClient } from '@/service/auth/AuthClient';
+import { useHome } from '@/store/home/useHome';
 import { useUser } from '@/store/user/useUser';
+import { ShoppingCart, Store, User2 } from 'lucide-react';
+import { useRouter } from 'next/router';
+import styles from './Navigation.module.scss';
 import SearchBar from '../SearchBar/SearchBar';
 
-const components: {
+type DropdownItem = {
   title: string;
-  href: string;
+  href?: string;
   description?: string;
-}[] = [
-  {
-    title: 'My Profile',
-    href: '/user?status=Info',
-  },
-  {
-    title: 'My Order',
-    href: '/user/order-detail',
-  },
-  {
-    title: 'Whislist',
-    href: '/user/wishlist?status=Wishlist',
-  },
-];
-
-const user: {
-  firstName: string;
-  lastName: string;
-  isSeller: boolean;
-} = {
-  firstName: 'Endriyani',
-  lastName: 'Rahayu',
-  isSeller: false,
+  callback?(): Promise<void>;
 };
 
-const products: ICartHome[] = [
-  {
-    thumbnail_url:
-      'https://images.tokopedia.net/img/cache/100-square/VqbcmM/2023/10/16/9a895898-56d6-4430-b338-bbd43107f091.png.webp?ect=4g',
-    product_name: 'Bantal tidur silikon Restking Bantal tidur silikon Restking',
-    price: 100000,
-    quantity: 1,
-  },
-  {
-    thumbnail_url:
-      'https://images.tokopedia.net/img/cache/100-square/VqbcmM/2021/7/27/5b3236fd-45aa-42c0-85d7-477dc0abfa8f.png.webp?ect=4g',
-    product_name: 'Bantal tidur silikon Restking',
-    price: 100000,
-    quantity: 12,
-  },
-  {
-    thumbnail_url:
-      'https://images.tokopedia.net/img/cache/100-square/VqbcmM/2021/3/21/19e19780-4bf2-46b7-bbc7-8ebf4652e0ee.jpg.webp?ect=4g',
-    product_name: 'Bantal tidur silikon Restking',
-    price: 100000,
-    quantity: 3,
-  },
-  {
-    thumbnail_url:
-      'https://images.tokopedia.net/img/cache/100-square/VqbcmM/2022/9/21/1109807a-c380-46cb-b460-b72638fa5630.png.webp?ect=4g',
-    product_name: 'Bantal tidur silikon Restking',
-    price: 100000,
-    quantity: 4,
-  },
-  {
-    thumbnail_url:
-      'https://images.tokopedia.net/img/cache/100-square/VqbcmM/2022/10/13/2247df4c-8508-4d2e-ac46-ab4cf57f44f8.jpg.webp?ect=4g',
-    product_name: 'Bantal tidur silikon Restking',
-    price: 100000,
-    quantity: 5,
-  },
-  {
-    thumbnail_url:
-      'https://images.tokopedia.net/img/cache/100-square/VqbcmM/2022/10/13/2247df4c-8508-4d2e-ac46-ab4cf57f44f8.jpg.webp?ect=4g',
-    product_name: 'Bantal tidur silikon Restking',
-    price: 100000,
-    quantity: 5,
-  },
-];
-
-const Navigation = () => {
+const Navigation: React.FC = () => {
   const cartInHome = useHome.use.cart_in_home();
   const fetchCartInHome = useHome.use.fetchCartInHome();
   const user_details = useUser.use.user_details();
   const fetchUserDetails = useUser.use.fetchUserDetails();
   const loading_fetch_user_details = useUser.use.loading_fetch_user_details();
+  const router = useRouter();
+
+  const components: DropdownItem[] = [
+    {
+      title: 'My Profile',
+      href: '/user?status=Info',
+    },
+    {
+      title: 'My Order',
+      href: '/user/order-detail',
+    },
+    {
+      title: 'Wishlist',
+      href: '/user/wishlist?status=Wishlist',
+    },
+    {
+      title: 'Logout',
+      async callback() {
+        await authClient.logout();
+        router.reload();
+      },
+    },
+  ];
 
   useEffect(() => {
     fetchCartInHome();
     fetchUserDetails();
-  }, []);
+  }, [fetchCartInHome, fetchUserDetails]);
 
   return (
     <div className={styles.navigation}>
@@ -244,6 +198,8 @@ const Navigation = () => {
                       key={component.title}
                       title={component.title}
                       href={component.href}
+                      className="cursor-pointer"
+                      onClick={component.callback}
                     >
                       {component.description}
                     </ListItem>

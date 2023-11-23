@@ -1,11 +1,15 @@
-import React from 'react';
-import Link from 'next/link';
+import { ITopCategory } from '@/store/home/useHome';
 import { ChevronRight } from 'lucide-react';
-import styles from './HomeCategoryList.module.scss';
-import CONSTANTS from '@/constants/constants';
+import Link from 'next/link';
+import React from 'react';
 import HomeCategoryItem from '../HomeCategoryItem/HomeCategoryItem';
+import styles from './HomeCategoryList.module.scss';
 
-const HomeCategoryList = () => {
+type Props = {
+  categories: ITopCategory[];
+};
+
+const HomeCategoryList: React.FC<Props> = ({ categories }) => {
   return (
     <div className={styles.brand__grid}>
       <div className={styles.brand_grid_header}>
@@ -23,17 +27,17 @@ const HomeCategoryList = () => {
           {'See More'} <ChevronRight size={20} />
         </Link>
       </div>
-      <div className="grid-list-wrapper overflow-auto h-fit border-b-[1px] border-t-[1px]">
+      <div className="border-2 grid-list-wrapper grid h-fit border-b-[1px] border-t-[1px]">
         <div className="grid-list hide-scrollbar h-[290px] p-0 w-[100%] flex flex-col flex-wrap overflow-x-scroll overflow-y-hidden scrolling-touch ">
-          {CONSTANTS.CATEGORY_LIST.map((category) => (
+          {categories.map((category) => (
             <div
-              key={`key:${category.title}`}
+              key={`key:${category.category_name}`}
               className="border-b-[1px] border-r-[1px] border-input h-[137px] flex flex-col justify-center items-center"
             >
               <HomeCategoryItem
-                image={category.image}
-                title={category.title}
-                href={category.href}
+                image={category.image_url}
+                title={category.category_name}
+                href={category.category_name}
               />
             </div>
           ))}
