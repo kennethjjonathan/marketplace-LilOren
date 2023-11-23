@@ -27,6 +27,14 @@ const nextConfig = {
         port: '',
       },
       {
+        hostname: 'www.tikibanjarmasin.com',
+        port: '',
+      },
+      {
+        hostname: 'play-lh.googleusercontent.com',
+        port: '',
+      },
+      {
         hostname: 'cf.shopee.sg',
       },
     ],

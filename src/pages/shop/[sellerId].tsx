@@ -95,12 +95,14 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   let sellerPage = null;
 
   try {
-    const response = await fetch(`${CONSTANTS.BASEURL}/${params!.sellerId}`);
+    const response = await fetch(
+      `${CONSTANTS.BASEURL}/shops/${params!.sellerId}`,
+    );
     if (!response.ok) {
       throw new Error(response.statusText);
     }
+
     const data = await response.json();
-    console.log(data);
     sellerPage = data.data;
   } catch (error) {
     console.error(error);

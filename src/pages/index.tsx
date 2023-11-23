@@ -30,7 +30,7 @@ const Home: NextPageWithLayout<Props> = ({ products, categories }: Props) => {
         <section className="home-category-list bg-white mt-3 lg:mt-5 md:w-[75vw]">
           {categories && <HomeCategoryList categories={categories} />}
         </section>
-        <section className="recommendedProductList flex flex-col justify-center items-center w-full mt-3 lg:mt-5 md:w-[75vw]">
+        <section className="recommendedProductList flex flex-col justify-center items-center w-full mt-3 mb-6 lg:mt-5 md:w-[75vw]">
           <div className="flex flex-row justify-between w-full">
             <div className="w-full md:w-[75vw] bg-white text-left text-primary py-3 pl-2 md:border-b-[5px] md:border-b-primary md:text-center md:text-[16px] md:bg-white md:mb-2 text-[14px] px-[10px]">
               {'RECOMMENDED'}
