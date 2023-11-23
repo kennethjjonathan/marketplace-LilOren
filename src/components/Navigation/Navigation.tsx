@@ -20,6 +20,7 @@ import { ICartHome, useHome } from '@/store/home/useHome';
 import CartInHome from '@/components/CartInHome/CartInHome';
 import styles from './Navigation.module.scss';
 import { useUser } from '@/store/user/useUser';
+import SearchBar from '../SearchBar/SearchBar';
 
 const components: {
   title: string;
@@ -96,16 +97,11 @@ const products: ICartHome[] = [
 ];
 
 const Navigation = () => {
-  const [searchKey, setSearchKey] = useState<string>('');
   const cartInHome = useHome.use.cart_in_home();
   const fetchCartInHome = useHome.use.fetchCartInHome();
   const user_details = useUser.use.user_details();
   const fetchUserDetails = useUser.use.fetchUserDetails();
   const loading_fetch_user_details = useUser.use.loading_fetch_user_details();
-
-  const handleSearchProduct = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-  };
 
   useEffect(() => {
     fetchCartInHome();
@@ -136,12 +132,7 @@ const Navigation = () => {
       )}
       <div className={styles.navigationContent}>
         <div className={styles.logo}>LOGO</div>
-        <div className={styles.searchInput}>
-          <form onSubmit={handleSearchProduct}>
-            <Search className="absolute text-primary top-[8px] left-[12px]" />
-            <input className={styles.inputField} placeholder="Cari produk" />
-          </form>
-        </div>
+        <SearchBar />
         <NavigationMenu>
           <NavigationMenuList>
             {/* Cart */}
