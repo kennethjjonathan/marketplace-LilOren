@@ -278,24 +278,39 @@ const SearchFilter = () => {
     const max_price: string | null = searchParams.get('max_price');
     if (typeof province === 'string') {
       getDistrict(province);
+    } else if (province === null) {
+      setChosenProvince(undefined);
     }
     if (typeof districts === 'string') {
       setChosenDistrict(districts.split(','));
+    } else if (districts === null) {
+      setChosenDistrict([]);
     }
     if (typeof sort_by === 'string' && typeof sort_desc === 'string') {
       sortSetter(sort_by, sort_desc);
+    } else if (sort_by === null && sort_desc === null) {
+      setChosenOrder('Lowest price');
     }
     if (typeof category1 === 'string') {
       handleCategory1Change(category1);
+    } else if (category1 === null) {
+      setChosenCategory1(undefined);
     }
     if (typeof category === 'string') {
       setChosenCategory2(category);
+    } else if (category === null) {
+      setChosenCategory2(undefined);
+      setCategory2Array([]);
     }
     if (typeof min_price === 'string') {
       setMinPrice(parseInt(min_price));
+    } else if (min_price === null) {
+      setMinPrice('');
     }
     if (typeof max_price === 'string') {
       setMaxPrice(parseInt(max_price));
+    } else if (max_price === null) {
+      setMaxPrice('');
     }
   }
 
