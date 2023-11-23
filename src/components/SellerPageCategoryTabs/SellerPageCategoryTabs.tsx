@@ -59,50 +59,62 @@ const SellerPageCategoryTabs = ({
   }, []);
 
   return (
-    <div className="flex flex-row items-center gap-3 mt-4 p-3 bg-accent">
-      <div className="hidden lg:block">
-        <p className="text-muted-foreground">{'Sort'}</p>
+    <div className="flex flex-row items-center gap-3 p-3 bg-accent">
+      <div className="flex flex-row justify-between items-center h-full w-full">
+        <div className="flex flex-row h-full justify-between items-center gap-3">
+          <div className="hidden lg:block">
+            <p className="text-muted-foreground">{'Sort'}</p>
+          </div>
+          {/* Most Recent */}
+          <Button
+            onClick={() => handleFilterBy('MostRecent')}
+            className={`${
+              activeTab === 'MostRecent' && 'text-primary'
+            } h-[20px] bg-transparent border-0 p-0 lg:bg-white lg:h-full lg:px-4 lg:border-[1px]`}
+            variant={'outline'}
+          >
+            {'Recent'}
+          </Button>
+          {/* Best Seller */}
+          <Button
+            onClick={() => handleFilterBy('BestSeller')}
+            className={`${
+              activeTab === 'BestSeller' && 'text-primary'
+            } h-[20px] bg-transparent border-0 p-0 lg:bg-white lg:h-full lg:px-4 lg:border-[1px]`}
+            variant={'outline'}
+          >
+            {'Best Seller'}
+          </Button>
+          {/* Price Pop Over */}
+          <Select onValueChange={(e) => handleSortByPrice(e)}>
+            <SelectTrigger
+              className={`w-[170px] ${activeTab === 'Price' && 'text-primary'}`}
+            >
+              <SelectValue
+                placeholder={`${
+                  activeTab === 'Price' ? labelSortPrice : 'Price'
+                }`}
+              />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>{'Price'}</SelectLabel>
+                <SelectItem value={'false'}>Price: Low to High</SelectItem>
+                <SelectItem value={'true'}>Price: High to Low</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="hidden sm:flex">
+          {seller_pagination.total_page > 1 && (
+            <PaginationNav
+              totalPage={seller_pagination?.total_page}
+              currentPage={seller_pagination?.page}
+              setCurrentPage={setCurrentPage}
+            />
+          )}
+        </div>
       </div>
-      {/* Most Recent */}
-      <Button
-        onClick={() => handleFilterBy('MostRecent')}
-        className={`${activeTab === 'MostRecent' && 'text-primary'}`}
-        variant={'outline'}
-      >
-        {'Recent'}
-      </Button>
-      {/* Best Seller */}
-      <Button
-        onClick={() => handleFilterBy('BestSeller')}
-        className={`${activeTab === 'BestSeller' && 'text-primary'}`}
-        variant={'outline'}
-      >
-        {'Best Seller'}
-      </Button>
-      {/* Price Pop Over */}
-      <Select onValueChange={(e) => handleSortByPrice(e)}>
-        <SelectTrigger
-          className={`w-[180px] ${activeTab === 'Price' && 'text-primary'} `}
-        >
-          <SelectValue
-            placeholder={`${activeTab === 'Price' ? labelSortPrice : 'Price'}`}
-          />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectLabel>{'Price'}</SelectLabel>
-            <SelectItem value={'false'}>Price: Low to High</SelectItem>
-            <SelectItem value={'true'}>Price: High to Low</SelectItem>
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-      {seller_pagination.total_page > 1 && (
-        <PaginationNav
-          totalPage={seller_pagination?.total_page}
-          currentPage={seller_pagination?.page}
-          setCurrentPage={setCurrentPage}
-        />
-      )}
     </div>
   );
 };

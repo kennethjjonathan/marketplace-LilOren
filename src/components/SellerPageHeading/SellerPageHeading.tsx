@@ -25,7 +25,7 @@ const SellerPageHeading = ({ sellerPage }: SellerPageHeadingProps) => {
             {sellerPage.shop_name}
           </p>
           <p className="font-normal text-muted-foreground text-[14px] md:text-[16px]">
-            {sellerPage.years}
+            {sellerPage.years} | {sellerPage.product_counts} total products
           </p>
         </div>
       </div>

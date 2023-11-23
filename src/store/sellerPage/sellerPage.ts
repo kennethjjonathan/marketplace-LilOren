@@ -8,6 +8,8 @@ export interface ISellerDetails {
   shop_name: string;
   product_counts: string;
   years: string;
+  categories: string[];
+  best_seller: ISellerProduct[];
   products: ISellerProduct[];
   pagination: IPagination;
 }
@@ -28,6 +30,8 @@ const useSellerPageBase = create<State & Actions>((set) => ({
     shop_name: '',
     product_counts: '',
     years: '',
+    categories: [],
+    best_seller: [],
     products: [],
     pagination: {
       page: 0,
