@@ -6,7 +6,6 @@ export class SellerPageClient {
     const response = await SellerPageServer.get(
       `${CONSTANTS.BASEURL}/shops/${shop_name}${params}`,
     );
-    console.log(response);
     return response;
   };
 }

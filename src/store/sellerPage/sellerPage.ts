@@ -8,6 +8,8 @@ export interface ISellerDetails {
   shop_name: string;
   product_counts: string;
   years: string;
+  categories: string[];
+  best_seller: ISellerProduct[];
   products: ISellerProduct[];
   pagination: IPagination;
 }
@@ -28,6 +30,8 @@ const useSellerPageBase = create<State & Actions>((set) => ({
     shop_name: '',
     product_counts: '',
     years: '',
+    categories: [],
+    best_seller: [],
     products: [],
     pagination: {
       page: 0,
@@ -43,6 +47,9 @@ const useSellerPageBase = create<State & Actions>((set) => ({
     const response = await SellerPageClient.getSellerDetails(shop_name, params);
     set(() => ({
       seller_details: response.data,
+    }));
+    set(() => ({
+      loading_fetch_seller_details: false,
     }));
   },
   setSellerDetails: (seller_details: ISellerDetails) => {
