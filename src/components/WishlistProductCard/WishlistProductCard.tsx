@@ -29,6 +29,7 @@ const WishlistProductCard = ({
                     is_in_wishlist={true}
                     product_code={item.product_code}
                     current_page={current_page}
+                    is_in_product_detail={false}
                   />
                   <Link href={`/products/${item.product_code}`}>
                     <div className={`img_container block w-[100%]`}></div>

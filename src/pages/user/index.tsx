@@ -69,7 +69,7 @@ const User: NextPageWithLayout = () => {
         ></meta>
       </Head>
       <div className="lg:flex lg:justify-center lg:items-center w-[100vw] bg-white">
-        <div className="bg-accent flex flex-col justify-start h-[100vh] lg:w-[75vw] lg:p-4 lg:bg-transparent lg:hidden">
+        <div className="bg-accent flex flex-col justify-start h-[calc(100vh-52px)] lg:w-[75vw] lg:p-4 lg:bg-transparent lg:hidden">
           <UserPresentation />
           <div className="lilOren__user__setting pt-[17px] bg-white lg:bg-transparent lg:w-[350px] lg:hidden">
             <span id="account-setting-section" className="font-bold px-4">

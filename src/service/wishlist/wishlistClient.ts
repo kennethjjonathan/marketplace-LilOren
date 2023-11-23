@@ -18,9 +18,9 @@ export class WishlistClient {
     return response;
   };
 
-  static removeFromWishlist = async (wishlist_id: number) => {
+  static removeFromWishlist = async (product_code: string) => {
     const response = await WishlistServer.delete(
-      `${CONSTANTS.BASEURL}/wishlist/${wishlist_id}`,
+      `${CONSTANTS.BASEURL}/wishlist/${product_code}`,
     );
     return response;
   };
