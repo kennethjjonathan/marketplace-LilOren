@@ -48,6 +48,9 @@ const useSellerPageBase = create<State & Actions>((set) => ({
     set(() => ({
       seller_details: response.data,
     }));
+    set(() => ({
+      loading_fetch_seller_details: false,
+    }));
   },
   setSellerDetails: (seller_details: ISellerDetails) => {
     set(() => ({

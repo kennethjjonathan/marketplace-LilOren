@@ -49,8 +49,9 @@ const SellerPageCategoryTabs = ({
       router.push(`/shop/${shop_name}`);
     }
   };
+
   useEffect(() => {
-    if (sort_by === 'Price' && (sort_desc == 'false' || sort_desc == 'true')) {
+    if (sort_by === 'price' && (sort_desc == 'false' || sort_desc == 'true')) {
       setActiveTab('Price');
       sort_desc === 'false'
         ? setLabelSortPrice('Price: Low to High')
@@ -59,7 +60,7 @@ const SellerPageCategoryTabs = ({
   }, []);
 
   return (
-    <div className="flex flex-row items-center gap-3 p-3 bg-accent">
+    <div className="flex flex-row items-center gap-3 px-3 py-5 bg-white border-[1px] rounded-lg">
       <div className="flex flex-row justify-between items-center h-full w-full">
         <div className="flex flex-row h-full justify-between items-center gap-3">
           <div className="hidden lg:block">
@@ -70,8 +71,8 @@ const SellerPageCategoryTabs = ({
             onClick={() => handleFilterBy('MostRecent')}
             className={`${
               activeTab === 'MostRecent' && 'text-primary'
-            } h-[20px] bg-transparent border-0 p-0 lg:bg-white lg:h-full lg:px-4 lg:border-[1px]`}
-            variant={'outline'}
+            } h-[20px] bg-transparent lg:bg-accent border-0 p-0 lg:h-full lg:px-4 lg:border-[1px]`}
+            variant={'secondary'}
           >
             {'Recent'}
           </Button>
@@ -80,19 +81,21 @@ const SellerPageCategoryTabs = ({
             onClick={() => handleFilterBy('BestSeller')}
             className={`${
               activeTab === 'BestSeller' && 'text-primary'
-            } h-[20px] bg-transparent border-0 p-0 lg:bg-white lg:h-full lg:px-4 lg:border-[1px]`}
-            variant={'outline'}
+            } h-[20px] bg-transparent border-0 p-0 lg:bg-accent lg:h-full lg:px-4 lg:border-[1px]`}
+            variant={'secondary'}
           >
             {'Best Seller'}
           </Button>
           {/* Price Pop Over */}
           <Select onValueChange={(e) => handleSortByPrice(e)}>
             <SelectTrigger
-              className={`w-[170px] ${activeTab === 'Price' && 'text-primary'}`}
+              className={`w-[170px] lg:bg-accent ${
+                activeTab === 'Price' && 'text-primary'
+              }`}
             >
               <SelectValue
                 placeholder={`${
-                  activeTab === 'Price' ? labelSortPrice : 'Price'
+                  sort_by === 'price' ? labelSortPrice : 'Price'
                 }`}
               />
             </SelectTrigger>
