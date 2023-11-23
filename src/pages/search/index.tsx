@@ -10,6 +10,7 @@ import SearchFilter from '@/components/SearchFilter/SearchFilter';
 import SearchPagination from '@/components/SearchPagination/SearchPagination';
 import DotsLoading from '@/components/DotsLoading/DotsLoading';
 import Head from 'next/head';
+import EmptyNotify from '@/components/EmptyNotify/EmptyNotify';
 
 const SearchPage: NextPageWithLayout = () => {
   const searchParams = useSearchParams();
@@ -85,11 +86,15 @@ const SearchPage: NextPageWithLayout = () => {
               <DotsLoading />
             ) : (
               <>
-                <div className="w-full grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                  {products.map((product, index) => (
-                    <RecommendedProductCard key={index} product={product} />
-                  ))}
-                </div>
+                {products.length === 0 ? (
+                  <EmptyNotify message="No product found" />
+                ) : (
+                  <div className="w-full grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    {products.map((product, index) => (
+                      <RecommendedProductCard key={index} product={product} />
+                    ))}
+                  </div>
+                )}
                 <div className="w-full flex items-center py-3 justify-center">
                   <SearchPagination totalPage={totalPage} />
                 </div>
