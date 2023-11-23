@@ -222,7 +222,7 @@ const SearchFilter = () => {
     if (maxPrice === '' || (maxPrice as number) <= 0) {
       params.delete('max_price');
     } else {
-      params.set('max_price', minPrice.toString());
+      params.set('max_price', maxPrice.toString());
     }
     params.set('page', '1');
     router.replace(`${pathname}?${params.toString()}`);
@@ -461,7 +461,11 @@ const SearchFilter = () => {
                   className="flex items-center gap-2 py-2 pt-3 min-w-full"
                   key={option}
                 >
-                  <RadioGroupItem value={option} id={option} />
+                  <RadioGroupItem
+                    value={option}
+                    id={option}
+                    checked={option === chosenOrder}
+                  />
                   <Label htmlFor={option} className="text-xs">
                     {option}
                   </Label>
