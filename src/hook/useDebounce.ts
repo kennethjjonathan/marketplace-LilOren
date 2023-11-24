@@ -4,7 +4,6 @@ const useDebounce = (callback: any, delay: number) => {
   const waitRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    // Cleanup the previous timeout on re-render
     return () => {
       if (waitRef.current) {
         clearTimeout(waitRef.current);

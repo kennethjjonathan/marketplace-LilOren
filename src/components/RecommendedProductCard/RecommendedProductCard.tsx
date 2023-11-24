@@ -33,7 +33,10 @@ const RecommendedProductCard = ({ product }: RecommendedProductCardProps) => {
                   </Link>
                 </div>
                 <div className={`${styles.content}`}>
-                  <Link href={'/'} className={`${styles.info_content}`}>
+                  <Link
+                    href={`/products/${product.product_code}`}
+                    className={`${styles.info_content}`}
+                  >
                     <div className={`${styles.product_name}`}>
                       {product.name}
                     </div>
@@ -43,13 +46,13 @@ const RecommendedProductCard = ({ product }: RecommendedProductCardProps) => {
                           {Utils.convertPrice(
                             product.discounted_price !== 0
                               ? product.discounted_price
-                              : product.base_price,
+                              : product.price,
                           )}
                         </div>
                         {product.discount !== 0 && (
                           <div className={`${styles.slash_price}`}>
                             <div className={`${styles.label_slash_price}`}>
-                              {Utils.convertPrice(product.base_price)}
+                              {Utils.convertPrice(product.price)}
                             </div>
                             <div className={`${styles.badge_slash_price}`}>
                               {`${product.discount!}%`}
@@ -82,7 +85,11 @@ const RecommendedProductCard = ({ product }: RecommendedProductCardProps) => {
                         </span>
                         <span className={`${styles.separator}`}></span>
                         <span className={`${styles.shop_label}`}>
-                          {product.total_sold}+ terjual
+                          {`${
+                            product.total_sold
+                              ? `${product.total_sold}+ terjual`
+                              : '0 terjual'
+                          }`}
                         </span>
                       </div>
                     </div>

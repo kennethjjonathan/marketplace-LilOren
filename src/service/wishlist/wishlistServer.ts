@@ -9,7 +9,8 @@ export class WishlistServer {
         url: url,
         data: data,
       });
-      if (response.status === 200) {
+      if (response.status.toString().startsWith('2')) {
+        console.log('masuk sini');
         const responseAPI: IWishlistResponse = {
           error: false,
           message: 'success add to wishlist',
@@ -27,11 +28,12 @@ export class WishlistServer {
     }
   };
 
-  static delete = async (url: string) => {
+  static delete = async (url: string, data: { product_code: string }) => {
     try {
       const response = await axiosInstance({
         method: 'DELETE',
         url: url,
+        data: data,
       });
       if (response.status === 200) {
         const responseAPI: IWishlistResponse = {
