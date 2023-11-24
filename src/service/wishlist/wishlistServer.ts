@@ -9,7 +9,8 @@ export class WishlistServer {
         url: url,
         data: data,
       });
-      if (response.status === 200) {
+      if (response.status.toString().startsWith('2')) {
+        console.log('masuk sini');
         const responseAPI: IWishlistResponse = {
           error: false,
           message: 'success add to wishlist',

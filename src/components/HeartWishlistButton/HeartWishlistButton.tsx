@@ -51,7 +51,11 @@ const HeartWishlistButton = ({
     if (response?.error) {
       Utils.notify(response?.message as ToastContent, 'error', 'light');
     } else {
-      Utils.notify(response?.message as ToastContent, 'success', 'light');
+      Utils.notify(
+        'success add to wishlist' as ToastContent,
+        'success',
+        'colored',
+      );
     }
     if (current_page) {
       fetchUserWishlist({ page: current_page });
