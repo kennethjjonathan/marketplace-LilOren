@@ -7,6 +7,7 @@ import React, { useEffect, useState, ReactElement } from 'react';
 import SellerLayout from '@/components/SellerLayout/SellerLayout';
 import DotsLoading from '@/components/DotsLoading/DotsLoading';
 import Head from 'next/head';
+import { Button } from '@/components/ui/button';
 
 const EditProductPage = () => {
   const router = useRouter();
@@ -30,6 +31,26 @@ const EditProductPage = () => {
     }
     getProduct();
   }, [router]);
+
+  if (product === undefined) {
+    return (
+      <>
+        <Head>
+          <title>Edit Product - LilOren</title>
+        </Head>
+        <section className="w-[70vw] flex flex-col gap-8 bg-white rounded-xl p-8 shadow-lg">
+          <p className="font-bold text-[12px] lg:text-[16px] pb-4 w-full text-center">
+            Not able to get product
+          </p>
+          <div className="w-full flex justify-center items-center">
+            <Button onClick={() => router.back()} className="w-fit">
+              Go Back
+            </Button>
+          </div>
+        </section>
+      </>
+    );
+  }
 
   return (
     <>

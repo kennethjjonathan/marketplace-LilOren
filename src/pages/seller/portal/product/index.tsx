@@ -9,7 +9,6 @@ import {
   TableBody,
   TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -18,6 +17,7 @@ import { Utils } from '@/utils';
 import axiosInstance from '@/lib/axiosInstance';
 import { IAdminProduct } from '@/interface/productAtAdminSeller';
 import Image from 'next/image';
+import PaginationNav from '@/components/PaginationNav/PaginationNav';
 
 const data = [
   {
@@ -37,15 +37,17 @@ const SellerPortalProduct = () => {
   useEffect(() => {
     async function getProducts() {
       try {
-        const response = await axiosInstance('/merchant/product');
+        const response = await axiosInstance(
+          `/merchant/product?page=${currentPage}`,
+        );
         setProducts(response.data.data.products);
+        setTotalPage(response.data.data.pagination.total_page);
       } catch (error) {
         Utils.handleGeneralError(error);
-        console.error(error);
       }
     }
     getProducts();
-  }, []);
+  }, [currentPage]);
   return (
     <>
       <Head>
@@ -61,7 +63,7 @@ const SellerPortalProduct = () => {
               Add new product
             </Button>
           </div>
-          <div className="w-full">
+          <div className="w-full mt-8">
             <Table>
               <TableCaption>
                 A list of your products from most recent.
@@ -119,6 +121,13 @@ const SellerPortalProduct = () => {
                   ))}
               </TableBody>
             </Table>
+          </div>
+          <div className="w-full flex justify-center items-center mt-5">
+            <PaginationNav
+              currentPage={currentPage}
+              totalPage={totalPage}
+              setCurrentPage={setCurrentPage}
+            />
           </div>
         </section>
       </div>
