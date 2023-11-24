@@ -27,11 +27,12 @@ export class WishlistServer {
     }
   };
 
-  static delete = async (url: string) => {
+  static delete = async (url: string, data: { product_code: string }) => {
     try {
       const response = await axiosInstance({
         method: 'DELETE',
         url: url,
+        data: data,
       });
       if (response.status === 200) {
         const responseAPI: IWishlistResponse = {

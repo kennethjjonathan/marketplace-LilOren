@@ -37,7 +37,6 @@ interface AddAddressFormProps {
 }
 
 const AddAddressForm = ({ setShowAddAddressModal }: AddAddressFormProps) => {
-  console.log(setShowAddAddressModal);
   const [provinces, setProvinces] = useState<IDropdownData[]>([]);
   const [cities, setCities] = useState<IDropdownData[]>([]);
   const [loadingFetchProvince, setLoadingFetchProvince] =

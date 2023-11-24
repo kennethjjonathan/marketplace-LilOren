@@ -28,7 +28,9 @@ const HeartWishlistButton = ({
     if (setIsInWishlist) {
       setIsInWishlist(false);
     }
-    const response = await WishlistClient.removeFromWishlist(product_code);
+    const response = await WishlistClient.removeFromWishlist({
+      product_code: product_code,
+    });
     if (response?.error) {
       Utils.notify(response?.message as ToastContent, 'error', 'light');
     } else {
