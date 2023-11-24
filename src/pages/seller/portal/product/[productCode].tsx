@@ -21,11 +21,9 @@ const EditProductPage = () => {
         const response = await axiosInstance(
           `/merchant/product-detail/${router.query.productCode}`,
         );
-        console.log(response.data.data);
         setProduct(response.data.data);
       } catch (error) {
         Utils.handleGeneralError(error);
-        console.error(error);
       } finally {
         setIsLoading(false);
       }

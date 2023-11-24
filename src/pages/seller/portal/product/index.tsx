@@ -76,7 +76,7 @@ const SellerPortalProduct = () => {
               </TableHeader>
               <TableBody>
                 {products.length !== 0 &&
-                  products.map((product, _) => (
+                  products.map((product) => (
                     <TableRow key={product.ProductCode}>
                       <TableCell>
                         <Image
@@ -105,7 +105,15 @@ const SellerPortalProduct = () => {
                         </Button>
                       </TableCell>
                       <TableCell>
-                        <Button>Manage Discount</Button>
+                        <Button
+                          onClick={() =>
+                            router.push(
+                              `/seller/portal/product/discount/${product.ProductCode}`,
+                            )
+                          }
+                        >
+                          Manage Discount
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
