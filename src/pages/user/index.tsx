@@ -1,6 +1,6 @@
 import React, { ReactElement, ReactNode, useEffect, useState } from 'react';
 import axios from 'axios';
-import { ArrowLeft, KeyRound, Store } from 'lucide-react';
+import { ArrowLeft, Heart, KeyRound, Store } from 'lucide-react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { useSearchParams } from 'next/navigation';
@@ -69,7 +69,7 @@ const User: NextPageWithLayout = () => {
         ></meta>
       </Head>
       <div className="lg:flex lg:justify-center lg:items-center w-[100vw] bg-white">
-        <div className="bg-accent flex flex-col justify-start h-[100vh] lg:w-[75vw] lg:p-4 lg:bg-transparent lg:hidden">
+        <div className="bg-accent flex flex-col justify-start h-[calc(100vh-52px)] lg:w-[75vw] lg:p-4 lg:bg-transparent lg:hidden">
           <UserPresentation />
           <div className="lilOren__user__setting pt-[17px] bg-white lg:bg-transparent lg:w-[350px] lg:hidden">
             <span id="account-setting-section" className="font-bold px-4">
@@ -79,14 +79,20 @@ const User: NextPageWithLayout = () => {
               <UserSetting
                 title={'My Address'}
                 icon={<Store />}
-                description={'Atur alamat pengiriman belanjaan'}
+                description={'Set the grocery delivery address'}
                 onClick={() => router.push('/user/address?status=Address')}
+              />
+              <UserSetting
+                title={'My Wishlist'}
+                icon={<Heart />}
+                description={''}
+                onClick={() => router.push('/user/wishlist')}
               />
               <UserSetting
                 title={'Reset Password'}
                 icon={<KeyRound />}
                 description={'Reset password akun Anda'}
-                onClick={() => router.push('/forget-password')}
+                onClick={() => router.push('/forgot-password')}
               />
             </ul>
           </div>

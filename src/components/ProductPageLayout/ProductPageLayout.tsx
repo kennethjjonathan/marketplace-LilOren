@@ -3,6 +3,7 @@ import QuantityController from '../QuantityController/QuantityController';
 import { Button } from '../ui/button';
 import { IProductVariant } from '@/interface/productPage';
 import { Utils } from '@/utils';
+import HeartWishlistButton from '../HeartWishlistButton/HeartWishlistButton';
 
 interface ProductPageLayoutProps {
   quantity: number | '';
@@ -11,6 +12,8 @@ interface ProductPageLayoutProps {
   handleAddToCart: () => void;
   isVariant: boolean;
   isAddLoading: boolean;
+  product_code: string;
+  is_in_wishlist: boolean;
 }
 
 const ProductPageLayout = ({
@@ -20,8 +23,11 @@ const ProductPageLayout = ({
   handleAddToCart,
   isVariant,
   isAddLoading,
+  product_code,
+  is_in_wishlist,
 }: ProductPageLayoutProps) => {
   const [isMaxValid, setIsMaxValid] = useState<boolean>(true);
+  const [isInWishlist, setIsInWishlist] = useState<boolean>(is_in_wishlist);
   function handleVariantChange() {
     setIsMaxValid(true);
     if (variant === undefined) {
@@ -63,7 +69,7 @@ const ProductPageLayout = ({
   }
   useEffect(() => handleVariantChange(), [variant]);
   return (
-    <div className="bg-primary-foreground w-full fixed z-30 bottom-0 left-0 flex justify-center">
+    <div className="bg-primary-foreground w-full sticky z-30 bottom-0 left-0 flex justify-center">
       <div className="w-full md:w-[75vw] p-2 pb-3 flex items-center gap-2 lg:justify-between">
         <div className="hidden sm:flex flex-col items-start justify-center min-h-fit w-4/5">
           {variant === undefined ? (
@@ -86,7 +92,7 @@ const ProductPageLayout = ({
             </>
           )}
         </div>
-        <div className="w-full lg:w-3/5 flex items-end gap-2 justify-between">
+        <div className="w-full lg:w-3/5 flex items-center gap-2 justify-end">
           <div className="w-fit flex flex-col items-center gap-1">
             {variant !== undefined && !isMaxValid ? (
               <p className="text-xs sm:text-sm lg:text-base text-destructive">{`Limit: ${variant.stock}!`}</p>
@@ -115,6 +121,14 @@ const ProductPageLayout = ({
               <div className="border-4 border-primary-foreground aspect-square border-t-transparent rounded-full animate-spin w-6" />
             )}
           </Button>
+          <HeartWishlistButton
+            product_code={product_code}
+            wishlist_id={0}
+            current_page={0}
+            is_in_wishlist={isInWishlist}
+            setIsInWishlist={setIsInWishlist}
+            is_in_product_detail={true}
+          />
         </div>
       </div>
     </div>

@@ -1,13 +1,56 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import { useSearchParams } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { NextPageWithLayout } from '@/pages/_app';
 import BackButton from '@/components/BackButton/BackButton';
 import UserSettingsLayout from '@/components/UserSettingsLayout/UserSettingsLayout';
+import { useWishlist } from '@/store/wishlist/useWishlist';
+import EmptyWishlist from '@/components/EmptyWishlist/EmptyWishlist';
+import DotsLoading from '@/components/DotsLoading/DotsLoading';
+import WishlistProductCard from '@/components/WishlistProductCard/WishlistProductCard';
 
 const UserWishlist: NextPageWithLayout = () => {
-  return <div>User Wishlist</div>;
+  const searchParams = useSearchParams();
+  const page = searchParams.get('page');
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const user_wishlist = useWishlist.use.user_wishlist();
+  const fetchUserWishlist = useWishlist.use.fetchUserWishlist();
+  const loading_fetch_user_wishlist =
+    useWishlist.use.loading_fetch_user_wishlist();
+
+  const handleChangePage = useCallback(async () => {
+    let params = 0;
+    if (page === '' || page === null) {
+      params = currentPage;
+    }
+    fetchUserWishlist({ page: params });
+  }, [currentPage]);
+
+  useEffect(() => {
+    handleChangePage();
+  }, [handleChangePage]);
+
+  useEffect(() => {
+    fetchUserWishlist({ page: currentPage });
+  }, [currentPage]);
+
+  return loading_fetch_user_wishlist ? (
+    <DotsLoading />
+  ) : user_wishlist.items.length === 0 ? (
+    <EmptyWishlist />
+  ) : (
+    <div className="w-full grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 pt-4">
+      {user_wishlist.items.map((item) => (
+        <WishlistProductCard
+          key={`key:${item.id}`}
+          item={item}
+          current_page={currentPage}
+        />
+      ))}
+    </div>
+  );
 };
 
 const UserWishlistHeading = () => {
@@ -32,7 +75,7 @@ const UserWishlistHeading = () => {
         <BackButton
           id="back-button"
           icon={<ArrowLeft size={24} />}
-          onClick={() => router.push('/user/wishlist?status=Wistlist')}
+          onClick={() => router.push('/user')}
         />
         <div>
           <p className="user__wishlist__heading block relative font-medium m-0 text-[16px]">

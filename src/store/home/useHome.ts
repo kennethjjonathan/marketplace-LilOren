@@ -13,7 +13,7 @@ export type IRecommendedProduct = {
   product_code: string;
   image_url: string;
   name: string;
-  base_price: number;
+  price: number;
   discounted_price: number;
   discount?: number;
   total_sold: number;
@@ -21,6 +21,12 @@ export type IRecommendedProduct = {
   shop_name: string;
   rating: number;
 };
+
+export interface ITopCategory {
+  category_id: number;
+  category_name: string;
+  image_url: string;
+}
 
 type State = {
   cart_in_home: ICartHome[];

@@ -8,7 +8,7 @@ interface SellerPageHeadingProps {
 
 const SellerPageHeading = ({ sellerPage }: SellerPageHeadingProps) => {
   return (
-    <div className="flex flex-col lg:flex-row w-full">
+    <div className="px-2 lg:p-0 flex flex-col lg:flex-row w-full">
       {/* Seller Info Name, Since When, Total Products */}
       <div className="flex flex-row items-center gap-3">
         {/* Image */}
@@ -25,7 +25,7 @@ const SellerPageHeading = ({ sellerPage }: SellerPageHeadingProps) => {
             {sellerPage.shop_name}
           </p>
           <p className="font-normal text-muted-foreground text-[14px] md:text-[16px]">
-            {sellerPage.years}
+            {sellerPage.years} | {sellerPage.product_counts} total products
           </p>
         </div>
       </div>
