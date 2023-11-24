@@ -10,6 +10,7 @@ import axiosInstance from '@/lib/axiosInstance';
 import TopUpModal from '@/components/TopUpModal/TopUpModal';
 import PaginationNav from '@/components/PaginationNav/PaginationNav';
 import Head from 'next/head';
+import ChangePinModal from '@/components/ChangePinModal/ChangePinModal';
 
 const WalletPage = () => {
   const [wallet, setWallet] = useState<IWalletInfo>();
@@ -20,6 +21,7 @@ const WalletPage = () => {
   const [historyArray, setHistoryArray] = useState<IWalletHistory[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPage, setTotalPage] = useState<number>(1);
+  const [isChangePinOpen, setIsChangePinOpen] = useState<boolean>(false);
 
   async function getWallet() {
     try {
@@ -109,10 +111,16 @@ const WalletPage = () => {
               <button
                 className="w-full flex flex-col items-center justify-center gap-1"
                 disabled={wallet === undefined || !wallet.is_active}
+                onClick={() => setIsChangePinOpen(true)}
               >
                 <Lock className="w-8 h-8" />
                 <p>Change PIN</p>
               </button>
+              <ChangePinModal
+                isOpen={isChangePinOpen}
+                setIsOpen={setIsChangePinOpen}
+                setUpdateToggle={setUpdateToggle}
+              />
             </div>
           </div>
           {wallet !== undefined &&
