@@ -34,13 +34,12 @@ interface SellerPageProps {
 const categories = ['Atasan', 'Beras', 'Kaos', 'Pulpen', 'Pensil', 'Laptop'];
 
 const SellerPage = ({ sellerPage }: SellerPageProps) => {
-  console.log(sellerPage);
+  const router = useRouter();
   const searchParams = useSearchParams();
   const sort_by = searchParams.get('sort_by');
   const sort_desc = searchParams.get('sort_desc');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [sortByPriceDesc, setSortByPriceDesc] = useState<string>('true');
-  const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('');
   const [activeFilter, setActiveFilter] = useState('');
   const tabsRef = useRef(null);
@@ -270,6 +269,11 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     console.error(error);
   }
 
+  if (!sellerPage) {
+    return {
+      notFound: true,
+    };
+  }
   return {
     props: {
       sellerPage: sellerPage,
