@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
 import ButtonWithIcon from '@/components/ButtonWithIcon/ButtonWithIcon';
 import CartInHome from '@/components/CartInHome/CartInHome';
 import EmptyCart from '@/components/EmptyCart/EmptyCart';
+import SearchBar from '@/components/SearchBar/SearchBar';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -15,7 +16,8 @@ import { cn } from '@/lib/utils';
 import { authClient } from '@/service/auth/AuthClient';
 import { useHome } from '@/store/home/useHome';
 import { useUser } from '@/store/user/useUser';
-import { Search, ShoppingCart, Store, User2 } from 'lucide-react';
+import { ShoppingCart, Store, User2 } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import styles from './Navigation.module.scss';
 
@@ -27,17 +29,12 @@ type DropdownItem = {
 };
 
 const Navigation: React.FC = () => {
-  const [searchKey, setSearchKey] = useState<string>('');
   const cartInHome = useHome.use.cart_in_home();
   const fetchCartInHome = useHome.use.fetchCartInHome();
   const user_details = useUser.use.user_details();
   const fetchUserDetails = useUser.use.fetchUserDetails();
   const loading_fetch_user_details = useUser.use.loading_fetch_user_details();
   const router = useRouter();
-
-  const handleSearchProduct = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-  };
 
   const components: DropdownItem[] = [
     {
@@ -89,13 +86,10 @@ const Navigation: React.FC = () => {
         </div>
       )}
       <div className={styles.navigationContent}>
-        <div className={styles.logo}>LOGO</div>
-        <div className={styles.searchInput}>
-          <form onSubmit={handleSearchProduct}>
-            <Search className="absolute text-primary top-[8px] left-[12px]" />
-            <input className={styles.inputField} placeholder="Cari produk" />
-          </form>
-        </div>
+        <Link href={'/'} className={styles.logo}>
+          LilOren
+        </Link>
+        <SearchBar />
         <NavigationMenu>
           <NavigationMenuList>
             {/* Cart */}
