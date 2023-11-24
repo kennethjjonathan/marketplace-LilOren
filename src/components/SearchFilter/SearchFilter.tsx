@@ -1,14 +1,6 @@
-import React, { useEffect, useState, Dispatch, SetStateAction } from 'react';
-import { ArrowDownUp, X } from 'lucide-react';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { Button } from '../ui/button';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Select,
   SelectContent,
@@ -18,20 +10,34 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Utils } from '@/utils';
-import axiosInstance from '@/lib/axiosInstance';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
 import {
   ICategory,
   IDistrict,
   IProvince,
   SortOptions,
 } from '@/interface/searchFilter';
-import { Checkbox } from '@/components/ui/checkbox';
+import axiosInstance from '@/lib/axiosInstance';
+import { Utils } from '@/utils';
+import { ArrowDownUp, X } from 'lucide-react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
+import React, {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useEffect,
+  useState,
+} from 'react';
+import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import styles from './SearchFilter.module.scss';
 import { ScrollArea, ScrollBar } from '../ui/scroll-area';
+import styles from './SearchFilter.module.scss';
 
 const sortOptions: SortOptions[] = [
   'Lowest price',
@@ -40,16 +46,14 @@ const sortOptions: SortOptions[] = [
   'Oldest',
 ];
 
-const SearchFilter = () => {
+const SearchFilter: FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
   // LocationFilter --START
   const [isLocationOpen, setIsLocationOpen] = useState<boolean>(false);
-  const [chosenProvince, setChosenProvince] = useState<number | undefined>(
-    undefined,
-  );
+  const [chosenProvince, setChosenProvince] = useState<number>();
   const [provinceArray, setProvinceArray] = useState<IProvince[]>([]);
   const [isDistrictLoading, setIsDistrciLoading] = useState<boolean>(false);
   const [districtArray, setDistrictArray] = useState<IDistrict[]>([]);
@@ -147,7 +151,12 @@ const SearchFilter = () => {
     setChosenCategory2(undefined);
     try {
       const response = await axiosInstance(
-        `/dropdowns/products/child-category?parent_id=${value}`,
+        `/dropdowns/products/child-category`,
+        {
+          params: {
+            parent_id: value,
+          },
+        },
       );
       setCategory2Array(response.data.data);
     } catch (error) {

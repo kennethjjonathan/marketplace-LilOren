@@ -1,16 +1,16 @@
-import React, { useEffect, useState, ReactElement } from 'react';
-import { NextPageWithLayout } from '../_app';
+import DotsLoading from '@/components/DotsLoading/DotsLoading';
+import EmptyNotify from '@/components/EmptyNotify/EmptyNotify';
 import Layout from '@/components/Layout/Layout';
-import { useSearchParams } from 'next/navigation';
-import { IRecommendedProduct } from '@/store/home/useHome';
-import { Utils } from '@/utils';
-import axiosInstance from '@/lib/axiosInstance';
 import RecommendedProductCard from '@/components/RecommendedProductCard/RecommendedProductCard';
 import SearchFilter from '@/components/SearchFilter/SearchFilter';
 import SearchPagination from '@/components/SearchPagination/SearchPagination';
-import DotsLoading from '@/components/DotsLoading/DotsLoading';
+import axiosInstance from '@/lib/axiosInstance';
+import { IRecommendedProduct } from '@/store/home/useHome';
+import { Utils } from '@/utils';
 import Head from 'next/head';
-import EmptyNotify from '@/components/EmptyNotify/EmptyNotify';
+import { useSearchParams } from 'next/navigation';
+import { ReactElement, useEffect, useState } from 'react';
+import { NextPageWithLayout } from '../_app';
 
 const SearchPage: NextPageWithLayout = () => {
   const searchParams = useSearchParams();
@@ -19,45 +19,16 @@ const SearchPage: NextPageWithLayout = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    const fetchParams = new URLSearchParams();
-    const search_term: string | null = searchParams.get('search_term');
-    const page: string | null = searchParams.get('page');
-    const category: string | null = searchParams.get('category');
-    const districts: string | null = searchParams.get('districts');
-    const sort_by: string | null = searchParams.get('sort_by');
-    const sort_desc: string | null = searchParams.get('sort_desc');
-    const min_price: string | null = searchParams.get('min_price');
-    const max_price: string | null = searchParams.get('max_price');
-    if (typeof search_term === 'string') {
-      fetchParams.set('search_term', search_term);
-    }
-    if (typeof page === 'string') {
-      fetchParams.set('page', page);
-    }
-    if (typeof category === 'string') {
-      fetchParams.set('category', category);
-    }
-    if (typeof districts === 'string') {
-      fetchParams.set('districts', districts);
-    }
-    if (typeof sort_by === 'string') {
-      fetchParams.set('sort_by', sort_by);
-    }
-    if (typeof sort_desc === 'string') {
-      fetchParams.set('sort_desc', sort_desc);
-    }
-    if (typeof min_price === 'string') {
-      fetchParams.set('min_price', min_price);
-    }
-    if (typeof max_price === 'string') {
-      fetchParams.set('max_price', max_price);
-    }
+    const fetchParams = new URLSearchParams(window.location.search);
+
     async function getProducts() {
       setIsLoading(true);
       try {
-        const response = await axiosInstance(
-          `/products?${fetchParams.toString()}`,
-        );
+        const response = await axiosInstance(`/products`, {
+          params: {
+            ...Object.fromEntries(fetchParams.entries()),
+          },
+        });
         console.log(response);
         setProducts(response.data.data.products);
         setTotalPage(response.data.data.total_page);
@@ -89,7 +60,7 @@ const SearchPage: NextPageWithLayout = () => {
                 {products.length === 0 ? (
                   <EmptyNotify message="No product found" />
                 ) : (
-                  <div className="w-full grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  <div className="w-full grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
                     {products.map((product, index) => (
                       <RecommendedProductCard key={index} product={product} />
                     ))}

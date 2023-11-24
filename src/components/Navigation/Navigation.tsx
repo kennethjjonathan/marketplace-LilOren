@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import ButtonWithIcon from '@/components/ButtonWithIcon/ButtonWithIcon';
 import CartInHome from '@/components/CartInHome/CartInHome';
 import EmptyCart from '@/components/EmptyCart/EmptyCart';
+import SearchBar from '@/components/SearchBar/SearchBar';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -16,10 +17,9 @@ import { authClient } from '@/service/auth/AuthClient';
 import { useHome } from '@/store/home/useHome';
 import { useUser } from '@/store/user/useUser';
 import { ShoppingCart, Store, User2 } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import styles from './Navigation.module.scss';
-import SearchBar from '../SearchBar/SearchBar';
-import Link from 'next/link';
 
 type DropdownItem = {
   title: string;
