@@ -19,6 +19,7 @@ import { ShoppingCart, Store, User2 } from 'lucide-react';
 import { useRouter } from 'next/router';
 import styles from './Navigation.module.scss';
 import SearchBar from '../SearchBar/SearchBar';
+import Link from 'next/link';
 
 type DropdownItem = {
   title: string;
@@ -85,7 +86,9 @@ const Navigation: React.FC = () => {
         </div>
       )}
       <div className={styles.navigationContent}>
-        <div className={styles.logo}>LOGO</div>
+        <Link href={'/'} className={styles.logo}>
+          LilOren
+        </Link>
         <SearchBar />
         <NavigationMenu>
           <NavigationMenuList>

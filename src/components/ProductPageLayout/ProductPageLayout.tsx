@@ -69,7 +69,7 @@ const ProductPageLayout = ({
   }
   useEffect(() => handleVariantChange(), [variant]);
   return (
-    <div className="bg-primary-foreground w-full fixed z-30 bottom-0 left-0 flex justify-center">
+    <div className="bg-primary-foreground w-full sticky z-30 bottom-0 left-0 flex justify-center">
       <div className="w-full md:w-[75vw] p-2 pb-3 flex items-center gap-2 lg:justify-between">
         <div className="hidden sm:flex flex-col items-start justify-center min-h-fit w-4/5">
           {variant === undefined ? (

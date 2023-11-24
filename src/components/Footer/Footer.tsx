@@ -2,6 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import { Facebook, Instagram, Youtube } from 'lucide-react';
 import Divider from '@/components/Divider/Divider';
+import Link from 'next/link';
 
 const Footer = () => {
   return (
@@ -31,9 +32,12 @@ const Footer = () => {
           <div className="footer__head flex flex-row justify-between py-8 border-b-[1px] items-center">
             <div className="footer__brand flex itemx-center">
               <div className="footer__brandimage mr-4">
-                <div className="hidden md:block font-bold text-primary md:text-[24px]">
-                  LOGO
-                </div>
+                <Link
+                  href={'/'}
+                  className="hidden md:block font-bold text-primary md:text-[24px]"
+                >
+                  LilOren
+                </Link>
               </div>
               <div className="footer__brandtext">
                 <p className="font-[25px] leading-[33px]">
