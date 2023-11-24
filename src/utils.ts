@@ -1,6 +1,5 @@
 import { Theme, ToastContent, TypeOptions, toast } from 'react-toastify';
 import CONSTANTS from './constants/constants';
-import { ICart, ICartItem } from './pages/user/cart';
 import { ICheckedCart } from './store/cart/useCart';
 
 export class Utils {

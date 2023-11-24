@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   env: {
-    BASEURL: process.env.BASEURL,
+    NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
   },
   images: {
     remotePatterns: [
@@ -25,6 +25,17 @@ const nextConfig = {
       {
         hostname: 'down-aka-id.img.susercontent.com',
         port: '',
+      },
+      {
+        hostname: 'www.tikibanjarmasin.com',
+        port: '',
+      },
+      {
+        hostname: 'play-lh.googleusercontent.com',
+        port: '',
+      },
+      {
+        hostname: 'cf.shopee.sg',
       },
     ],
   },

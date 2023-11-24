@@ -1,10 +1,10 @@
 import React from 'react';
 import { Check } from 'lucide-react';
-import { IUserAddress } from '@/service/userAddress/userAddressService';
 import { Button } from '@/components/ui/button';
 import { useUser } from '@/store/user/useUser';
 import styles from './UserAddressCard.module.scss';
 import { useRouter } from 'next/router';
+import { IUserAddress } from '@/interface/user';
 
 interface UserAddressCardProps {
   address: IUserAddress;

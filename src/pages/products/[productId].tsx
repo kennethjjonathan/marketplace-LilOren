@@ -27,6 +27,7 @@ interface ProductPageProps {
   isGroup1Variant: boolean;
   isGroup2Variant: boolean;
   isVariant: boolean;
+  productCode: string;
 }
 
 const ProductPage = ({
@@ -35,7 +36,9 @@ const ProductPage = ({
   isGroup1Variant,
   isGroup2Variant,
   isVariant,
+  productCode,
 }: ProductPageProps) => {
+  console.log(productPage.is_in_wishlist);
   const user_details = useUser.use.user_details();
   const fetchUserDetails = useUser.use.fetchUserDetails();
   const router = useRouter();
@@ -331,6 +334,8 @@ const ProductPage = ({
         handleAddToCart={handleAddToCart}
         isVariant={isVariant}
         isAddLoading={isAddLoading}
+        product_code={productCode}
+        is_in_wishlist={true}
       />
     </>
   );
@@ -514,6 +519,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       isGroup1Variant: isGroup1Variant,
       isGroup2Variant: isGroup2Variant,
       isVariant: isVariant,
+      productCode: params!.productId as string,
     },
   };
 };
