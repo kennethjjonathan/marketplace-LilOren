@@ -16,12 +16,25 @@ import Layout from '@/components/Layout/Layout';
 import SellerProductCard from '@/components/SellerProductCard/SellerProductCard';
 import { Button } from '@/components/ui/button';
 import DotsLoading from '@/components/DotsLoading/DotsLoading';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface SellerPageProps {
   sellerPage: ISellerDetails;
 }
 
+const categories = ['Atasan', 'Beras', 'Kaos', 'Pulpen', 'Pensil', 'Laptop'];
+
 const SellerPage = ({ sellerPage }: SellerPageProps) => {
+  console.log(sellerPage);
   const searchParams = useSearchParams();
   const sort_by = searchParams.get('sort_by');
   const sort_desc = searchParams.get('sort_desc');
@@ -56,7 +69,6 @@ const SellerPage = ({ sellerPage }: SellerPageProps) => {
     if (params !== '') {
       params += `&category_name=${selectedCategory}`;
     }
-
     setTimeout(() => {
       fetchSellerDetails(sellerPage.shop_name, params);
       handleScroll(tabsRef.current);
@@ -83,43 +95,71 @@ const SellerPage = ({ sellerPage }: SellerPageProps) => {
   }, []);
 
   return (
-    <section className="flex flex-col justify-center items-center w-full bg-white p-2 lg:px-0 pt-3">
+    <section className="flex flex-col justify-center items-center w-full bg-white lg:px-0 pt-3">
       <div className="flex flex-row"></div>
       {/* Heading */}
       <div className="flex flex-col justify-center w-full md:w-[75vw]">
         <SellerPageHeading sellerPage={seller_details} />
       </div>
       {/* Content Below */}
-      <div className="flex flex-row gap-2 justify-start w-full lg:py-6 md:w-[75vw]">
-        <Button
-          className=""
-          variant={`${selectedCategory === '' ? 'default' : 'secondary'}`}
-          onClick={() => setSelectedCategory('')}
-        >
-          {'All Products'}
-        </Button>
-        {seller_details.categories.map((category, index) => (
-          <Button
-            key={`key:category${index.toString()}`}
-            variant={`${
-              selectedCategory === category ? 'default' : 'secondary'
-            }`}
-            onClick={() => setSelectedCategory(category)}
-          >
-            {category}
-          </Button>
-        ))}
-      </div>
+      <ScrollArea className="max-w-full">
+        <div className="flex flex-row gap-2 justify-start w-full lg:py-6 md:w-[75vw] py-3 px-2">
+          <div className={'border-0 border-b-2 border-primary'}>
+            <Button className="border-0" variant={'outline'}>
+              {'Main Page'}
+            </Button>
+          </div>
+          <div className={'border-0'}>
+            <Button
+              className="border-0"
+              variant={'outline'}
+              onClick={() => setActiveFilter('BestSeller')}
+            >
+              {'All Products'}
+            </Button>
+          </div>
+          {categories.slice(0, 4).map((category, index) => (
+            <Button
+              className={'border-0'}
+              key={`key:category${index.toString()}`}
+              variant={'outline'}
+              onClick={() => setSelectedCategory(category)}
+            >
+              {category}
+            </Button>
+          ))}
+          {categories.length > 4 && (
+            <Select>
+              <SelectTrigger>
+                <SelectValue placeholder={'More'} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {/* <SelectLabel>{'Category'}</SelectLabel> */}
+                  {categories.slice(4).map((category) => (
+                    <SelectItem key={`${category}`} value={category}>
+                      {category}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          )}
+        </div>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
       <div className="w-full flex flex-col justify-center items-center bg-primary-foreground">
         {/* BEST SELLING PRODUCTS */}
         <div className="flex flex-row justify-between items-center  w-full md:w-[75vw] my-3">
-          <p className="font-bold">{'BEST SELLING PRODUCTS'}</p>
+          <p className="font-bold pl-3 lg:p-0 text-[12px] md:text-[14px] lg:text-[16px] lg:pl-2">
+            {'BEST SELLING PRODUCTS'}
+          </p>
           <Button
             variant={'link'}
             onClick={() => handleFilter()}
             className="font-bold"
           >
-            {'See All'}
+            {'See All >'}
           </Button>
         </div>
         <div className="w-full md:w-[75vw] grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
@@ -132,8 +172,8 @@ const SellerPage = ({ sellerPage }: SellerPageProps) => {
           ))}
         </div>
 
-        <div className="flex flex-row w-full md:w-[75vw] gap-3">
-          <div className="category border-[1px] rounded-lg bg-white px-4 py-2 mb-5 ">
+        <div className="lg:flex lg:flex-row w-full md:w-[75vw] gap-3">
+          <div className="category border-[1px] rounded-lg bg-white px-4 py-2 mb-5 hidden lg:block">
             <div className="border-b-[1px] pb-3 pt-3 pr-5">
               <p className="font-bold text-[16px] leading-[21px] text-left">
                 {'Category'}
@@ -168,7 +208,7 @@ const SellerPage = ({ sellerPage }: SellerPageProps) => {
             </ul>
           </div>
           {/* Tabs and product */}
-          <div className="flex flex-row">
+          <div className="flex flex-row lg:sticky lg:top-0">
             <div className="flex flex-col">
               <div
                 className="flex flex-col justify-center sticky lg:relative top-0 z-50 bg-white lg:mb-4 rounded-lg"
@@ -189,7 +229,7 @@ const SellerPage = ({ sellerPage }: SellerPageProps) => {
                   <DotsLoading />
                 </div>
               ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:w-[75vw] lg:mt-2 pt-3">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 w-full md:w-[75vw] lg:mt-2 pt-3">
                   {seller_details.products.map((product, index) => (
                     <SellerProductCard
                       key={`key:${product.product_name},${index.toString()}`}
