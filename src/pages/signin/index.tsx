@@ -151,7 +151,8 @@ function SignInPage({ providers }: SignInPageProps) {
           <Image
             src={withBasePath('Logo_.svg')}
             alt="LilOren's logo"
-            fill
+            width="470"
+            height="470"
             sizes="40vw"
           />
         </div>

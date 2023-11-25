@@ -37,10 +37,10 @@ const Custom404: NextPageWithLayout = () => {
       </Head>
       <div className="flex flex-col gap-3 justify-start mt-4 items-center h-[100vh]">
         <Image
+          src={withBasePath('empty-wishlist.png')}
           className="w-[150px] pb-3"
           width="150"
           height="150"
-          src={withBasePath('empty-wishlist.png')}
           alt="not-found"
         />
         <div className="font-light text-muted-foreground">
