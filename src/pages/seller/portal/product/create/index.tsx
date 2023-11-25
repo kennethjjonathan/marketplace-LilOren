@@ -86,7 +86,6 @@ const SellerPortalProductCreate = () => {
 
   function validateOnBlur(key: keyof IProductInformation): boolean | undefined {
     if (key === 'product_name' && productInformation.product_name === '') {
-      console.log('masuk name');
       setIsProductInformationValid({
         ...isProductInformationValid,
         [key]: false,

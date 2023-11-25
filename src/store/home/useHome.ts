@@ -13,7 +13,7 @@ export type IRecommendedProduct = {
   product_code: string;
   image_url: string;
   name: string;
-  base_price: number;
+  price: number;
   discounted_price: number;
   discount?: number;
   total_sold: number;

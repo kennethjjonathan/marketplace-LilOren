@@ -20,6 +20,7 @@ import { Utils } from '@/utils';
 import axiosInstance from '@/lib/axiosInstance';
 import { useRouter } from 'next/router';
 import { useUser } from '@/store/user/useUser';
+import Head from 'next/head';
 
 interface ProductPageProps {
   productPage: IProductPage;
@@ -38,7 +39,7 @@ const ProductPage = ({
   isVariant,
   productCode,
 }: ProductPageProps) => {
-  console.log(productPage.is_in_wishlist);
+  console.log(productPage);
   const user_details = useUser.use.user_details();
   const fetchUserDetails = useUser.use.fetchUserDetails();
   const router = useRouter();
@@ -219,6 +220,19 @@ const ProductPage = ({
 
   return (
     <>
+      <Head>
+        <meta charSet="UTF-8" />
+        <title>{`${productPage.product.name} - LilOren`}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="keywords" content={productPage.product.name} />
+        <meta name="description" content={productPage.product.description} />
+        <meta
+          name="og:title"
+          content={`${productPage.product.name} - Teracce`}
+        />
+        <meta name="og:description" content={productPage.product.description} />
+        <meta name="og:type" content="website" />
+      </Head>
       <section className="flex flex-col justify-center items-center w-full bg-white">
         <div className="w-full md:w-[75vw] pt-5 pb-[5.5rem]">
           <div className="w-full flex flex-col gap-6 lg:flex-row">
@@ -348,126 +362,6 @@ ProductPage.getLayout = function getLayout(page: ReactElement) {
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  // const productPage: IProductPage = {
-  //   product: {
-  //     name: 'Shirt',
-  //     description: 'desc',
-  //   },
-  //   shop: {
-  //     id: 1,
-  //     name: 'Hyouka',
-  //     profile_picture_url:
-  //       'https://down-aka-id.img.susercontent.com/7d2818ddcf9fd656b596ca8ca0a61b80_tn',
-  //     location: 'Aceh Barat',
-  //   },
-  //   product_variant: [
-  //     {
-  //       id: 1,
-  //       price: 100000,
-  //       discounted_price: 95000,
-  //       stock: 100,
-  //       discount: 5,
-  //       variant_type1_id: 2,
-  //       variant_type2_id: 5,
-  //     },
-  //     {
-  //       id: 2,
-  //       price: 200000,
-  //       discounted_price: 200000,
-  //       stock: 10,
-  //       discount: 0,
-  //       variant_type1_id: 3,
-  //       variant_type2_id: 5,
-  //     },
-  //     {
-  //       id: 3,
-  //       price: 300000,
-  //       discounted_price: 270000,
-  //       stock: 10,
-  //       discount: 10,
-  //       variant_type1_id: 2,
-  //       variant_type2_id: 6,
-  //     },
-  //   ],
-  //   product_media: [
-  //     {
-  //       media_url:
-  //         'https://down-id.img.susercontent.com/file/13913932b65d105da4af78ee23e72a1a',
-  //       media_type: 'image',
-  //     },
-  //     {
-  //       media_url:
-  //         'https://down-id.img.susercontent.com/file/27670afe9db6af1f9d85d1a39c05eba5',
-  //       media_type: 'image',
-  //     },
-  //     {
-  //       media_url:
-  //         'https://down-id.img.susercontent.com/file/1e27552a88b18bf53d4274badb8cabd4',
-  //       media_type: 'image',
-  //     },
-  //     {
-  //       media_url:
-  //         'https://down-id.img.susercontent.com/file/9de3c76fc7e9bb5123e146c6e80e7335',
-  //       media_type: 'image',
-  //     },
-  //     {
-  //       media_url:
-  //         'https://down-id.img.susercontent.com/file/93b788c59388944b3de6742928a88324',
-  //       media_type: 'image',
-  //     },
-  //     {
-  //       media_url:
-  //         'https://down-id.img.susercontent.com/file/315b0a3b5aa3d7743f0e914ec60d5fed',
-  //       media_type: 'image',
-  //     },
-  //     {
-  //       media_url:
-  //         'https://down-id.img.susercontent.com/file/ee24535522586415b4d4998bc8309658',
-  //       media_type: 'image',
-  //     },
-  //   ],
-  //   variant_group1: {
-  //     group_name: 'color',
-  //     variant_types: [
-  //       {
-  //         type_id: 1,
-  //         type_name: 'default',
-  //       },
-  //       {
-  //         type_id: 2,
-  //         type_name: 'red',
-  //       },
-  //       {
-  //         type_id: 3,
-  //         type_name: 'blue',
-  //       },
-  //     ],
-  //   },
-  //   variant_group2: {
-  //     group_name: 'size',
-  //     variant_types: [
-  //       {
-  //         type_id: 4,
-  //         type_name: 'default',
-  //       },
-  //       {
-  //         type_id: 5,
-  //         type_name: 'L',
-  //       },
-  //       {
-  //         type_id: 6,
-  //         type_name: 'XL',
-  //       },
-  //       {
-  //         type_id: 7,
-  //         type_name: 'XXL',
-  //       },
-  //     ],
-  //   },
-  //   high_price: 200000,
-  //   low_price: 100000,
-  //   is_variant: false,
-  // };
   let productPage: IProductPage | null = null;
   let highestDiscount: number = 0;
   let isGroup1Variant: boolean | null = null;
