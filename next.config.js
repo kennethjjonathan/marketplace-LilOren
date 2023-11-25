@@ -5,6 +5,7 @@ const nextConfig = {
     NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
   },
   images: {
+    domains: ['localhost'],
     remotePatterns: [
       {
         hostname: 'www.static-src.com',

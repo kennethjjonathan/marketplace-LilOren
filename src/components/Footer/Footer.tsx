@@ -11,6 +11,7 @@ const Footer = () => {
         <div className="need-help contact-us flex flex-row justify-center items-center gap-2">
           <Image
             src={withBasePath('headphone.svg')}
+            fill
             alt="cs"
             className="border-[1px] p-2 rounded-full shadow-sm"
           />

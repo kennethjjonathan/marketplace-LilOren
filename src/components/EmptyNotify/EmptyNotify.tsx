@@ -10,6 +10,8 @@ const EmptyNotify = ({ message }: EmptyNotifyProps) => {
     <div className="max-h-max flex flex-col gap-4 justify-center items-center pt-3 lg:pt-3">
       <Image
         src={withBasePath('empty-wishlist.png')}
+        width="200"
+        height="200"
         alt="empty-wishlist"
         className="w-[200px]"
       />

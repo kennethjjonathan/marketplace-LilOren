@@ -1,4 +1,3 @@
-import DotsLoading from '@/components/DotsLoading/DotsLoading';
 import Layout from '@/components/Layout/Layout';
 import { Button } from '@/components/ui/button';
 import { withBasePath } from '@/lib/nextUtils';
@@ -11,15 +10,11 @@ import { NextPageWithLayout } from './_app';
 const Custom404: NextPageWithLayout = () => {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
-  const handleBack = () => {
-    setLoading(true);
-    router.push('/');
-    setLoading(false);
+  const handleBack = async () => {
+    await router.replace('/');
   };
 
-  return loading ? (
-    <DotsLoading />
-  ) : (
+  return (
     <>
       <Head>
         <title>It looks like something is missing | LilOren</title>
@@ -43,6 +38,8 @@ const Custom404: NextPageWithLayout = () => {
       <div className="flex flex-col gap-3 justify-start mt-4 items-center h-[100vh]">
         <Image
           className="w-[150px] pb-3"
+          width="150"
+          height="150"
           src={withBasePath('empty-wishlist.png')}
           alt="not-found"
         />
