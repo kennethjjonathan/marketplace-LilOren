@@ -1,5 +1,6 @@
 import AsyncButton from '@/components/AsyncButton/AsyncButton';
 import { InputWithLabel } from '@/components/InputWithLabel/InputWithLabel';
+import { withBasePath } from '@/lib/nextUtils';
 import { redisClient } from '@/lib/redis';
 import { authClient } from '@/service/auth/AuthClient';
 import { Utils } from '@/utils';
@@ -56,7 +57,12 @@ function SignInPage({ code: reset_code }: PropsWithoutRef<Props>) {
           LilOren
         </h1>
         <div className="hidden relative aspect-square w-[470px] xl:block">
-          <Image src={'/Logo_.svg'} alt="Google's logo" fill sizes="40vw" />
+          <Image
+            src={withBasePath('Logo_.svg')}
+            alt="Google's logo"
+            fill
+            sizes="40vw"
+          />
         </div>
       </div>
       <div className="container pb-16 pt-6 flex flex-col items-center justify-center gap-5 bg-primary-foreground sm:max-w-lg sm:pb-6 sm:rounded-lg xl:my-auto">
