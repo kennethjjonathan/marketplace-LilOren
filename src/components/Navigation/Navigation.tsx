@@ -49,6 +49,7 @@ const Navigation: React.FC = () => {
       title: 'Wishlist',
       href: '/user/wishlist?status=Wishlist',
     },
+    { title: 'MyWallet', href: '/wallet' },
     {
       title: 'Logout',
       async callback() {

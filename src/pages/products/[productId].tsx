@@ -125,6 +125,10 @@ const ProductPage = ({
   }
 
   function setInitialAvailable() {
+    if (!isVariant) {
+      setVariant(productPage.product_variant[0]);
+      return;
+    }
     const availableSet1 = new Set<number>();
     const availableSet2 = new Set<number>();
     for (let i = 0; i < productPage.product_variant.length; i++) {
