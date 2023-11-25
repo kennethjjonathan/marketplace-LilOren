@@ -28,6 +28,11 @@ interface OrderCardProps {
   checkoutSummary: ICheckoutSummary;
   isCourierValid: boolean | undefined;
   isAllPriceLoading: boolean;
+  handlePromotionChange: (
+    shop_id: number,
+    promotion_id: number,
+    loadingToggle: Dispatch<SetStateAction<boolean>>,
+  ) => void;
 }
 
 const OrderCard = ({
@@ -38,6 +43,7 @@ const OrderCard = ({
   checkoutSummary,
   isCourierValid,
   isAllPriceLoading,
+  handlePromotionChange,
 }: OrderCardProps) => {
   const [orderSummary, setOrderSummary] = useState<IOrderSummary>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -79,6 +85,51 @@ const OrderCard = ({
             <CheckoutProductListTab key={index} item={item} />
           ))}
         </div>
+        {checkout.promotion_dropdown.length !== 0 && (
+          <div className="w-full pb-3">
+            <Select
+              onValueChange={(value) =>
+                handlePromotionChange(
+                  checkout.shop_id,
+                  parseInt(value),
+                  setIsLoading,
+                )
+              }
+            >
+              <SelectTrigger className="max-w-sm text-sm sm:text-base md:text-lg h-fit">
+                <SelectValue placeholder={'Promotion'} />
+              </SelectTrigger>
+              <SelectContent className="max-w-sm">
+                <SelectItem
+                  value={'-1'}
+                  className="text-sm sm:text-base md:text-lg flex flex-col items-start"
+                >
+                  Cancel
+                </SelectItem>
+                {checkout.promotion_dropdown.map((checkout, index) => (
+                  <SelectItem
+                    key={index}
+                    value={checkout.promotion_id.toString()}
+                    className="text-sm sm:text-base md:text-lg flex flex-col items-start"
+                    disabled={!checkout.is_applicable}
+                  >
+                    {checkout.price_cut !== undefined && (
+                      <p className="leading-none text-left">{`Discount: ${Utils.convertPrice(
+                        checkout.price_cut,
+                      )}`}</p>
+                    )}
+                    {checkout.percentage !== undefined && (
+                      <p className="leading-none text-left">{`Discount: ${checkout.percentage}%`}</p>
+                    )}
+                    <p className="text-xs sm:text-sm md:text-base leading-tight text-left text-gray-500">{`Minimum spend: ${Utils.convertPrice(
+                      checkout.minimum_spend,
+                    )}`}</p>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
         <div className="w-full pb-3">
           <Select
             onValueChange={(value) =>
@@ -90,7 +141,7 @@ const OrderCard = ({
             }
           >
             <SelectTrigger className="max-w-sm text-sm sm:text-base md:text-lg">
-              <SelectValue placeholder={'Shipping option'} />
+              <SelectValue placeholder={'Shipping option *'} />
             </SelectTrigger>
             <SelectContent className="max-w-sm">
               {checkout.courier_dropdown.map((courier, index) => (
@@ -114,7 +165,18 @@ const OrderCard = ({
         {!isLoading && !isAllPriceLoading && orderSummary && (
           <div className="w-full bg-primary-foreground py-2 max-w-sm px-1">
             {orderSummary.sub_total_product > 0 && (
-              <p className="text-gray-600 text-xs sm:text-sm">{`product(s): ${Utils.convertPrice(
+              <p
+                className={`text-gray-600 text-xs sm:text-sm ${
+                  orderSummary.sub_total_promotion <
+                    orderSummary.sub_total_product && 'line-through'
+                }`}
+              >{`product(s): ${Utils.convertPrice(
+                orderSummary.sub_total_product,
+              )}`}</p>
+            )}
+            {orderSummary.sub_total_promotion <
+              orderSummary.sub_total_product && (
+              <p className="text-gray-600 text-xs sm:text-sm">{`promotion: ${Utils.convertPrice(
                 orderSummary.sub_total_product,
               )}`}</p>
             )}

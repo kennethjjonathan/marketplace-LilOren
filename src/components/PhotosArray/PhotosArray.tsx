@@ -3,13 +3,13 @@ import Image from 'next/image';
 import { ArrowUpFromLine, Info, XCircle } from 'lucide-react';
 import styles from './PhotosArray.module.scss';
 
-const maxPhoto: number = 6;
-
 interface PhotosArrayProps {
   tempProductPhotos: File[];
   setTempProductPhotos: Dispatch<SetStateAction<File[]>>;
   remainingPhotos: number;
   setRemainingPhotos: Dispatch<SetStateAction<number>>;
+  maxPhoto: number;
+  isReviewForm?: boolean;
 }
 
 const PhotosArray = ({
@@ -17,11 +17,16 @@ const PhotosArray = ({
   setTempProductPhotos,
   remainingPhotos,
   setRemainingPhotos,
+  maxPhoto,
+  isReviewForm = false,
 }: PhotosArrayProps) => {
   const handleAddPhoto = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files !== null) {
       const selectedFiles = e.target.files;
-      setTempProductPhotos([...tempProductPhotos, selectedFiles[0]]);
+      const newFiles = [...tempProductPhotos];
+      newFiles.push(selectedFiles[0]);
+      console.log(newFiles);
+      setTempProductPhotos(newFiles);
       setRemainingPhotos((prev) => prev - 1);
     }
   };
@@ -35,17 +40,19 @@ const PhotosArray = ({
     <div className="flex flex-col w-fit">
       <div className="font-light w-full text-[10px] lg:text-[12px] md:text-base flex gap-2">
         <p className="text-[12px] lg:text-[14px]">{'Product Photos'}</p>
-        <span className="text-primary">{' *'}</span>
-        <div className={styles.product_icon}>
-          <Info size={15} className="text-muted-foreground" />
-          <div
-            className={`${styles.product_info} bg-white sm:w-[350px] md:w-[400px] lg:w-[500px] text-[12px] absolute p-6 rounded-xl border-2 duration-500 before:ease-in-out after:ease-in-out`}
-          >
-            <p>
-              {`Image format .jpg .jpeg .png and minimum size 300 x 300px (For optimal images use a minimum size of 700 x 700 px). Select a product photo. Upload min. 1 photo that are interesting and different from each other to attract buyers' attention.`}
-            </p>
+        {!isReviewForm && <span className="text-primary">{' *'}</span>}
+        {!isReviewForm && (
+          <div className={styles.product_icon}>
+            <Info size={15} className="text-muted-foreground" />
+            <div
+              className={`${styles.product_info} bg-white sm:w-[350px] md:w-[400px] lg:w-[500px] text-[12px] absolute p-6 rounded-xl border-2 duration-500 before:ease-in-out after:ease-in-out`}
+            >
+              <p>
+                {`Image format .jpg .jpeg .png and minimum size 300 x 300px (For optimal images use a minimum size of 700 x 700 px). Select a product photo. Upload min. 1 photo that are interesting and different from each other to attract buyers' attention.`}
+              </p>
+            </div>
           </div>
-        </div>
+        )}
       </div>
       <div className={`flex flex-wrap`}>
         {tempProductPhotos.map(
@@ -53,7 +60,7 @@ const PhotosArray = ({
             file && (
               <div key={`key-${index.toString()}`} className="relative p-3">
                 <Image
-                  src={file && URL.createObjectURL(file)}
+                  src={URL.createObjectURL(file)}
                   width={200}
                   height={200}
                   alt={'product'}

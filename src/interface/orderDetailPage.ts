@@ -18,4 +18,5 @@ export interface IOrderProductItem {
   variant_name: string;
   sub_total_price: number;
   quantity: number;
+  product_code: string;
 }

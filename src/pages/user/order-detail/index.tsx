@@ -40,7 +40,6 @@ const OrderDetailPage: NextPageWithLayout = () => {
       });
     } catch (error) {
       Utils.handleGeneralError(error);
-      console.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -63,7 +62,6 @@ const OrderDetailPage: NextPageWithLayout = () => {
       });
     } catch (error) {
       Utils.handleGeneralError(error);
-      console.error(error);
     } finally {
       setIsLoading(false);
     }

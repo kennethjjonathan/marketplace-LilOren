@@ -429,94 +429,6 @@ const SellerPortalProductCreate = () => {
     }
     return isContinue;
   }
-  // function buildVariant() {
-  //   if (!isVariantActive) {
-  //     const payload: INonVariant[] = [
-  //       {
-  //         price: noVarPrice as number,
-  //         stock: noVarStock as number,
-  //       },
-  //     ];
-  //     return payload;
-  //   }
-
-  //   if (variants.length === 2) {
-  //     const variantTypes1: string[] = [];
-  //     for (let i = 0; i < variants[0].options.length; i++) {
-  //       if (variants[0].options[i] !== undefined) {
-  //         variantTypes1.push(variants[0].options[i] as string);
-  //       }
-  //     }
-  //     const variantTypes2: string[] = [];
-  //     for (let i = 0; i < variants[1].options.length; i++) {
-  //       if (variants[1].options[i] !== undefined) {
-  //         variantTypes2.push(variants[1].options[i] as string);
-  //       }
-  //     }
-  //     const variant_definition: IVariantDefinition = {
-  //       variant_group_1: {
-  //         name: variants[0].variant_name,
-  //         variant_types: variantTypes1,
-  //       },
-  //       variant_group_2: {
-  //         name: variants[1].variant_name,
-  //         variant_types: variantTypes2,
-  //       },
-  //     };
-  //     const variant_group: IVariantGroup[] = [];
-  //     for (let i = 0; i < variants[0].options.length; i++) {
-  //       for (let j = 0; j < variants[1].options.length; j++) {
-  //         if (
-  //           variants[0].options[i] !== undefined &&
-  //           variants[1].options[j] !== undefined
-  //         ) {
-  //           const variantGroup: IVariantGroup = {
-  //             variant_type_1: variants[0].options[i] as string,
-  //             variant_type_2: variants[1].options[j] as string,
-  //             price: price[i][j] as number,
-  //             stock: stocks[i][j] as number,
-  //           };
-  //           variant_group.push(variantGroup);
-  //         }
-  //       }
-  //     }
-  //     return {
-  //       variant_definition: variant_definition,
-  //       variants: variant_group,
-  //     };
-  //   }
-
-  //   if (variants.length === 1) {
-  //     const variantTypes1: string[] = [];
-  //     for (let i = 0; i < variants[0].options.length; i++) {
-  //       if (variants[0].options[i] !== undefined) {
-  //         variantTypes1.push(variants[0].options[i] as string);
-  //       }
-  //     }
-  //     const variant_definition: IVariantDefinition = {
-  //       variant_group_1: {
-  //         name: variants[0].variant_name,
-  //         variant_types: variantTypes1,
-  //       },
-  //     };
-  //     const variant_group: IVariantGroup[] = [];
-  //     for (let i = 0; i < variants[0].options.length; i++) {
-  //       if (variants[0].options[i] !== undefined) {
-  //         const variantGroup: IVariantGroup = {
-  //           variant_type_1: variants[0].options[i] as string,
-  //           price: price[i][0] as number,
-  //           stock: stocks[i][0] as number,
-  //         };
-  //         variant_group.push(variantGroup);
-  //       }
-  //     }
-  //     return {
-  //       variant_definition: variant_definition,
-  //       variants: variant_group,
-  //     };
-  //   }
-  // }
-  // PRODUCT VARIANT -- END
 
   function validateRequestBody(): boolean {
     let isContinue: boolean = true;
@@ -766,6 +678,7 @@ const SellerPortalProductCreate = () => {
             setTempProductPhotos={setTempProductPhotos}
             remainingPhotos={remainingPhotos}
             setRemainingPhotos={setRemainingPhotos}
+            maxPhoto={maxPhoto}
           />
           <div className="flex flex-col gap-1 w-full">
             <div className="flex items-end w-full justify-between">

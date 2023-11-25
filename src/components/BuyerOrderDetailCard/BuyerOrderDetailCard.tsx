@@ -10,6 +10,21 @@ import {
 } from '@/components/ui/popover';
 import { Button } from '../ui/button';
 import axiosInstance from '@/lib/axiosInstance';
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
+import ReviewForm from '../ReviewForm/ReviewForm';
 
 interface BuyerOrderDetailCardProps {
   orderItem: IOrderItem;
@@ -20,6 +35,8 @@ const BuyerOrderDetailCard = ({
   orderItem,
   setUpdateToggle,
 }: BuyerOrderDetailCardProps) => {
+  const [isCancelOpen, setIsCancelOpen] = useState<boolean>(false);
+  const [isReviewOpen, setIsReviewOpen] = useState<boolean>(false);
   const [isAddDetailOpen, setIsAddDetailOpen] = useState<boolean>(false);
   const [isActionLoading, setIsActionLoading] = useState<boolean>(false);
   function parseStatus(inputString: string): string {
@@ -51,17 +68,17 @@ const BuyerOrderDetailCard = ({
     } else {
       specEndPoint = 'receive';
     }
-
     setIsActionLoading(true);
     try {
       await axiosInstance.put(`/orders/${orderItem.id}/${specEndPoint}`);
       Utils.notify('Order successfully updated', 'success', 'colored');
       setUpdateToggle((prev) => !prev);
+      setIsActionLoading(false);
     } catch (error) {
       Utils.handleGeneralError(error);
-      console.error(error);
-    } finally {
       setIsActionLoading(false);
+    } finally {
+      setIsReviewOpen(true);
     }
   }
   return (
@@ -147,14 +164,9 @@ const BuyerOrderDetailCard = ({
             {orderItem.status === 'NEW' ? (
               <Button
                 variant={'destructive'}
-                onClick={handleSpecialAction}
-                disabled={isActionLoading}
+                onClick={() => setIsCancelOpen(true)}
               >
-                {isActionLoading ? (
-                  <div className="border-4 border-destructive-foreground border-t-transparent rounded-full animate-spin aspect-square h-4" />
-                ) : (
-                  <p>Cancel Order</p>
-                )}
+                Cancel Order
               </Button>
             ) : (
               <Button onClick={handleSpecialAction} disabled={isActionLoading}>
@@ -179,6 +191,58 @@ const BuyerOrderDetailCard = ({
         </div>
       </div>
       <Divider />
+      <AlertDialog open={isCancelOpen} onOpenChange={setIsCancelOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-destructive">
+              Cancel Order
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              <p>
+                Are you sure you want to cancel order from{' '}
+                <span className="text-destructive">{orderItem.shop_name}</span>?
+              </p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="w-full flex items-center justify-end gap-3">
+            <Button
+              variant={'outline'}
+              disabled={isActionLoading}
+              onClick={() => setIsCancelOpen(false)}
+              className="px-3 py-1 text-base"
+            >
+              Close
+            </Button>
+            <Button
+              variant={'destructive'}
+              disabled={isActionLoading}
+              onClick={handleSpecialAction}
+              className="px-3 py-1 text-base"
+            >
+              {isActionLoading ? (
+                <div className="border-4 border-destructive-foreground border-t-transparent rounded-full animate-spin aspect-square h-4" />
+              ) : (
+                <p>Cancel Order</p>
+              )}
+            </Button>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
+      <Sheet open={isReviewOpen} onOpenChange={setIsReviewOpen}>
+        <SheetContent side={'bottom'} className="max-h-full overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Leave a Review</SheetTitle>
+            <SheetDescription>
+              You can leave a review for the product
+            </SheetDescription>
+          </SheetHeader>
+          <div className="w-full mt-3">
+            {orderItem.products.map((product) => (
+              <ReviewForm product={product} key={product.product_code} />
+            ))}
+          </div>
+        </SheetContent>
+      </Sheet>
     </>
   );
 };

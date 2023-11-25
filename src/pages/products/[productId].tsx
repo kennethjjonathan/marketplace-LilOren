@@ -264,7 +264,8 @@ const ProductPage = ({
                   <div className="flex items-center">
                     <Star className="fill-yellow-300 text-yellow-300 aspect-square h-5 mb-[0.125rem] sm:h-6" />{' '}
                     <p className="text-base sm:text-lg lg:text-xl">
-                      4.3 <span className="font-light">{`(${4} rating)`}</span>
+                      {productPage.rating}{' '}
+                      <span className="font-light">{`(${4} rating)`}</span>
                     </p>
                   </div>
                 </div>

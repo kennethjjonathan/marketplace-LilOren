@@ -24,65 +24,7 @@ import { ICheckout } from '@/interface/checkoutPage';
 import { Utils } from '@/utils';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-
-const dummyData: ICheckout[] = [
-  {
-    shop_id: 1,
-    shop_name: 'Zataru',
-    shop_city: 'Kab. Tangerang',
-    items: [
-      {
-        name: 'Fragrance 1',
-        image_url:
-          'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//92/MTA-5070654/dc_dc_trase_tx_m_shoe_adys300126-bgm_black-gum_full02_g0b376j9.jpg',
-        quantity: 1,
-        total_weight: 500,
-        price: 150000,
-      },
-      {
-        name: 'Fragrance 2',
-        image_url:
-          'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//92/MTA-5070654/dc_dc_trase_tx_m_shoe_adys300126-bgm_black-gum_full02_g0b376j9.jpg',
-        quantity: 1,
-        total_weight: 1000,
-        price: 200000,
-      },
-    ],
-    courier_dropdown: [
-      { label: 'JNE', value: 1 },
-      { label: 'JNT', value: 2 },
-      { label: 'Ninja', value: 3 },
-    ],
-  },
-  {
-    shop_id: 2,
-    shop_name: 'Converse',
-    shop_city: 'Tangerang Selatan',
-    items: [
-      {
-        name: 'Shoes 1',
-        image_url:
-          'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//92/MTA-5070654/dc_dc_trase_tx_m_shoe_adys300126-bgm_black-gum_full02_g0b376j9.jpg',
-        quantity: 1,
-        total_weight: 1000,
-        price: 300000,
-      },
-      {
-        name: 'Shoes 2',
-        image_url:
-          'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//92/MTA-5070654/dc_dc_trase_tx_m_shoe_adys300126-bgm_black-gum_full02_g0b376j9.jpg',
-        quantity: 1,
-        total_weight: 1000,
-        price: 400000,
-      },
-    ],
-    courier_dropdown: [
-      { label: 'JNE', value: 1 },
-      { label: 'JNT', value: 2 },
-      { label: 'Ninja', value: 3 },
-    ],
-  },
-];
+import Head from 'next/head';
 
 const CheckoutPage: NextPageWithLayout = () => {
   const router = useRouter();
@@ -126,11 +68,41 @@ const CheckoutPage: NextPageWithLayout = () => {
           const newCourierItem: IRequestOrderSummary = {
             shop_id: shop_id,
             shop_courier_id: shop_courier_id,
+            promotion_id: newCourierArr[i].promotion_id,
           };
           newCourierArr[i] = newCourierItem;
           newCouriersValid[i] = true;
           setCouriers(newCourierArr);
           setCouriersValid(newCouriersValid);
+          await getSummary(chosenAddress!, newCourierArr);
+          loadingToggle(false);
+          setIsSummaryLoading(false);
+          return;
+        }
+      }
+    }
+    loadingToggle(false);
+    setIsSummaryLoading(false);
+  }
+
+  async function handlePromotionChange(
+    shop_id: number,
+    promotion_id: number,
+    loadingToggle: Dispatch<SetStateAction<boolean>>,
+  ) {
+    loadingToggle(true);
+    setIsSummaryLoading(true);
+    if (couriers) {
+      for (let i = 0; i < couriers.length; i++) {
+        if (couriers[i].shop_id === shop_id) {
+          const newCourierArr: IRequestOrderSummary[] = [...couriers];
+          const newCourierItem: IRequestOrderSummary = {
+            shop_id: shop_id,
+            shop_courier_id: newCourierArr[i].shop_courier_id,
+            promotion_id: promotion_id === -1 ? undefined : promotion_id,
+          };
+          newCourierArr[i] = newCourierItem;
+          setCouriers(newCourierArr);
           await getSummary(chosenAddress!, newCourierArr);
           loadingToggle(false);
           setIsSummaryLoading(false);
@@ -155,6 +127,7 @@ const CheckoutPage: NextPageWithLayout = () => {
         `${CONSTANTS.BASEURL}/checkouts/summary`,
         newRequestSummary,
       );
+      console.log(response.data.data);
       setCheckoutSummary(response.data.data);
     } catch (error) {
       if (error === CONSTANTS.ALREADY_LOGGED_OUT) {
@@ -168,6 +141,7 @@ const CheckoutPage: NextPageWithLayout = () => {
   async function getInitialOrderList() {
     try {
       const response = await axiosInstance(`${CONSTANTS.BASEURL}/checkouts`);
+      console.log(response);
       setCheckouts(response.data.data.checkouts);
       return response.data.data;
     } catch (error: any) {
@@ -220,6 +194,7 @@ const CheckoutPage: NextPageWithLayout = () => {
           const orderReq: IRequestOrderSummary = {
             shop_id: checkoutReponse.checkouts[i].shop_id,
             shop_courier_id: undefined,
+            promotion_id: undefined,
           };
           initialCouriers.push(orderReq);
           initialCouriersValid.push(true);
@@ -299,7 +274,6 @@ const CheckoutPage: NextPageWithLayout = () => {
       router.replace('/user/order-detail?page=1');
     } catch (error: any) {
       Utils.handleGeneralError(error);
-      console.error(error);
     } finally {
       setIsPaymentLoading(false);
     }
@@ -333,66 +307,77 @@ const CheckoutPage: NextPageWithLayout = () => {
 
   if (checkouts === undefined || checkouts.length === 0) {
     return (
-      <section className="flex flex-col justify-center items-center w-full bg-white pb-5">
-        <div className="w-full md:w-[75vw] lg:px-2 lg:pt-5 flex flex-col justify-center items-center gap-5">
-          <p className="w-full text-center mt-10 text-lg lg:text-xl px-2">
-            Seems like you don&apos;t have any items at checkout yet.
-          </p>
-          <Link
-            href="/user/cart"
-            className="text-primary underline text-base px-2"
-          >
-            Go to Cart Page
-          </Link>
-        </div>
-      </section>
+      <>
+        <Head>
+          <title>Checkout - LilOren</title>
+        </Head>
+        <section className="flex flex-col justify-center items-center w-full bg-white pb-5">
+          <div className="w-full md:w-[75vw] lg:px-2 lg:pt-5 flex flex-col justify-center items-center gap-5">
+            <p className="w-full text-center mt-10 text-lg lg:text-xl px-2">
+              Seems like you don&apos;t have any items at checkout yet.
+            </p>
+            <Link
+              href="/user/cart"
+              className="text-primary underline text-base px-2"
+            >
+              Go to Cart Page
+            </Link>
+          </div>
+        </section>
+      </>
     );
   }
 
   return (
-    <section className="flex flex-col justify-center items-center w-full bg-white pb-5">
-      <div className="w-full md:w-[75vw] lg:px-2 lg:pt-5 flex flex-col">
-        <CheckoutAddressOption
-          chosenAddress={chosenAddress}
-          setChosenAddress={setChosenAddress}
-          allAddress={allAddress}
-        />
-        <div className="w-full">
-          {checkouts &&
-            checkouts.map((checkout, index) => (
-              <OrderCard
-                key={index}
-                checkout={checkout}
-                index={index}
-                isMultiple={checkouts.length > 1}
-                handleCouriersChange={handleCourierChange}
-                checkoutSummary={checkoutSummary}
-                isCourierValid={
-                  couriersValid ? couriersValid[index] : undefined
-                }
-                isAllPriceLoading={isAllPriceLoading}
-              />
-            ))}
-        </div>
-        <div className="w-full flex justify-end">
-          <CheckoutPaymentOption
-            checkoutSummary={checkoutSummary}
-            isLoading={isSummaryLoading}
-            pins={pins}
-            setPins={setPins}
-            handlePay={handlePay}
-            isPinsValid={isPinsValid}
-            setIsPinsValid={setIsPinsValid}
-            isPaymentOpen={isPaymentOpen}
-            setIsPaymentOpen={setIsPaymentOpen}
-            isPaymentLoading={isPaymentLoading}
-            handleOpenPayment={handleOpenPaymentPortal}
-            wallet={wallet || { isActive: false, balance: 0 }}
-            setUpdateToggle={setUpdateToggle}
+    <>
+      <Head>
+        <title>Checkout - LilOren</title>
+      </Head>
+      <section className="flex flex-col justify-center items-center w-full bg-white pb-5">
+        <div className="w-full md:w-[75vw] lg:px-2 lg:pt-5 flex flex-col">
+          <CheckoutAddressOption
+            chosenAddress={chosenAddress}
+            setChosenAddress={setChosenAddress}
+            allAddress={allAddress}
           />
+          <div className="w-full">
+            {checkouts &&
+              checkouts.map((checkout, index) => (
+                <OrderCard
+                  key={index}
+                  checkout={checkout}
+                  index={index}
+                  isMultiple={checkouts.length > 1}
+                  handleCouriersChange={handleCourierChange}
+                  checkoutSummary={checkoutSummary}
+                  isCourierValid={
+                    couriersValid ? couriersValid[index] : undefined
+                  }
+                  isAllPriceLoading={isAllPriceLoading}
+                  handlePromotionChange={handlePromotionChange}
+                />
+              ))}
+          </div>
+          <div className="w-full flex justify-end">
+            <CheckoutPaymentOption
+              checkoutSummary={checkoutSummary}
+              isLoading={isSummaryLoading}
+              pins={pins}
+              setPins={setPins}
+              handlePay={handlePay}
+              isPinsValid={isPinsValid}
+              setIsPinsValid={setIsPinsValid}
+              isPaymentOpen={isPaymentOpen}
+              setIsPaymentOpen={setIsPaymentOpen}
+              isPaymentLoading={isPaymentLoading}
+              handleOpenPayment={handleOpenPaymentPortal}
+              wallet={wallet || { isActive: false, balance: 0 }}
+              setUpdateToggle={setUpdateToggle}
+            />
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 };
 

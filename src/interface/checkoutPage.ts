@@ -18,18 +18,28 @@ export interface ICheckoutItem {
   price: number;
 }
 
+export interface IPromotionCheckout {
+  is_applicable: boolean;
+  minimum_spend: number;
+  price_cut?: number;
+  percentage?: number;
+  promotion_id: number;
+}
+
 export interface ICheckout {
   shop_id: number;
   shop_name: string;
   shop_city: string;
   items: ICheckoutItem[];
   courier_dropdown: ICouriers[];
+  promotion_dropdown: IPromotionCheckout[];
 }
 
 export interface IOrderSummary {
   shop_id: number;
   shop_name: string;
   sub_total_product: number;
+  sub_total_promotion: number;
   delivery_cost: number;
   subtotal: number;
 }
@@ -46,6 +56,7 @@ export interface ICheckoutSummary {
 export interface IRequestOrderSummary {
   shop_id: number;
   shop_courier_id: number | undefined;
+  promotion_id: number | undefined;
 }
 
 export interface IRequestSummary {
