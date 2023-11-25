@@ -25,4 +25,4 @@ COPY --from=build /build/.next/static ./.next/static
 EXPOSE 3000
 ENV NEXTAUTH_SECRET=test123
 ENV NODE_ENV=production
-CMD [ "node", "./.next/standalone/server.js" ]
+CMD [ "node", "server.js" ]
