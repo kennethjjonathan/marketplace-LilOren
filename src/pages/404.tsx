@@ -2,7 +2,6 @@ import Layout from '@/components/Layout/Layout';
 import { Button } from '@/components/ui/button';
 import { withBasePath } from '@/lib/nextUtils';
 import Head from 'next/head';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { ReactElement, useState } from 'react';
 import { NextPageWithLayout } from './_app';
@@ -36,7 +35,8 @@ const Custom404: NextPageWithLayout = () => {
         ></meta>
       </Head>
       <div className="flex flex-col gap-3 justify-start mt-4 items-center h-[100vh]">
-        <Image
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           src={withBasePath('empty-wishlist.png')}
           className="w-[150px] pb-3"
           width="150"
