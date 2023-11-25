@@ -12,6 +12,7 @@ import { useRouter } from 'next/router';
 import { Button } from '@/components/ui/button';
 import PaginationNav from '@/components//PaginationNav/PaginationNav';
 import { IPagination } from '@/interface/pagination';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
 interface SellerPageCategoryTabsProps {
   setCurrentPage: Dispatch<React.SetStateAction<number>>;
@@ -42,11 +43,11 @@ const SellerPageCategoryTabs = ({
     setActiveTab(menu);
     setActiveFilter(menu);
     if (menu === 'MostRecent') {
-      router.push(`/shop/${shop_name}?sort_desc=true`);
+      router.push(`/shop/${shop_name}?sort_desc=true&page=1`);
     }
 
     if (menu === 'BestSeller') {
-      router.push(`/shop/${shop_name}`);
+      router.push(`/shop/${shop_name}?page=1`);
     }
   };
 
@@ -60,8 +61,8 @@ const SellerPageCategoryTabs = ({
   }, []);
 
   return (
-    <div className="flex flex-row items-center gap-3 px-3 py-5 bg-white border-[1px] rounded-lg">
-      <div className="flex flex-row justify-between items-center h-full w-full">
+    <ScrollArea className="w-[calc(100vw-32vw)] flex">
+      <div className="flex flex-row items-center gap-3 px-3 py-5">
         <div className="flex flex-row h-full justify-between items-center gap-3">
           <div className="hidden lg:block">
             <p className="text-muted-foreground">{'Sort'}</p>
@@ -108,17 +109,9 @@ const SellerPageCategoryTabs = ({
             </SelectContent>
           </Select>
         </div>
-        <div className="hidden sm:flex">
-          {seller_pagination.total_page > 1 && (
-            <PaginationNav
-              totalPage={seller_pagination?.total_page}
-              currentPage={seller_pagination?.page}
-              setCurrentPage={setCurrentPage}
-            />
-          )}
-        </div>
       </div>
-    </div>
+      <ScrollBar orientation="horizontal" />
+    </ScrollArea>
   );
 };
 
