@@ -1,10 +1,12 @@
-import { ReactElement, useState } from 'react';
-import { useRouter } from 'next/router';
-import Head from 'next/head';
-import { NextPageWithLayout } from './_app';
-import { Button } from '@/components/ui/button';
-import Layout from '@/components/Layout/Layout';
 import DotsLoading from '@/components/DotsLoading/DotsLoading';
+import Layout from '@/components/Layout/Layout';
+import { Button } from '@/components/ui/button';
+import { withBasePath } from '@/lib/nextUtils';
+import Head from 'next/head';
+import Image from 'next/image';
+import { useRouter } from 'next/router';
+import { ReactElement, useState } from 'react';
+import { NextPageWithLayout } from './_app';
 
 const Custom404: NextPageWithLayout = () => {
   const router = useRouter();
@@ -39,7 +41,11 @@ const Custom404: NextPageWithLayout = () => {
         ></meta>
       </Head>
       <div className="flex flex-col gap-3 justify-start mt-4 items-center h-[100vh]">
-        <img className="w-[150px] pb-3" src="/not-found.png" alt="not-found" />
+        <Image
+          className="w-[150px] pb-3"
+          src={withBasePath('empty-wishlist.png')}
+          alt="not-found"
+        />
         <div className="font-light text-muted-foreground">
           {'It looks like something is missing!'}
         </div>

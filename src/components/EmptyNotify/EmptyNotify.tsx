@@ -1,4 +1,5 @@
-import React from 'react';
+import { withBasePath } from '@/lib/nextUtils';
+import Image from 'next/image';
 
 interface EmptyNotifyProps {
   message: string;
@@ -7,8 +8,8 @@ interface EmptyNotifyProps {
 const EmptyNotify = ({ message }: EmptyNotifyProps) => {
   return (
     <div className="max-h-max flex flex-col gap-4 justify-center items-center pt-3 lg:pt-3">
-      <img
-        src="/empty-wishlist.png"
+      <Image
+        src={withBasePath('empty-wishlist.png')}
         alt="empty-wishlist"
         className="w-[200px]"
       />
