@@ -39,7 +39,6 @@ const ProductPage = ({
   isVariant,
   productCode,
 }: ProductPageProps) => {
-  console.log(productPage);
   const user_details = useUser.use.user_details();
   const fetchUserDetails = useUser.use.fetchUserDetails();
   const router = useRouter();
@@ -339,7 +338,7 @@ const ProductPage = ({
           <div className="px-2 w-full my-4">
             <Separator className="h-0.5 rounded-md" />
           </div>
-          <ReviewComponent />
+          <ReviewComponent product_code={productCode} />
         </div>
       </section>
       <ProductPageLayout

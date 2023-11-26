@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Star } from 'lucide-react';
 import ReviewCard from '../ReviewCard/ReviewCard';
 import {
@@ -10,8 +10,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import axiosInstance from '@/lib/axiosInstance';
 
-const ReviewComponent = () => {
+interface ReviewComponentProps {
+  product_code: string;
+}
+
+const ReviewComponent = ({ product_code }: ReviewComponentProps) => {
+  async function getReviews() {
+    const params = new URLSearchParams();
+    params.set('page', '1');
+    try {
+      const response = await axiosInstance(
+        `/reviews/${product_code}?${params.toString()}`,
+      );
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  useEffect(() => {
+    getReviews();
+  }, []);
   return (
     <div className="w-full px-2">
       <h3 className="font-semibold text-xl md:text-2xl">Review</h3>
