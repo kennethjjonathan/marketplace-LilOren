@@ -56,7 +56,7 @@ export interface IAddToCart {
 
 export interface IProductReview {
   rating: number;
-  comment: string;
+  comment?: string;
   account_id: number;
   username: string;
   image_urls?: string[];

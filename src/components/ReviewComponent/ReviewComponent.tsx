@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Star } from 'lucide-react';
 import ReviewCard from '../ReviewCard/ReviewCard';
 import {
@@ -11,20 +11,36 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import axiosInstance from '@/lib/axiosInstance';
+import { IProductReview } from '@/interface/productPage';
+import PaginationNav from '../PaginationNav/PaginationNav';
 
 interface ReviewComponentProps {
   product_code: string;
+  rating: number;
+  totalRating: number;
+  setTotalRating: Dispatch<SetStateAction<number>>;
 }
 
-const ReviewComponent = ({ product_code }: ReviewComponentProps) => {
+const ReviewComponent = ({
+  product_code,
+  rating,
+  totalRating,
+  setTotalRating,
+}: ReviewComponentProps) => {
+  const [reviews, setReviews] = useState<IProductReview[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPage, setTotalPage] = useState<number>(1);
   async function getReviews() {
     const params = new URLSearchParams();
-    params.set('page', '1');
+    params.set('page', currentPage.toString());
     try {
       const response = await axiosInstance(
         `/reviews/${product_code}?${params.toString()}`,
       );
+      setTotalRating(response.data.data.total_review);
+      setTotalPage(response.data.data.total_page);
       console.log(response);
+      setReviews(response.data.data.user_reviews);
     } catch (error) {
       console.error(error);
     }
@@ -32,6 +48,7 @@ const ReviewComponent = ({ product_code }: ReviewComponentProps) => {
   useEffect(() => {
     getReviews();
   }, []);
+
   return (
     <div className="w-full px-2">
       <h3 className="font-semibold text-xl md:text-2xl">Review</h3>
@@ -40,11 +57,13 @@ const ReviewComponent = ({ product_code }: ReviewComponentProps) => {
           <div className="flex items-center gap-1 w-full justify-center">
             <Star className="fill-yellow-300 text-yellow-300 aspect-square h-10 mb-[0.125rem]" />{' '}
             <p className="text-4xl font-bold lg:text-5xl">
-              4
+              {rating}
               <span className="ml-1 font-extralight text-base text-gray-500 lg:text-xl">{`/5`}</span>
             </p>
           </div>
-          <p className="text-gray-500 text-base w-full text-center lg:text-lg">{`${31} reviews`}</p>
+          <p className="text-gray-500 text-base w-full text-center lg:text-lg">{`${totalRating} review${
+            totalRating > 1 ? 's' : ''
+          }`}</p>
           <p className="font-semibold text-base lg:mt-3">Filter:</p>
           <div className="mt-2 lg:mt-1 max-w-full py-1 grid gap-3 grid-cols-2 lg:grid-cols-1 lg:px-1">
             <Select>
@@ -164,43 +183,19 @@ const ReviewComponent = ({ product_code }: ReviewComponentProps) => {
             </Select>
           </div>
         </div>
-        <div className="flex flex-col w-full mt-2 divide-y-2 lg:mt-0">
-          <ReviewCard
-            profilePic="/banner-1.jpg"
-            username="Kenneth12"
-            rating={4}
-            date={'2023-09-23 20:41'}
-            comment="Kwalitas produk tidak diragukan lagi, packing luar biasa Aman, dilindungi dengan bubble wrap berlapis, Great services !!"
-            productPics={[
-              '/banner-1.jpg',
-              'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//92/MTA-5070654/dc_dc_trase_tx_m_shoe_adys300126-bgm_black-gum_full02_g0b376j9.jpg',
-              'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//92/MTA-5070654/dc_dc_trase_tx_m_shoe_adys300126-bgm_black-gum_full02_g0b376j9.jpg',
-            ]}
-          />
-          <ReviewCard
-            profilePic="/banner-1.jpg"
-            username="Kenneth12"
-            rating={4}
-            date={'2023-09-23 20:41'}
-            comment="Kwalitas produk tidak diragukan lagi, packing luar biasa Aman, dilindungi dengan bubble wrap berlapis, Great services !!"
-            productPics={[
-              'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//92/MTA-5070654/dc_dc_trase_tx_m_shoe_adys300126-bgm_black-gum_full02_g0b376j9.jpg',
-              'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//92/MTA-5070654/dc_dc_trase_tx_m_shoe_adys300126-bgm_black-gum_full02_g0b376j9.jpg',
-              'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//92/MTA-5070654/dc_dc_trase_tx_m_shoe_adys300126-bgm_black-gum_full02_g0b376j9.jpg',
-            ]}
-          />
-          <ReviewCard
-            profilePic="/banner-1.jpg"
-            username="Kenneth12"
-            rating={4}
-            date={'2023-09-23 20:41'}
-            comment="Kwalitas produk tidak diragukan lagi, packing luar biasa Aman, dilindungi dengan bubble wrap berlapis, Great services !!"
-            productPics={[
-              'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//92/MTA-5070654/dc_dc_trase_tx_m_shoe_adys300126-bgm_black-gum_full02_g0b376j9.jpg',
-              'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//92/MTA-5070654/dc_dc_trase_tx_m_shoe_adys300126-bgm_black-gum_full02_g0b376j9.jpg',
-              'https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//92/MTA-5070654/dc_dc_trase_tx_m_shoe_adys300126-bgm_black-gum_full02_g0b376j9.jpg',
-            ]}
-          />
+        <div className="w-full space-y-2">
+          <div className="flex flex-col w-full mt-2 divide-y-2 lg:mt-0">
+            {reviews.map((review, index) => (
+              <ReviewCard review={review} key={index} />
+            ))}
+          </div>
+          <div className="w-full flex justify-center items-center">
+            <PaginationNav
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              totalPage={totalPage}
+            />
+          </div>
         </div>
       </div>
     </div>

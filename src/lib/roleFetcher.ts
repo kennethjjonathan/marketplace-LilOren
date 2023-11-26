@@ -13,7 +13,7 @@ const refreshAccessToken = async () => {
   }
 };
 
-async function fetchInstance(resource: string, configuration: RequestInit) {
+async function roleFetcher(resource: string, configuration: RequestInit) {
   const response = await fetch(resource, configuration);
   if (response.status && response.status === 401) {
     try {
@@ -34,4 +34,4 @@ async function fetchInstance(resource: string, configuration: RequestInit) {
   }
 }
 
-export default fetchInstance;
+export default roleFetcher;

@@ -13,7 +13,6 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/', request.url));
     }
   }
-
   if (request.nextUrl.pathname.startsWith('/user')) {
     if (!cookieList.has('refresh_token')) {
       return NextResponse.redirect(new URL('/signin', request.url));

@@ -39,9 +39,11 @@ const ProductPage = ({
   isVariant,
   productCode,
 }: ProductPageProps) => {
+  console.log('ini product page', productPage);
   const user_details = useUser.use.user_details();
   const fetchUserDetails = useUser.use.fetchUserDetails();
   const router = useRouter();
+  const [totalRating, setTotalRating] = useState<number>(0);
   const [quantity, setQuantity] = useState<number | ''>(1);
   const [group1, setGroup1] = useState<IVariantType>(
     productPage.variant_group1.variant_types[0],
@@ -237,7 +239,7 @@ const ProductPage = ({
         <meta name="og:type" content="website" />
       </Head>
       <section className="flex flex-col justify-center items-center w-full bg-white">
-        <div className="w-full md:w-[75vw] pt-5 pb-[5.5rem]">
+        <div className="w-full md:w-[75vw] pt-5 pb-5">
           <div className="w-full flex flex-col gap-6 lg:flex-row">
             <div className="w-full lg:w-1/3">
               <ImageCarousel mediaArray={productPage.product_media} />
@@ -264,7 +266,9 @@ const ProductPage = ({
                     <Star className="fill-yellow-300 text-yellow-300 aspect-square h-5 mb-[0.125rem] sm:h-6" />{' '}
                     <p className="text-base sm:text-lg lg:text-xl">
                       {productPage.rating}{' '}
-                      <span className="font-light">{`(${4} rating)`}</span>
+                      <span className="font-light">{`(${totalRating} rating${
+                        totalRating > 1 ? 's' : ''
+                      })`}</span>
                     </p>
                   </div>
                 </div>
@@ -342,7 +346,12 @@ const ProductPage = ({
           <div className="px-2 w-full my-4">
             <Separator className="h-0.5 rounded-md" />
           </div>
-          <ReviewComponent product_code={productCode} />
+          <ReviewComponent
+            rating={productPage.rating}
+            product_code={productCode}
+            totalRating={totalRating}
+            setTotalRating={setTotalRating}
+          />
         </div>
       </section>
       <ProductPageLayout
