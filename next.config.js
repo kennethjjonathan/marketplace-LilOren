@@ -37,6 +37,9 @@ const nextConfig = {
       {
         hostname: 'cf.shopee.sg',
       },
+      {
+        hostname: 'res.cloudinary.com',
+      },
     ],
   },
   output: 'standalone',
