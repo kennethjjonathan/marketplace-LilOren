@@ -24,33 +24,6 @@ import Head from 'next/head';
 import DotsLoading from '@/components/DotsLoading/DotsLoading';
 import { useRouter } from 'next/navigation';
 
-// const items = [
-//   {
-//     id: '1',
-//     image: 'https://images.tokopedia.net/img/kurir-jne.png',
-//     label: 'JNE',
-//     category: 'Regular',
-//     description:
-//       'JNE Reguler adalah paket reguler yang ditawarkan JNE. Kecepatan pengiriman tergantung dari lokasi pengiriman dan lokasi tujuan. Untuk kota yang sama, umumnya memakan waktu 2-3 hari.',
-//   },
-//   {
-//     id: '2',
-//     image: 'https://images.tokopedia.net/img/kurir-tiki.png',
-//     label: 'TIKI',
-//     category: 'Regular',
-//     description:
-//       'TIKI Paket Reguler adalah paket yang dapat menjangkau seluruh Indonesia hanya dalam waktu kurang dari 7 hari kerja.',
-//   },
-//   {
-//     id: '3',
-//     image: 'https://images.tokopedia.net/img/kurir-pos-aja.png',
-//     label: 'POS',
-//     category: 'Regular',
-//     description:
-//       'Gunakan Pos Reguler, sebagai pilihan tepat untuk pengiriman Suratpos yang mengandalkan kecepatan kiriman dan menjangkau ke seluruh pelosok Indonesia.',
-//   },
-// ] as const;
-
 const SHIPMENT_SERVICES = 'Shipment Services';
 const CHOOSE_SERVICE_DESCRIPTION =
   'Select the courier service you want to provide in your shop';
@@ -78,7 +51,6 @@ export interface IPutCourier {
 type TypePutCourier = '1' | '2' | '3';
 
 const CheckboxCourier = () => {
-  const router = useRouter();
   const [sellerCourier, setSellerCourier] = useState<IPutCourier>({
     '1': false,
     '2': false,
