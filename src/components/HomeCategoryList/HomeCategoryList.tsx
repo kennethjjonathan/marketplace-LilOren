@@ -1,8 +1,8 @@
 import { ITopCategory } from '@/store/home/useHome';
 import React from 'react';
 import HomeCategoryItem from '../HomeCategoryItem/HomeCategoryItem';
-import styles from './HomeCategoryList.module.scss';
 import { ScrollArea, ScrollBar } from '../ui/scroll-area';
+import styles from './HomeCategoryList.module.scss';
 
 type Props = {
   categories: ITopCategory[];
@@ -18,14 +18,19 @@ const HomeCategoryList: React.FC<Props> = ({ categories }) => {
       </div>
       <ScrollArea className="max-w-full">
         <div className="flex space-x-5 p-2">
-          {categories.map((category) => (
-            <HomeCategoryItem
-              key={`key:${category.category_name}`}
-              image={category.image_url}
-              title={category.category_name}
-              href={category.category_name}
-            />
-          ))}
+          {categories.map((category) => {
+            const params = new URLSearchParams();
+            params.set('category1', category.top_category_id.toString());
+            params.set('category', category.child_category_id.toString());
+            return (
+              <HomeCategoryItem
+                key={`key:${category.category_name}`}
+                image={category.image_url}
+                title={category.category_name}
+                href={`/search?${params.toString()}`}
+              />
+            );
+          })}
         </div>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>

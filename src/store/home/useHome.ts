@@ -23,7 +23,8 @@ export type IRecommendedProduct = {
 };
 
 export interface ITopCategory {
-  category_id: number;
+  top_category_id: number;
+  child_category_id: number;
   category_name: string;
   image_url: string;
 }
