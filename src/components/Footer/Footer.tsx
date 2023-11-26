@@ -11,9 +11,10 @@ const Footer = () => {
         <div className="need-help contact-us flex flex-row justify-center items-center gap-2">
           <Image
             src={withBasePath('headphone.svg')}
-            fill
+            width={50}
+            height={50}
             alt="cs"
-            className="border-[1px] p-2 rounded-full shadow-sm"
+            className="border-[1px] p-2 rounded-full shadow-sm w-[35px] h-[35px]"
           />
           <p className="font-semibold text-[12px]">Need help?</p>
           <p className="text-primary text-[12px]">contact us</p>
