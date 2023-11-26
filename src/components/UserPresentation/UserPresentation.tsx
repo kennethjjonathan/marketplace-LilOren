@@ -52,7 +52,7 @@ const UserInfo = ({ user_details }: UserInfoProps) => {
       </div>
       <div className="lilOren__user__phone__container"></div>
       <div className={styles.lilOren__user_email__container}>
-        {'endriyanira@gmail.com'}
+        {user_details.email}
       </div>
       <Button className={`${styles.lilOren__user__edit__button}`}>
         <PlusCircle size={20} />
