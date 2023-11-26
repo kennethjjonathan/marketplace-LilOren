@@ -1,11 +1,12 @@
 import CONSTANTS from '@/constants/constants';
 
-const refreshAccessToken = async () => {
+const refreshAccessToken = async (cookie: string) => {
   try {
     const response = await fetch(`${CONSTANTS.BASEURL}/auth/refresh-token`, {
       method: 'POST',
-      credentials: 'same-origin',
+      credentials: 'include',
       body: null,
+      headers: { Cookie: cookie },
     });
     return response;
   } catch (error: any) {
@@ -13,25 +14,45 @@ const refreshAccessToken = async () => {
   }
 };
 
-async function roleFetcher(resource: string, configuration: RequestInit) {
-  const response = await fetch(resource, configuration);
-  if (response.status && response.status === 401) {
+async function roleFetcher(cookie: string) {
+  const response = await fetch(`${CONSTANTS.BASEURL}/auth/user`, {
+    headers: { Cookie: cookie },
+    credentials: 'include',
+  });
+  if (response.ok) {
+    const data = await response.json();
+    if (data.data && data.data.is_seller === false) {
+      return 'user';
+    } else if (data.data && data.data.is_seller === true) {
+      return 'seller';
+    }
+  }
+  if (!response.ok && response.status === 401) {
     try {
-      const refreshReponse = await refreshAccessToken();
-
-      const refreshData = await refreshReponse.json();
-      console.log('baru', refreshData);
-
-      if (refreshData.message === CONSTANTS.ALREADY_LOGGED_OUT) {
-        return Promise.reject(CONSTANTS.ALREADY_LOGGED_OUT);
+      const refreshResponse = await refreshAccessToken(cookie);
+      if (refreshResponse.ok) {
+        const checkAgainResponse = await fetch(
+          `${CONSTANTS.BASEURL}/auth/user`,
+          {
+            headers: { Cookie: cookie },
+            credentials: 'include',
+          },
+        );
+        if (checkAgainResponse.ok) {
+          const data = await response.json();
+          if (data.data && data.data.is_seller === false) {
+            return 'user';
+          } else if (data.data && data.data.is_seller === true) {
+            return 'seller';
+          }
+        }
       }
-      const responseAgain = await fetch(resource, configuration);
-    } catch (error) {}
+      return 'unauthorized';
+    } catch (error) {
+      return 'unauthorized';
+    }
   }
-  try {
-  } catch (error) {
-    return Promise.reject(error);
-  }
+  return 'unauthorized';
 }
 
 export default roleFetcher;
