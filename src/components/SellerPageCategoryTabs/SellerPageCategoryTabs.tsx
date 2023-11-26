@@ -9,59 +9,90 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useRouter } from 'next/router';
+import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import PaginationNav from '@/components//PaginationNav/PaginationNav';
 import { IPagination } from '@/interface/pagination';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { useSellerPage } from '@/store/sellerPage/sellerPage';
 
 interface SellerPageCategoryTabsProps {
   setCurrentPage: Dispatch<React.SetStateAction<number>>;
   setActiveFilter: Dispatch<React.SetStateAction<string>>;
+  setSortByPriceDesc: Dispatch<React.SetStateAction<boolean>>;
+  activeFilter: string;
   shop_name: string;
   sort_desc: string;
   seller_pagination: IPagination;
   sort_by: string;
+  sortByPriceDesc: boolean;
+  category_name: string;
 }
 
 const SellerPageCategoryTabs = ({
   setCurrentPage,
   setActiveFilter,
+  activeFilter,
   shop_name,
   sort_desc,
   seller_pagination,
   sort_by,
+  category_name,
 }: SellerPageCategoryTabsProps) => {
+  const searchParams = useSearchParams();
+  const fetchSellerDetails = useSellerPage.use.fetchSellerDetails();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('BestSeller');
   const [labelSortPrice, setLabelSortPrice] = useState('Price');
 
   const handleSortByPrice = (e: string) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('page', '1');
+    params.set('sort_by', 'price');
+    params.set('sort_desc', e);
     setActiveTab('Price');
-    router.push(`/shop/${shop_name}?sort_by=price&sort_desc=${e}`);
+    setActiveFilter('Price');
+    router.push(`/shop/${shop_name}?${params}`);
+    fetchSellerDetails(shop_name, `${params.toString()}`);
   };
   const handleFilterBy = (menu: string) => {
+    setLabelSortPrice('Price');
+    const params = new URLSearchParams(searchParams);
+    if (sort_by === null) {
+      params.delete('sort_by');
+    }
+    if (sort_desc === null) {
+      params.delete('sort_desc');
+    }
+    if (category_name === null) {
+      params.delete('category_name');
+    }
+    params.set('page', '1');
+
     setActiveTab(menu);
     setActiveFilter(menu);
     if (menu === 'MostRecent') {
-      router.push(`/shop/${shop_name}?sort_desc=true`);
+      params.set('sort_desc', 'true');
+    } else {
+      params.delete('sort_desc');
     }
-
-    if (menu === 'BestSeller') {
-      router.push(`/shop/${shop_name}`);
-    }
+    router.push(`/shop/${shop_name}?${params}`);
+    fetchSellerDetails(shop_name, `${params.toString()}`);
   };
 
   useEffect(() => {
-    if (sort_by === 'price' && (sort_desc == 'false' || sort_desc == 'true')) {
+    if (sort_by === 'price' && sort_desc == 'false') {
       setActiveTab('Price');
-      sort_desc === 'false'
-        ? setLabelSortPrice('Price: Low to High')
-        : setLabelSortPrice('Price: High to Low');
+      setLabelSortPrice('Price: Low to High');
+    } else if (sort_desc === 'true') {
+      setActiveTab('Price');
+      setLabelSortPrice('Price: High to Low');
     }
   }, []);
 
   return (
-    <div className="flex flex-row items-center gap-3 px-3 py-5 bg-white border-[1px] rounded-lg">
-      <div className="flex flex-row justify-between items-center h-full w-full">
+    <ScrollArea className="max-w-full md:w-[calc(100vw-55vw)]">
+      <div className="flex flex-row items-center gap-3 px-3 py-5">
         <div className="flex flex-row h-full justify-between items-center gap-3">
           <div className="hidden lg:block">
             <p className="text-muted-foreground">{'Sort'}</p>
@@ -70,8 +101,8 @@ const SellerPageCategoryTabs = ({
           <Button
             onClick={() => handleFilterBy('MostRecent')}
             className={`${
-              activeTab === 'MostRecent' && 'text-primary'
-            } h-[20px] bg-transparent lg:bg-accent border-0 p-0 lg:h-full lg:px-4 lg:border-[1px]`}
+              activeFilter === 'MostRecent' && 'text-primary'
+            } bg-white lg:bg-accent lg:px-4 border-[1px]`}
             variant={'secondary'}
           >
             {'Recent'}
@@ -80,8 +111,8 @@ const SellerPageCategoryTabs = ({
           <Button
             onClick={() => handleFilterBy('BestSeller')}
             className={`${
-              activeTab === 'BestSeller' && 'text-primary'
-            } h-[20px] bg-transparent border-0 p-0 lg:bg-accent lg:h-full lg:px-4 lg:border-[1px]`}
+              activeFilter === 'BestSeller' && 'text-primary'
+            } bg-white  lg:bg-accent lg:px-4 border-[1px]`}
             variant={'secondary'}
           >
             {'Best Seller'}
@@ -90,12 +121,14 @@ const SellerPageCategoryTabs = ({
           <Select onValueChange={(e) => handleSortByPrice(e)}>
             <SelectTrigger
               className={`w-[170px] lg:bg-accent ${
-                activeTab === 'Price' && 'text-primary'
+                activeTab === 'Price' &&
+                activeFilter === 'Price' &&
+                'text-primary'
               }`}
             >
               <SelectValue
                 placeholder={`${
-                  sort_by === 'price' ? labelSortPrice : 'Price'
+                  activeFilter === 'Price' ? labelSortPrice : 'Price'
                 }`}
               />
             </SelectTrigger>
@@ -108,17 +141,9 @@ const SellerPageCategoryTabs = ({
             </SelectContent>
           </Select>
         </div>
-        <div className="hidden sm:flex">
-          {seller_pagination.total_page > 1 && (
-            <PaginationNav
-              totalPage={seller_pagination?.total_page}
-              currentPage={seller_pagination?.page}
-              setCurrentPage={setCurrentPage}
-            />
-          )}
-        </div>
       </div>
-    </div>
+      <ScrollBar orientation="horizontal" />
+    </ScrollArea>
   );
 };
 

@@ -48,6 +48,7 @@ interface ProductVariantProps {
     biggerIndex: number,
   ) => boolean;
   checkIfNameDuplicate: (biggerIndex: number | undefined) => boolean;
+  isEdit?: boolean;
 }
 
 const ProductVariant = ({
@@ -73,6 +74,7 @@ const ProductVariant = ({
   setIsStockValid,
   checkIfOptDuplicate,
   checkIfNameDuplicate,
+  isEdit = false,
 }: ProductVariantProps) => {
   function handleVariantNameInput(
     e: React.ChangeEvent<HTMLInputElement>,
@@ -90,7 +92,6 @@ const ProductVariant = ({
       setVariants(newVariants);
     }
   }
-
   function handleOptionChange(
     e: React.ChangeEvent<HTMLInputElement>,
     index: number,
@@ -423,6 +424,7 @@ const ProductVariant = ({
             size={'customBlank'}
             variant={'outline'}
             className="text-base px-3 py-2"
+            disabled={isEdit}
             onClick={handleActivateVariant}
             id="activate-variant-button"
           >
@@ -508,6 +510,7 @@ const ProductVariant = ({
         variant={'outline'}
         className="text-base px-3 py-2 w-fit"
         onClick={handleDeactivateVariant}
+        disabled={isEdit}
       >
         Deactivate Variant
       </Button>
@@ -539,6 +542,7 @@ const ProductVariant = ({
                       validateVarNameOnBlur(variant.variant_name, biggerIndex)
                     }
                     className="w-full"
+                    disabled={isEdit}
                   />
                   {!isVariantsValid[biggerIndex].variant_name && (
                     <p className="w-full text-left text-xs text-destructive">
@@ -571,6 +575,7 @@ const ProductVariant = ({
                             validateOptOnBlur(option, index, biggerIndex)
                           }
                           className="w-full"
+                          disabled={isEdit}
                         />
                         {!isVariantsValid[biggerIndex].options[index] && (
                           <p className="w-full text-left text-xs text-destructive">
@@ -580,7 +585,7 @@ const ProductVariant = ({
                       </div>
                       <button
                         onClick={() => handleDeleteOptions(index, biggerIndex)}
-                        disabled={option === undefined}
+                        disabled={option === undefined || isEdit}
                         className="disabled:hidden"
                       >
                         <X className="w-5 h-5 text-gray-500 opacity-80" />
@@ -594,7 +599,7 @@ const ProductVariant = ({
                   onClick={() => handleDeleteVariant(biggerIndex)}
                   size={'customBlank'}
                   variant={'destructive'}
-                  disabled={variants.length < 2}
+                  disabled={variants.length < 2 || isEdit}
                   className="absolute right-2 top-2 px-2 py-1 text-base w-fit"
                 >
                   <X className="w-5 h-5 mr-1" />
@@ -603,7 +608,7 @@ const ProductVariant = ({
               )}
               {variants.length < maxVariant && (
                 <Button
-                  disabled={variants.length > 1}
+                  disabled={variants.length > 1 || isEdit}
                   size={'customBlank'}
                   variant={'outline'}
                   onClick={handleAddVariant}
