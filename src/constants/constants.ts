@@ -1,5 +1,6 @@
 const CONSTANTS = {
   BASEURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+  BASE_PATH: process.env.NEXT_PUBLIC_BASE_PATH,
   CANNOT_ADD_MORE_THAN_STOCK: 'Cannot add quantity more than stock',
   ALREADY_LOGGED_OUT: 'RefreshTokenExpired',
   WALLET_NOT_ACTIVATED: 'Not yet activate wallet',
