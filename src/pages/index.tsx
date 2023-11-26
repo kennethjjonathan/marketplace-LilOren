@@ -21,25 +21,20 @@ const Home: NextPageWithLayout<Props> = ({ products, categories }: Props) => {
   return (
     <>
       <Head>
-        <Head>
-          <meta charSet="UTF-8" />
-          <title>LilOren</title>
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0"
-          />
-          <meta name="keywords" content={'LilOren'} />
-          <meta
-            name="description"
-            content={'LilOren is an e-commerce for everything you need'}
-          />
-          <meta name="og:title" content={`LilOren`} />
-          <meta
-            name="og:description"
-            content={'LilOren is an e-commerce for everything you need'}
-          />
-          <meta name="og:type" content="website" />
-        </Head>
+        <meta charSet="UTF-8" />
+        <title>LilOren</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="keywords" content={'LilOren'} />
+        <meta
+          name="description"
+          content={'LilOren is an e-commerce for everything you need'}
+        />
+        <meta name="og:title" content={`LilOren`} />
+        <meta
+          name="og:description"
+          content={'LilOren is an e-commerce for everything you need'}
+        />
+        <meta name="og:type" content="website" />
       </Head>
       <div className="flex flex-col justify-center items-center w-full bg-primary-foreground">
         <main className="w-full flex flex-col justify-center items-center">
