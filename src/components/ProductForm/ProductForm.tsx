@@ -1,8 +1,7 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import ProductVariant from '@/components/ProductVariant/ProductVariant';
-import SellerLayout from '@/components/SellerLayout/SellerLayout';
 import {
   IProductVariant,
   IIsProductVariantValid,
@@ -10,10 +9,11 @@ import {
   IVariantDefinition,
   IProductInformation,
   IProductCategory,
+  IProductDetailForEdit,
 } from '@/interface/addProduct';
 import PhotosArray from '@/components/PhotosArray/PhotosArray';
 import { Textarea } from '@/components/ui/textarea';
-import styles from './SellerPortalProductCreate.module.scss';
+import styles from './ProductForm.module.scss';
 import { Utils } from '@/utils';
 import axiosInstance from '@/lib/axiosInstance';
 import {
@@ -28,6 +28,8 @@ import {
 import { Button } from '@/components/ui/button';
 import imageUploadder from '@/lib/imageUploadder';
 import { useRouter } from 'next/router';
+import urlToFileConverter from '@/lib/urlToFileConverter';
+import DotsLoading from '../DotsLoading/DotsLoading';
 
 const maxPhoto: number = 6;
 const maxNameLength: number = 255;
@@ -35,8 +37,15 @@ const maxDescLength: number = 3000;
 const minDescLength: number = 20;
 const maxOptLength: number = 3;
 
-const SellerPortalProductCreate = () => {
+interface ProductFormProps {
+  isEdit: boolean;
+  productToEdit: IProductDetailForEdit | undefined;
+}
+
+const ProductForm = ({ isEdit = false, productToEdit }: ProductFormProps) => {
   const router = useRouter();
+  const [isInitialStateLoading, setIsInitialStateLoading] =
+    useState<boolean>(false);
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [productInformation, setProductInformation] =
     useState<IProductInformation>({
@@ -86,6 +95,7 @@ const SellerPortalProductCreate = () => {
 
   function validateOnBlur(key: keyof IProductInformation): boolean | undefined {
     if (key === 'product_name' && productInformation.product_name === '') {
+      console.log('masuk name');
       setIsProductInformationValid({
         ...isProductInformationValid,
         [key]: false,
@@ -429,8 +439,6 @@ const SellerPortalProductCreate = () => {
     }
     return isContinue;
   }
-  // PRODUCT VARIANT -- END
-
   function validateRequestBody(): boolean {
     let isContinue: boolean = true;
     const newIsProductInformationValid = { ...isProductInformationValid };
@@ -460,7 +468,6 @@ const SellerPortalProductCreate = () => {
     }
     return isContinue;
   }
-
   async function createRequestBody() {
     const imageUrl = [];
     for (let i = 0; i < tempProductPhotos.length; i++) {
@@ -470,6 +477,7 @@ const SellerPortalProductCreate = () => {
 
     if (!isVariantActive) {
       const reqBody = {
+        product_id: productToEdit?.id,
         product_name: productInformation.product_name,
         description: productInformation.product_desc,
         weight: productInformation.weight,
@@ -513,6 +521,7 @@ const SellerPortalProductCreate = () => {
         }
       }
       const reqBody = {
+        product_id: productToEdit?.id,
         product_name: productInformation.product_name,
         description: productInformation.product_desc,
         weight: productInformation.weight,
@@ -568,6 +577,7 @@ const SellerPortalProductCreate = () => {
         }
       }
       const reqBody = {
+        product_id: productToEdit?.id,
         product_name: productInformation.product_name,
         description: productInformation.product_desc,
         weight: productInformation.weight,
@@ -583,7 +593,6 @@ const SellerPortalProductCreate = () => {
       return reqBody;
     }
   }
-
   async function postFormBody() {
     setIsPageLoading(true);
     if (!validateRequestBody()) {
@@ -598,14 +607,170 @@ const SellerPortalProductCreate = () => {
     }
 
     try {
-      await axiosInstance.post(`/merchant/product`, reqBody);
-      Utils.notify('Successfully added the product', 'success', 'colored');
+      if (isEdit) {
+        await axiosInstance.put(`/merchant/product`, reqBody);
+      } else {
+        await axiosInstance.post(`/merchant/product`, reqBody);
+      }
+      if (isEdit) {
+        Utils.notify('Successfully edit the product', 'success', 'colored');
+      } else {
+        Utils.notify('Successfully added the product', 'success', 'colored');
+      }
       router.push('/seller/portal/product');
     } catch (error) {
       Utils.handleGeneralError(error);
     } finally {
       setIsPageLoading(false);
     }
+  }
+
+  async function setInitialStateForEdit() {
+    if (productToEdit === undefined) return;
+    setIsInitialStateLoading(true);
+    try {
+      const newProductInformation: IProductInformation = {
+        product_name: productToEdit.product_name,
+        product_desc: productToEdit.description,
+        weight: productToEdit.weight,
+      };
+      setProductInformation(newProductInformation);
+      const newTempPhotos: File[] = [];
+      let photoLimit = maxPhoto;
+      for (let i = 0; i < productToEdit.media.length; i++) {
+        const newFile = await urlToFileConverter(
+          productToEdit.media[i].media_url,
+          productToEdit.product_name,
+        );
+        photoLimit--;
+        newTempPhotos.push(newFile!);
+      }
+      setTempProductPhotos(newTempPhotos);
+      setRemainingPhotos(photoLimit);
+      await handleCategory1Change(
+        productToEdit.category[0].category_id.toString(),
+      );
+      setCategory2(productToEdit.category[1].category_id.toString());
+      if (
+        productToEdit.variant_group[0].variant_group_name === 'default' &&
+        productToEdit.variant_group[1].variant_group_name === 'default'
+      ) {
+        setNoVarPrice(productToEdit.variant_detail[0].price);
+        setNoVarStock(productToEdit.variant_detail[0].stock);
+      } else {
+        setIsVariantActive(true);
+        if (
+          productToEdit.variant_group[0].variant_group_name !== 'default' &&
+          productToEdit.variant_group[1].variant_group_name === 'default'
+        ) {
+          const newVariants: IProductVariant[] = [];
+          const isNewVariantsValid: IIsProductVariantValid[] = [];
+          const isNewVariantValid: IIsProductVariantValid = {
+            variant_name: true,
+            options: [],
+          };
+          const newVariant: IProductVariant = {
+            variant_name: productToEdit.variant_group[0].variant_group_name,
+            options: [],
+          };
+          const newPrice = new Array(maxOptLength).fill(
+            new Array(maxOptLength).fill(0),
+          );
+          const newStock = new Array(maxOptLength).fill(
+            new Array(maxOptLength).fill(0),
+          );
+          productToEdit.variant_detail.forEach((item, index) => {
+            newVariant.options.push(item.variant_type1_name);
+            isNewVariantValid.options.push(true);
+
+            const newSmallPrice = [...newPrice[index]];
+            newSmallPrice[0] = item.price;
+            newPrice[index] = newSmallPrice;
+
+            const newSmallStock = [...newStock[index]];
+            newSmallStock[0] = item.stock;
+            newStock[index] = newSmallStock;
+          });
+          newVariants.push(newVariant);
+          isNewVariantsValid.push(isNewVariantValid);
+          setVariants(newVariants);
+          setIsVariantsValid(isNewVariantsValid);
+          setPrice(newPrice);
+          setStocks(newStock);
+        } else {
+          const newVariants: IProductVariant[] = [];
+          const isNewVariantsValid: IIsProductVariantValid[] = [];
+          const newVariant1: IProductVariant = {
+            variant_name: productToEdit.variant_group[0].variant_group_name,
+            options: [],
+          };
+          const isNewVariantValid1: IIsProductVariantValid = {
+            variant_name: true,
+            options: [],
+          };
+          const newVariant2: IProductVariant = {
+            variant_name: productToEdit.variant_group[1].variant_group_name,
+            options: [],
+          };
+          const isNewVariantValid2: IIsProductVariantValid = {
+            variant_name: true,
+            options: [],
+          };
+          productToEdit.variant_detail.forEach((item) => {
+            if (!newVariant1.options.includes(item.variant_type1_name)) {
+              newVariant1.options.push(item.variant_type1_name);
+              isNewVariantValid1.options.push(true);
+            }
+            if (!newVariant2.options.includes(item.variant_type2_name)) {
+              newVariant2.options.push(item.variant_type2_name);
+              isNewVariantValid2.options.push(true);
+            }
+          });
+          newVariants.push(newVariant1);
+          newVariants.push(newVariant2);
+          setVariants(newVariants);
+          isNewVariantsValid.push(isNewVariantValid1);
+          isNewVariantsValid.push(isNewVariantValid2);
+          setIsVariantsValid(isNewVariantsValid);
+          const newPrice = new Array(maxOptLength).fill(
+            new Array(maxOptLength).fill(0),
+          );
+          const newStock = new Array(maxOptLength).fill(
+            new Array(maxOptLength).fill(0),
+          );
+          let k = 0;
+          for (let i = 0; i < newVariant1.options.length; i++) {
+            for (let j = 0; j < newVariant2.options.length; j++) {
+              const smallPrice = [...newPrice[i]];
+              smallPrice[j] = productToEdit.variant_detail[j + k].price;
+              newPrice[i] = smallPrice;
+
+              const smallStock = [...newStock[i]];
+              smallStock[j] = productToEdit.variant_detail[j + k].stock;
+              newStock[i] = smallStock;
+            }
+            k += newVariant1.options.length - 1;
+          }
+          setPrice(newPrice);
+          setStocks(newStock);
+        }
+      }
+    } catch (error) {
+      Utils.handleGeneralError(error);
+      console.error(error);
+    } finally {
+      setIsInitialStateLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (isEdit) {
+      setInitialStateForEdit();
+    }
+  }, [productToEdit]);
+
+  if (isInitialStateLoading) {
+    return <DotsLoading />;
   }
 
   return (
@@ -733,7 +898,10 @@ const SellerPortalProductCreate = () => {
                   :
                 </Label>
               </div>
-              <Select onValueChange={(value) => handleCategory1Change(value)}>
+              <Select
+                onValueChange={(value) => handleCategory1Change(value)}
+                defaultValue={category1}
+              >
                 <SelectTrigger id="product-category-1" className="mt-1">
                   <SelectValue placeholder="Category 1" />
                 </SelectTrigger>
@@ -763,7 +931,10 @@ const SellerPortalProductCreate = () => {
                     <span className="text-primary">{' *'}</span>:
                   </Label>
                 </div>
-                <Select onValueChange={(value) => handleCategory2Change(value)}>
+                <Select
+                  onValueChange={(value) => handleCategory2Change(value)}
+                  defaultValue={category2}
+                >
                   <SelectTrigger
                     id="product-category-2"
                     className="mt-1"
@@ -819,6 +990,7 @@ const SellerPortalProductCreate = () => {
           setIsStockValid={setIsStockValid}
           checkIfOptDuplicate={checkIfOptDuplicate}
           checkIfNameDuplicate={checkIfNameDuplicate}
+          isEdit={true}
         />
       </section>
       {/* Product Variants -- END */}
@@ -832,7 +1004,7 @@ const SellerPortalProductCreate = () => {
           {isPageLoading ? (
             <div className="border-4 border-primary-foreground border-t-transparent animate-spin aspect-square h-6 rounded-full" />
           ) : (
-            <p>Add Product</p>
+            <p>Save Product</p>
           )}
         </Button>
       </section>
@@ -840,8 +1012,4 @@ const SellerPortalProductCreate = () => {
   );
 };
 
-SellerPortalProductCreate.getLayout = function getLayout(page: ReactElement) {
-  return <SellerLayout header="Add Product">{page}</SellerLayout>;
-};
-
-export default SellerPortalProductCreate;
+export default ProductForm;
