@@ -1,15 +1,11 @@
 .lilOren__home__category {
-  @apply flex justify-center items-center flex-col;
-}
-
-.lilOren__home__category__item {
-  @apply m-0 w-[107px] h-[107px] relative flex flex-col justify-center items-center;
+  @apply flex justify-center items-center flex-col gap-5 rounded-lg shadow-xl p-3 border-[1px] border-gray-100 aspect-square w-32 lg:hover:-translate-y-1 duration-300;
 }
 
 .lilOren__home__category__item__title {
-  @apply overflow-x-hidden overflow-y-hidden h-[40px] px-[8px] py-0 w-[100%] text-center relative whitespace-nowrap text-ellipsis line-clamp-2 font-light text-[14px];
+  @apply truncate w-full text-sm text-center;
 }
 
 .lilOren__home__category__item__img {
-  @apply object-contain align-bottom h-[100%] w-[75%] transition-opacity ease-in-out;
+  @apply h-[100%] aspect-square;
 }

@@ -23,35 +23,14 @@ const BuyerOrderDetailCardItem = ({ item }: BuyerOrderDetailCardItemProps) => {
         <div className="flex flex-col gap-1">
           <p className="text-base sm:text-lg font-semibold line-clamp-2 text-ellipsis lg:text-xl">
             {`${item.product_name}${
-              item.variant1_name === 'default' ? '' : ` | ${item.variant1_name}`
-            }${
-              item.variant2_name === 'default' ? '' : ` | ${item.variant2_name}`
+              item.variant_name !== '' && ` | ${item.variant_name}`
             }`}
           </p>
-          {item.discount > 0 ? (
-            <div className="flex items-start gap-1">
-              <p className="text-gray-500 text-sm lg:text-base">
-                {item.quantity}
-              </p>
-              <p className="text-gray-500 text-sm lg:text-base">x</p>
-              <p className="text-gray-500 text-sm lg:text-base">
-                {Utils.convertPrice(item.discounted_price)}
-              </p>
-              <p className="text-destructive text-xs lg:text-sm line-through">
-                {Utils.convertPrice(item.base_price)}
-              </p>
-            </div>
-          ) : (
-            <div className="flex items-start gap-1">
-              <p className="text-gray-500 text-sm lg:text-base">
-                {item.quantity}
-              </p>
-              <p className="text-gray-500 text-sm lg:text-base">x</p>
-              <p className="text-gray-500 text-sm lg:text-base">
-                {Utils.convertPrice(item.sub_total_price)}
-              </p>
-            </div>
-          )}
+          <div className="flex items-start gap-1">
+            <p className="text-gray-500 text-sm lg:text-base">
+              {`Quantity: ${item.quantity}`}
+            </p>
+          </div>
         </div>
       </div>
       <div className="min-h-full flex-col items-center justify-center border-l-2 border-gray-100 pl-2 w-1/6 hidden lg:flex">

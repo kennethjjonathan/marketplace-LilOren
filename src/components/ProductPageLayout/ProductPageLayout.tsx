@@ -92,7 +92,7 @@ const ProductPageLayout = ({
             </>
           )}
         </div>
-        <div className="w-full lg:w-3/5 flex items-center gap-2 justify-end">
+        <div className="w-full lg:w-3/5 flex items-end gap-2 justify-end">
           <div className="w-fit flex flex-col items-center gap-1">
             {variant !== undefined && !isMaxValid ? (
               <p className="text-xs sm:text-sm lg:text-base text-destructive">{`Limit: ${variant.stock}!`}</p>

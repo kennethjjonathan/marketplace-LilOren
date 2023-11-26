@@ -37,6 +37,7 @@ export interface IVariantGroup {
 export interface IProductPage {
   product: IProduct;
   shop: ISeller;
+  rating: number;
   product_variant: IProductVariant[];
   product_media: IProductMedia[];
   variant_group1: IVariantGroup;

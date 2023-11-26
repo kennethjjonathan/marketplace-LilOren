@@ -10,9 +10,6 @@ interface RecommendedProductCardProps {
 }
 
 const RecommendedProductCard = ({ product }: RecommendedProductCardProps) => {
-  const handleDirectToDetailPage = () => {
-    console.log('direct to product page');
-  };
   return (
     <div className={styles.product}>
       <div className={styles.product_feed}>

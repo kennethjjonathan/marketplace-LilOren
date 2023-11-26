@@ -125,6 +125,10 @@ const ProductPage = ({
   }
 
   function setInitialAvailable() {
+    if (!isVariant) {
+      setVariant(productPage.product_variant[0]);
+      return;
+    }
     const availableSet1 = new Set<number>();
     const availableSet2 = new Set<number>();
     for (let i = 0; i < productPage.product_variant.length; i++) {
@@ -190,7 +194,6 @@ const ProductPage = ({
       );
       Utils.notify('Successfully added to cart', 'success', 'colored');
     } catch (error: any) {
-      console.log(error);
       if (error === CONSTANTS.ALREADY_LOGGED_OUT) {
         Utils.notify(
           'Your token has expired, please sign in again',
@@ -261,7 +264,8 @@ const ProductPage = ({
                   <div className="flex items-center">
                     <Star className="fill-yellow-300 text-yellow-300 aspect-square h-5 mb-[0.125rem] sm:h-6" />{' '}
                     <p className="text-base sm:text-lg lg:text-xl">
-                      4.3 <span className="font-light">{`(${4} rating)`}</span>
+                      {productPage.rating}{' '}
+                      <span className="font-light">{`(${4} rating)`}</span>
                     </p>
                   </div>
                 </div>

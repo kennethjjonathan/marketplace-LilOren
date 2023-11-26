@@ -25,8 +25,8 @@ export interface IVariantDefinition {
 }
 
 export interface IVariantGroup {
-  variant_type_1?: string;
-  variant_type_2?: string;
+  variant_type1?: string;
+  variant_type2?: string;
   price: number;
   stock: number;
 }

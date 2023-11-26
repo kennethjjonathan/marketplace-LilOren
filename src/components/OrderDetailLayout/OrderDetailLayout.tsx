@@ -57,7 +57,7 @@ const OrderDetailLayout = ({ children }: OrderDetailLayoutProps) => {
       <div
         className={`w-full md:w-[75vw] lg:px-2 lg:pt-5 flex flex-col mx-auto bg-white`}
       >
-        <Tabs datas={tabsDatas} />
+        <Tabs isSeller={false} datas={tabsDatas} />
         <Divider />
       </div>
       <div>{children}</div>

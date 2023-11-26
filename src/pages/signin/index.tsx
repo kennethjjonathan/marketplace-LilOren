@@ -144,9 +144,12 @@ function SignInPage({ providers }: SignInPageProps) {
   return (
     <section className="bg-gradient-to-t from-[#FF7337] to-[#F99116] flex flex-col justify-center items-center gap-5 min-h-screen sm:py-6 xl:flex-row xl:justify-between xl:gap-10 xl:px-40 xl:items-start xl:py-20">
       <div className="hidden sm:flex flex-col items-center justify-center xl:justify-start xl:min-h-full xl:flex-1 xl:gap-40">
-        <h1 className="font-bold text-3xl text-primary-foreground lg:text-4xl xl:w-full xl:text-left">
-          LilOren
-        </h1>
+        <Link
+          href="/"
+          className="font-bold text-3xl text-primary-foreground lg:text-4xl xl:w-full xl:text-left"
+        >
+          <h1>LilOren</h1>
+        </Link>
         <div className="hidden relative aspect-square w-[470px] xl:block">
           <Image
             src={withBasePath('Logo_.svg')}

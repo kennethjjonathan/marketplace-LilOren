@@ -1,13 +1,10 @@
-import ButtonWithIcon from '@/components/ButtonWithIcon/ButtonWithIcon';
 import HomeCategoryList from '@/components/HomeCategoryList/HomeCategoryList';
 import Layout from '@/components/Layout/Layout';
 import PromotionCarousel from '@/components/PromotionCarousel/PromotionCarousel';
 import RecommendedProductCard from '@/components/RecommendedProductCard/RecommendedProductCard';
 import { HomeClient } from '@/service/home/HomeClient';
 import { IRecommendedProduct, ITopCategory } from '@/store/home/useHome';
-import { ChevronRight } from 'lucide-react';
 import { GetServerSideProps } from 'next';
-import Link from 'next/link';
 import { ReactElement } from 'react';
 import { NextPageWithLayout } from './_app';
 import Head from 'next/head';
@@ -21,25 +18,20 @@ const Home: NextPageWithLayout<Props> = ({ products, categories }: Props) => {
   return (
     <>
       <Head>
-        <Head>
-          <meta charSet="UTF-8" />
-          <title>LilOren</title>
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0"
-          />
-          <meta name="keywords" content={'LilOren'} />
-          <meta
-            name="description"
-            content={'LilOren is an e-commerce for everything you need'}
-          />
-          <meta name="og:title" content={`LilOren`} />
-          <meta
-            name="og:description"
-            content={'LilOren is an e-commerce for everything you need'}
-          />
-          <meta name="og:type" content="website" />
-        </Head>
+        <meta charSet="UTF-8" />
+        <title>LilOren</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="keywords" content={'LilOren'} />
+        <meta
+          name="description"
+          content={'LilOren is an e-commerce for everything you need'}
+        />
+        <meta name="og:title" content={`LilOren`} />
+        <meta
+          name="og:description"
+          content={'LilOren is an e-commerce for everything you need'}
+        />
+        <meta name="og:type" content="website" />
       </Head>
       <div className="flex flex-col justify-center items-center w-full bg-primary-foreground">
         <main className="w-full flex flex-col justify-center items-center">
@@ -50,25 +42,15 @@ const Home: NextPageWithLayout<Props> = ({ products, categories }: Props) => {
               'https://down-id.img.susercontent.com/file/id-50009109-af0948f69bef33259d862b058bc82b84',
             ]}
           />
-          <section className="home-category-list bg-white mt-3 lg:mt-5 md:w-[75vw]">
+          <section className="bg-white mt-3 lg:mt-5 w-full md:w-[75vw]">
             {categories && <HomeCategoryList categories={categories} />}
           </section>
-          <section className="recommendedProductList flex flex-col justify-center items-center w-full mt-3 mb-6 lg:mt-5 md:w-[75vw]">
-            <div className="flex flex-row justify-between w-full">
+          <section className="flex flex-col justify-center items-center w-full mt-3 mb-6 lg:mt-5 md:w-[75vw]">
+            <div className="flex w-full">
               <div className="w-full md:w-[75vw] bg-white text-left text-primary py-3 pl-2 md:border-b-[5px] md:border-b-primary md:text-center md:text-[16px] md:bg-white md:mb-2 text-[14px] px-[10px]">
-                {'RECOMMENDED'}
-              </div>
-
-              <div className="w-full md:w-[75vw] bg-white text-right text-muted-foreground py-3 pr-2 text-[12px] md:hidden">
-                <Link
-                  href={'/'}
-                  className="justify-end items-center flex flex-row w-full"
-                >
-                  {'See More'} <ChevronRight size={20} />
-                </Link>
+                RECOMMENDED
               </div>
             </div>
-
             <div className="HomeRecomProduct grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
               {products &&
                 products.map((product, index) => (
@@ -78,9 +60,6 @@ const Home: NextPageWithLayout<Props> = ({ products, categories }: Props) => {
                   />
                 ))}
             </div>
-            <ButtonWithIcon variant={'outline'} href="/" className="mt-5">
-              {'See More'}
-            </ButtonWithIcon>
           </section>
         </main>
       </div>
