@@ -5,7 +5,10 @@ const nextConfig = {
     NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
   },
   images: {
-    domains: process.env.NODE_ENV === 'development' ? ['localhost'] : undefined,
+    domains: [
+      'res.cloudinary.com',
+      ...(process.env.NODE_ENV === 'development' ? ['localhost'] : []),
+    ],
     remotePatterns: [
       {
         hostname: 'www.static-src.com',
