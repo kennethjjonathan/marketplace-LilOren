@@ -1,5 +1,6 @@
-import React from 'react';
+import { withBasePath } from '@/lib/nextUtils';
 import Image from 'next/image';
+import React from 'react';
 
 interface GoogleButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
@@ -12,7 +13,7 @@ function GoogleButton({ ...props }: GoogleButtonProps) {
     >
       <div className="relative w-6 h-6">
         <Image
-          src={'/google.svg'}
+          src={withBasePath('google.svg')}
           alt="Google's logo"
           fill
           sizes="{max-width: 768px} 10vw, 20vw"

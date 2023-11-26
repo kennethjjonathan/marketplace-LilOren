@@ -1,4 +1,5 @@
-import React from 'react';
+import { withBasePath } from '@/lib/nextUtils';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { Button } from '../ui/button';
 
@@ -6,8 +7,10 @@ const EmptyWishlist = () => {
   const router = useRouter();
   return (
     <div className="max-h-max flex flex-col gap-4 justify-center items-center pt-3 lg:pt-3">
-      <img
-        src="/empty-wishlist.png"
+      <Image
+        src={withBasePath('empty-wishlist.png')}
+        width="200"
+        height="200"
         alt="empty-wishlist"
         className="w-[200px]"
       />

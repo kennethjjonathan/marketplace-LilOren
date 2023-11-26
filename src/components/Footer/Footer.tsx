@@ -1,7 +1,7 @@
-import React from 'react';
-import Image from 'next/image';
-import { Facebook, Instagram, Youtube } from 'lucide-react';
 import Divider from '@/components/Divider/Divider';
+import { withBasePath } from '@/lib/nextUtils';
+import { Facebook, Instagram, Youtube } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 const Footer = () => {
@@ -9,8 +9,9 @@ const Footer = () => {
     <div className="w-full bg-white mt-5">
       <div className="flex flex-col lg:hidden">
         <div className="need-help contact-us flex flex-row justify-center items-center gap-2">
-          <img
-            src="/headphone.svg"
+          <Image
+            src={withBasePath('headphone.svg')}
+            fill
             alt="cs"
             className="border-[1px] p-2 rounded-full shadow-sm"
           />

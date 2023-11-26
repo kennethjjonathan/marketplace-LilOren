@@ -1,6 +1,6 @@
+import { withBasePath } from '@/lib/nextUtils';
 import { ISellerDetails } from '@/store/sellerPage/sellerPage';
 import Image from 'next/image';
-import React from 'react';
 
 interface SellerPageHeadingProps {
   sellerPage: ISellerDetails;
@@ -13,7 +13,7 @@ const SellerPageHeading = ({ sellerPage }: SellerPageHeadingProps) => {
       <div className="flex flex-row items-center gap-3">
         {/* Image */}
         <Image
-          src={'/seller-logo.png'}
+          src={withBasePath('seller-logo.png')}
           alt={'seller-profile'}
           width={200}
           height={200}

@@ -2,6 +2,7 @@ import AsyncButton from '@/components/AsyncButton/AsyncButton';
 import GoogleButton from '@/components/GoogleButton/GoogleButton';
 import { InputWithLabel } from '@/components/InputWithLabel/InputWithLabel';
 import { IErrorResponse, ISignIn } from '@/interface/user';
+import { withBasePath } from '@/lib/nextUtils';
 import { UserClient } from '@/service/user/userClient';
 import { Utils } from '@/utils';
 import { LogIn } from 'lucide-react';
@@ -150,7 +151,13 @@ function SignInPage({ providers }: SignInPageProps) {
           <h1>LilOren</h1>
         </Link>
         <div className="hidden relative aspect-square w-[470px] xl:block">
-          <Image src={'/Logo_.svg'} alt="LilOren's logo" fill sizes="40vw" />
+          <Image
+            src={withBasePath('Logo_.svg')}
+            alt="LilOren's logo"
+            width="470"
+            height="470"
+            sizes="40vw"
+          />
         </div>
       </div>
       <div className="container pb-16 pt-6 flex flex-col items-center justify-center gap-5 bg-primary-foreground sm:max-w-lg sm:pb-6 sm:rounded-lg xl:my-auto">
