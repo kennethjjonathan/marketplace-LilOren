@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react';
 import Navigation from '../Navigation/Navigation';
 import UserPresentation from '../UserPresentation/UserPresentation';
 import Tabs from '../Tabs/Tabs';
+import Footer from '../Footer/Footer';
 
 interface UserSettingsLayoutProps {
   children: ReactNode;
@@ -51,6 +52,9 @@ const UserSettingsLayout = ({
         <main className="lg:w-[75vw] w-full lg:mt-4 h-[calc(100vh-260px)]">
           {children}
         </main>
+      </div>
+      <div className="">
+        <Footer />
       </div>
     </div>
   );
