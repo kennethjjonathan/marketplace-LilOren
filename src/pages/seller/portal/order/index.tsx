@@ -8,6 +8,8 @@ import DotsLoading from '@/components/DotsLoading/DotsLoading';
 import { useSeller } from '@/store/seller/useSeller';
 import { NextPageWithLayout } from '@/pages/_app';
 import styles from './SellerPortalOrder.module.scss';
+import EmptyNotify from '@/components/EmptyNotify/EmptyNotify';
+import PaginationNav from '@/components/PaginationNav/PaginationNav';
 
 const data = [
   {
@@ -118,7 +120,7 @@ const SellerPortalOrder: NextPageWithLayout = () => {
         </div>
       ) : seller_orders.order_data.length === 0 ? (
         <div className="flex justify-center pt-5 h-full w-[100vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw]">
-          Empty Data
+          <EmptyNotify message={'No Order Data Available'} />
         </div>
       ) : (
         <div className={`${styles.page_order}`}>
@@ -135,6 +137,13 @@ const SellerPortalOrder: NextPageWithLayout = () => {
           </section>
         </div>
       )}
+      <div className="w-[85vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw] flex flex-end">
+        <PaginationNav
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          totalPage={seller_orders.total_page}
+        />
+      </div>
     </div>
   );
 };

@@ -26,6 +26,7 @@ export interface IAuthReturnData {
   message: string;
 }
 export interface IUserDetails {
+  shop_name?: string;
   user_id: number;
   username: string;
   is_seller: boolean;
