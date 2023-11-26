@@ -10,6 +10,7 @@ interface PhotosArrayProps {
   setRemainingPhotos: Dispatch<SetStateAction<number>>;
   maxPhoto: number;
   isReviewForm?: boolean;
+  product_code?: string;
 }
 
 const PhotosArray = ({
@@ -19,13 +20,13 @@ const PhotosArray = ({
   setRemainingPhotos,
   maxPhoto,
   isReviewForm = false,
+  product_code,
 }: PhotosArrayProps) => {
   const handleAddPhoto = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files !== null) {
       const selectedFiles = e.target.files;
       const newFiles = [...tempProductPhotos];
       newFiles.push(selectedFiles[0]);
-      console.log(newFiles);
       setTempProductPhotos(newFiles);
       setRemainingPhotos((prev) => prev - 1);
     }
@@ -78,7 +79,11 @@ const PhotosArray = ({
           <div className="p-3">
             <label
               className="border-2 border-dashed flex flex-col justify-center items-center h-[75px] w-[75px] gap-2 hover:border-primary duration-500 before:ease-in-out after:ease-in-out text-primary hover:bg-primary/5 lg:h-[100px] lg:w-[100px] rounded-lg cursor-pointer"
-              htmlFor={`key-image:${tempProductPhotos.length - 1}`}
+              htmlFor={
+                product_code !== undefined
+                  ? product_code
+                  : `key-image:${tempProductPhotos.length - 1}`
+              }
             >
               <ArrowUpFromLine />
               <p className="text-[10px] lg:text-[12px] font-bold">{`${remainingPhotos} / ${maxPhoto}`}</p>
@@ -91,7 +96,11 @@ const PhotosArray = ({
                 e.target.value = '';
               }}
               type="file"
-              id={`key-image:${tempProductPhotos.length - 1}`}
+              id={
+                product_code !== undefined
+                  ? product_code
+                  : `key-image:${tempProductPhotos.length - 1}`
+              }
               disabled={tempProductPhotos.length === maxPhoto}
               hidden
             />

@@ -47,7 +47,6 @@ const ReviewForm = ({ product }: ReviewFormProps) => {
         image_urls: imageArr,
       };
       await axiosInstance.post(`/reviews`, reqBody);
-      Utils.notify('Successfully added review', 'success', 'colored');
       setIsReviewed(true);
     } catch (error) {
       Utils.handleGeneralError(error);
@@ -116,6 +115,7 @@ const ReviewForm = ({ product }: ReviewFormProps) => {
             setRemainingPhotos={setRemainingPhotos}
             maxPhoto={maxPhoto}
             isReviewForm={true}
+            product_code={product.product_code}
           />
         </div>
         <div className="w-full flex justify-end">

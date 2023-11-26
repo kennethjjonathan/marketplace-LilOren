@@ -58,28 +58,34 @@ const BuyerOrderDetailCard = ({
     }
   }
 
-  async function handleSpecialAction() {
-    if (orderItem.status !== 'NEW' && orderItem.status !== 'ARRIVE') {
-      return;
-    }
-    let specEndPoint: string = '';
-    if (orderItem.status === 'NEW') {
-      specEndPoint = 'cancel';
-    } else {
-      specEndPoint = 'receive';
-    }
+  async function handleCancel() {
     setIsActionLoading(true);
     try {
-      await axiosInstance.put(`/orders/${orderItem.id}/${specEndPoint}`);
-      Utils.notify('Order successfully updated', 'success', 'colored');
+      await axiosInstance.put(`/orders/${orderItem.id}/cancel`);
+      Utils.notify('Order canceled successfully', 'success', 'colored');
       setUpdateToggle((prev) => !prev);
-      setIsActionLoading(false);
     } catch (error) {
       Utils.handleGeneralError(error);
-      setIsActionLoading(false);
     } finally {
-      setIsReviewOpen(true);
+      setIsActionLoading(false);
     }
+  }
+
+  async function handleConfirmReceive() {
+    setIsActionLoading(true);
+    try {
+      await axiosInstance.put(`/orders/${orderItem.id}/receive`);
+      setIsReviewOpen(true);
+    } catch (error) {
+      Utils.handleGeneralError(error);
+    } finally {
+      setIsActionLoading(false);
+    }
+  }
+
+  function handleCLoseReview() {
+    setUpdateToggle((prev) => !prev);
+    setIsReviewOpen(false);
   }
   return (
     <>
@@ -169,7 +175,7 @@ const BuyerOrderDetailCard = ({
                 Cancel Order
               </Button>
             ) : (
-              <Button onClick={handleSpecialAction} disabled={isActionLoading}>
+              <Button onClick={handleConfirmReceive} disabled={isActionLoading}>
                 {isActionLoading ? (
                   <div className="border-4 border-primary-foreground-foreground border-t-transparent rounded-full animate-spin aspect-square h-4" />
                 ) : (
@@ -216,7 +222,7 @@ const BuyerOrderDetailCard = ({
             <Button
               variant={'destructive'}
               disabled={isActionLoading}
-              onClick={handleSpecialAction}
+              onClick={handleCancel}
               className="px-3 py-1 text-base"
             >
               {isActionLoading ? (
@@ -228,21 +234,22 @@ const BuyerOrderDetailCard = ({
           </div>
         </AlertDialogContent>
       </AlertDialog>
-      <Sheet open={isReviewOpen} onOpenChange={setIsReviewOpen}>
-        <SheetContent side={'bottom'} className="max-h-full overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle>Leave a Review</SheetTitle>
-            <SheetDescription>
+      <AlertDialog open={isReviewOpen} onOpenChange={setIsReviewOpen}>
+        <AlertDialogContent className="max-h-full overflow-y-auto">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Leave a Review</AlertDialogTitle>
+            <AlertDialogDescription>
               You can leave a review for the product
-            </SheetDescription>
-          </SheetHeader>
-          <div className="w-full mt-3">
+            </AlertDialogDescription>
+            <Button onClick={handleCLoseReview}>Close Review</Button>
+          </AlertDialogHeader>
+          <div className="w-full">
             {orderItem.products.map((product) => (
               <ReviewForm product={product} key={product.product_code} />
             ))}
           </div>
-        </SheetContent>
-      </Sheet>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };
