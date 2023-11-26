@@ -38,22 +38,4 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/', request.url));
     }
   }
-
-  // try {
-  //   const response = await fetch(`${CONSTANTS.BASEURL}/auth/user`, {
-  //     headers: { Cookie: cookies().toString() },
-  //   });
-  //   const data = await response.json();
-  //   console.log(data);
-  //   if (response.ok) {
-  //     return NextResponse.redirect(new URL('/', request.url));
-  //   }
-  // } catch (error: any) {
-  //   console.log(error);
-  // }
 }
-
-// See "Matching Paths" below to learn more
-// export const config = {
-//   matcher: '/about/:path*',
-// };
