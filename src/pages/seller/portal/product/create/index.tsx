@@ -505,7 +505,7 @@ const SellerPortalProductCreate = () => {
       for (let i = 0; i < variants[0].options.length; i++) {
         if (variants[0].options[i] !== undefined) {
           const variantGroup: IVariantGroup = {
-            variant_type_1: variants[0].options[i] as string,
+            variant_type1: variants[0].options[i] as string,
             price: price[i][0] as number,
             stock: stocks[i][0] as number,
           };
@@ -558,8 +558,8 @@ const SellerPortalProductCreate = () => {
             variants[1].options[j] !== undefined
           ) {
             const variantGroup: IVariantGroup = {
-              variant_type_1: variants[0].options[i] as string,
-              variant_type_2: variants[1].options[j] as string,
+              variant_type1: variants[0].options[i] as string,
+              variant_type2: variants[1].options[j] as string,
               price: price[i][j] as number,
               stock: stocks[i][j] as number,
             };
@@ -679,6 +679,7 @@ const SellerPortalProductCreate = () => {
             setTempProductPhotos={setTempProductPhotos}
             remainingPhotos={remainingPhotos}
             setRemainingPhotos={setRemainingPhotos}
+            maxPhoto={maxPhoto}
           />
           <div className="flex flex-col gap-1 w-full">
             <div className="flex items-end w-full justify-between">

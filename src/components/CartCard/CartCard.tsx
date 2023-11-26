@@ -66,7 +66,7 @@ const CartCard = ({ shop, shop_items, indexData }: CartCardProps) => {
 
   return (
     <div className="flex flex-col w-full border-[1px] border-gray-100">
-      <div className="flex items-center gap-2 p-2  border-gray-200 w-full">
+      <div className="flex items-center gap-2 p-2 border-gray-200 w-full">
         <Checkbox
           checked={isShopCheck}
           onCheckedChange={(checked) => {

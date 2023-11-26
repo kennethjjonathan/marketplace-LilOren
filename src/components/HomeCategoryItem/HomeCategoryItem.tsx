@@ -12,18 +12,15 @@ interface HomeCategoryItemProps {
 const HomeCategoryItem = ({ image, title, href }: HomeCategoryItemProps) => {
   return (
     <Link href={href} className={styles.lilOren__home__category}>
-      <div className={styles.lilOren__home__category__item}>
-        <Image
-          alt={'category-item'}
-          width={75}
-          height={75}
-          src={image}
-          className={styles.lilOren__home__category__item__img}
-        />
-        <div className={styles.lilOren__home__category__item__title}>
-          {title}
-        </div>
-      </div>
+      <Image
+        alt={title}
+        width={200}
+        height={200}
+        style={{ objectFit: 'cover' }}
+        src={image}
+        className={styles.lilOren__home__category__item__img}
+      />
+      <p className={styles.lilOren__home__category__item__title}>{title}</p>
     </Link>
   );
 };

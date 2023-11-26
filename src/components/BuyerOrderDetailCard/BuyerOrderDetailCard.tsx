@@ -1,5 +1,5 @@
 import { IOrderItem } from '@/interface/orderDetailPage';
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import Divider from '../Divider/Divider';
 import BuyerOrderDetailCardItem from '../BuyerOrderDetailCardItem/BuyerOrderDetailCardItem';
 import { Utils } from '@/utils';
@@ -9,13 +9,36 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Button } from '../ui/button';
+import axiosInstance from '@/lib/axiosInstance';
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
+import ReviewForm from '../ReviewForm/ReviewForm';
 
 interface BuyerOrderDetailCardProps {
   orderItem: IOrderItem;
+  setUpdateToggle: Dispatch<SetStateAction<boolean>>;
 }
 
-const BuyerOrderDetailCard = ({ orderItem }: BuyerOrderDetailCardProps) => {
+const BuyerOrderDetailCard = ({
+  orderItem,
+  setUpdateToggle,
+}: BuyerOrderDetailCardProps) => {
+  const [isCancelOpen, setIsCancelOpen] = useState<boolean>(false);
+  const [isReviewOpen, setIsReviewOpen] = useState<boolean>(false);
   const [isAddDetailOpen, setIsAddDetailOpen] = useState<boolean>(false);
+  const [isActionLoading, setIsActionLoading] = useState<boolean>(false);
   function parseStatus(inputString: string): string {
     switch (inputString) {
       case 'NEW':
@@ -34,6 +57,36 @@ const BuyerOrderDetailCard = ({ orderItem }: BuyerOrderDetailCardProps) => {
         return '';
     }
   }
+
+  async function handleCancel() {
+    setIsActionLoading(true);
+    try {
+      await axiosInstance.put(`/orders/${orderItem.id}/cancel`);
+      Utils.notify('Order canceled successfully', 'success', 'colored');
+      setUpdateToggle((prev) => !prev);
+    } catch (error) {
+      Utils.handleGeneralError(error);
+    } finally {
+      setIsActionLoading(false);
+    }
+  }
+
+  async function handleConfirmReceive() {
+    setIsActionLoading(true);
+    try {
+      await axiosInstance.put(`/orders/${orderItem.id}/receive`);
+      setIsReviewOpen(true);
+    } catch (error) {
+      Utils.handleGeneralError(error);
+    } finally {
+      setIsActionLoading(false);
+    }
+  }
+
+  function handleCLoseReview() {
+    setUpdateToggle((prev) => !prev);
+    setIsReviewOpen(false);
+  }
   return (
     <>
       <div className="flex flex-col w-full border-[1px] border-gray-100">
@@ -41,9 +94,9 @@ const BuyerOrderDetailCard = ({ orderItem }: BuyerOrderDetailCardProps) => {
           <p className="border-l-[5px] border-primary p-0 pl-1 pt-0.5 text-xs font-bold text-left lg:text-sm 2xl:text-base">
             {parseStatus(orderItem.status)}
           </p>
-          <div className="flex items-center gap-2 justify-between w-fit">
+          <div className="flex items-center gap-2 justify-between w-fit max-w-full">
             <p className="text-sm md:text-base truncate text-gray-500">
-              18 Okt 2023
+              {`Estimated arrival: ${Utils.getDate(orderItem.eta)}`}
             </p>
             <div className="bg-gray-300 aspect-square w-1 rounded-full md:w-1.5" />
             <Popover open={isAddDetailOpen} onOpenChange={setIsAddDetailOpen}>
@@ -54,7 +107,7 @@ const BuyerOrderDetailCard = ({ orderItem }: BuyerOrderDetailCardProps) => {
                   onClick={() => setIsAddDetailOpen(true)}
                   className="text-sm md:text-base font-normal"
                 >
-                  Address Detail
+                  Delivery Detail
                 </Button>
               </PopoverTrigger>
               <PopoverContent>
@@ -91,6 +144,14 @@ const BuyerOrderDetailCard = ({ orderItem }: BuyerOrderDetailCardProps) => {
                       {orderItem.courier_name}
                     </p>
                   </div>
+                  <div>
+                    <p className="text-xs font-semibold leading-none lg:text-sm xl:text-lg">
+                      Delivery Fee:
+                    </p>
+                    <p className="text-sm leading-tight line-clamp-2 text-ellipsis lg:text-base xl:text-xl">
+                      {Utils.convertPrice(orderItem.delivery_cost)}
+                    </p>
+                  </div>
                 </div>
               </PopoverContent>
             </Popover>
@@ -104,6 +165,26 @@ const BuyerOrderDetailCard = ({ orderItem }: BuyerOrderDetailCardProps) => {
             <BuyerOrderDetailCardItem key={index} item={item} />
           ))}
         </div>
+        {(orderItem.status === 'NEW' || orderItem.status === 'ARRIVE') && (
+          <div className="w-full p-2 flex items-center justify-end">
+            {orderItem.status === 'NEW' ? (
+              <Button
+                variant={'destructive'}
+                onClick={() => setIsCancelOpen(true)}
+              >
+                Cancel Order
+              </Button>
+            ) : (
+              <Button onClick={handleConfirmReceive} disabled={isActionLoading}>
+                {isActionLoading ? (
+                  <div className="border-4 border-primary-foreground-foreground border-t-transparent rounded-full animate-spin aspect-square h-4" />
+                ) : (
+                  <p>Confirm Receive</p>
+                )}
+              </Button>
+            )}
+          </div>
+        )}
         <div className="w-full p-2 bg-primary-foreground lg:flex lg:justify-end">
           <div className="w-fit lg:w-1/6">
             <p className="font-semibold text-xs text-gray-500 lg:text-base">
@@ -116,6 +197,59 @@ const BuyerOrderDetailCard = ({ orderItem }: BuyerOrderDetailCardProps) => {
         </div>
       </div>
       <Divider />
+      <AlertDialog open={isCancelOpen} onOpenChange={setIsCancelOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-destructive">
+              Cancel Order
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              <p>
+                Are you sure you want to cancel order from{' '}
+                <span className="text-destructive">{orderItem.shop_name}</span>?
+              </p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="w-full flex items-center justify-end gap-3">
+            <Button
+              variant={'outline'}
+              disabled={isActionLoading}
+              onClick={() => setIsCancelOpen(false)}
+              className="px-3 py-1 text-base"
+            >
+              Close
+            </Button>
+            <Button
+              variant={'destructive'}
+              disabled={isActionLoading}
+              onClick={handleCancel}
+              className="px-3 py-1 text-base"
+            >
+              {isActionLoading ? (
+                <div className="border-4 border-destructive-foreground border-t-transparent rounded-full animate-spin aspect-square h-4" />
+              ) : (
+                <p>Cancel Order</p>
+              )}
+            </Button>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
+      <AlertDialog open={isReviewOpen} onOpenChange={setIsReviewOpen}>
+        <AlertDialogContent className="max-h-full overflow-y-auto">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Leave a Review</AlertDialogTitle>
+            <AlertDialogDescription>
+              You can leave a review for the product
+            </AlertDialogDescription>
+            <Button onClick={handleCLoseReview}>Close Review</Button>
+          </AlertDialogHeader>
+          <div className="w-full">
+            {orderItem.products.map((product) => (
+              <ReviewForm product={product} key={product.product_code} />
+            ))}
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };
