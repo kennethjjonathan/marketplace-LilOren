@@ -39,11 +39,10 @@ const ProductPage = ({
   isVariant,
   productCode,
 }: ProductPageProps) => {
-  console.log('ini product page', productPage);
+  console.log(productPage);
   const user_details = useUser.use.user_details();
   const fetchUserDetails = useUser.use.fetchUserDetails();
   const router = useRouter();
-  const [totalRating, setTotalRating] = useState<number>(0);
   const [quantity, setQuantity] = useState<number | ''>(1);
   const [group1, setGroup1] = useState<IVariantType>(
     productPage.variant_group1.variant_types[0],
@@ -259,15 +258,18 @@ const ProductPage = ({
                 </h1>
                 <div className="w-full flex justify-start items-center gap-2">
                   <p className="text-base sm:text-lg lg:text-xl">
-                    Sold: <span className="font-light">{`(${50})`}</span>
+                    Sold:{' '}
+                    <span className="font-light">{`(${productPage.total_sold})`}</span>
                   </p>
                   <div className="w-1.5 h-1.5 bg-gray-500 rounded-full" />
                   <div className="flex items-center">
                     <Star className="fill-yellow-300 text-yellow-300 aspect-square h-5 mb-[0.125rem] sm:h-6" />{' '}
                     <p className="text-base sm:text-lg lg:text-xl">
                       {productPage.rating}{' '}
-                      <span className="font-light">{`(${totalRating} rating${
-                        totalRating > 1 ? 's' : ''
+                      <span className="font-light">{`(${
+                        productPage.rating_count
+                      } rating${
+                        productPage.rating_count > 1 ? 's' : ''
                       })`}</span>
                     </p>
                   </div>
@@ -349,8 +351,7 @@ const ProductPage = ({
           <ReviewComponent
             rating={productPage.rating}
             product_code={productCode}
-            totalRating={totalRating}
-            setTotalRating={setTotalRating}
+            totalRating={productPage.rating_count}
           />
         </div>
       </section>
@@ -374,17 +375,29 @@ ProductPage.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  params,
+  req,
+}) => {
   let productPage: IProductPage | null = null;
   let highestDiscount: number = 0;
   let isGroup1Variant: boolean | null = null;
   let isGroup2Variant: boolean | null = null;
   let isVariant: boolean = false;
+  const cookies = req.headers.cookie;
 
   try {
-    const response = await fetch(
-      `${CONSTANTS.BASEURL}/products/${params!.productId}`,
-    );
+    let response;
+    if (cookies !== undefined) {
+      response = await fetch(
+        `${CONSTANTS.BASEURL}/products/${params!.productId}`,
+        { headers: { Cookie: cookies }, credentials: 'include' },
+      );
+    } else {
+      response = await fetch(
+        `${CONSTANTS.BASEURL}/products/${params!.productId}`,
+      );
+    }
     if (!response.ok) throw new Error(response.statusText);
     const data = await response.json();
     productPage = data.data;
