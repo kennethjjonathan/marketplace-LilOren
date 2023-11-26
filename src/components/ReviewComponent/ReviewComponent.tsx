@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Star } from 'lucide-react';
 import ReviewCard from '../ReviewCard/ReviewCard';
 import {
