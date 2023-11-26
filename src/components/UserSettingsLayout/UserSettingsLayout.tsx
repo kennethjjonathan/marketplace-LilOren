@@ -49,7 +49,7 @@ const UserSettingsLayout = ({
       </div>
       {component}
       <div className="flex justify-center items-center flex-col">
-        <main className="lg:w-[75vw] w-full lg:mt-4 h-[calc(100vh-260px)]">
+        <main className="lg:w-[75vw] w-full lg:mt-4 h-[calc(100vh-80px)] lg:h-[calc(100vh-260px)]">
           {children}
         </main>
       </div>

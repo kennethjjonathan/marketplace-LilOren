@@ -42,6 +42,8 @@ const useUserBase = create<State & Actions>((set) => ({
     is_pin_set: false,
     cart_count: 0,
     profile_picture_url: '',
+    email: '',
+    shop_name: '',
   },
   loading_fetch_user_details: false,
   fetchUserAddresses: async () => {

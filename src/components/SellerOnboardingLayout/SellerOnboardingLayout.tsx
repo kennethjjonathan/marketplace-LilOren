@@ -1,4 +1,5 @@
 import React, { ReactNode } from 'react';
+import Link from 'next/link';
 import styles from './SellerOnboardingLayout.module.scss';
 
 interface SellerOnboardingLayoutProps {
@@ -15,7 +16,9 @@ const SellerOnboardingLayout = ({
       <div className="hidden lg:block">
         <div className={`${styles.navigation}`}>
           <div className={styles.navigationContent}>
-            <div className={styles.logo}>LOGO</div>
+            <Link href={'/'} className={styles.logo}>
+              LilOren
+            </Link>
             <div className={styles.searchInput}></div>
           </div>
         </div>
