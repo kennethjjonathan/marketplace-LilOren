@@ -99,6 +99,7 @@ const SellerOnboardingForm = () => {
       }
       setLoadingPost(false);
     }
+    router.push('/seller/portal');
   };
 
   const setAddress = (address_id: string) => {
