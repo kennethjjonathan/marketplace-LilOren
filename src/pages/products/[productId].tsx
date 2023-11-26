@@ -238,7 +238,7 @@ const ProductPage = ({
         <meta name="og:type" content="website" />
       </Head>
       <section className="flex flex-col justify-center items-center w-full bg-white">
-        <div className="w-full md:w-[75vw] pt-5 pb-[5.5rem]">
+        <div className="w-full md:w-[75vw] pt-5 pb-5">
           <div className="w-full flex flex-col gap-6 lg:flex-row">
             <div className="w-full lg:w-1/3">
               <ImageCarousel mediaArray={productPage.product_media} />
@@ -258,14 +258,19 @@ const ProductPage = ({
                 </h1>
                 <div className="w-full flex justify-start items-center gap-2">
                   <p className="text-base sm:text-lg lg:text-xl">
-                    Sold: <span className="font-light">{`(${50})`}</span>
+                    Sold:{' '}
+                    <span className="font-light">{`(${productPage.total_sold})`}</span>
                   </p>
                   <div className="w-1.5 h-1.5 bg-gray-500 rounded-full" />
                   <div className="flex items-center">
                     <Star className="fill-yellow-300 text-yellow-300 aspect-square h-5 mb-[0.125rem] sm:h-6" />{' '}
                     <p className="text-base sm:text-lg lg:text-xl">
                       {productPage.rating}{' '}
-                      <span className="font-light">{`(${4} rating)`}</span>
+                      <span className="font-light">{`(${
+                        productPage.rating_count
+                      } rating${
+                        productPage.rating_count > 1 ? 's' : ''
+                      })`}</span>
                     </p>
                   </div>
                 </div>
@@ -343,7 +348,11 @@ const ProductPage = ({
           <div className="px-2 w-full my-4">
             <Separator className="h-0.5 rounded-md" />
           </div>
-          <ReviewComponent />
+          <ReviewComponent
+            rating={productPage.rating}
+            product_code={productCode}
+            totalRating={productPage.rating_count}
+          />
         </div>
       </section>
       <ProductPageLayout
@@ -366,17 +375,29 @@ ProductPage.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  params,
+  req,
+}) => {
   let productPage: IProductPage | null = null;
   let highestDiscount: number = 0;
   let isGroup1Variant: boolean | null = null;
   let isGroup2Variant: boolean | null = null;
   let isVariant: boolean = false;
+  const cookies = req.headers.cookie;
 
   try {
-    const response = await fetch(
-      `${CONSTANTS.BASEURL}/products/${params!.productId}`,
-    );
+    let response;
+    if (cookies !== undefined) {
+      response = await fetch(
+        `${CONSTANTS.BASEURL}/products/${params!.productId}`,
+        { headers: { Cookie: cookies }, credentials: 'include' },
+      );
+    } else {
+      response = await fetch(
+        `${CONSTANTS.BASEURL}/products/${params!.productId}`,
+      );
+    }
     if (!response.ok) throw new Error(response.statusText);
     const data = await response.json();
     productPage = data.data;

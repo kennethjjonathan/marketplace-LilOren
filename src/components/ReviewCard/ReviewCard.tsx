@@ -1,65 +1,47 @@
 import React from 'react';
 import Image from 'next/image';
 import { Star } from 'lucide-react';
-import { ScrollArea } from '../ui/scroll-area';
+import { IProductReview } from '@/interface/productPage';
+import { Utils } from '@/utils';
 
 interface ReviewCardProps {
-  profilePic: string;
-  username: string;
-  rating: number;
-  date: string;
-  comment?: string;
-  productPics?: string[];
+  review: IProductReview;
 }
 
-function ReviewCard({
-  profilePic,
-  username,
-  rating,
-  date,
-  comment,
-  productPics,
-}: ReviewCardProps) {
+function ReviewCard({ review }: ReviewCardProps) {
   return (
-    <div className="flex flex-col gap-2 w-full py-2 px-1">
-      <div className="flex items-center gap-2">
-        <div className="relative w-1/6 aspect-square rounded-full overflow-hidden sm:w-1/12">
-          <Image
-            src={profilePic}
-            alt="User's profile picture"
-            fill
-            style={{ objectFit: 'fill' }}
-            sizes="(max-width: 768px) 30vw, 10vw"
+    <div className="flex flex-col gap-0.5 w-full py-2 px-1">
+      <p className="text-base font-semibold leading-snug sm:text-lg">
+        {review.username}
+      </p>
+      <div className="flex items-center gap-1 sm:gap-2">
+        {[...Array(review.rating)].map((_, index) => (
+          <Star
+            key={index}
+            className="fill-yellow-300 text-yellow-300 aspect-square h-5 -ml-1 sm:h-7"
           />
-        </div>
-        <div className="flex flex-col flex-1 gap-0.5">
-          <p className="text-sm font-semibold 2xl:text-base">{username}</p>
-          <div className="flex items-center">
-            {[...Array(rating)].map((e, index) => (
-              <Star
-                key={index}
-                className="fill-yellow-300 text-yellow-300 aspect-square h-3 -ml-1.5 -mr-0.5 2xl:h-4"
-              />
-            ))}
-          </div>
-          <p className="text-gray-400 text-xs 2xl:text-sm">{date}</p>
-        </div>
+        ))}
       </div>
-      {comment && (
-        <p className="w-full text-justify text-sm 2xl:text-base">{comment}</p>
+      <p className="text-gray-500 text-sm">
+        {review.created_at.split(' ').join(',')}
+      </p>
+      {review.comment && (
+        <p className="w-full text-justify text-base line-clamp-2 text-ellipsis sm:text-lg">
+          {review.comment}
+        </p>
       )}
-      {productPics && (
+      {review.image_urls && review.image_urls.length !== 0 && (
         <div className="w-full flex items-center flex-wrap justify-start gap-2">
-          {productPics.map((image, index) => (
+          {review.image_urls.map((image, index) => (
             <div
               key={index}
-              className="relative aspect-square rounded-md overflow-hidden w-1/12"
+              className="relative aspect-square rounded-md overflow-hidden w-14 sm:w-20"
             >
               <Image
                 src={image}
                 alt={`Product's image ${index}`}
                 fill
-                sizes="(max-width: 768px) 15vw, 10vw"
+                sizes="(max-width: 768px) 30vw, 20vw"
               />
             </div>
           ))}

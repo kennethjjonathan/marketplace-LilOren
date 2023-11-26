@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
+import roleFetcher from './lib/roleFetcher';
 
 // This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
@@ -10,31 +11,31 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname.startsWith('/register')
   ) {
     if (cookieList.has('refresh_token')) {
-      return NextResponse.redirect(new URL('/', request.url));
+      const role = await roleFetcher(cookieList.toString());
+      if (role !== 'unauthorized') {
+        return NextResponse.redirect(new URL('/', request.url));
+      }
     }
   }
-
-  if (request.nextUrl.pathname.startsWith('/user')) {
+  if (
+    request.nextUrl.pathname.startsWith('/user') ||
+    request.nextUrl.pathname.startsWith('/wallet')
+  ) {
     if (!cookieList.has('refresh_token')) {
       return NextResponse.redirect(new URL('/signin', request.url));
     }
+    const role = await roleFetcher(cookieList.toString());
+    if (role === 'unauthorized') {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
   }
-
-  // try {
-  //   const response = await fetch(`${CONSTANTS.BASEURL}/auth/user`, {
-  //     headers: { Cookie: cookies().toString() },
-  //   });
-  //   const data = await response.json();
-  //   console.log(data);
-  //   if (response.ok) {
-  //     return NextResponse.redirect(new URL('/', request.url));
-  //   }
-  // } catch (error: any) {
-  //   console.log(error);
-  // }
+  if (request.nextUrl.pathname.startsWith('/seller')) {
+    if (!cookieList.has('refresh_token')) {
+      return NextResponse.redirect(new URL('/signin', request.url));
+    }
+    const role = await roleFetcher(cookieList.toString());
+    if (role !== 'seller') {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
+  }
 }
-
-// See "Matching Paths" below to learn more
-// export const config = {
-//   matcher: '/about/:path*',
-// };

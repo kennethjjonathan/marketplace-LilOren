@@ -46,10 +46,28 @@ export interface IProductPage {
   low_price: number;
   is_variant: boolean;
   is_in_wishlist: boolean;
+  total_sold: number;
+  rating_count: number;
 }
 
 export interface IAddToCart {
   product_variant_id: number;
   seller_id: number;
   quantity: number;
+}
+
+export interface IProductReview {
+  rating: number;
+  comment?: string;
+  account_id: number;
+  username: string;
+  image_urls?: string[];
+  created_at: string;
+}
+
+export interface IProductReviewResponse {
+  user_reviews: IProductReview[];
+  total_review: number;
+  total_page: number;
+  current_page: number;
 }

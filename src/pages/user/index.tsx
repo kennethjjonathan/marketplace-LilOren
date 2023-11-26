@@ -19,12 +19,17 @@ import UserPresentation from '@/components/UserPresentation/UserPresentation';
 import { useUser } from '@/store/user/useUser';
 import AsyncButton from '@/components/AsyncButton/AsyncButton';
 import styles from './User.module.scss';
-import { withBasePath } from '@/lib/nextUtils';
-import imageUploadder from '@/lib/imageUploadder';
-import axiosInstance from '@/lib/axiosInstance';
-import CONSTANTS from '@/constants/constants';
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogTitle,
+  AlertDialogHeader,
+} from '@/components/ui/alert-dialog';
 import { Utils } from '@/utils';
-import { ToastContent } from 'react-toastify';
+import axiosInstance from '@/lib/axiosInstance';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 
 const User: NextPageWithLayout = () => {
   const router = useRouter();
@@ -95,6 +100,60 @@ const User: NextPageWithLayout = () => {
     });
   }, [status]);
 
+  const [isChangePassOpen, setIsChangePassOpen] = useState<boolean>(false);
+  const [isChangeOpenLoading, setIsChangeOpenLoading] =
+    useState<boolean>(false);
+  const [otp, setOtp] = useState<string>('');
+  const [newPassword, setNewPassword] = useState<string>('');
+  const [isChangePassLoading, setIsChangePassLoading] =
+    useState<boolean>(false);
+
+  async function handleOpenChangePassword() {
+    setIsChangeOpenLoading(true);
+    try {
+      await axiosInstance.post('/auth/change-password/request');
+      setIsChangePassOpen(true);
+    } catch (error) {
+      Utils.handleGeneralError(error);
+    } finally {
+      setIsChangeOpenLoading(false);
+    }
+  }
+
+  async function handleCloseChangePass() {
+    setIsChangePassOpen(false);
+    setOtp('');
+    setNewPassword('');
+  }
+
+  async function changePass() {
+    if (/^\s+$/.test(otp) || otp === '') {
+      Utils.notify('OTP cannot be empty', 'info', 'colored');
+      return;
+    }
+    const passwordRegex =
+      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm;
+    if (!passwordRegex.test(newPassword)) {
+      Utils.notify(
+        'Password must contain at least 1 lowercase letter, 1 uppercase letter, 1 number, and with a minimum of 8 characters',
+        'info',
+        'colored',
+      );
+      return;
+    }
+    setIsChangeOpenLoading(true);
+    try {
+      const reqBody = { verify_code: otp, password: newPassword };
+      await axiosInstance.post('/auth/change-password', reqBody);
+      Utils.notify('Succesfully changed password', 'success', 'colored');
+      setIsChangePassOpen(false);
+    } catch (error) {
+      Utils.handleGeneralError(error);
+    } finally {
+      setIsChangeOpenLoading(false);
+    }
+  }
+
   return (
     <>
       <Head>
@@ -139,12 +198,20 @@ const User: NextPageWithLayout = () => {
               <UserSetting
                 title={'Reset Password'}
                 icon={<KeyRound />}
-                description={'Reset password akun Anda'}
+                description={'Reset your password'}
                 onClick={() => router.push('/forgot-password')}
               />
             </ul>
           </div>
-          <div className=""></div>
+          <div className="pt-[17px] flex justify-center items-center w-full">
+            <AsyncButton
+              onClick={handleOpenChangePassword}
+              isLoading={isChangeOpenLoading}
+              variant={'outline'}
+            >
+              Change Password
+            </AsyncButton>
+          </div>
           <div className="lilOren__user__logout w-full flex justify-center items-center pt-[17px] lg:hidden">
             {loadingLogout ? (
               <AsyncButton isLoading={true}>{'Logout'}</AsyncButton>
@@ -186,6 +253,55 @@ const User: NextPageWithLayout = () => {
           hidden
         />
       </div>
+      <AlertDialog open={isChangePassOpen} onOpenChange={setIsChangePassOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Change Password</AlertDialogTitle>
+            <AlertDialogDescription>
+              {
+                'An OTP will be sent to your email (OTP is valifd for 5 minutes)'
+              }
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="w-full space-y-3">
+            <div className="w-full space-y-2">
+              <Label htmlFor="otp-input">{'OTP'}</Label>
+              <Input
+                id="otp-input"
+                type="text"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+              />
+            </div>
+            <div className="w-full space-y-2">
+              <Label htmlFor="new-password-input">New Password</Label>
+              <Input
+                id="new-password-input"
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+              <p className="text-xs text-gray-500">
+                {
+                  'Password must contain at least 1 lowercase letter, 1 uppercase letter, 1 number, and with a minimum of 8 characters'
+                }
+              </p>
+            </div>
+            <div className="w-full flex justify-end items-center gap-3">
+              <Button onClick={handleCloseChangePass} variant={'outline'}>
+                Cancel
+              </Button>
+              <AsyncButton
+                onClick={changePass}
+                variant={'default'}
+                isLoading={isChangePassLoading}
+              >
+                Change Password
+              </AsyncButton>
+            </div>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };
