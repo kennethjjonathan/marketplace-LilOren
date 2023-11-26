@@ -192,7 +192,8 @@ const SellerPage = ({ sellerPage }: SellerPageProps) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [sortByPriceDesc, setSortByPriceDesc] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [activeFilter, setActiveFilter] = useState('');
+  const [activeFilter, setActiveFilter] = useState('BestSeller');
+
   const tabsRef = useRef(null);
   const loading_fetch_seller_details =
     useSellerPage.use.loading_fetch_seller_details();
@@ -200,17 +201,69 @@ const SellerPage = ({ sellerPage }: SellerPageProps) => {
   const seller_details = useSellerPage.use.seller_details();
   const setSellerDetails = useSellerPage.use.setSellerDetails();
 
+  const [showFilterCategory, setShowFilterCategory] = useState<boolean>(false);
+  const [showFilterProduct, setShowFilterProduct] = useState<boolean>(false);
+  const [showTab1, setShowTab1] = useState<boolean>(false);
+  const [showTab2, setShowTab2] = useState<boolean>(false);
+
+  const resetAllTab = () => {
+    setShowTab1(false);
+    setShowTab2(false);
+    setShowFilterProduct(false);
+    setShowFilterCategory(false);
+  };
+
+  const handleShowTabProduct = () => {
+    setShowFilterProduct(true);
+    setShowFilterCategory(false);
+    setShowTab1(true);
+    setShowTab2(false);
+    const params = new URLSearchParams(searchParams);
+    params.delete('sort_by');
+    params.delete('sort_desc');
+    params.delete('category_name');
+    setSelectedCategory('');
+    setActiveFilter('');
+    router.replace(`${pathname}?${params.toString()}`);
+    fetchSellerDetails(seller_details.shop_name, `${params.toString()}`);
+  };
+
+  const handleShowTabCategory = () => {
+    setSelectedCategory('');
+    setShowFilterProduct(false);
+    setShowFilterCategory(true);
+    setShowTab1(false);
+    setShowTab2(true);
+    setActiveFilter('');
+  };
+
+  const handleSeeAllBestSellerProduct = () => {
+    setShowFilterProduct(true);
+    setShowTab1(true);
+  };
+
   const handleChangeCategory = (category: string, status: string) => {
-    handleScroll(tabsRef.current);
-    setSelectedCategory(category);
+    if (category === 'All') {
+      setSelectedCategory('');
+    }
+    if (!showFilterCategory) {
+      setShowFilterCategory(false);
+    }
 
     const params = new URLSearchParams(searchParams);
-    setActiveFilter('MostRecent');
     if (status === 'change') {
       params.delete('sort_by');
       params.delete('sort_desc');
       params.delete('category_name');
       setActiveFilter('');
+      if (category === 'All') {
+        params.delete('category_name');
+      } else {
+        params.set('category_name', category);
+      }
+      params.set('page', currentPage.toString());
+      router.replace(`${pathname}?${params.toString()}`);
+      fetchSellerDetails(seller_details.shop_name, `${params.toString()}`);
     } else {
       if (sort_by !== null) {
         setActiveFilter('Price');
@@ -220,38 +273,44 @@ const SellerPage = ({ sellerPage }: SellerPageProps) => {
       if (sort_desc !== null) {
         params.set('sort_desc', sort_desc);
       }
+      if (activeFilter !== 'MostRecent') {
+        setActiveFilter('MostRecent');
+      }
+      params.set('category_name', category);
+      params.set('page', currentPage.toString());
+      setSelectedCategory(category);
+      router.replace(`${pathname}?${params.toString()}`);
+      fetchSellerDetails(seller_details.shop_name, `${params.toString()}`);
     }
-
-    params.set('category_name', category);
-    params.set('page', currentPage.toString());
-    router.replace(`${pathname}?${params.toString()}`);
-    fetchSellerDetails(seller_details.shop_name, `${params.toString()}`);
-    handleScroll(tabsRef.current);
   };
 
   const handleSeeAllBestSeller = () => {
     //price: low to high
-    setSelectedCategory('');
-    setActiveFilter('Price');
     const params = new URLSearchParams(searchParams);
     params.delete('sort');
     params.delete('sort_by');
     params.delete('category_name');
     params.set('page', '1');
-    params.set('sort_by', 'price');
-    params.set('sort_desc', 'false');
-    router.replace(`${pathname}?${params.toString()}`);
+    // params.set('sort_by', 'price');
+    // params.set('sort_desc', 'false');
+    setSelectedCategory('');
+    setActiveFilter('BestSeller');
+    router.push(`${pathname}?${params.toString()}`);
     fetchSellerDetails(seller_details.shop_name, `${params.toString()}`);
   };
 
   const handeAllProduct = () => {
-    setActiveFilter('MostRecent');
+    if (!showTab1 && !showTab2) {
+      setShowTab1(false);
+      setShowTab2(false);
+    }
     const params = new URLSearchParams(searchParams);
     params.delete('sort');
     params.delete('sort_by');
     params.delete('category_name');
     params.set('page', '1');
     setSelectedCategory('');
+    setActiveFilter('MostRecent');
     router.replace(`${pathname}?${params.toString()}`);
     fetchSellerDetails(seller_details.shop_name, `${params.toString()}`);
   };
@@ -299,10 +358,83 @@ const SellerPage = ({ sellerPage }: SellerPageProps) => {
       <div className="flex flex-col justify-center w-full md:w-[75vw]">
         <SellerPageHeading sellerPage={seller_details} />
       </div>
-      {/* Content Below */}
-      <ScrollArea className="max-w-full">
+      {/* Mobile - Tab */}
+      <ScrollArea className="flex md:hidden justify-start w-[100vw]">
+        <div className="flex flex-row gap-2 justify-start w-full lg:py-6 md:w-[75vw] py-3 px-2 sticky top-0">
+          <div
+            className={`${
+              !showTab1 && !showTab2 && 'border-b-2 border-primary'
+            } border-0`}
+          >
+            <Button
+              className="border-0"
+              variant={'outline'}
+              onClick={() => resetAllTab()}
+            >
+              {'Shop'}
+            </Button>
+          </div>
+          <div
+            className={`${showTab1 && 'border-b-2 border-primary'} border-0`}
+          >
+            <Button
+              className="border-0"
+              variant={'outline'}
+              onClick={() => handleShowTabProduct()}
+            >
+              {'All Products'}
+            </Button>
+          </div>
+          <div
+            className={`${showTab2 && 'border-b-2 border-primary'} border-0`}
+          >
+            <Button
+              className="border-0"
+              variant={'outline'}
+              onClick={() => handleShowTabCategory()}
+            >
+              {'By Category'}
+            </Button>
+          </div>
+        </div>
+        {/* <Button variant={'outline'} className="ml-0 border-0">
+          <p className="font-bold">Category: {selectedCategory}</p>
+        </Button> */}
+        <div className={`${showTab2 ? 'block' : 'hidden'}`}>
+          <Select
+            onValueChange={(value) => handleChangeCategory(value, 'change')}
+            defaultValue={selectedCategory}
+          >
+            <SelectTrigger id="category-dropdown" className="lg:text-lg">
+              <SelectValue placeholder="Select a category" />
+            </SelectTrigger>
+            <SelectContent className="max-h-[15rem] lg:max-h-96">
+              <SelectGroup>
+                <SelectLabel className="lg:text-lg">Categories</SelectLabel>
+                <SelectItem value={'All'} className="lg:text-lg">
+                  {'All'}
+                </SelectItem>
+                {seller_details.categories.map((category, index) => (
+                  <SelectItem
+                    key={index}
+                    value={category}
+                    className="lg:text-lg"
+                  >
+                    {category}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
+
+      {/* Content Below Desktop*/}
+      <ScrollArea className="hidden md:flex justify-start">
         <div className="flex flex-row gap-2 justify-start w-full lg:py-6 md:w-[75vw] py-3 px-2">
-          <div className={'border-0 border-b-2 border-primary'}>
+          <div className={`border-0 border-b-2 border-primary`}>
             <Button className="border-0" variant={'outline'}>
               {'Main Page'}
             </Button>
@@ -346,32 +478,71 @@ const SellerPage = ({ sellerPage }: SellerPageProps) => {
         </div>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
-      <div className="w-full flex flex-col justify-center items-center bg-primary-foreground">
+      <div className="w-full md:flex md:flex-col justify-center items-center bg-primary-foreground">
         {/* BEST SELLING PRODUCTS */}
-        <div className="flex flex-row justify-between items-center  w-full md:w-[75vw] my-3">
-          <p className="font-bold pl-3 lg:p-0 text-[12px] md:text-[14px] lg:text-[16px] lg:pl-2">
-            {'BEST SELLING PRODUCTS'}
-          </p>
-          <Button
-            variant={'link'}
-            onClick={() => handleSeeAllBestSeller()}
-            className="font-bold"
+        <div className={`${showTab1 || (showTab2 && 'hidden')}`}>
+          <div
+            className={`flex-row justify-between items-center w-full md:w-[75vw] my-3 flex`}
           >
-            {'See All >'}
-          </Button>
-        </div>
-        <div className="w-full md:w-[75vw] grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-          {seller_details.best_seller.map((product, index) => (
-            <SellerProductCard
-              key={`key:${product.product_name},${index.toString()}`}
-              shop_name={sellerPage.shop_name}
-              product={product}
-            />
-          ))}
+            <p
+              className={`font-bold pl-3 lg:p-0 text-[12px] md:text-[14px] lg:text-[16px] lg:pl-2 ${
+                showTab1 || showTab2 ? 'hidden' : 'block'
+              } `}
+            >
+              {'BEST SELLING PRODUCTS'}
+            </p>
+            <p
+              className={`font-bold pl-3 lg:p-0 text-[12px] md:text-[14px] lg:text-[16px] lg:pl-2 hidden md:block`}
+            >
+              {'BEST SELLING PRODUCTS'}
+            </p>
+            {/* For Desktop */}
+            <Button
+              variant={'link'}
+              onClick={() => handleSeeAllBestSeller()}
+              className="font-bold hidden md:block"
+            >
+              {'See All >'}
+            </Button>
+            {/* For Mobile */}
+            <Button
+              variant={'link'}
+              onClick={() => handleSeeAllBestSellerProduct()}
+              className={`font-bold md:hidden ${
+                showTab1 || showTab2 ? 'hidden' : 'block'
+              } `}
+            >
+              {'See All >'}
+            </Button>
+          </div>
+          <div
+            className={`w-full md:w-[75vw] grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 hidden md:grid`}
+          >
+            {seller_details.best_seller.map((product, index) => (
+              <SellerProductCard
+                key={`key:${product.product_name},${index.toString()}`}
+                shop_name={sellerPage.shop_name}
+                product={product}
+              />
+            ))}
+          </div>
+          <div
+            className={`w-full md:w-[75vw] grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 ${
+              showTab1 || showTab2 ? 'hidden' : 'grid'
+            } `}
+          >
+            {seller_details.best_seller.map((product, index) => (
+              <SellerProductCard
+                key={`key:${product.product_name},${index.toString()}`}
+                shop_name={sellerPage.shop_name}
+                product={product}
+              />
+            ))}
+          </div>
         </div>
 
-        <div className="lg:flex lg:flex-row w-full md:w-[75vw] gap-3">
-          <div className="category border-[1px] rounded-lg bg-white px-4 py-2 mb-5 hidden lg:block">
+        <div className="md:flex md:flex-row w-full md:w-[75vw] gap-3">
+          <div className="category border-[1px] rounded-lg bg-white px-4 py-2 mb-5 hidden md:block">
             <div className="border-b-[1px] pb-3 pt-3 pr-5">
               <p className="font-bold text-[16px] leading-[21px] text-left">
                 {'Category'}
@@ -406,7 +577,7 @@ const SellerPage = ({ sellerPage }: SellerPageProps) => {
             </ul>
           </div>
           {/* Tabs and product */}
-          <div className="lg:flex lg:flex-col" ref={tabsRef}>
+          <div className="hidden md:flex md:flex-col" ref={tabsRef}>
             <div className="sticky top-0 z-50 mb-4 lg:mb-0">
               <div className="flex flex-col">
                 <div
@@ -416,6 +587,7 @@ const SellerPage = ({ sellerPage }: SellerPageProps) => {
                   <SellerPageCategoryTabs
                     shop_name={seller_details.shop_name}
                     sort_desc={sort_desc as string}
+                    category_name={category_name as string}
                     seller_pagination={seller_details.pagination}
                     setCurrentPage={setCurrentPage}
                     setActiveFilter={setActiveFilter}
@@ -427,12 +599,15 @@ const SellerPage = ({ sellerPage }: SellerPageProps) => {
                 </div>
               </div>
             </div>
+            {/* Desktop */}
             {loading_fetch_seller_details ? (
               <div className="w-full flex justify-center h-[350px]">
                 <DotsLoading />
               </div>
             ) : (
-              <div className="w-full lg::w-[calc(100vw-35vw)] grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4  lg:grid-cols-5">
+              <div
+                className={`w-[calc(100vw-35vw)] grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3  lg:grid-cols-5 md:grid`}
+              >
                 {seller_details.products.map((product, index) => (
                   <SellerProductCard
                     key={`key:${product.product_name},${index.toString()}`}
@@ -442,6 +617,7 @@ const SellerPage = ({ sellerPage }: SellerPageProps) => {
                 ))}
               </div>
             )}
+            {/* Mobile */}
             <div className="w-full flex justify-center mb-4">
               <PaginationNav
                 currentPage={currentPage}
@@ -450,6 +626,23 @@ const SellerPage = ({ sellerPage }: SellerPageProps) => {
               />
             </div>
           </div>
+          {loading_fetch_seller_details ? (
+            <div className="w-full flex justify-center h-[350px]">
+              <DotsLoading />
+            </div>
+          ) : (
+            <div
+              className={`w-full grid grid-cols-2 md:grid-cols-4  lg:grid-cols-5 pt-4`}
+            >
+              {seller_details.products.map((product, index) => (
+                <SellerProductCard
+                  key={`key:${product.product_name},${index.toString()}`}
+                  shop_name={sellerPage.shop_name}
+                  product={product}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </section>

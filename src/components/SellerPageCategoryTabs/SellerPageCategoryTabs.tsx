@@ -26,6 +26,7 @@ interface SellerPageCategoryTabsProps {
   seller_pagination: IPagination;
   sort_by: string;
   sortByPriceDesc: boolean;
+  category_name: string;
 }
 
 const SellerPageCategoryTabs = ({
@@ -36,6 +37,7 @@ const SellerPageCategoryTabs = ({
   sort_desc,
   seller_pagination,
   sort_by,
+  category_name,
 }: SellerPageCategoryTabsProps) => {
   const searchParams = useSearchParams();
   const fetchSellerDetails = useSellerPage.use.fetchSellerDetails();
@@ -54,10 +56,17 @@ const SellerPageCategoryTabs = ({
     fetchSellerDetails(shop_name, `${params.toString()}`);
   };
   const handleFilterBy = (menu: string) => {
+    setLabelSortPrice('Price');
     const params = new URLSearchParams(searchParams);
-    params.delete('sort_desc');
-    params.delete('sort_by');
-    params.delete('category_name');
+    if (sort_by === null) {
+      params.delete('sort_by');
+    }
+    if (sort_desc === null) {
+      params.delete('sort_desc');
+    }
+    if (category_name === null) {
+      params.delete('category_name');
+    }
     params.set('page', '1');
 
     setActiveTab(menu);
@@ -80,7 +89,7 @@ const SellerPageCategoryTabs = ({
   }, []);
 
   return (
-    <ScrollArea className="w-[calc(100vw-32vw)]">
+    <ScrollArea className="w-[calc(100vw-55vw)]">
       <div className="flex flex-row items-center gap-3 px-3 py-5">
         <div className="flex flex-row h-full justify-between items-center gap-3">
           <div className="hidden lg:block">
