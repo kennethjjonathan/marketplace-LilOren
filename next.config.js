@@ -39,6 +39,10 @@ const nextConfig = {
         port: '',
       },
       {
+        hostname: 'res.cloudinary.com',
+        port: '',
+      },
+      {
         hostname: 'cf.shopee.sg',
       },
     ],
