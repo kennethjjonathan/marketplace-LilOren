@@ -480,12 +480,12 @@ const SellerPage = ({ sellerPage }: SellerPageProps) => {
       </ScrollArea>
       <div className="w-full md:flex md:flex-col justify-center items-center bg-primary-foreground">
         {/* BEST SELLING PRODUCTS */}
-        <div className={`${showTab1 || (showTab2 && 'hidden')}`}>
+        <div className={`${(showTab1 || showTab2) && 'hidden'}`}>
           <div
             className={`flex-row justify-between items-center w-full md:w-[75vw] my-3 flex`}
           >
             <p
-              className={`font-bold pl-3 lg:p-0 text-[12px] md:text-[14px] lg:text-[16px] lg:pl-2 ${
+              className={`md:hidden font-bold pl-3 lg:p-0 text-[12px] md:text-[14px] lg:text-[16px] lg:pl-2 ${
                 showTab1 || showTab2 ? 'hidden' : 'block'
               } `}
             >
@@ -527,7 +527,7 @@ const SellerPage = ({ sellerPage }: SellerPageProps) => {
             ))}
           </div>
           <div
-            className={`w-full md:w-[75vw] grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 ${
+            className={`md:hidden w-full md:w-[75vw] grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 ${
               showTab1 || showTab2 ? 'hidden' : 'grid'
             } `}
           >
@@ -539,6 +539,22 @@ const SellerPage = ({ sellerPage }: SellerPageProps) => {
               />
             ))}
           </div>
+        </div>
+
+        {/* Mobile Tabs */}
+        <div className={`md:hidden ${showTab1 ? 'block' : 'hidden'}`}>
+          <SellerPageCategoryTabs
+            shop_name={seller_details.shop_name}
+            sort_desc={sort_desc as string}
+            category_name={category_name as string}
+            seller_pagination={seller_details.pagination}
+            setCurrentPage={setCurrentPage}
+            setActiveFilter={setActiveFilter}
+            sort_by={sort_by as string}
+            activeFilter={activeFilter}
+            sortByPriceDesc={sortByPriceDesc}
+            setSortByPriceDesc={setSortByPriceDesc}
+          />
         </div>
 
         <div className="md:flex md:flex-row w-full md:w-[75vw] gap-3">
@@ -606,7 +622,7 @@ const SellerPage = ({ sellerPage }: SellerPageProps) => {
               </div>
             ) : (
               <div
-                className={`w-[calc(100vw-35vw)] grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3  lg:grid-cols-5 md:grid`}
+                className={`w-[calc(100vw-35vw)] grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 md:grid`}
               >
                 {seller_details.products.map((product, index) => (
                   <SellerProductCard
@@ -632,7 +648,9 @@ const SellerPage = ({ sellerPage }: SellerPageProps) => {
             </div>
           ) : (
             <div
-              className={`w-full grid grid-cols-2 md:grid-cols-4  lg:grid-cols-5 pt-4`}
+              className={`w-full md:hidden grid-cols-2 md:grid-cols-4 lg:grid-cols-5 pt-4 ${
+                showTab1 || showTab2 ? 'grid' : 'hidden'
+              }`}
             >
               {seller_details.products.map((product, index) => (
                 <SellerProductCard

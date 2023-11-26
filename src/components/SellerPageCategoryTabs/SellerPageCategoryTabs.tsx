@@ -73,6 +73,8 @@ const SellerPageCategoryTabs = ({
     setActiveFilter(menu);
     if (menu === 'MostRecent') {
       params.set('sort_desc', 'true');
+    } else {
+      params.delete('sort_desc');
     }
     router.push(`/shop/${shop_name}?${params}`);
     fetchSellerDetails(shop_name, `${params.toString()}`);
@@ -89,7 +91,7 @@ const SellerPageCategoryTabs = ({
   }, []);
 
   return (
-    <ScrollArea className="w-[calc(100vw-55vw)]">
+    <ScrollArea className="max-w-full md:w-[calc(100vw-55vw)]">
       <div className="flex flex-row items-center gap-3 px-3 py-5">
         <div className="flex flex-row h-full justify-between items-center gap-3">
           <div className="hidden lg:block">
@@ -100,7 +102,7 @@ const SellerPageCategoryTabs = ({
             onClick={() => handleFilterBy('MostRecent')}
             className={`${
               activeFilter === 'MostRecent' && 'text-primary'
-            } bg-transparent lg:bg-accent border-0 p-0 lg:px-4 lg:border-[1px]`}
+            } bg-white lg:bg-accent lg:px-4 border-[1px]`}
             variant={'secondary'}
           >
             {'Recent'}
@@ -110,7 +112,7 @@ const SellerPageCategoryTabs = ({
             onClick={() => handleFilterBy('BestSeller')}
             className={`${
               activeFilter === 'BestSeller' && 'text-primary'
-            } bg-transparent border-0 p-0 lg:bg-accent lg:px-4 lg:border-[1px]`}
+            } bg-white  lg:bg-accent lg:px-4 border-[1px]`}
             variant={'secondary'}
           >
             {'Best Seller'}
