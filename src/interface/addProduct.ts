@@ -55,3 +55,26 @@ export interface IAddProductRequest {
   variant_definition: IVariantDefinition;
   variants: IVariantGroup[];
 }
+
+export interface IProductDetailForEdit {
+  id: number;
+  product_code: string;
+  product_name: string;
+  description: string;
+  weight: number;
+  media: {
+    media_id: number;
+    media_url: string;
+  }[];
+  category: { category_id: number; category_name: string }[];
+  variant_group: { variant_group_id: number; variant_group_name: string }[];
+  variant_detail: {
+    discount: number;
+    price: number;
+    stock: number;
+    variant_type1_id: number;
+    variant_type1_name: string;
+    variant_type2_id: number;
+    variant_type2_name: string;
+  }[];
+}
