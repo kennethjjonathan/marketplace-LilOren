@@ -5,6 +5,7 @@ import Navbar from './Navbar';
 import styles from './SellerLayout.module.scss';
 import Sidebar from './Sidebar';
 import { useUser } from '@/store/user/useUser';
+import Footer from '../Footer/Footer';
 
 interface SellerLayoutProps {
   children: ReactNode;
@@ -35,6 +36,7 @@ const SellerLayout = ({ children, header, tabData }: SellerLayoutProps) => {
           </div>
           {tabData && <Tabs isSeller datas={tabData!} />}
           {children}
+          <Footer />
         </div>
       </div>
     </div>

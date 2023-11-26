@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-
 import ButtonWithIcon from '@/components/ButtonWithIcon/ButtonWithIcon';
 import CartInHome from '@/components/CartInHome/CartInHome';
 import EmptyCart from '@/components/EmptyCart/EmptyCart';

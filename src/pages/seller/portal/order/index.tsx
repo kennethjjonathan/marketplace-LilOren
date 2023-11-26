@@ -1,6 +1,7 @@
 import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 import Divider from '@/components/Divider/Divider';
 import SellerLayout from '@/components/SellerLayout/SellerLayout';
 import SellerOrderCard from '@/components/SellerOrderCard/SellerOrderCard';
@@ -113,38 +114,56 @@ const SellerPortalOrder: NextPageWithLayout = () => {
   }, [handleChangePage]);
 
   return (
-    <div className={`${styles.sellerPortalOrder}`}>
-      {loading_fetch_seller_orders ? (
-        <div className="w-[85vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw]">
-          <DotsLoading />
-        </div>
-      ) : seller_orders.order_data.length === 0 ? (
-        <div className="flex justify-center pt-5 h-full w-[100vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw]">
-          <EmptyNotify message={'No Order Data Available'} />
-        </div>
-      ) : (
-        <div className={`${styles.page_order}`}>
-          <section className="w-[85vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw]">
-            <Divider />
-            {seller_orders.order_data.map((order_data, index) => (
-              <SellerOrderCard
-                key={`key:${index.toString()}-${order_data.status}`}
-                order_data={order_data}
-                total_products={order_data.products.length}
-                index={index}
-              />
-            ))}
-          </section>
-        </div>
-      )}
-      <div className="w-[85vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw] flex flex-end">
-        <PaginationNav
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          totalPage={seller_orders.total_page}
+    <>
+      <Head>
+        <meta charSet="UTF-8" />
+        <title>LilOren | Seller Order</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="keywords" content={'LilOren'} />
+        <meta
+          name="description"
+          content={'LilOren is an e-commerce for everything you need'}
         />
+        <meta name="og:title" content={`LilOren`} />
+        <meta
+          name="og:description"
+          content={'LilOren is an e-commerce for everything you need'}
+        />
+        <meta name="og:type" content="website" />
+      </Head>
+      <div className={`${styles.sellerPortalOrder}`}>
+        {loading_fetch_seller_orders ? (
+          <div className="w-[85vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw]">
+            <DotsLoading />
+          </div>
+        ) : seller_orders.order_data.length === 0 ? (
+          <div className="flex justify-center pt-5 h-full w-[100vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw]">
+            <EmptyNotify message={'No Order Data Available'} />
+          </div>
+        ) : (
+          <div className={`${styles.page_order}`}>
+            <section className="w-[85vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw]">
+              <Divider />
+              {seller_orders.order_data.map((order_data, index) => (
+                <SellerOrderCard
+                  key={`key:${index.toString()}-${order_data.status}`}
+                  order_data={order_data}
+                  total_products={order_data.products.length}
+                  index={index}
+                />
+              ))}
+            </section>
+          </div>
+        )}
+        <div className="w-[85vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw] flex flex-end">
+          <PaginationNav
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            totalPage={seller_orders.total_page}
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
