@@ -1,8 +1,15 @@
-import React, { ReactElement, ReactNode, useEffect, useState } from 'react';
+import React, {
+  ChangeEvent,
+  ReactElement,
+  ReactNode,
+  useEffect,
+  useState,
+} from 'react';
 import axios from 'axios';
 import { ArrowLeft, Heart, KeyRound, Store } from 'lucide-react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { NextPageWithLayout } from '../_app';
 import { Button } from '@/components/ui/button';
@@ -12,6 +19,12 @@ import UserPresentation from '@/components/UserPresentation/UserPresentation';
 import { useUser } from '@/store/user/useUser';
 import AsyncButton from '@/components/AsyncButton/AsyncButton';
 import styles from './User.module.scss';
+import { withBasePath } from '@/lib/nextUtils';
+import imageUploadder from '@/lib/imageUploadder';
+import axiosInstance from '@/lib/axiosInstance';
+import CONSTANTS from '@/constants/constants';
+import { Utils } from '@/utils';
+import { ToastContent } from 'react-toastify';
 
 const User: NextPageWithLayout = () => {
   const router = useRouter();
@@ -23,6 +36,41 @@ const User: NextPageWithLayout = () => {
   const [showSetAddressModal, setShowSetAddressModal] =
     useState<boolean>(false);
   const [loadingLogout, setLoadingLogout] = useState(false);
+
+  const [userTempImg, setTempUserImg] = useState<File>();
+  const [userImg, setUserImg] = useState<string>('');
+  const [loadingUploadImage, setLoadingUploadImage] = useState<boolean>(false);
+  const handleAddPhoto = async (e: ChangeEvent<HTMLInputElement>) => {
+    setLoadingUploadImage(true);
+    if (e.target.files !== null) {
+      const selectedFiles = e.target.files;
+      setTempUserImg(selectedFiles[0]);
+      const response = await imageUploadder(selectedFiles[0]);
+      try {
+        const responseUpload = await axiosInstance({
+          method: 'PUT',
+          url: `${CONSTANTS.BASEURL}/profile/picture`,
+          data: {
+            image_url: response,
+          },
+        });
+        if (responseUpload.status === 200) {
+          setUserImg(response);
+          Utils.notify(
+            'success upload picture' as ToastContent,
+            'success',
+            'light',
+          );
+        }
+      } catch (error) {
+        Utils.notify('failed upload picture' as ToastContent, 'error', 'light');
+      }
+    }
+    fetchUserDetails();
+    console.log(user_details);
+
+    setLoadingUploadImage(false);
+  };
 
   const handleLogout = async () => {
     setLoadingLogout(true);
@@ -107,6 +155,36 @@ const User: NextPageWithLayout = () => {
             )}
           </div>
         </div>
+        {/* <div className>Photo</> */}
+      </div>
+      <div className="relative">
+        <img
+          src={`${
+            user_details.profile_picture_url
+              ? user_details.profile_picture_url
+              : '/blank-profile.webp'
+          }`}
+          alt={'user__profpic'}
+          className={'h-[200px] w-[200px]'}
+        />
+        <label
+          className="border-2 flex flex-col justify-center items-center h-[200px] w-[200px] gap-2 duration-500 before:ease-in-out after:ease-in-out hover:text-white s lg:h-[50px] lg:w-[200px] cursor-pointer top-0 mt-2 rounded-lg"
+          htmlFor={`user-profile`}
+        >
+          <p className="w-full text-center text-[14px] text-muted-foreground font-semibold">
+            {'Chooose Photo'}
+          </p>
+        </label>
+        <input
+          accept="image/png, image/jpeg, image/jpg"
+          onChange={(e) => {
+            handleAddPhoto(e);
+            e.target.value = '';
+          }}
+          type="file"
+          id={`user-profile`}
+          hidden
+        />
       </div>
     </>
   );
