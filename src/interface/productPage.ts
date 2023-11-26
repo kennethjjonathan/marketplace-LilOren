@@ -52,3 +52,19 @@ export interface IAddToCart {
   seller_id: number;
   quantity: number;
 }
+
+export interface IProductReview {
+  rating: number;
+  comment: string;
+  account_id: number;
+  username: string;
+  image_urls?: string[];
+  created_at: string;
+}
+
+export interface IProductReviewResponse {
+  user_reviews: IProductReview[];
+  total_review: number;
+  total_page: number;
+  current_page: number;
+}
