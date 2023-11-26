@@ -33,6 +33,7 @@ export interface IUserDetails {
   is_pin_set: boolean;
   cart_count: number;
   profile_picture_url: string;
+  email: string;
 }
 
 export interface IAddAddressData {

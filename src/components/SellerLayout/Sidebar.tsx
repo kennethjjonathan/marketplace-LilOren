@@ -1,9 +1,13 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
 import { useOnClickOutside } from 'usehooks-ts';
 import classNames from 'classnames';
 import DefaultNavbarItems from './DefaultNavbarItems';
+import { withBasePath } from '@/lib/nextUtils';
+import { IUserDetails } from '@/interface/user';
+import { useUser } from '@/store/user/useUser';
 
 export type NavItem = {
   label: string;
@@ -23,10 +27,17 @@ const Sidebar = ({
   setOpen,
 }: SidebarProps) => {
   const ref = useRef<HTMLDivElement>(null);
+  const user_details = useUser.use.user_details();
+  const fetchUserDetails = useUser.use.fetchUserDetails();
+  const router = useRouter();
+
   useOnClickOutside(ref, (e) => {
     setOpen(false);
   });
-  const router = useRouter();
+
+  useEffect(() => {
+    fetchUserDetails();
+  }, []);
 
   return (
     <div
@@ -65,6 +76,28 @@ const Sidebar = ({
           })}
         </ul>
       </nav>
+      <div className="border-t border-t-primary p-4 bg-primary-foreground">
+        <div className="flex gap-4 items-center">
+          <Image
+            src={withBasePath('blank-profile.webp')}
+            height={36}
+            width={36}
+            alt="profile image"
+            className="rounded-full"
+          />
+          <div className="flex flex-col ">
+            <span className="text-primary my-0 font-semibold">
+              {user_details.username}
+            </span>
+            <Link
+              href="/user?status=Info"
+              className="text-muted-foreground text-sm"
+            >
+              View Profile
+            </Link>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

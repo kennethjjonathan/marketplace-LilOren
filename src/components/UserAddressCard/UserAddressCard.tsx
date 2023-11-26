@@ -14,7 +14,6 @@ const UserAddressCard = ({ address }: UserAddressCardProps) => {
   const user_default_address = useUser.use.user_default_address();
   const editUserDefaultAddress = useUser.use.editUserDefaultAddress();
   const fetchUserAddresses = useUser.use.fetchUserAddresses();
-  const router = useRouter();
   const handleMainAddress = (address: IUserAddress) => {
     editUserDefaultAddress(address.id);
     setTimeout(() => {
@@ -64,27 +63,15 @@ const UserAddressCard = ({ address }: UserAddressCardProps) => {
           </div>
           <div className={`action-button ${styles.action_buttons}`}>
             <div className="flex flex-row">
-              <Button
-                variant={'link'}
-                className="pl-0 pr-2 border-r-[1px] py-0 h-[20px]"
-                onClick={() =>
-                  router.push(`/user/address/update/${address.id}`)
-                }
-              >
-                {'Edit'}
-              </Button>
               {user_default_address.id !== address.id && (
                 <Button
                   variant={'link'}
-                  className="pl-2 pr-2 border-r-[1px] py-0 h-[20px]"
+                  className="pl-0 pr-2 py-0 h-[20px]"
                   onClick={() => handleMainAddress(address)}
                 >
                   {'Set as default address'}
                 </Button>
               )}
-              <Button variant={'link'} className="pl-2 py-0 h-[20px]">
-                {'Delete'}
-              </Button>
             </div>
           </div>
         </section>
