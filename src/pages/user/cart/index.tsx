@@ -7,7 +7,7 @@ import SkeletonCart from '@/components/SkeletonCart/SkeletonCart';
 import { IProduct } from '@/interface/product';
 import { ICheckedCart, useCart } from '@/store/cart/useCart';
 import Image from 'next/image';
-import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import EmptyCartImage from '../../../../public/empty-cart.svg';
 import { NextPageWithLayout } from '../../_app';
 import styles from './CartPage.module.scss';
@@ -30,26 +30,25 @@ export interface ICart {
 }
 
 const CartPage: NextPageWithLayout = () => {
-  const isMounted = useRef(false);
-  const [countMounted, setCountMounted] = useState(0);
+  const [countMounted] = useState(0);
   const fetchCart = useCart.use.fetchCart();
   const cartItems = useCart.use.cartItems();
   const setCheckedCart = useCart.use.setCheckedCart();
   const loading_fetch_cart = useCart.use.loading_fetch_cart();
 
-  const handleSetCheckedFirstCart = useCallback(() => {
-    let is_checked_cart: ICheckedCart[] = [];
-    cartItems.items.forEach((cart_per_seller) => {
-      cart_per_seller.products.forEach((cart) => {
-        const obj: ICheckedCart = {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleSetCheckedFirstCart = () => {
+    let is_checked_cart: ICheckedCart[] = cartItems.items
+      .map((cps) =>
+        cps.products.map((cart) => ({
           cart_id: cart.cart_id!,
           is_checked: cart.is_checked!,
-        };
-        is_checked_cart.push(obj);
-      });
-    });
+        })),
+      )
+      .flat();
+
     setCheckedCart(is_checked_cart);
-  }, [cartItems.items, setCheckedCart]);
+  };
 
   useEffect(() => {
     fetchCart();
