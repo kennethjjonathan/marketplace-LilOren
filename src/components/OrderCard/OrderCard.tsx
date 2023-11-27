@@ -177,7 +177,7 @@ const OrderCard = ({
             {orderSummary.sub_total_promotion <
               orderSummary.sub_total_product && (
               <p className="text-gray-600 text-xs sm:text-sm">{`promotion: ${Utils.convertPrice(
-                orderSummary.sub_total_product,
+                orderSummary.sub_total_promotion,
               )}`}</p>
             )}
             {orderSummary.delivery_cost > 0 && (
