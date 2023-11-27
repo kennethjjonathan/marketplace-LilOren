@@ -32,6 +32,7 @@ import {
 import { ToastContent } from 'react-toastify';
 import { NextPageWithLayout } from '../_app';
 import styles from './User.module.scss';
+import { withBasePath } from '@/lib/nextUtils';
 
 const User: NextPageWithLayout = () => {
   const router = useRouter();
@@ -231,8 +232,8 @@ const User: NextPageWithLayout = () => {
         <img
           src={`${
             user_details.profile_picture_url
-              ? user_details.profile_picture_url
-              : '/blank-profile.webp'
+              ? withBasePath(user_details.profile_picture_url)
+              : withBasePath('/blank-profile.webp')
           }`}
           alt={'user__profpic'}
           className={'h-[200px] w-[200px]'}
