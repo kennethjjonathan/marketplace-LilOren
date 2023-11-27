@@ -32,6 +32,7 @@ import {
 import { ToastContent } from 'react-toastify';
 import { NextPageWithLayout } from '../_app';
 import styles from './User.module.scss';
+import { withBasePath } from '@/lib/nextUtils';
 
 const User: NextPageWithLayout = () => {
   const router = useRouter();
@@ -143,16 +144,16 @@ const User: NextPageWithLayout = () => {
       );
       return;
     }
-    setIsChangeOpenLoading(true);
+    setIsChangePassLoading(true);
     try {
       const reqBody = { verify_code: otp, password: newPassword };
       await axiosInstance.post('/auth/change-password', reqBody);
       Utils.notify('Succesfully changed password', 'success', 'colored');
-      setIsChangePassOpen(false);
+      handleCloseChangePass();
     } catch (error) {
       Utils.handleGeneralError(error);
     } finally {
-      setIsChangeOpenLoading(false);
+      setIsChangePassLoading(true);
     }
   }
 
@@ -231,8 +232,8 @@ const User: NextPageWithLayout = () => {
         <img
           src={`${
             user_details.profile_picture_url
-              ? user_details.profile_picture_url
-              : '/blank-profile.webp'
+              ? withBasePath(user_details.profile_picture_url)
+              : withBasePath('/blank-profile.webp')
           }`}
           alt={'user__profpic'}
           className={'h-[200px] w-[200px]'}
