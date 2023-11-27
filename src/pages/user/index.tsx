@@ -144,16 +144,16 @@ const User: NextPageWithLayout = () => {
       );
       return;
     }
-    setIsChangeOpenLoading(true);
+    setIsChangePassLoading(true);
     try {
       const reqBody = { verify_code: otp, password: newPassword };
       await axiosInstance.post('/auth/change-password', reqBody);
       Utils.notify('Succesfully changed password', 'success', 'colored');
-      setIsChangePassOpen(false);
+      handleCloseChangePass();
     } catch (error) {
       Utils.handleGeneralError(error);
     } finally {
-      setIsChangeOpenLoading(false);
+      setIsChangePassLoading(true);
     }
   }
 
