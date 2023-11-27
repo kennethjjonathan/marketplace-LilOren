@@ -1,16 +1,16 @@
-import React, { ReactElement, useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
-import { NextPageWithLayout } from '../../_app';
-import Layout from '@/components/Layout/Layout';
-import CartLayout from '@/components/CartLayout/CartLayout';
+import ButtonWithIcon from '@/components/ButtonWithIcon/ButtonWithIcon';
 import CartCard from '@/components/CartCard/CartCard';
+import CartLayout from '@/components/CartLayout/CartLayout';
+import { EMPTY_CART_TEXT } from '@/components/EmptyCart/constants';
+import Layout from '@/components/Layout/Layout';
+import SkeletonCart from '@/components/SkeletonCart/SkeletonCart';
 import { IProduct } from '@/interface/product';
 import { ICheckedCart, useCart } from '@/store/cart/useCart';
-import { EMPTY_CART_TEXT } from '@/components/EmptyCart/constants';
-import ButtonWithIcon from '@/components/ButtonWithIcon/ButtonWithIcon';
+import Image from 'next/image';
+import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import EmptyCartImage from '../../../../public/empty-cart.svg';
+import { NextPageWithLayout } from '../../_app';
 import styles from './CartPage.module.scss';
-import SkeletonCart from '@/components/SkeletonCart/SkeletonCart';
 
 export interface ICartItem {
   seller_name: string;
@@ -37,7 +37,7 @@ const CartPage: NextPageWithLayout = () => {
   const setCheckedCart = useCart.use.setCheckedCart();
   const loading_fetch_cart = useCart.use.loading_fetch_cart();
 
-  const handleSetCheckedFirstCart = () => {
+  const handleSetCheckedFirstCart = useCallback(() => {
     let is_checked_cart: ICheckedCart[] = [];
     cartItems.items.forEach((cart_per_seller) => {
       cart_per_seller.products.forEach((cart) => {
@@ -49,7 +49,7 @@ const CartPage: NextPageWithLayout = () => {
       });
     });
     setCheckedCart(is_checked_cart);
-  };
+  }, [cartItems.items, setCheckedCart]);
 
   useEffect(() => {
     if (isMounted.current) {
@@ -61,7 +61,7 @@ const CartPage: NextPageWithLayout = () => {
         isMounted.current = true;
       }
     }
-  }, []);
+  }, [countMounted, fetchCart, handleSetCheckedFirstCart]);
   return (
     <>
       <section className="flex flex-col justify-center items-center w-full bg-white pb-8">
