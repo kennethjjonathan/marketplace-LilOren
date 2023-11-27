@@ -52,15 +52,8 @@ const CartPage: NextPageWithLayout = () => {
   }, [cartItems.items, setCheckedCart]);
 
   useEffect(() => {
-    if (isMounted.current) {
-      fetchCart();
-      handleSetCheckedFirstCart();
-    } else {
-      setCountMounted((prev) => prev + 1);
-      if (countMounted >= 0) {
-        isMounted.current = true;
-      }
-    }
+    fetchCart();
+    handleSetCheckedFirstCart();
   }, [countMounted, fetchCart, handleSetCheckedFirstCart]);
   return (
     <>
