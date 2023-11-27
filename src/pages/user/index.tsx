@@ -232,11 +232,12 @@ const User: NextPageWithLayout = () => {
         <img
           src={`${
             user_details.profile_picture_url
-              ? withBasePath(user_details.profile_picture_url)
+              ? user_details.profile_picture_url
               : withBasePath('/blank-profile.webp')
           }`}
           alt={'user__profpic'}
           className={'h-[200px] w-[200px]'}
+          loading="lazy"
         />
         <label
           className="border-2 flex flex-col justify-center items-center h-[200px] w-[200px] gap-2 duration-500 before:ease-in-out after:ease-in-out hover:text-white s lg:h-[50px] lg:w-[200px] cursor-pointer top-0 mt-2 rounded-lg"

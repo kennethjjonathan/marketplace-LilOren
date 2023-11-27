@@ -20,16 +20,15 @@ const UserPresentation = () => {
     <DotsLoading />
   ) : (
     <div className={styles.liloren__user__presentation}>
-      <Image
+      <img
         src={`${
           user_details.profile_picture_url
-            ? withBasePath(user_details.profile_picture_url)
+            ? user_details.profile_picture_url
             : withBasePath('/blank-profile.webp')
         }`}
         alt={'user__profpic'}
-        width={500}
-        height={500}
         className={'rounded-full h-[64px] w-[64px]'}
+        loading="lazy"
       />
       <UserInfo user_details={user_details} />
       <div className="flex ml-auto items-center lg:hidden">
