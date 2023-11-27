@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react';
 import ButtonWithIcon from '@/components/ButtonWithIcon/ButtonWithIcon';
 import CartInHome from '@/components/CartInHome/CartInHome';
 import EmptyCart from '@/components/EmptyCart/EmptyCart';
@@ -18,8 +17,8 @@ import { useUser } from '@/store/user/useUser';
 import { ShoppingCart, Store, User2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import React, { useEffect } from 'react';
 import styles from './Navigation.module.scss';
-
 type DropdownItem = {
   title: string;
   href?: string;
@@ -220,16 +219,17 @@ const Navigation: React.FC = () => {
 export const ListItem = React.forwardRef<
   React.ElementRef<'a'>,
   React.ComponentPropsWithoutRef<'a'>
->(({ className, title, children, ...props }, ref) => {
+>(({ className, title, children, href, ...props }, ref) => {
   return (
     <li className="border-b-[1px]">
       <NavigationMenuLink asChild>
-        <a
+        <Link
           ref={ref}
           className={cn(
             'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
             className,
           )}
+          href={href ?? ''}
           {...props}
         >
           <div className="font-medium leading-none whitespace-nowrap overflow-hidden text-ellipsis w-[100px] sm:w-[150px] md:w-[180px] lg:w-[200px] text-[10px] sm:text-[12px] md:text-[14px]">
@@ -238,7 +238,7 @@ export const ListItem = React.forwardRef<
           <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
             {children}
           </p>
-        </a>
+        </Link>
       </NavigationMenuLink>
     </li>
   );
