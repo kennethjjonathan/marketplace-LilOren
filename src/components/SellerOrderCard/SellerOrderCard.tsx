@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { ToastContent } from 'react-toastify';
-import { Button } from '@/components/ui/button';
 import AsyncButton from '@/components/AsyncButton/AsyncButton';
-import SellerOrderCourier from '@/components/SellerOrder/SellerOrderCourier';
 import SellerOrderAddress from '@/components/SellerOrder/SellerOrderAddress';
+import SellerOrderCourier from '@/components/SellerOrder/SellerOrderCourier';
 import SellerOrderProductInfo from '@/components/SellerOrder/SellerOrderProductInfo';
 import SellerOrderDeliveryFormModal from '@/components/SellerOrderDeliveryFormModal/SellerOrderDeliveryFormModal';
+import { Button } from '@/components/ui/button';
 import { IOrderData } from '@/interface/sellerOrder';
 import { SellerOrderClient } from '@/service/sellerOrder/SellerOrderClient';
 import { useSeller } from '@/store/seller/useSeller';
 import { Utils } from '@/utils';
+import { useState } from 'react';
+import { ToastContent } from 'react-toastify';
 
 interface SellerOrderCardProps {
   order_data: IOrderData;
@@ -112,20 +112,12 @@ const SellerOrderCard = ({
         </p>
       </div>
       {/* product address courier */}
-      <div className="product-address-courier flex mt-2 pb-2 lg:gap-8 items-start">
+      <div className="product-address-courier flex mt-2 pb-2 lg:gap-8 items-start my-4">
         <SellerOrderProductInfo order_data={order_data} />
         <SellerOrderAddress order_data={order_data} />
         <SellerOrderCourier order_data={order_data} />
       </div>
 
-      <div className="border-b-[1px] lg:hidden"></div>
-      {total_products > 1 && (
-        <div className="see-more-product mb-3 mt-2 text-left lg:w-[200px]">
-          <Button variant={'link'} className="p-0 text-[12px] h-[20px]">
-            {` See more ${total_products - 1} product`}
-          </Button>
-        </div>
-      )}
       {/* total items and total price */}
       <div className="bg-input flex flex-row total-items items-center px-2 py-[4px] justify-between rounded-sm lg:h-[35px]">
         <p className="text-[12px] font-medium lg:text-[14px]">
