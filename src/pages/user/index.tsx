@@ -160,14 +160,14 @@ const User: NextPageWithLayout = () => {
     }
     setIsChangePassLoading(true);
     try {
-      const reqBody = { verify_code: otp, password: newPassword };
+      const reqBody = { verif_code: otp, password: newPassword };
       await axiosInstance.post('/auth/change-password', reqBody);
       Utils.notify('Succesfully changed password', 'success', 'colored');
       handleCloseChangePass();
     } catch (error) {
       Utils.handleGeneralError(error);
     } finally {
-      setIsChangePassLoading(true);
+      setIsChangePassLoading(false);
     }
   }
 
@@ -269,9 +269,7 @@ const User: NextPageWithLayout = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Change Password</AlertDialogTitle>
             <AlertDialogDescription>
-              {
-                'An OTP will be sent to your email (OTP is valifd for 5 minutes)'
-              }
+              {'An OTP will be sent to your email (OTP is valid for 5 minutes)'}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="w-full space-y-3">

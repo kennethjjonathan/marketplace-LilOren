@@ -35,14 +35,12 @@ const WalletPage = () => {
     } catch (error: any) {
       if (
         error &&
-        error.response &&
-        error.response.data &&
-        error.response.data.message &&
-        error.response.data.message === CONSTANTS.WALLET_NOT_ACTIVATED
+        error.message &&
+        error.message === CONSTANTS.WALLET_NOT_ACTIVATED
       ) {
         setWallet({ is_active: false, balance: 0 });
       } else {
-        Utils.handleGeneralError(error);
+        console.error(error);
       }
     } finally {
       setIsPageLoading(false);
@@ -58,7 +56,9 @@ const WalletPage = () => {
       setHistoryArray(response.data.data.history);
       setTotalPage(response.data.data.total_page);
     } catch (error: any) {
-      Utils.handleGeneralError(error);
+      if (wallet && wallet.is_active) {
+        Utils.handleGeneralError(error);
+      }
     } finally {
       setIsHistoryLoading(false);
     }
@@ -104,7 +104,7 @@ const WalletPage = () => {
                   />
                 )}
               </div>
-              {wallet && (
+              {wallet && wallet.is_active === true && (
                 <p className="text-2xl mt-3 truncate">
                   {isHide ? '***********' : Utils.convertPrice(wallet.balance)}
                 </p>

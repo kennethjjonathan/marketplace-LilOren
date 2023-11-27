@@ -26,6 +26,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import AsyncButton from '@/components/AsyncButton/AsyncButton';
+import EmptyNotify from '@/components/EmptyNotify/EmptyNotify';
 
 const data = [
   {
@@ -105,71 +106,77 @@ const SellerPortalProduct = () => {
             </Button>
           </div>
           <div className="w-full mt-8">
-            <Table>
-              <TableCaption>
-                A list of your products from most recent.
-              </TableCaption>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Thumbnail</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Product Code</TableHead>
-                  <TableHead colSpan={3}>Action</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {products.length !== 0 &&
-                  products.map((product) => (
-                    <TableRow key={product.ProductCode}>
-                      <TableCell>
-                        <Image
-                          src={product.ThumbnailURL}
-                          alt={product.ProductName}
-                          width={100}
-                          height={100}
-                          style={{ objectFit: 'cover' }}
-                        />
-                      </TableCell>
-                      <TableCell className="truncate">
-                        {product.ProductName}
-                      </TableCell>
-                      <TableCell className="truncate">
-                        {product.ProductCode}
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          onClick={() =>
-                            router.push(
-                              `/seller/portal/product/${product.ProductCode}`,
-                            )
-                          }
-                        >
-                          Edit
-                        </Button>
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          onClick={() =>
-                            router.push(
-                              `/seller/portal/product/discount/${product.ProductCode}`,
-                            )
-                          }
-                        >
-                          Manage Discount
-                        </Button>
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          onClick={() => handleOpenDelete(product.ProductCode)}
-                          variant={'destructive'}
-                        >
-                          Delete
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
+            {products.length !== 0 ? (
+              <Table>
+                <TableCaption>
+                  A list of your products from most recent.
+                </TableCaption>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Thumbnail</TableHead>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Product Code</TableHead>
+                    <TableHead colSpan={3}>Action</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {products.length !== 0 &&
+                    products.map((product) => (
+                      <TableRow key={product.ProductCode}>
+                        <TableCell>
+                          <Image
+                            src={product.ThumbnailURL}
+                            alt={product.ProductName}
+                            width={100}
+                            height={100}
+                            style={{ objectFit: 'cover' }}
+                          />
+                        </TableCell>
+                        <TableCell className="truncate">
+                          {product.ProductName}
+                        </TableCell>
+                        <TableCell className="truncate">
+                          {product.ProductCode}
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            onClick={() =>
+                              router.push(
+                                `/seller/portal/product/${product.ProductCode}`,
+                              )
+                            }
+                          >
+                            Edit
+                          </Button>
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            onClick={() =>
+                              router.push(
+                                `/seller/portal/product/discount/${product.ProductCode}`,
+                              )
+                            }
+                          >
+                            Manage Discount
+                          </Button>
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            onClick={() =>
+                              handleOpenDelete(product.ProductCode)
+                            }
+                            variant={'destructive'}
+                          >
+                            Delete
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <EmptyNotify message="No Product" />
+            )}
           </div>
           <div className="w-full flex justify-center items-center mt-5">
             <PaginationNav

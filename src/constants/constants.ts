@@ -3,7 +3,7 @@ const CONSTANTS = {
   BASE_PATH: process.env.NEXT_PUBLIC_BASE_PATH,
   CANNOT_ADD_MORE_THAN_STOCK: 'Cannot add quantity more than stock',
   ALREADY_LOGGED_OUT: 'RefreshTokenExpired',
-  WALLET_NOT_ACTIVATED: 'Not yet activate wallet',
+  WALLET_NOT_ACTIVATED: 'Wallet is not activated',
   TOKEN_HAS_EXPIRED: 'Your token has expired, please sign in again',
   RO_BASEURL: 'https://api.rajaongkir.com/starter',
   RO_API_PROVINCE: '/api/rajaongkirprovince',
@@ -163,6 +163,7 @@ const CONSTANTS = {
   ],
   URL_USER_ADDRESS_REGISTRATION: '/profile/addresses',
   URL_MERCHANT: '/merchant',
+  GOOGLE_AUTH: `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/oauth/google`,
 };
 
 export default CONSTANTS;

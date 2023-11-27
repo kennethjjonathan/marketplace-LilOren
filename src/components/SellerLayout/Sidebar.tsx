@@ -118,6 +118,10 @@ const Sidebar = ({
       );
       return;
     }
+    if (withdrawal > balance) {
+      Utils.notify('Cannot withdraw more than balance', 'info', 'colored');
+      return;
+    }
     if (pins.includes('') || !findNonNumber()) {
       Utils.notify('Please enter the valid PIN', 'info', 'colored');
       return;

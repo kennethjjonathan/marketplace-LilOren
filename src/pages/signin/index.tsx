@@ -6,25 +6,13 @@ import { withBasePath } from '@/lib/nextUtils';
 import { UserClient } from '@/service/user/userClient';
 import { Utils } from '@/utils';
 import { LogIn } from 'lucide-react';
-import { GetServerSideProps } from 'next';
-import { BuiltInProviderType } from 'next-auth/providers/index';
-import {
-  ClientSafeProvider,
-  LiteralUnion,
-  getProviders,
-  signIn,
-} from 'next-auth/react';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
-interface SignInPageProps {
-  providers: Record<LiteralUnion<BuiltInProviderType>, ClientSafeProvider>;
-}
-
-function SignInPage({ providers }: SignInPageProps) {
+function SignInPage() {
   const router = useRouter();
   const [registerData, setRegisterData] = useState({
     email: '',
@@ -119,14 +107,6 @@ function SignInPage({ providers }: SignInPageProps) {
     }
   };
 
-  const handleGoogleSignIn = () => {
-    if (providers && providers.google) {
-      signIn(providers.google.id);
-      return;
-    }
-    return;
-  };
-
   const handleErrorAuthResponse = (message: IErrorResponse | string) => {
     if (message instanceof Object) {
       if (message.email !== undefined) {
@@ -210,18 +190,14 @@ function SignInPage({ providers }: SignInPageProps) {
                 Sign In
               </AsyncButton>
             </form>
-            {providers && providers.google && (
-              <>
-                <div className="flex items-center w-full justify-between gap-3 mt-2">
-                  <div className="w-full h-px bg-gray-300" />
-                  <p className="text-sm text-gray-300 font-normal">OR</p>
-                  <div className="w-full h-px bg-gray-300" />
-                </div>
-                <div className="w-full mt-2">
-                  <GoogleButton onClick={handleGoogleSignIn} />
-                </div>
-              </>
-            )}
+            <div className="flex items-center w-full justify-between gap-3 mt-2">
+              <div className="w-full h-px bg-gray-300" />
+              <p className="text-sm text-gray-300 font-normal">OR</p>
+              <div className="w-full h-px bg-gray-300" />
+            </div>
+            <div className="w-full mt-2">
+              <GoogleButton />
+            </div>
           </div>
           <p className="font-extralight mt-3 w-full text-center text-base lg:text-lg">
             Don&apos;t have an account?{' '}
@@ -240,11 +216,3 @@ function SignInPage({ providers }: SignInPageProps) {
 }
 
 export default SignInPage;
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  return {
-    props: {
-      providers: await getProviders(),
-    },
-  };
-};
