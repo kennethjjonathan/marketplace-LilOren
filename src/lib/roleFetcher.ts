@@ -2,21 +2,19 @@ import CONSTANTS from '@/constants/constants';
 
 const refreshAccessToken = async (cookie: string) => {
   try {
-    console.log('refresh');
     const response = await fetch(`${CONSTANTS.BASEURL}/auth/refresh-token`, {
       method: 'POST',
       credentials: 'include',
       body: null,
       headers: { Cookie: cookie },
     });
-    return response;
+    return response.headers.getSetCookie().toString();
   } catch (error: any) {
     return error;
   }
 };
 
 async function roleFetcher(cookie: string) {
-  console.log('test');
   const response = await fetch(`${CONSTANTS.BASEURL}/auth/user`, {
     headers: { Cookie: cookie },
     credentials: 'include',
@@ -31,22 +29,20 @@ async function roleFetcher(cookie: string) {
   }
   if (!response.ok && response.status === 401) {
     try {
-      const refreshResponse = await refreshAccessToken(cookie);
-      if (refreshResponse.ok) {
-        const checkAgainResponse = await fetch(
-          `${CONSTANTS.BASEURL}/auth/user`,
-          {
-            headers: { Cookie: cookie },
-            credentials: 'include',
-          },
-        );
-        if (checkAgainResponse.ok) {
-          const data = await response.json();
-          if (data.data && data.data.is_seller === false) {
-            return 'user';
-          } else if (data.data && data.data.is_seller === true) {
-            return 'seller';
-          }
+      const newCookie = await refreshAccessToken(cookie);
+      const checkAgainResponse = await fetch(`${CONSTANTS.BASEURL}/auth/user`, {
+        headers: { Cookie: newCookie },
+        credentials: 'include',
+      });
+      if (checkAgainResponse.ok) {
+        const checkAgainData = await checkAgainResponse.json();
+        if (checkAgainData.data && checkAgainData.data.is_seller === false) {
+          return 'user';
+        } else if (
+          checkAgainData.data &&
+          checkAgainData.data.is_seller === true
+        ) {
+          return 'seller';
         }
       } else {
         return 'unauthorized';

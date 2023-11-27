@@ -119,7 +119,10 @@ const Navigation: React.FC = () => {
               <NavigationMenuItem>
                 <NavigationMenuTrigger>
                   <div className="flex md:flex-row md:gap-3 items-center">
-                    <ButtonWithIcon href="/user?status=Info" variant={'ghost'}>
+                    <ButtonWithIcon
+                      href="/seller/portal/order"
+                      variant={'ghost'}
+                    >
                       <Store />
                       <p className="hidden md:hidden lg:block font-light pl-3">
                         {user_details.shop_name}
@@ -136,7 +139,10 @@ const Navigation: React.FC = () => {
                         "Monitor incoming orders and check your shop's progress regularly in one place."
                       }
                     </p>
-                    <ButtonWithIcon variant={'default'} href={'/seller/portal'}>
+                    <ButtonWithIcon
+                      variant={'default'}
+                      href={'/seller/portal/order'}
+                    >
                       {'Check my shop'}
                     </ButtonWithIcon>
                   </div>

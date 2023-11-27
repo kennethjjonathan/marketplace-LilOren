@@ -3,7 +3,6 @@ import { IProductDiscountResponse } from '@/interface/productDiscount';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import styles from './ProductDiscountForm.module.scss';
-import { Button } from '../ui/button';
 import AsyncButton from '../AsyncButton/AsyncButton';
 import { IProductVariant } from '@/interface/addProduct';
 import { Utils } from '@/utils';
