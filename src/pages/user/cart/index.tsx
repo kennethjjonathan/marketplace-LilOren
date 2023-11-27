@@ -5,9 +5,9 @@ import { EMPTY_CART_TEXT } from '@/components/EmptyCart/constants';
 import Layout from '@/components/Layout/Layout';
 import SkeletonCart from '@/components/SkeletonCart/SkeletonCart';
 import { IProduct } from '@/interface/product';
-import { ICheckedCart, useCart } from '@/store/cart/useCart';
+import { useCart } from '@/store/cart/useCart';
 import Image from 'next/image';
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useEffect } from 'react';
 import EmptyCartImage from '../../../../public/empty-cart.svg';
 import { NextPageWithLayout } from '../../_app';
 import styles from './CartPage.module.scss';
@@ -30,7 +30,6 @@ export interface ICart {
 }
 
 const CartPage: NextPageWithLayout = () => {
-  const [countMounted] = useState(0);
   const fetchCart = useCart.use.fetchCart();
   const cartItems = useCart.use.cartItems();
   const setCheckedCart = useCart.use.setCheckedCart();
@@ -38,7 +37,7 @@ const CartPage: NextPageWithLayout = () => {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleSetCheckedFirstCart = () => {
-    let is_checked_cart: ICheckedCart[] = cartItems.items
+    const checkedCart = cartItems.items
       .map((cps) =>
         cps.products.map((cart) => ({
           cart_id: cart.cart_id!,
@@ -47,13 +46,15 @@ const CartPage: NextPageWithLayout = () => {
       )
       .flat();
 
-    setCheckedCart(is_checked_cart);
+    setCheckedCart(checkedCart);
   };
 
   useEffect(() => {
     fetchCart();
     handleSetCheckedFirstCart();
-  }, [countMounted, fetchCart, handleSetCheckedFirstCart]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <>
       <section className="flex flex-col justify-center items-center w-full bg-white pb-8">
