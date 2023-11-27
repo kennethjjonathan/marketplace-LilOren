@@ -627,6 +627,7 @@ const ProductForm = ({ isEdit = false, productToEdit }: ProductFormProps) => {
 
   async function setInitialStateForEdit() {
     if (productToEdit === undefined) return;
+    console.log(productToEdit);
     setIsInitialStateLoading(true);
     try {
       const newProductInformation: IProductInformation = {
@@ -749,7 +750,7 @@ const ProductForm = ({ isEdit = false, productToEdit }: ProductFormProps) => {
               smallStock[j] = productToEdit.variant_detail[j + k].stock;
               newStock[i] = smallStock;
             }
-            k += newVariant1.options.length - 1;
+            k += newVariant1.options.length;
           }
           setPrice(newPrice);
           setStocks(newStock);

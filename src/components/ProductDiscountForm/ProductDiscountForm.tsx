@@ -87,7 +87,7 @@ const ProductDiscountForm = ({
             smallDiscount[j] = productDiscount.variants[j + k].discount;
             newDiscount[i] = smallDiscount;
           }
-          k += variant1.options.length - 1;
+          k += variant1.options.length;
         }
         setDiscount(newDiscount);
       }
