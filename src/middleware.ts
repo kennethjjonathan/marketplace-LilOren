@@ -14,12 +14,17 @@ export async function middleware(request: NextRequest) {
       const role = await roleFetcher(cookieList.toString());
       if (role !== 'unauthorized') {
         return NextResponse.redirect(new URL('/', request.url));
+      } else {
+        return;
       }
+    } else {
+      return;
     }
   }
   if (
     request.nextUrl.pathname.startsWith('/user') ||
-    request.nextUrl.pathname.startsWith('/wallet')
+    request.nextUrl.pathname.startsWith('/wallet') ||
+    request.nextUrl.pathname.startsWith('/seller/onboarding')
   ) {
     if (!cookieList.has('refresh_token')) {
       return NextResponse.redirect(new URL('/signin', request.url));
@@ -27,6 +32,8 @@ export async function middleware(request: NextRequest) {
     const role = await roleFetcher(cookieList.toString());
     if (role === 'unauthorized') {
       return NextResponse.redirect(new URL('/', request.url));
+    } else {
+      return;
     }
   }
   if (request.nextUrl.pathname.startsWith('/seller')) {
@@ -36,6 +43,8 @@ export async function middleware(request: NextRequest) {
     const role = await roleFetcher(cookieList.toString());
     if (role !== 'seller') {
       return NextResponse.redirect(new URL('/', request.url));
+    } else {
+      return;
     }
   }
 }
