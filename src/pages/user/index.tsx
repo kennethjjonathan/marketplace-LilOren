@@ -1,35 +1,37 @@
-import React, {
+import AsyncButton from '@/components/AsyncButton/AsyncButton';
+import BackButton from '@/components/BackButton/BackButton';
+import UserPresentation from '@/components/UserPresentation/UserPresentation';
+import UserSettingsLayout from '@/components/UserSettingsLayout/UserSettingsLayout';
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import CONSTANTS from '@/constants/constants';
+import axiosInstance from '@/lib/axiosInstance';
+import imageUploadder from '@/lib/imageUploadder';
+import { useUser } from '@/store/user/useUser';
+import { Utils } from '@/utils';
+import axios from 'axios';
+import { ArrowLeft, Heart, KeyRound, Store } from 'lucide-react';
+import Head from 'next/head';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/router';
+import {
   ChangeEvent,
   ReactElement,
   ReactNode,
   useEffect,
   useState,
 } from 'react';
-import axios from 'axios';
-import { ArrowLeft, Heart, KeyRound, Store } from 'lucide-react';
-import { useRouter } from 'next/router';
-import Head from 'next/head';
-import Image from 'next/image';
-import { useSearchParams } from 'next/navigation';
+import { ToastContent } from 'react-toastify';
 import { NextPageWithLayout } from '../_app';
-import { Button } from '@/components/ui/button';
-import BackButton from '@/components/BackButton/BackButton';
-import UserSettingsLayout from '@/components/UserSettingsLayout/UserSettingsLayout';
-import UserPresentation from '@/components/UserPresentation/UserPresentation';
-import { useUser } from '@/store/user/useUser';
-import AsyncButton from '@/components/AsyncButton/AsyncButton';
 import styles from './User.module.scss';
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogTitle,
-  AlertDialogHeader,
-} from '@/components/ui/alert-dialog';
-import { Utils } from '@/utils';
-import axiosInstance from '@/lib/axiosInstance';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 
 const User: NextPageWithLayout = () => {
   const router = useRouter();
@@ -98,7 +100,7 @@ const User: NextPageWithLayout = () => {
       top: 0,
       behavior: 'smooth',
     });
-  }, [status]);
+  }, [fetchUserDetails, status]);
 
   const [isChangePassOpen, setIsChangePassOpen] = useState<boolean>(false);
   const [isChangeOpenLoading, setIsChangeOpenLoading] =
@@ -141,16 +143,16 @@ const User: NextPageWithLayout = () => {
       );
       return;
     }
-    setIsChangeOpenLoading(true);
+    setIsChangePassLoading(true);
     try {
       const reqBody = { verify_code: otp, password: newPassword };
       await axiosInstance.post('/auth/change-password', reqBody);
       Utils.notify('Succesfully changed password', 'success', 'colored');
-      setIsChangePassOpen(false);
+      handleCloseChangePass();
     } catch (error) {
       Utils.handleGeneralError(error);
     } finally {
-      setIsChangeOpenLoading(false);
+      setIsChangePassLoading(true);
     }
   }
 
@@ -225,6 +227,7 @@ const User: NextPageWithLayout = () => {
         {/* <div className>Photo</> */}
       </div>
       <div className="relative">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={`${
             user_details.profile_picture_url
