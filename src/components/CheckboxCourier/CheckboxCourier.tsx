@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { Dispatch, useEffect, useState } from 'react';
+import Head from 'next/head';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ControllerRenderProps, useForm } from 'react-hook-form';
+import { ToastContent } from 'react-toastify';
 import * as z from 'zod';
-
+import axiosInstance from '@/lib/axiosInstance';
+import { Utils } from '@/utils';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -15,14 +19,13 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import axiosInstance from '@/lib/axiosInstance';
 import CONSTANTS from '@/constants/constants';
-import { Utils } from '@/utils';
-import { ToastContent } from 'react-toastify';
-import AsyncButton from '../AsyncButton/AsyncButton';
-import Head from 'next/head';
-import DotsLoading from '@/components/DotsLoading/DotsLoading';
-import { useRouter } from 'next/navigation';
+import AsyncButton from '@/components/AsyncButton/AsyncButton';
+import {
+  IMerchantCourier,
+  IPutCourier,
+  TypePutCourier,
+} from '@/interface/merchantCourier';
 
 const SHIPMENT_SERVICES = 'Shipment Services';
 const CHOOSE_SERVICE_DESCRIPTION =
@@ -30,41 +33,29 @@ const CHOOSE_SERVICE_DESCRIPTION =
 
 const FormSchema = z.object({
   items: z.array(z.string()).refine((value) => value.some((item) => item), {
-    message: 'You have to select at least one item.',
+    message: "You haven't change selected courier in your shop",
   }),
 });
 
-export interface IMerchantCourier {
-  id: number;
-  name: string;
-  image_url: string;
-  description: string;
-  is_available: boolean;
+interface CheckboxCourierProps {
+  merchantCourier: IMerchantCourier[];
+  currentCourier: string[];
+  sellerCourier: IPutCourier;
+  setSellerCourier: Dispatch<any>;
+  setCurrentCourier: Dispatch<React.SetStateAction<string[]>>;
+  getListCourier: () => void;
 }
 
-export interface IPutCourier {
-  '1': boolean;
-  '2': boolean;
-  '3': boolean;
-}
-
-type TypePutCourier = '1' | '2' | '3';
-
-const CheckboxCourier = () => {
-  const [sellerCourier, setSellerCourier] = useState<IPutCourier>({
-    '1': false,
-    '2': false,
-    '3': false,
-  });
-
-  const [merchantCourier, setMerchantCourier] = useState<IMerchantCourier[]>(
-    [],
-  );
-
-  const [currentCourier, setCurrentCourier] = useState<string[]>([]);
+const CheckboxCourier = ({
+  merchantCourier,
+  currentCourier,
+  sellerCourier,
+  setSellerCourier,
+  setCurrentCourier,
+  getListCourier,
+}: CheckboxCourierProps) => {
+  const router = useRouter();
   const [loadingChangeCourier, setLoadingChangeCourier] =
-    useState<boolean>(false);
-  const [loadingFetchCourier, setLoadingFetchCourier] =
     useState<boolean>(false);
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -74,45 +65,11 @@ const CheckboxCourier = () => {
     },
   });
 
-  const getListCourier = async () => {
-    setLoadingFetchCourier(true);
-    try {
-      const response = await axiosInstance({
-        method: 'GET',
-        url: `${CONSTANTS.BASEURL}/merchant/courier`,
-      });
-      const updatedCurrentCourier: string[] = [];
-      const updatedSellerCourier = { ...sellerCourier };
-      response.data.data.map((courier: IMerchantCourier, index: number) => {
-        if (courier.is_available && courier.id === 1) {
-          updatedSellerCourier['1'] = true;
-          updatedCurrentCourier.push(courier.id.toString());
-        }
-
-        if (courier.is_available && courier.id === 2) {
-          updatedSellerCourier['2'] = true;
-          updatedCurrentCourier.push(courier.id.toString());
-        }
-        if (courier.is_available && courier.id === 3) {
-          updatedSellerCourier['3'] = true;
-          updatedCurrentCourier.push(courier.id.toString());
-        }
-      });
-      setSellerCourier(updatedSellerCourier);
-      setCurrentCourier(updatedCurrentCourier);
-      setMerchantCourier(response.data.data);
-    } catch (error: any) {
-      console.log(error);
-    }
-    setLoadingFetchCourier(false);
-  };
-
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     const updatedSellerCourier = { ...sellerCourier };
     data.items.forEach((val: string) => {
       updatedSellerCourier[val as TypePutCourier] = true;
     });
-    setSellerCourier(updatedSellerCourier);
     setLoadingChangeCourier(true);
     try {
       const response = await axiosInstance({
@@ -135,8 +92,10 @@ const CheckboxCourier = () => {
       };
       Utils.notify(responseAPI.message as ToastContent, 'error', 'light');
       return responseAPI;
+    } finally {
+      setLoadingChangeCourier(false);
+      router.push('/seller/portal/settings/shipment');
     }
-    setLoadingChangeCourier(false);
   };
 
   const handleCheck = (
@@ -148,8 +107,12 @@ const CheckboxCourier = () => {
     >,
     id: string,
   ) => {
-    setCurrentCourier([...currentCourier, id]);
-    setSellerCourier({ ...sellerCourier, [id]: true });
+    const baseId = (parseInt(id) % 3).toString();
+    setCurrentCourier([...currentCourier, baseId === '0' ? '3' : baseId]);
+    setSellerCourier({
+      ...sellerCourier,
+      [baseId === '0' ? '3' : baseId]: true,
+    });
     field.onChange([...field.value, id]);
   };
 
@@ -162,9 +125,17 @@ const CheckboxCourier = () => {
     >,
     id: string,
   ) => {
-    setSellerCourier({ ...sellerCourier, [id]: false });
-    setCurrentCourier(currentCourier.filter((val) => val !== id));
-    field.onChange(field.value?.filter((value) => value !== id));
+    const baseId = (parseInt(id) % 3).toString();
+    setSellerCourier({
+      ...sellerCourier,
+      [baseId === '0' ? '3' : baseId]: false,
+    });
+    setCurrentCourier(
+      currentCourier.filter((val) => val !== (baseId === '0' ? '3' : baseId)),
+    );
+    field.onChange(
+      field.value?.filter((value) => value !== (baseId === '0' ? '3' : baseId)),
+    );
   };
 
   useEffect(() => {
@@ -189,99 +160,101 @@ const CheckboxCourier = () => {
         />
         <meta name="og:type" content="website" />
       </Head>
-      {loadingFetchCourier ? (
-        <div className="w-full h-[calc(100vh-30vh)]">
-          <DotsLoading />
-        </div>
-      ) : (
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <FormField
-              control={form.control}
-              name="items"
-              render={() => (
-                <FormItem>
-                  <div className="mb-4">
-                    <FormLabel className="text-base">
-                      {SHIPMENT_SERVICES}
-                    </FormLabel>
-                    <FormDescription>
-                      {CHOOSE_SERVICE_DESCRIPTION}
-                    </FormDescription>
-                  </div>
-                  {merchantCourier.map((item) => (
-                    <FormField
-                      key={item.id}
-                      control={form.control}
-                      name="items"
-                      render={({ field }) => {
-                        return (
-                          <FormItem
-                            key={item.id}
-                            className="flex flex-row items-start space-x-3 space-y-0 border-[1px] rounded-lg p-4 shadow-sm"
-                          >
-                            <FormControl>
-                              <Checkbox
-                                checked={
-                                  field.value?.includes(item.id.toString()) ||
-                                  currentCourier.includes(item.id.toString())
-                                }
-                                onCheckedChange={(checked) => {
-                                  return checked
-                                    ? handleCheck(field, item.id.toString())
-                                    : handleUnCheck(field, item.id.toString());
-                                }}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <FormField
+            control={form.control}
+            name="items"
+            render={() => (
+              <FormItem>
+                <div className="mb-4">
+                  <FormLabel className="text-base">
+                    {SHIPMENT_SERVICES}
+                  </FormLabel>
+                  <FormDescription>
+                    {CHOOSE_SERVICE_DESCRIPTION}
+                  </FormDescription>
+                </div>
+                {merchantCourier.map((item) => (
+                  <FormField
+                    key={item.id}
+                    control={form.control}
+                    name="items"
+                    render={({ field }) => {
+                      return (
+                        <FormItem
+                          key={item.id}
+                          className="flex flex-row items-start space-x-3 space-y-0 border-[1px] rounded-lg p-4 shadow-sm"
+                        >
+                          <FormControl>
+                            <Checkbox
+                              checked={
+                                field.value?.includes(
+                                  item.id % 3 === 0
+                                    ? '3'
+                                    : (item.id % 3).toString(),
+                                ) ||
+                                currentCourier.includes(
+                                  item.id % 3 === 0
+                                    ? '3'
+                                    : (item.id % 3).toString(),
+                                )
+                              }
+                              onCheckedChange={(checked) => {
+                                return checked
+                                  ? handleCheck(field, item.id.toString())
+                                  : handleUnCheck(field, item.id.toString());
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="font-bold flex flex-col gap-5 w-full">
+                            <div className="flex flex-row items-center justify-start gap-4">
+                              <Image
+                                src={item.image_url}
+                                width={500}
+                                height={500}
+                                alt={'courier'}
+                                className="w-[50px]"
                               />
-                            </FormControl>
-                            <FormLabel className="font-bold flex flex-col gap-5 w-full">
-                              <div className="flex flex-row items-center justify-start gap-4">
-                                <Image
-                                  src={item.image_url}
-                                  width={500}
-                                  height={500}
-                                  alt={'courier'}
-                                  className="w-[50px]"
-                                />
-                                <div className="flex flex-col">
-                                  <p>{item.name}</p>
-                                  <p className="font-normal text-[12px] text-muted-foreground">
-                                    {'Regular'}
-                                  </p>
-                                </div>
-                              </div>
-                              <>
-                                <div className="border-t-[0.5px]"></div>
-                                <p className="font-light text-muted-foreground text-[12px] sm:text-[14px] leading-normal">
-                                  {item.description}
+                              <div className="flex flex-col">
+                                <p>{item.name}</p>
+                                <p className="font-normal text-[12px] text-muted-foreground">
+                                  {'Regular'}
                                 </p>
-                              </>
-                            </FormLabel>
-                          </FormItem>
-                        );
-                      }}
-                    />
-                  ))}
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {loadingChangeCourier ? (
-              <div className="flex items-end w-full justify-end">
-                <AsyncButton isLoading={true}>Loading</AsyncButton>
-              </div>
-            ) : (
-              <div className="flex items-end w-full justify-end">
-                <Button
-                  className="w-full md:w-[100px] text-right right-0"
-                  type="submit"
-                >
-                  Submit
-                </Button>
-              </div>
+                              </div>
+                            </div>
+                            <>
+                              <div className="border-t-[0.5px]"></div>
+                              <p className="font-light text-muted-foreground text-[12px] sm:text-[14px] leading-normal">
+                                {item.description}
+                              </p>
+                            </>
+                          </FormLabel>
+                        </FormItem>
+                      );
+                    }}
+                  />
+                ))}
+                <FormMessage />
+              </FormItem>
             )}
-          </form>
-        </Form>
-      )}
+          />
+          {loadingChangeCourier ? (
+            <div className="flex items-end w-full justify-end">
+              <AsyncButton isLoading={true}>Loading</AsyncButton>
+            </div>
+          ) : (
+            <div className="flex items-end w-full justify-end">
+              <Button
+                className="w-full md:w-[100px] text-right right-0"
+                type="submit"
+              >
+                Submit
+              </Button>
+            </div>
+          )}
+        </form>
+      </Form>
     </>
   );
 };
