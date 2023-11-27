@@ -104,12 +104,26 @@ const User: NextPageWithLayout = () => {
   }, [fetchUserDetails, status]);
 
   const [isChangePassOpen, setIsChangePassOpen] = useState<boolean>(false);
+  const [isChangeWishlistLoading, setIsChangeWishlistLoading] =
+    useState<boolean>(false);
+  const [isChangeAddressLoading, setIsChangeAddressLoading] =
+    useState<boolean>(false);
   const [isChangeOpenLoading, setIsChangeOpenLoading] =
     useState<boolean>(false);
   const [otp, setOtp] = useState<string>('');
   const [newPassword, setNewPassword] = useState<string>('');
   const [isChangePassLoading, setIsChangePassLoading] =
     useState<boolean>(false);
+
+  const handleOpenAddress = () => {
+    setIsChangeAddressLoading(true);
+    router.push('/user/address?status=Address');
+  };
+
+  const handleOpenWishlit = () => {
+    setIsChangeWishlistLoading(true);
+    router.push('/user/wishlist');
+  };
 
   async function handleOpenChangePassword() {
     setIsChangeOpenLoading(true);
@@ -190,30 +204,24 @@ const User: NextPageWithLayout = () => {
                 title={'My Address'}
                 icon={<Store />}
                 description={'Set the grocery delivery address'}
-                onClick={() => router.push('/user/address?status=Address')}
+                onClick={() => handleOpenAddress()}
+                loading={isChangeAddressLoading}
               />
               <UserSetting
                 title={'My Wishlist'}
                 icon={<Heart />}
                 description={''}
-                onClick={() => router.push('/user/wishlist')}
+                onClick={() => handleOpenWishlit()}
+                loading={isChangeWishlistLoading}
               />
               <UserSetting
-                title={'Reset Password'}
+                title={'Change Password'}
                 icon={<KeyRound />}
-                description={'Reset your password'}
-                onClick={() => router.push('/forgot-password')}
+                description={'Change your password'}
+                onClick={handleOpenChangePassword}
+                loading={isChangeOpenLoading}
               />
             </ul>
-          </div>
-          <div className="pt-[17px] flex justify-center items-center w-full">
-            <AsyncButton
-              onClick={handleOpenChangePassword}
-              isLoading={isChangeOpenLoading}
-              variant={'outline'}
-            >
-              Change Password
-            </AsyncButton>
           </div>
           <div className="lilOren__user__logout w-full flex justify-center items-center pt-[17px] lg:hidden">
             {loadingLogout ? (
@@ -225,10 +233,8 @@ const User: NextPageWithLayout = () => {
             )}
           </div>
         </div>
-        {/* <div className>Photo</> */}
       </div>
-      <div className="relative">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
+      <div className="relative hidden lg:block">
         <img
           src={`${
             user_details.profile_picture_url
@@ -344,6 +350,7 @@ interface UserSettingProps {
   title: string;
   description: string;
   icon: ReactNode;
+  loading?: boolean;
 }
 
 const UserSetting = ({
@@ -351,6 +358,7 @@ const UserSetting = ({
   title,
   description,
   icon,
+  loading,
 }: UserSettingProps) => {
   return (
     <li
@@ -363,6 +371,11 @@ const UserSetting = ({
         <p className={styles.list__item__title}>{title}</p>
         <p className={styles.list__item__desc}>{description}</p>
       </div>
+      {loading && (
+        <div
+          className={`mr-2 h-4 w-4 animate-spin border-4 border-b-primary rounded-full`}
+        />
+      )}
     </li>
   );
 };
