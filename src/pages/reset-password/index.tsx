@@ -5,6 +5,7 @@ import { redisClient } from '@/lib/redis';
 import { authClient } from '@/service/auth/AuthClient';
 import { Utils } from '@/utils';
 import { GetServerSideProps } from 'next';
+import Head from 'next/head';
 import Image from 'next/image';
 import { FormEventHandler, PropsWithoutRef, useState } from 'react';
 
@@ -51,65 +52,70 @@ function SignInPage({ code: reset_code }: PropsWithoutRef<Props>) {
   };
 
   return (
-    <section className="bg-gradient-to-t from-[#FF7337] to-[#F99116] flex flex-col justify-center items-center gap-5 sm:min-h-screen sm:py-6 xl:flex-row xl:justify-between xl:gap-10 xl:px-40 xl:items-start xl:py-20">
-      <div className="hidden sm:flex flex-col items-center justify-center xl:justify-start xl:min-h-full xl:flex-1 xl:gap-40">
-        <h1 className="font-bold text-3xl text-primary-foreground lg:text-4xl xl:w-full xl:text-left">
-          LilOren
-        </h1>
-        <div className="hidden relative aspect-square w-[470px] xl:block">
-          <Image
-            src={withBasePath('Logo_.svg')}
-            alt="Google's logo"
-            fill
-            sizes="40vw"
-          />
-        </div>
-      </div>
-      <div className="container pb-16 pt-6 flex flex-col items-center justify-center gap-5 bg-primary-foreground sm:max-w-lg sm:pb-6 sm:rounded-lg xl:my-auto">
-        <h1 className="font-bold text-2xl text-primary sm:hidden">LilOren</h1>
-        <div className="rounded-lg w-full flex flex-col items-baseline justify-center">
-          <h1 className="font-light text-xl w-full text-left lg:text-2xl">
-            Reset Password
+    <>
+      <Head>
+        <title>Reset Password - LilOren</title>
+      </Head>
+      <section className="bg-gradient-to-t from-[#FF7337] to-[#F99116] flex flex-col justify-center items-center gap-5 sm:min-h-screen sm:py-6 xl:flex-row xl:justify-between xl:gap-10 xl:px-40 xl:items-start xl:py-20">
+        <div className="hidden sm:flex flex-col items-center justify-center xl:justify-start xl:min-h-full xl:flex-1 xl:gap-40">
+          <h1 className="font-bold text-3xl text-primary-foreground lg:text-4xl xl:w-full xl:text-left">
+            LilOren
           </h1>
-          <form
-            className="mt-5 flex flex-col gap-3 w-full"
-            onSubmit={handleSubmit}
-          >
-            <InputWithLabel
-              type="password"
-              label="Password"
-              id="password-input"
-              labelStyling="font-light"
-              value={password}
-              onChange={(ev) => setPassword(ev.target.value)}
-              disabled={loading}
-              isValid={!passwordValidation}
-              validation={passwordValidation}
-              required
+          <div className="hidden relative aspect-square w-[470px] xl:block">
+            <Image
+              src={withBasePath('Logo_.svg')}
+              alt="Google's logo"
+              fill
+              sizes="40vw"
             />
-            <InputWithLabel
-              type="password"
-              label="Password Confirmation"
-              id="password-confirmation-input"
-              labelStyling="font-light"
-              value={passwordConfirmation}
-              onChange={(ev) => setPasswordConfirmation(ev.target.value)}
-              disabled={loading}
-              isValid={!passwordConfirmationValidation}
-              validation={passwordConfirmationValidation}
-              required
-            />
-            <AsyncButton
-              className="text-sm lg:text-base"
-              type="submit"
-              disabled={loading}
-            >
-              Reset Password
-            </AsyncButton>
-          </form>
+          </div>
         </div>
-      </div>
-    </section>
+        <div className="container pb-16 pt-6 flex flex-col items-center justify-center gap-5 bg-primary-foreground sm:max-w-lg sm:pb-6 sm:rounded-lg xl:my-auto">
+          <h1 className="font-bold text-2xl text-primary sm:hidden">LilOren</h1>
+          <div className="rounded-lg w-full flex flex-col items-baseline justify-center">
+            <h1 className="font-light text-xl w-full text-left lg:text-2xl">
+              Reset Password
+            </h1>
+            <form
+              className="mt-5 flex flex-col gap-3 w-full"
+              onSubmit={handleSubmit}
+            >
+              <InputWithLabel
+                type="password"
+                label="Password"
+                id="password-input"
+                labelStyling="font-light"
+                value={password}
+                onChange={(ev) => setPassword(ev.target.value)}
+                disabled={loading}
+                isValid={!passwordValidation}
+                validation={passwordValidation}
+                required
+              />
+              <InputWithLabel
+                type="password"
+                label="Password Confirmation"
+                id="password-confirmation-input"
+                labelStyling="font-light"
+                value={passwordConfirmation}
+                onChange={(ev) => setPasswordConfirmation(ev.target.value)}
+                disabled={loading}
+                isValid={!passwordConfirmationValidation}
+                validation={passwordConfirmationValidation}
+                required
+              />
+              <AsyncButton
+                className="text-sm lg:text-base"
+                type="submit"
+                disabled={loading}
+              >
+                Reset Password
+              </AsyncButton>
+            </form>
+          </div>
+        </div>
+      </section>
+    </>
   );
 }
 

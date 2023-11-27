@@ -22,7 +22,6 @@ const ProductDiscountPage = () => {
         const response = await axiosInstance(
           `/merchant/product/discount/${router.query.productCode}`,
         );
-        console.log(response.data.data);
         setProductDiscount(response.data.data);
       } catch (error) {
         Utils.handleGeneralError(error);
