@@ -46,6 +46,7 @@ const ProductDiscountForm = ({
         productDiscount.variant_group.variant_group_1.name !== 'default' &&
         productDiscount.variant_group.variant_group_2.name === 'default'
       ) {
+        setIsVariantActive(true);
         const newVariants: IProductVariant[] = [];
         const newVariant: IProductVariant = {
           variant_name: productDiscount.variant_group.variant_group_1.name,
@@ -63,6 +64,7 @@ const ProductDiscountForm = ({
         });
         setDiscount(newDiscount);
       } else {
+        setIsVariantActive(true);
         const newVariants: IProductVariant[] = [];
         const variant1: IProductVariant = {
           variant_name: productDiscount.variant_group.variant_group_1.name,
@@ -172,7 +174,7 @@ const ProductDiscountForm = ({
         variant_type2: 'default',
         discount: noVarDiscount,
       };
-      return payload;
+      return { variants: [payload] };
     }
 
     if (variants.length === 1) {
@@ -195,7 +197,7 @@ const ProductDiscountForm = ({
           variantsPayload.push(newVariant);
         }
       });
-      return variantsPayload;
+      return { variants: variantsPayload };
     }
 
     if (variants.length === 2) {
@@ -218,7 +220,7 @@ const ProductDiscountForm = ({
           variantsPayload.push(newVariant);
         }
       }
-      return variantsPayload;
+      return { variants: variantsPayload };
     }
   }
 
