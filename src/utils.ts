@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { Theme, ToastContent, TypeOptions, toast } from 'react-toastify';
 import CONSTANTS from './constants/constants';
 import { ICheckedCart } from './store/cart/useCart';
@@ -110,6 +111,15 @@ export class Utils {
     ];
     const year = d.getFullYear();
     return `${day} ${months[month]} ${year}`;
+  };
+
+  static formatDateString = (
+    dateStr: string,
+    layoutFrom: string,
+    layoutTo: string,
+  ) => {
+    const ddate = dayjs(dateStr, layoutFrom);
+    return ddate.format(layoutTo);
   };
 
   static getDDMonthYYYYTime = (d: string) => {
