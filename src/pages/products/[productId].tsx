@@ -39,7 +39,6 @@ const ProductPage = ({
   isVariant,
   productCode,
 }: ProductPageProps) => {
-  console.log(productPage);
   const user_details = useUser.use.user_details();
   const fetchUserDetails = useUser.use.fetchUserDetails();
   const router = useRouter();
@@ -296,13 +295,13 @@ const ProductPage = ({
                   )}
                   {variant === undefined && highestDiscount !== 0 ? (
                     <div className="flex items-center gap-2 mt-1 text-base sm:text-lg lg:text-xl">
-                      <p className="px-1.5 py-0.5 bg-destructive text-white font-semibold rounded-md">{`%${highestDiscount}`}</p>
+                      <p className="px-1.5 py-0.5 bg-destructive text-white font-semibold rounded-md">{`${highestDiscount}%`}</p>
                     </div>
                   ) : variant === undefined &&
                     highestDiscount === 0 ? null : variant !== undefined &&
                     variant.discount !== 0 ? (
                     <div className="flex items-center gap-2 mt-1 text-base sm:text-lg lg:text-xl">
-                      <p className="px-1.5 py-0.5 bg-destructive text-white font-semibold rounded-md">{`%${variant.discount}`}</p>
+                      <p className="px-1.5 py-0.5 bg-destructive text-white font-semibold rounded-md">{`${variant.discount}%`}</p>
                       <p className="text-gray-400 font-semibold line-through">
                         {Utils.convertPrice(variant.price)}
                       </p>
@@ -363,7 +362,7 @@ const ProductPage = ({
         isVariant={isVariant}
         isAddLoading={isAddLoading}
         product_code={productCode}
-        is_in_wishlist={true}
+        is_in_wishlist={productPage.is_in_wishlist}
       />
     </>
   );
@@ -396,6 +395,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     } else {
       response = await fetch(
         `${CONSTANTS.BASEURL}/products/${params!.productId}`,
+        { credentials: 'include' },
       );
     }
     if (!response.ok) throw new Error(response.statusText);
