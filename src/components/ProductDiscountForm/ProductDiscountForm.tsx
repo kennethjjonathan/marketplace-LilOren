@@ -214,7 +214,7 @@ const ProductDiscountForm = ({
             discount: number;
           } = {
             variant_type1: variants[0].options[i]!,
-            variant_type2: variants[0].options[i]!,
+            variant_type2: variants[1].options[j]!,
             discount: discount[i][j] as number,
           };
           variantsPayload.push(newVariant);
@@ -227,7 +227,6 @@ const ProductDiscountForm = ({
   async function postFormBody() {
     const reqBody = createPayloadBody();
     if (reqBody === undefined) return;
-    console.log(reqBody);
     setIsPostLoading(true);
     try {
       await axiosInstance.put(

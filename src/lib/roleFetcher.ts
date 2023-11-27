@@ -2,6 +2,7 @@ import CONSTANTS from '@/constants/constants';
 
 const refreshAccessToken = async (cookie: string) => {
   try {
+    console.log('refresh');
     const response = await fetch(`${CONSTANTS.BASEURL}/auth/refresh-token`, {
       method: 'POST',
       credentials: 'include',
@@ -15,6 +16,7 @@ const refreshAccessToken = async (cookie: string) => {
 };
 
 async function roleFetcher(cookie: string) {
+  console.log('test');
   const response = await fetch(`${CONSTANTS.BASEURL}/auth/user`, {
     headers: { Cookie: cookie },
     credentials: 'include',
@@ -46,13 +48,15 @@ async function roleFetcher(cookie: string) {
             return 'seller';
           }
         }
+      } else {
+        return 'unauthorized';
       }
-      return 'unauthorized';
     } catch (error) {
       return 'unauthorized';
     }
+  } else {
+    return 'unauthorized';
   }
-  return 'unauthorized';
 }
 
 export default roleFetcher;

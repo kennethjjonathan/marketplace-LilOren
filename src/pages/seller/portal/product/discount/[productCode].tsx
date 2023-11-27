@@ -6,6 +6,7 @@ import axiosInstance from '@/lib/axiosInstance';
 import SellerLayout from '@/components/SellerLayout/SellerLayout';
 import Head from 'next/head';
 import ProductDiscountForm from '@/components/ProductDiscountForm/ProductDiscountForm';
+import DotsLoading from '@/components/DotsLoading/DotsLoading';
 
 const ProductDiscountPage = () => {
   const router = useRouter();
@@ -38,10 +39,14 @@ const ProductDiscountPage = () => {
         <title>Product Discount - LilOren</title>
       </Head>
       <section className="bg-white rounded-xl p-8 shadow-lg w-[70vw] flex flex-col gap-8">
-        <ProductDiscountForm
-          productDiscount={productDiscount}
-          productCode={router.query.productCode as string}
-        />
+        {isLoading ? (
+          <DotsLoading />
+        ) : (
+          <ProductDiscountForm
+            productDiscount={productDiscount}
+            productCode={router.query.productCode as string}
+          />
+        )}
       </section>
     </>
   );

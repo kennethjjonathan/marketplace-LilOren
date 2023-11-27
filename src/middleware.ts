@@ -36,7 +36,7 @@ export async function middleware(request: NextRequest) {
       return;
     }
   }
-  if (request.nextUrl.pathname.startsWith('/seller')) {
+  if (request.nextUrl.pathname.startsWith('/seller/portal')) {
     if (!cookieList.has('refresh_token')) {
       return NextResponse.redirect(new URL('/signin', request.url));
     }
