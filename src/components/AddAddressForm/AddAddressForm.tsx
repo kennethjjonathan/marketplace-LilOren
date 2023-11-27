@@ -113,6 +113,42 @@ const AddAddressForm = ({ setShowAddAddressModal }: AddAddressFormProps) => {
     key: keyof typeof addAddressData,
     pattern: RegExp,
   ): boolean => {
+    if (key === 'receiver_phone_number') {
+      if (
+        !addAddressData.receiver_phone_number.startsWith('0') ||
+        addAddressData.receiver_phone_number.length < 9 ||
+        addAddressData.receiver_phone_number.length > 15
+      ) {
+        setIsDataValid({ ...isDataValid, ['receiver_phone_number']: false });
+        return false;
+      } else {
+        setIsDataValid({ ...isDataValid, ['receiver_phone_number']: true });
+        return true;
+      }
+    }
+
+    if (key === 'postal_code') {
+      if (addAddressData.postal_code.length !== 5) {
+        setIsDataValid({ ...isDataValid, ['postal_code']: false });
+        return false;
+      }
+    }
+
+    if (
+      key === 'receiver_name' ||
+      key === 'sub_district' ||
+      key === 'sub_sub_district'
+    ) {
+      if (addAddressData[key].replace(/\s/g, '').length === 0) {
+        setIsDataValid({ ...isDataValid, [key]: false });
+        return false;
+      }
+      if (addAddressData[key].startsWith(' ')) {
+        setIsDataValid({ ...isDataValid, [key]: false });
+        return false;
+      }
+    }
+
     const dataRegex = pattern;
     if (!dataRegex.test(addAddressData[key].toString())) {
       setIsDataValid({ ...isDataValid, [key]: false });
@@ -163,7 +199,7 @@ const AddAddressForm = ({ setShowAddAddressModal }: AddAddressFormProps) => {
           onChange={(e) => handleChange(e, 'receiver_name')}
           isValid={isDataValid.receiver_name}
           onBlur={() => validateData('receiver_name', /^[a-zA-Z\s]{3,20}$/)}
-          validation="Contains only alphabet with 3-20 chars"
+          validation="Contains only alphabet with 3-20 chars, no whitespace at the beginning"
           required
         />
         <InputWithLabel
@@ -178,7 +214,7 @@ const AddAddressForm = ({ setShowAddAddressModal }: AddAddressFormProps) => {
           isValid={isDataValid.receiver_phone_number}
           onKeyDown={(e) => handleNumber(e)}
           onBlur={() => validateData('receiver_phone_number', /^\+?\d{9,15}$/)}
-          validation="Min 9 numbers"
+          validation="Phone Number should starts with 0, with min 9 numbers and max 15 numbers"
           required
         />
       </div>
@@ -249,12 +285,12 @@ const AddAddressForm = ({ setShowAddAddressModal }: AddAddressFormProps) => {
                 id="sub-district"
                 labelStyling="font-light"
                 value={addAddressData.sub_district}
-                minLength={1}
+                minLength={3}
                 maxLength={50}
                 onChange={(e) => handleChange(e, 'sub_district')}
                 isValid={isDataValid.sub_district}
                 onBlur={() => validateData('sub_district', /^[a-zA-Z\s]+$/)}
-                validation="Must not be a blank"
+                validation="Contains only alphabet with 3-50 chars, no whitespace at the beginning"
                 required
               />
               <InputWithLabel
@@ -263,12 +299,12 @@ const AddAddressForm = ({ setShowAddAddressModal }: AddAddressFormProps) => {
                 id="sub-from-sub-district"
                 labelStyling="font-light"
                 value={addAddressData.sub_sub_district}
-                minLength={1}
+                minLength={3}
                 maxLength={50}
                 onChange={(e) => handleChange(e, 'sub_sub_district')}
                 isValid={isDataValid.sub_sub_district}
                 onBlur={() => validateData('sub_sub_district', /^[a-zA-Z\s]+$/)}
-                validation="Must not be a blank"
+                validation="Contains only alphabet with 3-50 chars, no whitespace at the beginning"
                 required
               />
             </div>
@@ -285,7 +321,7 @@ const AddAddressForm = ({ setShowAddAddressModal }: AddAddressFormProps) => {
                 onKeyDown={(e) => handleNumber(e)}
                 isValid={isDataValid.postal_code}
                 onBlur={() => validateData('postal_code', /^\+?\d{5,15}$/)}
-                validation="Please enter a valid zip code"
+                validation="Zip code only consist of 5 digits"
                 required
               />
               <TextAreaWithLabel
