@@ -1,15 +1,3 @@
-import { IOrderItem } from '@/interface/orderDetailPage';
-import React, { Dispatch, SetStateAction, useState } from 'react';
-import Divider from '../Divider/Divider';
-import BuyerOrderDetailCardItem from '../BuyerOrderDetailCardItem/BuyerOrderDetailCardItem';
-import { Utils } from '@/utils';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { Button } from '../ui/button';
-import axiosInstance from '@/lib/axiosInstance';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -17,7 +5,19 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { IOrderItem } from '@/interface/orderDetailPage';
+import axiosInstance from '@/lib/axiosInstance';
+import { Utils } from '@/utils';
+import { Dispatch, SetStateAction, useState } from 'react';
+import BuyerOrderDetailCardItem from '../BuyerOrderDetailCardItem/BuyerOrderDetailCardItem';
+import Divider from '../Divider/Divider';
 import ReviewForm from '../ReviewForm/ReviewForm';
+import { Button } from '../ui/button';
 
 interface BuyerOrderDetailCardProps {
   orderItem: IOrderItem;
@@ -89,7 +89,11 @@ const BuyerOrderDetailCard = ({
           </p>
           <div className="flex items-center gap-2 justify-between w-fit max-w-full">
             <p className="text-sm md:text-base truncate text-gray-500">
-              {`Estimated arrival: ${Utils.getDate(orderItem.eta)}`}
+              {`Estimated arrival: ${Utils.formatDateString(
+                orderItem.eta,
+                'YYYY-MM-DD',
+                'DD MMMM YYYY',
+              )}`}
             </p>
             <div className="bg-gray-300 aspect-square w-1 rounded-full md:w-1.5" />
             <Popover open={isAddDetailOpen} onOpenChange={setIsAddDetailOpen}>
