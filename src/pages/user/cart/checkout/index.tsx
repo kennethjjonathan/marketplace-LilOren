@@ -304,6 +304,41 @@ const CheckoutPage: NextPageWithLayout = () => {
     handleChangeAddress();
   }, [chosenAddress]);
 
+  if (allAddress === undefined || allAddress.length === 0) {
+    return (
+      <>
+        <Head>
+          <title>Checkout - LilOren</title>
+          <meta
+            data-rh="true"
+            name="viewport"
+            content="initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=no, width=device-width"
+          />
+          <meta data-rh="true" property="site_name" content="LilOren" />
+          <meta
+            data-rh="true"
+            name="description"
+            content="Mal online terbesar Indonesia, tempat berkumpulnya toko / online shop terpercaya se Indonesia. Jual beli online semakin aman dan nyaman di LilOren."
+          ></meta>
+          <link rel="icon" href={withBasePath('favicon.ico')} />
+        </Head>
+        <section className="flex flex-col justify-center items-center w-full bg-white pb-5">
+          <div className="w-full md:w-[75vw] lg:px-2 lg:pt-5 flex flex-col justify-center items-center gap-5">
+            <p className="w-full text-center mt-10 text-lg lg:text-xl px-2">
+              Seems like you don&apos;t have any registered address yet.
+            </p>
+            <Link
+              href="/user/address?status=Address"
+              className="text-primary underline text-base px-2"
+            >
+              Add address
+            </Link>
+          </div>
+        </section>
+      </>
+    );
+  }
+
   if (checkouts === undefined || checkouts.length === 0) {
     return (
       <>
