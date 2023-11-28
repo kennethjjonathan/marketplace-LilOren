@@ -4,6 +4,7 @@ import { MapPin } from 'lucide-react';
 import { ISeller } from '@/interface/productPage';
 import { Button } from '../ui/button';
 import { useRouter } from 'next/router';
+import FallbackImage from '../FallbackImage/FallbackImage';
 
 interface SellerProfileSnippetProps {
   seller: ISeller;
@@ -14,7 +15,7 @@ const SellerProfileSnippet = ({ seller }: SellerProfileSnippetProps) => {
   return (
     <div className="flex items-center gap-2 w-full sm:gap-5 px-2">
       <div className="rounded-full aspect-square relative w-1/5 overflow-hidden lg:w-2/12 xl:w-1/12 ">
-        <Image
+        <FallbackImage
           src={seller.profile_picture_url || '/blank-profile.webp'}
           alt="Shop's profile pict"
           fill

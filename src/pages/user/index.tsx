@@ -4,6 +4,7 @@ import AsyncButton from '@/components/AsyncButton/AsyncButton';
 import BackButton from '@/components/BackButton/BackButton';
 import UserPresentation from '@/components/UserPresentation/UserPresentation';
 import UserSettingsLayout from '@/components/UserSettingsLayout/UserSettingsLayout';
+import FallbackImage from '@/components/FallbackImage/FallbackImage';
 import EditEmailForm from '@/components/EditEmailForm/EditEmailForm';
 import {
   AlertDialog,
@@ -239,7 +240,7 @@ const User: NextPageWithLayout = () => {
       <div className="relative hidden lg:flex flex-row gap-4">
         <div className="flex flex-col w-fit">
           <div className="p-2 border-[1px] shadow-md rounded-lg w-fit m-3">
-            <img
+            <FallbackImage
               src={`${
                 user_details.profile_picture_url
                   ? user_details.profile_picture_url
@@ -247,7 +248,8 @@ const User: NextPageWithLayout = () => {
               }`}
               alt={'user__profpic'}
               className={'h-[200px] w-[200px]'}
-              loading="lazy"
+              width={200}
+              height={200}
             />
 
             <label

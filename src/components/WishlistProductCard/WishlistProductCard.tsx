@@ -6,6 +6,7 @@ import { Utils } from '@/utils';
 import styles from './WishlistProductCard.module.scss';
 import { Star } from 'lucide-react';
 import HeartWishlistButton from '../HeartWishlistButton/HeartWishlistButton';
+import FallbackImage from '@/components/FallbackImage/FallbackImage';
 
 interface WishlistProductCardProps {
   item: IWishlistItem;
@@ -33,7 +34,7 @@ const WishlistProductCard = ({
                   />
                   <Link href={`/products/${item.product_code}`}>
                     <div className={`img_container block w-[100%]`}></div>
-                    <Image
+                    <FallbackImage
                       src={item.thumbnail_url}
                       width={500}
                       height={500}

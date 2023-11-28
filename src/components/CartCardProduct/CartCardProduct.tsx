@@ -1,5 +1,4 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
-import Image from 'next/image';
 import { Checkbox } from '@/components/ui/checkbox';
 import TrashButton from '@/components/TrashButton/TrashButton';
 import CartQuantityController from '@/components/CartQuantityController/CartQuantityController';
@@ -8,6 +7,7 @@ import { useCart } from '@/store/cart/useCart';
 import { ICartCheckedRequest } from '@/service/cart/CartService';
 import { Utils } from '@/utils';
 import { ICart } from '@/pages/user/cart';
+import FallbackImage from '@/components/FallbackImage/FallbackImage';
 
 interface CartCardProductProps {
   product: IProduct;
@@ -67,7 +67,7 @@ const CartCardProduct = ({
           className="w-5 h-5"
         />
         <div className="relative aspect-square rounded-md overflow-hidden border-[1px] border-gray-100 w-[100px]">
-          <Image
+          <FallbackImage
             src={product.image_url}
             alt={`${product.product_name}'s view`}
             fill

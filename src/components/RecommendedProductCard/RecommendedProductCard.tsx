@@ -4,6 +4,7 @@ import { Star } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from './RecommendedProductCard.module.scss';
+import FallbackImage from '@/components/FallbackImage/FallbackImage';
 
 interface RecommendedProductCardProps {
   product: IRecommendedProduct;
@@ -20,7 +21,7 @@ const RecommendedProductCard = ({ product }: RecommendedProductCardProps) => {
                 <div className={styles.image}>
                   <Link href={`/products/${product.product_code}`}>
                     <div className={`img_container block w-[100%]`}></div>
-                    <Image
+                    <FallbackImage
                       src={product.image_url}
                       width={500}
                       height={500}

@@ -2,6 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import { ICheckoutItem } from '@/interface/checkoutPage';
 import { Utils } from '@/utils';
+import FallbackImage from '@/components/FallbackImage/FallbackImage';
 
 interface CheckoutProductListTabProps {
   item: ICheckoutItem;
@@ -12,7 +13,7 @@ const CheckoutProductListTab = ({ item }: CheckoutProductListTabProps) => {
     <div className="w-full py-2">
       <div className="flex mt-1 items-start gap-2">
         <div className="relative aspect-square rounded-md overflow-hidden border-[1px] border-gray-100 w-[100px]">
-          <Image
+          <FallbackImage
             src={item.image_url}
             alt={`${item.name}'s photo`}
             fill

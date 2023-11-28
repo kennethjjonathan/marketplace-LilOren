@@ -2,6 +2,7 @@ import { IOrderProductItem } from '@/interface/orderDetailPage';
 import Image from 'next/image';
 import React from 'react';
 import { Utils } from '@/utils';
+import FallbackImage from '@/components/FallbackImage/FallbackImage';
 
 interface BuyerOrderDetailCardItemProps {
   item: IOrderProductItem;
@@ -12,7 +13,7 @@ const BuyerOrderDetailCardItem = ({ item }: BuyerOrderDetailCardItemProps) => {
     <div className="flex items-start gap-2 py-2 justify-between">
       <div className="flex gap-2 items-start max-w-full">
         <div className="relative aspect-square rounded-md overflow-hidden border-[1px] border-gray-100 w-[80px] lg:w-[100px]">
-          <Image
+          <FallbackImage
             src={item.thumbnail_url}
             alt={item.product_name}
             fill

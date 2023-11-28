@@ -4,6 +4,7 @@ import CartLayout from '@/components/CartLayout/CartLayout';
 import { EMPTY_CART_TEXT } from '@/components/EmptyCart/constants';
 import Layout from '@/components/Layout/Layout';
 import SkeletonCart from '@/components/SkeletonCart/SkeletonCart';
+import FallbackImage from '@/components/FallbackImage/FallbackImage';
 import { IProduct } from '@/interface/product';
 import { useCart } from '@/store/cart/useCart';
 import Image from 'next/image';
@@ -79,7 +80,7 @@ const CartPage: NextPageWithLayout = () => {
               ) : (
                 <div className="flex flex-col justify-center items-center w-full">
                   <div className={`${styles.emptyCart}`}>
-                    <Image
+                    <FallbackImage
                       alt="empty-cart"
                       src={EmptyCartImage}
                       width={500}
