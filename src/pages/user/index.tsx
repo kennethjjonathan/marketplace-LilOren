@@ -15,6 +15,7 @@ import { ArrowLeft, Heart, KeyRound, Store, LogOut } from 'lucide-react';
 import { ToastContent } from 'react-toastify';
 import { NextPageWithLayout } from '../_app';
 import { withBasePath } from '@/lib/nextUtils';
+import { authClient } from '@/service/auth/AuthClient';
 import AsyncButton from '@/components/AsyncButton/AsyncButton';
 import BackButton from '@/components/BackButton/BackButton';
 import UserPresentation from '@/components/UserPresentation/UserPresentation';
@@ -44,6 +45,7 @@ import axiosInstance from '@/lib/axiosInstance';
 import imageUploadder from '@/lib/imageUploadder';
 import { useUser } from '@/store/user/useUser';
 import styles from './User.module.scss';
+import Divider from '@/components/Divider/Divider';
 
 const User: NextPageWithLayout = () => {
   const router = useRouter();
@@ -69,9 +71,6 @@ const User: NextPageWithLayout = () => {
   const [otp, setOtp] = useState<string>('');
   const [newPassword, setNewPassword] = useState<string>('');
   const [isChangePassLoading, setIsChangePassLoading] =
-    useState<boolean>(false);
-
-  const [isLoadingChangeEmail, setIsLoadingChangeEmail] =
     useState<boolean>(false);
 
   const [userEmail, setUserEmail] = useState(user_details.email);
@@ -110,15 +109,9 @@ const User: NextPageWithLayout = () => {
 
   const handleLogout = async () => {
     setLoadingLogout(true);
-    await axios({
-      method: 'POST',
-      url: 'http://localhost/vm1/api/auth/logout',
-      withCredentials: true,
-    });
-    setTimeout(() => {
-      router.push('/');
-      setLoadingLogout(true);
-    }, 200);
+    await authClient.logout();
+    router.reload();
+    setLoadingLogout(true);
   };
 
   const handleOpenAddress = () => {
@@ -223,7 +216,7 @@ const User: NextPageWithLayout = () => {
               <UserSetting
                 title={'My Address'}
                 icon={<Store />}
-                description={'Set the grocery delivery address'}
+                description={'Set the shop delivery address'}
                 onClick={() => handleOpenAddress()}
                 loading={isChangeAddressLoading}
               />
@@ -243,15 +236,16 @@ const User: NextPageWithLayout = () => {
               />
             </ul>
           </div>
-          <div className="lilOren__user__logout w-full flex justify-center items-center pt-[17px] lg:hidden">
-            {loadingLogout ? (
-              <AsyncButton isLoading={true}>{'Logout'}</AsyncButton>
-            ) : (
-              <Button variant={'outline'} onClick={() => handleLogout()}>
-                <LogOut className="mr-3" size={20} /> {'Logout'}
-              </Button>
-            )}
-          </div>
+          <div className="h-[10px] bg-transparent"></div>
+          <ul className="lilOren__user__account__setting__list bg-white">
+            <UserSetting
+              title={'Logout'}
+              icon={<LogOut />}
+              onClick={handleLogout}
+              loading={loadingLogout}
+              description={''}
+            />
+          </ul>
         </div>
       </div>
       <div className="relative hidden lg:flex flex-row gap-4">
