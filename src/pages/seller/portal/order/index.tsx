@@ -2,6 +2,7 @@ import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import { withBasePath } from '@/lib/nextUtils';
 import Divider from '@/components/Divider/Divider';
 import SellerLayout from '@/components/SellerLayout/SellerLayout';
 import SellerOrderCard from '@/components/SellerOrderCard/SellerOrderCard';
@@ -130,6 +131,7 @@ const SellerPortalOrder: NextPageWithLayout = () => {
           content={'LilOren is an e-commerce for everything you need'}
         />
         <meta name="og:type" content="website" />
+        <link rel="icon" href={withBasePath('favicon.ico')} />
       </Head>
       <div className={`${styles.sellerPortalOrder}`}>
         {loading_fetch_seller_orders ? (

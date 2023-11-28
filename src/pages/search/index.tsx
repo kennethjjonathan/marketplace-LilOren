@@ -1,16 +1,17 @@
+import { ReactElement, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import Head from 'next/head';
+import { Utils } from '@/utils';
+import { withBasePath } from '@/lib/nextUtils';
+import { NextPageWithLayout } from '../_app';
+import axiosInstance from '@/lib/axiosInstance';
 import DotsLoading from '@/components/DotsLoading/DotsLoading';
 import EmptyNotify from '@/components/EmptyNotify/EmptyNotify';
 import Layout from '@/components/Layout/Layout';
 import RecommendedProductCard from '@/components/RecommendedProductCard/RecommendedProductCard';
 import SearchFilter from '@/components/SearchFilter/SearchFilter';
 import SearchPagination from '@/components/SearchPagination/SearchPagination';
-import axiosInstance from '@/lib/axiosInstance';
 import { IRecommendedProduct } from '@/store/home/useHome';
-import { Utils } from '@/utils';
-import Head from 'next/head';
-import { useSearchParams } from 'next/navigation';
-import { ReactElement, useEffect, useState } from 'react';
-import { NextPageWithLayout } from '../_app';
 
 const SearchPage: NextPageWithLayout = () => {
   const searchParams = useSearchParams();
@@ -46,6 +47,18 @@ const SearchPage: NextPageWithLayout = () => {
     <>
       <Head>
         <title>LilOren</title>
+        <meta
+          data-rh="true"
+          name="viewport"
+          content="initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=no, width=device-width"
+        />
+        <meta data-rh="true" property="site_name" content="LilOren" />
+        <meta
+          data-rh="true"
+          name="description"
+          content="Mal online terbesar Indonesia, tempat berkumpulnya toko / online shop terpercaya se Indonesia. Jual beli online semakin aman dan nyaman di LilOren."
+        ></meta>
+        <link rel="icon" href={withBasePath('favicon.ico')} />
       </Head>
       <div className="w-full">
         <div className="w-full md:w-[75vw] mx-auto sm:flex sm:gap-2 sm:mt-5">

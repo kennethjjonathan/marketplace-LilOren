@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { useSearchParams } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
+import { withBasePath } from '@/lib/nextUtils';
 import { NextPageWithLayout } from '@/pages/_app';
 import BackButton from '@/components/BackButton/BackButton';
 import UserSettingsLayout from '@/components/UserSettingsLayout/UserSettingsLayout';
@@ -70,6 +71,7 @@ const UserWishlistHeading = () => {
           name="description"
           content="Mal online terbesar Indonesia, tempat berkumpulnya toko / online shop terpercaya se Indonesia. Jual beli online semakin aman dan nyaman di LilOren."
         ></meta>
+        <link rel="icon" href={withBasePath('favicon.ico')} />
       </Head>
       <div className="lg:hidden UserWishlist__navbar w-[100%] min-w-auto flex items-center top-0 h-[52px] border-b-[1px] sticky bg-white">
         <BackButton

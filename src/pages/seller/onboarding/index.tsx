@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { ArrowLeft } from 'lucide-react';
 import { NextPageWithLayout } from '../../_app';
+import { withBasePath } from '@/lib/nextUtils';
 import RegisterSeller from '../../../../public/seller-portal.svg';
 import { Button } from '@/components/ui/button';
 import styles from './SellerOnboarding.module.scss';
@@ -81,6 +82,7 @@ const SellerOnboardingHeading = () => {
           name="description"
           content="Mal online terbesar Indonesia, tempat berkumpulnya toko / online shop terpercaya se Indonesia. Jual beli online semakin aman dan nyaman di LilOren."
         ></meta>
+        <link rel="icon" href={withBasePath('favicon.ico')} />
       </Head>
       <div className="lg:hidden SellerOnboarding__navbar w-[100%] min-w-auto flex items-center top-0 h-[52px] border-b-[1px] sticky bg-white">
         <BackButton

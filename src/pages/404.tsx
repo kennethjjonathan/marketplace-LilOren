@@ -33,6 +33,7 @@ const Custom404: NextPageWithLayout = () => {
           name="description"
           content="Mal online terbesar Indonesia, tempat berkumpulnya toko / online shop terpercaya se Indonesia. Jual beli online semakin aman dan nyaman di LilOren."
         ></meta>
+        <link rel="icon" href={withBasePath('favicon.ico')} />
       </Head>
       <div className="flex flex-col gap-3 justify-start mt-4 items-center h-[100vh]">
         {/* eslint-disable-next-line @next/next/no-img-element */}

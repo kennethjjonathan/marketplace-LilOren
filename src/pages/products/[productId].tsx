@@ -1,6 +1,12 @@
 import React, { useEffect, useState, ReactElement } from 'react';
 import { GetServerSideProps } from 'next';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { Star } from 'lucide-react';
+import { Utils } from '@/utils';
+import { withBasePath } from '@/lib/nextUtils';
+import axiosInstance from '@/lib/axiosInstance';
+import { useUser } from '@/store/user/useUser';
 import CONSTANTS from '@/constants/constants';
 import ImageCarousel from '@/components/ImageCarousel/ImageCarousel';
 import ProductPageLayout from '@/components/ProductPageLayout/ProductPageLayout';
@@ -16,11 +22,6 @@ import {
 import Layout from '@/components/Layout/Layout';
 import ReviewComponent from '@/components/ReviewComponent/ReviewComponent';
 import TypeSelector from '@/components/TypeSelector/TypeSelector';
-import { Utils } from '@/utils';
-import axiosInstance from '@/lib/axiosInstance';
-import { useRouter } from 'next/router';
-import { useUser } from '@/store/user/useUser';
-import Head from 'next/head';
 
 interface ProductPageProps {
   productPage: IProductPage;
@@ -235,6 +236,7 @@ const ProductPage = ({
         />
         <meta name="og:description" content={productPage.product.description} />
         <meta name="og:type" content="website" />
+        <link rel="icon" href={withBasePath('favicon.ico')} />
       </Head>
       <section className="flex flex-col justify-center items-center w-full bg-white">
         <div className="w-full md:w-[75vw] pt-5 pb-5">

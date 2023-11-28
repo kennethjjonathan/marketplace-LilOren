@@ -3,6 +3,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { ArrowLeft, Plus } from 'lucide-react';
 import { IUserAddress } from '@/interface/user';
+import { withBasePath } from '@/lib/nextUtils';
 import UserSettingsLayout from '@/components/UserSettingsLayout/UserSettingsLayout';
 import AddAddressModal from '@/components/AddAddressModal/AddAddressModal';
 import BackButton from '@/components/BackButton/BackButton';
@@ -83,6 +84,7 @@ const UserSettingsAddressHeading = () => {
           name="description"
           content="Mal online terbesar Indonesia, tempat berkumpulnya toko / online shop terpercaya se Indonesia. Jual beli online semakin aman dan nyaman di LilOren."
         ></meta>
+        <link rel="icon" href={withBasePath('favicon.ico')} />
       </Head>
       <div className="lg:hidden UserSettingsAddress__navbar w-[100%] min-w-auto flex items-center top-0 h-[52px] border-b-[1px] sticky bg-white z-50">
         <BackButton
