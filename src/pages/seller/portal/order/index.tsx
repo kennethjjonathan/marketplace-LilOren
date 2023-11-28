@@ -156,7 +156,7 @@ const SellerPortalOrder: NextPageWithLayout = () => {
             </section>
           </div>
         )}
-        <div className="w-[85vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw] flex flex-end">
+        <div className="flex justify-end w-[85vw] sm:w-[45vw] md:w-[47vw] lg:w-[65vw]">
           <PaginationNav
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
