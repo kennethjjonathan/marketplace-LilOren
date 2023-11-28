@@ -365,6 +365,7 @@ const ProductPage = ({
         isAddLoading={isAddLoading}
         product_code={productCode}
         is_in_wishlist={productPage.is_in_wishlist}
+        shop_name={productPage.shop.name}
       />
     </>
   );
