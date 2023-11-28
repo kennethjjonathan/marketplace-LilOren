@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, Dispatch, useState, SetStateAction } from 'react';
 import { IProduct } from '@/interface/product';
 import { Checkbox } from '@/components/ui/checkbox';
 import Divider from '@/components/Divider/Divider';
@@ -11,9 +11,15 @@ interface CartCardProps {
   shop: string;
   shop_items: IProduct[];
   indexData: number;
+  setIsDeleteCart: Dispatch<SetStateAction<boolean>>;
 }
 
-const CartCard = ({ shop, shop_items, indexData }: CartCardProps) => {
+const CartCard = ({
+  shop,
+  shop_items,
+  indexData,
+  setIsDeleteCart,
+}: CartCardProps) => {
   const [isShopCheck, setIsShopCheck] = useState(false);
   const cartItems = useCart.use.cartItems();
   const setCart = useCart.use.setCartItems();
@@ -87,6 +93,7 @@ const CartCard = ({ shop, shop_items, indexData }: CartCardProps) => {
             key={`key-${items.product_name} ${index.toString()}`}
             product={items}
             index={indexData}
+            setIsDeleteCart={setIsDeleteCart}
           />
         ))}
       </div>

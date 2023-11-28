@@ -7,7 +7,7 @@ import SkeletonCart from '@/components/SkeletonCart/SkeletonCart';
 import { IProduct } from '@/interface/product';
 import { useCart } from '@/store/cart/useCart';
 import Image from 'next/image';
-import { ReactElement, useEffect } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import EmptyCartImage from '../../../../public/empty-cart.svg';
 import { NextPageWithLayout } from '../../_app';
 import styles from './CartPage.module.scss';
@@ -34,8 +34,8 @@ const CartPage: NextPageWithLayout = () => {
   const cartItems = useCart.use.cartItems();
   const setCheckedCart = useCart.use.setCheckedCart();
   const loading_fetch_cart = useCart.use.loading_fetch_cart();
+  const [isDeleteCart, setIsDeleteCart] = useState<boolean>(false);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleSetCheckedFirstCart = () => {
     const checkedCart = cartItems.items
       .map((cps) =>
@@ -52,8 +52,7 @@ const CartPage: NextPageWithLayout = () => {
   useEffect(() => {
     fetchCart();
     handleSetCheckedFirstCart();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isDeleteCart]);
 
   return (
     <>
@@ -74,6 +73,7 @@ const CartPage: NextPageWithLayout = () => {
                     shop={item.seller_name!}
                     shop_items={item.products}
                     indexData={index}
+                    setIsDeleteCart={setIsDeleteCart}
                   />
                 ))
               ) : (
