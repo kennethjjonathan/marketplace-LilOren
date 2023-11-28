@@ -74,9 +74,6 @@ const CheckoutPaymentOption = ({
               <p className="text-gray-500">{`Shipping Fee: ${Utils.convertPrice(
                 checkoutSummary.total_delivery_cost,
               )}`}</p>
-              <p className="text-gray-500">{`Service Fee: ${Utils.convertPrice(
-                checkoutSummary.service_price,
-              )}`}</p>
             </div>
             <div className="flex items-center justify-between py-2 text-lg sm:text-xl lg:text-2xl">
               <p className="font-bold">{`Shopping Total:`}</p>

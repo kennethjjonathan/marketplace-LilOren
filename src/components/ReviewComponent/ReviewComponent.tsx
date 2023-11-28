@@ -197,7 +197,7 @@ const ReviewComponent = ({
                       value="comment"
                       className="text-sm xl:text-base"
                     >
-                      With comment
+                      Comment only
                     </SelectItem>
                     <SelectItem value="image" className="text-sm xl:text-base">
                       With image

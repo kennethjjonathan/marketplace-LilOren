@@ -128,7 +128,6 @@ const CheckoutPage: NextPageWithLayout = () => {
         `${CONSTANTS.BASEURL}/checkouts/summary`,
         newRequestSummary,
       );
-      console.log(response.data.data);
       setCheckoutSummary(response.data.data);
     } catch (error) {
       if (error === CONSTANTS.ALREADY_LOGGED_OUT) {
@@ -142,7 +141,6 @@ const CheckoutPage: NextPageWithLayout = () => {
   async function getInitialOrderList() {
     try {
       const response = await axiosInstance(`${CONSTANTS.BASEURL}/checkouts`);
-      console.log(response);
       setCheckouts(response.data.data.checkouts);
       return response.data.data;
     } catch (error: any) {

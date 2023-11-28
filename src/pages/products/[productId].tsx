@@ -22,6 +22,7 @@ import {
 import Layout from '@/components/Layout/Layout';
 import ReviewComponent from '@/components/ReviewComponent/ReviewComponent';
 import TypeSelector from '@/components/TypeSelector/TypeSelector';
+import { useHome } from '@/store/home/useHome';
 
 interface ProductPageProps {
   productPage: IProductPage;
@@ -41,6 +42,7 @@ const ProductPage = ({
   productCode,
 }: ProductPageProps) => {
   const user_details = useUser.use.user_details();
+  const fetchCartInHome = useHome.use.fetchCartInHome();
   const fetchUserDetails = useUser.use.fetchUserDetails();
   const router = useRouter();
   const [quantity, setQuantity] = useState<number | ''>(1);
@@ -188,10 +190,8 @@ const ProductPage = ({
     }
     setIsAddLoading(true);
     try {
-      const response = await axiosInstance.post(
-        `${CONSTANTS.BASEURL}/carts`,
-        payload,
-      );
+      await axiosInstance.post(`${CONSTANTS.BASEURL}/carts`, payload);
+      fetchCartInHome();
       Utils.notify('Successfully added to cart', 'success', 'colored');
     } catch (error: any) {
       if (error === CONSTANTS.ALREADY_LOGGED_OUT) {

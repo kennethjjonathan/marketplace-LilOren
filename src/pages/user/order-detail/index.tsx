@@ -31,7 +31,6 @@ const OrderDetailPage: NextPageWithLayout = () => {
             : `page=1&status=${status}`
         }`,
       );
-      console.log(response.data);
       setOrderItems(response.data.data.order);
       setTotalPage(response.data.data.pagination.total_page);
       setCurrentPage(1);

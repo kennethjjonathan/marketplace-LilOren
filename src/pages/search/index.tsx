@@ -30,7 +30,6 @@ const SearchPage: NextPageWithLayout = () => {
             ...Object.fromEntries(fetchParams.entries()),
           },
         });
-        console.log(response);
         setProducts(response.data.data.products);
         setTotalPage(response.data.data.total_page);
       } catch (error) {

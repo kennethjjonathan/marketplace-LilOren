@@ -7,7 +7,8 @@ const nextConfig = {
   images: {
     domains: [
       'res.cloudinary.com',
-      ...(process.env.NODE_ENV === 'development' ? ['localhost'] : []),
+      'localhost',
+      'digitalent.games.test.shopee.io',
     ],
     remotePatterns: [
       {

@@ -95,7 +95,6 @@ const ProductForm = ({ isEdit = false, productToEdit }: ProductFormProps) => {
 
   function validateOnBlur(key: keyof IProductInformation): boolean | undefined {
     if (key === 'product_name' && productInformation.product_name === '') {
-      console.log('masuk name');
       setIsProductInformationValid({
         ...isProductInformationValid,
         [key]: false,
@@ -627,7 +626,6 @@ const ProductForm = ({ isEdit = false, productToEdit }: ProductFormProps) => {
 
   async function setInitialStateForEdit() {
     if (productToEdit === undefined) return;
-    console.log(productToEdit);
     setIsInitialStateLoading(true);
     try {
       const newProductInformation: IProductInformation = {
