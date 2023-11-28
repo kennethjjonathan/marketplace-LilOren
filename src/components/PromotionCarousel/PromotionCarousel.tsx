@@ -37,8 +37,8 @@ function PromotionCarousel({
 
   return (
     <>
-      <div className="w-full bg-white flex-col justify-center items-center hidden lg:flex">
-        <div className="w-full md:w-[75vw] flex overflow-hidden relative md:rounded-xl md:my-5">
+      <div className="w-full bg-primary-foreground flex-col justify-center items-center hidden lg:flex">
+        <div className="w-full md:w-[75vw] flex overflow-hidden relative md:rounded-xl md:my-5 group">
           {imageArray.map((image, index) => (
             <div
               key={index}
@@ -55,7 +55,7 @@ function PromotionCarousel({
               />
             </div>
           ))}
-          <div className="absolute inset-0 flex items-center justify-between">
+          <div className="absolute inset-3 flex items-center justify-between opacity-0 duration-300 group-hover:opacity-100 group-hover:inset-0">
             <button
               className="text-white py-1 px-2 bg-[rgba(0,0,0,0.2)] focus:outline-none duration-300 hover:bg-[rgba(0,0,0,0.6)]"
               onClick={goToPrev}

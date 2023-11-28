@@ -111,7 +111,7 @@ const WalletPage = () => {
               )}
               <div className="w-full border-t-[1px] flex justify-between border-primary-foreground pt-3 mt-5">
                 <button
-                  className="w-full flex flex-col items-center justify-center gap-1"
+                  className="w-full flex flex-col items-center justify-center gap-1 duration-300 hover:opacity-50"
                   disabled={wallet === undefined || !wallet.is_active}
                   onClick={() => setIsTopUpOpen(true)}
                 >
@@ -125,7 +125,7 @@ const WalletPage = () => {
                 />
                 <div className="bg-primary-foreground min-h-full w-[1px] rounded-md" />
                 <button
-                  className="w-full flex flex-col items-center justify-center gap-1"
+                  className="w-full flex flex-col items-center justify-center gap-1 duration-300 hover:opacity-50"
                   disabled={wallet === undefined || !wallet.is_active}
                   onClick={() => setIsChangePinOpen(true)}
                 >

@@ -23,7 +23,7 @@ const BuyerOrderDetailCardItem = ({ item }: BuyerOrderDetailCardItemProps) => {
         <div className="flex flex-col gap-1">
           <p className="text-base sm:text-lg font-semibold line-clamp-2 text-ellipsis lg:text-xl">
             {`${item.product_name}${
-              item.variant_name !== '-' ? ` | ${item.variant_name}` : ''
+              item.variant_name !== '' ? ` | ${item.variant_name}` : ''
             }`}
           </p>
           <div className="flex items-start gap-1">
