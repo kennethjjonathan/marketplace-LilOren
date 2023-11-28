@@ -17,11 +17,11 @@ const WalletHistoryTab = ({ history }: WalletHistoryTabProps) => {
           {Utils.getDDMonthYYYYTime(history.date)}
         </p>
       </div>
-      <div className="flex flex-col items-end gap-1">
+      <div className="flex flex-col items-end gap-1 max-w-full">
         <p
           className={`${
             history.is_debit ? 'text-green-500' : 'text-destructive'
-          }`}
+          } truncate max-w-full`}
         >{`${history.is_debit ? '+' : '-'}${Utils.convertPrice(
           history.amount,
         )}`}</p>

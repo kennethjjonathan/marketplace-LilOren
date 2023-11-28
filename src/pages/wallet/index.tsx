@@ -36,14 +36,12 @@ const WalletPage = () => {
     } catch (error: any) {
       if (
         error &&
-        error.response &&
-        error.response.data &&
-        error.response.data.message &&
-        error.response.data.message === CONSTANTS.WALLET_NOT_ACTIVATED
+        error.message &&
+        error.message === CONSTANTS.WALLET_NOT_ACTIVATED
       ) {
         setWallet({ is_active: false, balance: 0 });
       } else {
-        Utils.handleGeneralError(error);
+        console.error(error);
       }
     } finally {
       setIsPageLoading(false);
@@ -59,7 +57,9 @@ const WalletPage = () => {
       setHistoryArray(response.data.data.history);
       setTotalPage(response.data.data.total_page);
     } catch (error: any) {
-      Utils.handleGeneralError(error);
+      if (wallet && wallet.is_active) {
+        Utils.handleGeneralError(error);
+      }
     } finally {
       setIsHistoryLoading(false);
     }
@@ -117,14 +117,14 @@ const WalletPage = () => {
                   />
                 )}
               </div>
-              {wallet && (
+              {wallet && wallet.is_active === true && (
                 <p className="text-2xl mt-3 truncate">
                   {isHide ? '***********' : Utils.convertPrice(wallet.balance)}
                 </p>
               )}
               <div className="w-full border-t-[1px] flex justify-between border-primary-foreground pt-3 mt-5">
                 <button
-                  className="w-full flex flex-col items-center justify-center gap-1"
+                  className="w-full flex flex-col items-center justify-center gap-1 duration-300 hover:opacity-50"
                   disabled={wallet === undefined || !wallet.is_active}
                   onClick={() => setIsTopUpOpen(true)}
                 >
@@ -138,7 +138,7 @@ const WalletPage = () => {
                 />
                 <div className="bg-primary-foreground min-h-full w-[1px] rounded-md" />
                 <button
-                  className="w-full flex flex-col items-center justify-center gap-1"
+                  className="w-full flex flex-col items-center justify-center gap-1 duration-300 hover:opacity-50"
                   disabled={wallet === undefined || !wallet.is_active}
                   onClick={() => setIsChangePinOpen(true)}
                 >

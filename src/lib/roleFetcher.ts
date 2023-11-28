@@ -8,7 +8,7 @@ const refreshAccessToken = async (cookie: string) => {
       body: null,
       headers: { Cookie: cookie },
     });
-    return response;
+    return response.headers.getSetCookie().toString();
   } catch (error: any) {
     return error;
   }
@@ -29,30 +29,30 @@ async function roleFetcher(cookie: string) {
   }
   if (!response.ok && response.status === 401) {
     try {
-      const refreshResponse = await refreshAccessToken(cookie);
-      if (refreshResponse.ok) {
-        const checkAgainResponse = await fetch(
-          `${CONSTANTS.BASEURL}/auth/user`,
-          {
-            headers: { Cookie: cookie },
-            credentials: 'include',
-          },
-        );
-        if (checkAgainResponse.ok) {
-          const data = await response.json();
-          if (data.data && data.data.is_seller === false) {
-            return 'user';
-          } else if (data.data && data.data.is_seller === true) {
-            return 'seller';
-          }
+      const newCookie = await refreshAccessToken(cookie);
+      const checkAgainResponse = await fetch(`${CONSTANTS.BASEURL}/auth/user`, {
+        headers: { Cookie: newCookie },
+        credentials: 'include',
+      });
+      if (checkAgainResponse.ok) {
+        const checkAgainData = await checkAgainResponse.json();
+        if (checkAgainData.data && checkAgainData.data.is_seller === false) {
+          return 'user';
+        } else if (
+          checkAgainData.data &&
+          checkAgainData.data.is_seller === true
+        ) {
+          return 'seller';
         }
+      } else {
+        return 'unauthorized';
       }
-      return 'unauthorized';
     } catch (error) {
       return 'unauthorized';
     }
+  } else {
+    return 'unauthorized';
   }
-  return 'unauthorized';
 }
 
 export default roleFetcher;

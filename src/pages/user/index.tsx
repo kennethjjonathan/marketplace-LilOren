@@ -1,19 +1,3 @@
-import {
-  ChangeEvent,
-  ReactElement,
-  ReactNode,
-  useEffect,
-  useState,
-  FormEventHandler,
-} from 'react';
-import Head from 'next/head';
-import { useSearchParams } from 'next/navigation';
-import { useRouter } from 'next/router';
-import { Utils } from '@/utils';
-import axios from 'axios';
-import { ArrowLeft, Heart, KeyRound, Store, LogOut } from 'lucide-react';
-import { ToastContent } from 'react-toastify';
-import { NextPageWithLayout } from '../_app';
 import { withBasePath } from '@/lib/nextUtils';
 import { authClient } from '@/service/auth/AuthClient';
 import AsyncButton from '@/components/AsyncButton/AsyncButton';
@@ -28,15 +12,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -44,8 +19,21 @@ import CONSTANTS from '@/constants/constants';
 import axiosInstance from '@/lib/axiosInstance';
 import imageUploadder from '@/lib/imageUploadder';
 import { useUser } from '@/store/user/useUser';
+import { Utils } from '@/utils';
+import { ArrowLeft, Heart, KeyRound, Store, Mail, LogOut } from 'lucide-react';
+import Head from 'next/head';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/router';
+import {
+  ChangeEvent,
+  ReactElement,
+  ReactNode,
+  useEffect,
+  useState,
+} from 'react';
+import { ToastContent } from 'react-toastify';
+import { NextPageWithLayout } from '../_app';
 import styles from './User.module.scss';
-import Divider from '@/components/Divider/Divider';
 
 const User: NextPageWithLayout = () => {
   const router = useRouter();
@@ -159,14 +147,14 @@ const User: NextPageWithLayout = () => {
     }
     setIsChangePassLoading(true);
     try {
-      const reqBody = { verify_code: otp, password: newPassword };
+      const reqBody = { verif_code: otp, password: newPassword };
       await axiosInstance.post('/auth/change-password', reqBody);
       Utils.notify('Succesfully changed password', 'success', 'colored');
       handleCloseChangePass();
     } catch (error) {
       Utils.handleGeneralError(error);
     } finally {
-      setIsChangePassLoading(true);
+      setIsChangePassLoading(false);
     }
   }
 
@@ -339,9 +327,7 @@ const User: NextPageWithLayout = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Change Password</AlertDialogTitle>
             <AlertDialogDescription>
-              {
-                'An OTP will be sent to your email (OTP is valifd for 5 minutes)'
-              }
+              {'An OTP will be sent to your email (OTP is valid for 5 minutes)'}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="w-full space-y-3">

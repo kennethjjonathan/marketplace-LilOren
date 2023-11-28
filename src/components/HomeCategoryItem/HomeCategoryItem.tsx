@@ -11,7 +11,10 @@ interface HomeCategoryItemProps {
 
 const HomeCategoryItem = ({ image, title, href }: HomeCategoryItemProps) => {
   return (
-    <Link href={href} className={styles.lilOren__home__category}>
+    <Link
+      href={href}
+      className="flex justify-center items-center flex-col gap-5 rounded-lg shadow-xl p-3 border-[1px] border-gray-100 aspect-square w-28 sm:w-32 lg:hover:-translate-y-1 duration-300"
+    >
       <Image
         alt={title}
         width={200}

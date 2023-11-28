@@ -3,7 +3,6 @@ import { IProductDiscountResponse } from '@/interface/productDiscount';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import styles from './ProductDiscountForm.module.scss';
-import { Button } from '../ui/button';
 import AsyncButton from '../AsyncButton/AsyncButton';
 import { IProductVariant } from '@/interface/addProduct';
 import { Utils } from '@/utils';
@@ -214,7 +213,7 @@ const ProductDiscountForm = ({
             discount: number;
           } = {
             variant_type1: variants[0].options[i]!,
-            variant_type2: variants[0].options[i]!,
+            variant_type2: variants[1].options[j]!,
             discount: discount[i][j] as number,
           };
           variantsPayload.push(newVariant);
@@ -227,7 +226,6 @@ const ProductDiscountForm = ({
   async function postFormBody() {
     const reqBody = createPayloadBody();
     if (reqBody === undefined) return;
-    console.log(reqBody);
     setIsPostLoading(true);
     try {
       await axiosInstance.put(

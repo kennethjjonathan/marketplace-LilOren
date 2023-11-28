@@ -18,3 +18,8 @@
     font-size: 22px;
   }
 }
+
+.hideIndicator::-webkit-outer-spin-button,
+.hideIndicator::-webkit-inner-spin-button {
+  appearance: none;
+}

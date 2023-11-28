@@ -1,12 +1,4 @@
 import React, { useState } from 'react';
-import {
-  ClientSafeProvider,
-  LiteralUnion,
-  getProviders,
-  signIn,
-} from 'next-auth/react';
-import { GetServerSideProps } from 'next';
-import { BuiltInProviderType } from 'next-auth/providers/index';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -20,11 +12,7 @@ import AsyncButton from '@/components/AsyncButton/AsyncButton';
 import GoogleButton from '@/components/GoogleButton/GoogleButton';
 import { InputWithLabel } from '@/components/InputWithLabel/InputWithLabel';
 
-interface RegisterPageProps {
-  providers: Record<LiteralUnion<BuiltInProviderType>, ClientSafeProvider>;
-}
-
-function RegisterPage({ providers }: RegisterPageProps) {
+function RegisterPage() {
   const router = useRouter();
   const [registerData, setRegisterData] = useState({
     username: '',
@@ -181,14 +169,6 @@ function RegisterPage({ providers }: RegisterPageProps) {
     }
   };
 
-  const handleGoogleSignIn = () => {
-    if (providers && providers.google) {
-      signIn(providers.google.id);
-      return;
-    }
-    return;
-  };
-
   const handleErrorAuthResponse = (message: IErrorResponse | string) => {
     if (message instanceof Object) {
       if (message.username !== undefined) {
@@ -318,18 +298,15 @@ function RegisterPage({ providers }: RegisterPageProps) {
                 Register
               </AsyncButton>
             </form>
-            {providers && providers.google && (
-              <>
-                <div className="flex items-center w-full justify-between gap-3 mt-2">
-                  <div className="w-full h-px bg-gray-300" />
-                  <p className="text-sm text-gray-300 font-normal">OR</p>
-                  <div className="w-full h-px bg-gray-300" />
-                </div>
-                <div className="w-full mt-2">
-                  <GoogleButton onClick={handleGoogleSignIn} />
-                </div>
-              </>
-            )}
+
+            <div className="flex items-center w-full justify-between gap-3 mt-2">
+              <div className="w-full h-px bg-gray-300" />
+              <p className="text-sm text-gray-300 font-normal">OR</p>
+              <div className="w-full h-px bg-gray-300" />
+            </div>
+            <div className="w-full mt-2">
+              <GoogleButton />
+            </div>
           </div>
           <p className="font-extralight mt-3 w-full text-center text-base lg:text-lg">
             Already have an account?{' '}
@@ -344,11 +321,3 @@ function RegisterPage({ providers }: RegisterPageProps) {
 }
 
 export default RegisterPage;
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  return {
-    props: {
-      providers: await getProviders(),
-    },
-  };
-};
