@@ -1,20 +1,20 @@
-import React, { useEffect } from 'react';
-import Image from 'next/image';
-import { Pencil, PlusCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import DotsLoading from '@/components/DotsLoading/DotsLoading';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { withBasePath } from '@/lib/nextUtils';
 import { IUserDetails } from '@/interface/user';
 import { useUser } from '@/store/user/useUser';
+import EditEmailForm from '@/components/EditEmailForm/EditEmailForm';
+import DotsLoading from '@/components/DotsLoading/DotsLoading';
 import styles from './UserPresentation.module.scss';
-import { withBasePath } from '@/lib/nextUtils';
 
 const UserPresentation = () => {
   const user_details = useUser.use.user_details();
   const fetchUserDetails = useUser.use.fetchUserDetails();
   const loading_fetch_user_details = useUser.use.loading_fetch_user_details();
+  const [userEmail, setUserEmail] = useState(user_details.email);
 
   useEffect(() => {
     fetchUserDetails();
+    setUserEmail(user_details.email);
   }, []);
   return loading_fetch_user_details ? (
     <DotsLoading />
@@ -30,19 +30,22 @@ const UserPresentation = () => {
         className={'rounded-full h-[64px] w-[64px]'}
         loading="lazy"
       />
-      <UserInfo user_details={user_details} />
-      <div className="flex ml-auto items-center lg:hidden">
-        <Pencil className="text-muted-foreground" />
-      </div>
+      <UserInfo
+        user_details={user_details}
+        userEmail={userEmail}
+        setUserEmail={setUserEmail}
+      />
     </div>
   );
 };
 
 interface UserInfoProps {
   user_details: IUserDetails;
+  userEmail: string;
+  setUserEmail: Dispatch<SetStateAction<string>>;
 }
 
-const UserInfo = ({ user_details }: UserInfoProps) => {
+const UserInfo = ({ user_details, userEmail, setUserEmail }: UserInfoProps) => {
   return (
     <div className={styles.lilOren__user__info}>
       <div className={styles.lilOren__user__name__container}>
@@ -53,11 +56,8 @@ const UserInfo = ({ user_details }: UserInfoProps) => {
       <div className="lilOren__user__phone__container"></div>
       <div className={styles.lilOren__user_email__container}>
         {user_details.email}
+        <EditEmailForm userEmail={userEmail} setUserEmail={setUserEmail} />
       </div>
-      <Button className={`${styles.lilOren__user__edit__button}`}>
-        <PlusCircle size={20} />
-        <span className="font-bold ml-[10px]">{'Add Phone Number'}</span>
-      </Button>
     </div>
   );
 };

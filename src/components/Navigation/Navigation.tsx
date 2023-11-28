@@ -1,7 +1,17 @@
+import React, { useEffect } from 'react';
+import { cn } from '@/lib/utils';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { ShoppingCart, Store, User2 } from 'lucide-react';
+import { authClient } from '@/service/auth/AuthClient';
 import ButtonWithIcon from '@/components/ButtonWithIcon/ButtonWithIcon';
+import { Button } from '@/components/ui/button';
 import CartInHome from '@/components/CartInHome/CartInHome';
 import EmptyCart from '@/components/EmptyCart/EmptyCart';
 import SearchBar from '@/components/SearchBar/SearchBar';
+import NoShop from '@/components/NoShop/NoShop';
+import SellerShop from '@/components/SellerShop/SellerShop';
+
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -10,15 +20,21 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu';
-import { cn } from '@/lib/utils';
-import { authClient } from '@/service/auth/AuthClient';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useHome } from '@/store/home/useHome';
 import { useUser } from '@/store/user/useUser';
-import { ShoppingCart, Store, User2 } from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import React, { useEffect } from 'react';
 import styles from './Navigation.module.scss';
+
 type DropdownItem = {
   title: string;
   href?: string;
@@ -115,68 +131,86 @@ const Navigation: React.FC = () => {
               </NavigationMenuContent>
             </NavigationMenuItem>
             {/* My Shop */}
-            {user_details.is_seller ? (
-              <NavigationMenuItem>
-                <NavigationMenuTrigger>
-                  <div className="flex md:flex-row md:gap-3 items-center">
-                    <ButtonWithIcon
-                      href="/seller/portal/order"
-                      variant={'ghost'}
+            <div className="hidden lg:block">
+              {user_details.is_seller ? (
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger>
+                    <div className="flex md:flex-row md:gap-3 items-center">
+                      <ButtonWithIcon
+                        href={`/seller/portal/order`}
+                        variant={'ghost'}
+                      >
+                        <Store />
+                        <p className="hidden md:hidden lg:block font-light pl-3">
+                          {user_details.shop_name}
+                        </p>
+                      </ButtonWithIcon>
+                    </div>
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div
+                      className={`flex flex-col w-full lg:w-[400px] justify-center items-center p-3 gap-3`}
                     >
-                      <Store />
-                      <p className="hidden md:hidden lg:block font-light pl-3">
-                        {user_details.shop_name}
+                      <p className={'text-muted-foreground text-center'}>
+                        {
+                          "Monitor incoming orders and check your shop's progress regularly in one place."
+                        }
                       </p>
-                    </ButtonWithIcon>
-                  </div>
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <div
-                    className={`flex flex-col w-full lg:w-[400px] justify-center items-center p-3 gap-3`}
-                  >
-                    <p className={'text-muted-foreground text-center'}>
-                      {
-                        "Monitor incoming orders and check your shop's progress regularly in one place."
-                      }
-                    </p>
-                    <ButtonWithIcon
-                      variant={'default'}
-                      href={'/seller/portal/order'}
+                      <ButtonWithIcon
+                        variant={'default'}
+                        href={'/seller/portal/order'}
+                      >
+                        {'Check my shop'}
+                      </ButtonWithIcon>
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              ) : (
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger>
+                    <div className="flex md:flex-row md:gap-3 items-center">
+                      <ButtonWithIcon
+                        variant={'ghost'}
+                        href={'/seller/onboarding'}
+                      >
+                        <Store />
+                        <p className="hidden md:hidden lg:block font-light pl-3">
+                          {'Shop'}
+                        </p>
+                      </ButtonWithIcon>
+                    </div>
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div
+                      className={`flex flex-col lg:w-[300px] justify-center items-center p-3 gap-3`}
                     >
-                      {'Check my shop'}
-                    </ButtonWithIcon>
-                  </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-            ) : (
-              <NavigationMenuItem>
-                <NavigationMenuTrigger>
-                  <div className="flex md:flex-row md:gap-3 items-center">
-                    <ButtonWithIcon href="/user" variant={'ghost'}>
-                      <Store />
-                      <p className="hidden md:hidden lg:block font-light pl-3">
-                        {'Shop'}
+                      <p className={'text-muted-foreground'}>
+                        {"You don't have a shop yet."}
                       </p>
-                    </ButtonWithIcon>
-                  </div>
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <div
-                    className={`flex flex-col lg:w-[300px] justify-center items-center p-3 gap-3`}
-                  >
-                    <p className={'text-muted-foreground'}>
-                      {"You don't have a shop yet."}
-                    </p>
-                    <ButtonWithIcon
-                      variant={'default'}
-                      href={'/seller/onboarding'}
-                    >
-                      {'Open a free shop'}
-                    </ButtonWithIcon>
-                  </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-            )}
+                      <ButtonWithIcon
+                        variant={'default'}
+                        href={'/seller/onboarding'}
+                      >
+                        {'Open a free shop'}
+                      </ButtonWithIcon>
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              )}
+            </div>
+            {/* My Shop Mobile */}
+            <div className="lg:hidden">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="border-0 rounded-full" variant="outline">
+                    <Store />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  {user_details.is_seller ? <SellerShop /> : <NoShop />}
+                </DialogContent>
+              </Dialog>
+            </div>
             {/* My Account */}
             <NavigationMenuItem>
               {/* check if user is logged in or not */}

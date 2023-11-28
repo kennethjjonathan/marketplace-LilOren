@@ -1,16 +1,24 @@
-import AsyncButton from '@/components/AsyncButton/AsyncButton';
-import GoogleButton from '@/components/GoogleButton/GoogleButton';
-import { InputWithLabel } from '@/components/InputWithLabel/InputWithLabel';
-import { IErrorResponse, IRegister } from '@/interface/user';
-import { withBasePath } from '@/lib/nextUtils';
-import { UserClient } from '@/service/user/userClient';
-import { Utils } from '@/utils';
-import { UserPlus } from 'lucide-react';
+import React, { useState } from 'react';
+import {
+  ClientSafeProvider,
+  LiteralUnion,
+  getProviders,
+  signIn,
+} from 'next-auth/react';
+import { GetServerSideProps } from 'next';
+import { BuiltInProviderType } from 'next-auth/providers/index';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
 import Head from 'next/head';
+import { UserPlus } from 'lucide-react';
+import { withBasePath } from '@/lib/nextUtils';
+import { UserClient } from '@/service/user/userClient';
+import { Utils } from '@/utils';
+import { IErrorResponse, IRegister } from '@/interface/user';
+import AsyncButton from '@/components/AsyncButton/AsyncButton';
+import GoogleButton from '@/components/GoogleButton/GoogleButton';
+import { InputWithLabel } from '@/components/InputWithLabel/InputWithLabel';
 
 function RegisterPage() {
   const router = useRouter();
@@ -192,6 +200,18 @@ function RegisterPage() {
     <>
       <Head>
         <title>Register - LilOren</title>
+        <meta
+          data-rh="true"
+          name="viewport"
+          content="initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=no, width=device-width"
+        />
+        <meta data-rh="true" property="site_name" content="LilOren" />
+        <meta
+          data-rh="true"
+          name="description"
+          content="Mal online terbesar Indonesia, tempat berkumpulnya toko / online shop terpercaya se Indonesia. Jual beli online semakin aman dan nyaman di LilOren."
+        ></meta>
+        <link rel="icon" href={withBasePath('favicon.ico')} />
       </Head>
       <section className="bg-gradient-to-t from-[#FF7337] to-[#F99116] flex flex-col justify-center items-center gap-5 min-h-screen sm:py-6 xl:flex-row xl:justify-between xl:gap-10 xl:px-40 xl:items-start xl:py-20">
         <div className="hidden sm:flex flex-col items-center justify-center xl:justify-start xl:min-h-full xl:flex-1 xl:gap-40">

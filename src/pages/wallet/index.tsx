@@ -1,5 +1,6 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 import { Eye, EyeOff, Coins, Lock, History } from 'lucide-react';
+import { withBasePath } from '@/lib/nextUtils';
 import WalletHistoryTab from '@/components/HostoryTab/HistoryTab';
 import Layout from '@/components/Layout/Layout';
 import CONSTANTS from '@/constants/constants';
@@ -76,6 +77,18 @@ const WalletPage = () => {
     <>
       <Head>
         <title>MyWallet - LilOren</title>
+        <meta
+          data-rh="true"
+          name="viewport"
+          content="initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=no, width=device-width"
+        />
+        <meta data-rh="true" property="site_name" content="LilOren" />
+        <meta
+          data-rh="true"
+          name="description"
+          content="Mal online terbesar Indonesia, tempat berkumpulnya toko / online shop terpercaya se Indonesia. Jual beli online semakin aman dan nyaman di LilOren."
+        ></meta>
+        <link rel="icon" href={withBasePath('favicon.ico')} />
       </Head>
       {isPageLoading ? (
         <section className="w-full">

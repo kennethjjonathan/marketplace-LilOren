@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { ArrowLeft } from 'lucide-react';
 import { ToastContent } from 'react-toastify';
 import { Utils } from '@/utils';
+import { withBasePath } from '@/lib/nextUtils';
 import { IUserAddress } from '@/interface/user';
 import { SellerMerchantClient } from '@/service/SellerMerchant/SellerMerchantClient';
 import BackButton from '@/components/BackButton/BackButton';
@@ -298,6 +299,7 @@ const SellerOnboardingFormHeading = () => {
           name="description"
           content="Mal online terbesar Indonesia, tempat berkumpulnya toko / online shop terpercaya se Indonesia. Jual beli online semakin aman dan nyaman di LilOren."
         ></meta>
+        <link rel="icon" href={withBasePath('favicon.ico')} />
       </Head>
       <div className="lg:hidden SellerOnboardingForm__navbar w-[100%] min-w-auto flex justify-start items-center top-0 h-[52px] border-b-[1px] sticky bg-white">
         <BackButton

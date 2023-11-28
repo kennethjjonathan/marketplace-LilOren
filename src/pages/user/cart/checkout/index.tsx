@@ -5,11 +5,13 @@ import React, {
   useEffect,
   useState,
 } from 'react';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
+import Head from 'next/head';
 import { NextPageWithLayout } from '@/pages/_app';
-import Layout from '@/components/Layout/Layout';
-import CheckoutAddressOption from '@/components/CheckoutAddressOption.tsx/CheckoutAddressOption';
-import OrderCard from '@/components/OrderCard/OrderCard';
-import CheckoutPaymentOption from '@/components/CheckoutPaymentOption/CheckoutPaymentOption';
+import { withBasePath } from '@/lib/nextUtils';
+import axiosInstance from '@/lib/axiosInstance';
+import { ICheckout } from '@/interface/checkoutPage';
 import {
   IAddress,
   ICheckoutSummary,
@@ -18,13 +20,12 @@ import {
   IRequestSummary,
   IResponseCheckouts,
 } from '@/interface/checkoutPage';
-import axiosInstance from '@/lib/axiosInstance';
 import CONSTANTS from '@/constants/constants';
-import { ICheckout } from '@/interface/checkoutPage';
 import { Utils } from '@/utils';
-import { useRouter } from 'next/router';
-import Link from 'next/link';
-import Head from 'next/head';
+import Layout from '@/components/Layout/Layout';
+import CheckoutAddressOption from '@/components/CheckoutAddressOption.tsx/CheckoutAddressOption';
+import OrderCard from '@/components/OrderCard/OrderCard';
+import CheckoutPaymentOption from '@/components/CheckoutPaymentOption/CheckoutPaymentOption';
 
 const CheckoutPage: NextPageWithLayout = () => {
   const router = useRouter();
@@ -310,6 +311,18 @@ const CheckoutPage: NextPageWithLayout = () => {
       <>
         <Head>
           <title>Checkout - LilOren</title>
+          <meta
+            data-rh="true"
+            name="viewport"
+            content="initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=no, width=device-width"
+          />
+          <meta data-rh="true" property="site_name" content="LilOren" />
+          <meta
+            data-rh="true"
+            name="description"
+            content="Mal online terbesar Indonesia, tempat berkumpulnya toko / online shop terpercaya se Indonesia. Jual beli online semakin aman dan nyaman di LilOren."
+          ></meta>
+          <link rel="icon" href={withBasePath('favicon.ico')} />
         </Head>
         <section className="flex flex-col justify-center items-center w-full bg-white pb-5">
           <div className="w-full md:w-[75vw] lg:px-2 lg:pt-5 flex flex-col justify-center items-center gap-5">

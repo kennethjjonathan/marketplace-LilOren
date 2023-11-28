@@ -126,6 +126,18 @@ function SignInPage() {
     <>
       <Head>
         <title>Signin - LilOren</title>
+        <meta
+          data-rh="true"
+          name="viewport"
+          content="initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=no, width=device-width"
+        />
+        <meta data-rh="true" property="site_name" content="LilOren" />
+        <meta
+          data-rh="true"
+          name="description"
+          content="Mal online terbesar Indonesia, tempat berkumpulnya toko / online shop terpercaya se Indonesia. Jual beli online semakin aman dan nyaman di LilOren."
+        ></meta>
+        <link rel="icon" href={withBasePath('favicon.ico')} />
       </Head>
       <section className="bg-gradient-to-t from-[#FF7337] to-[#F99116] flex flex-col justify-center items-center gap-5 min-h-screen sm:py-6 xl:flex-row xl:justify-between xl:gap-10 xl:px-40 xl:items-start xl:py-20">
         <div className="hidden sm:flex flex-col items-center justify-center xl:justify-start xl:min-h-full xl:flex-1 xl:gap-40">

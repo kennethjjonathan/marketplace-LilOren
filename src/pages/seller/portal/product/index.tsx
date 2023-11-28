@@ -1,9 +1,12 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
+import Head from 'next/head';
+import axiosInstance from '@/lib/axiosInstance';
+import { withBasePath } from '@/lib/nextUtils';
+import { Utils } from '@/utils';
 import SellerLayout from '@/components/SellerLayout/SellerLayout';
 import { Button } from '@/components/ui/button';
-import styles from './SellerPortalProduct.module.scss';
-import Head from 'next/head';
 import {
   Table,
   TableBody,
@@ -13,10 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Utils } from '@/utils';
-import axiosInstance from '@/lib/axiosInstance';
 import { IAdminProduct } from '@/interface/productAtAdminSeller';
-import Image from 'next/image';
 import PaginationNav from '@/components/PaginationNav/PaginationNav';
 import {
   AlertDialog,
@@ -27,6 +27,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import AsyncButton from '@/components/AsyncButton/AsyncButton';
 import EmptyNotify from '@/components/EmptyNotify/EmptyNotify';
+import styles from './SellerPortalProduct.module.scss';
 
 const data = [
   {
@@ -94,6 +95,18 @@ const SellerPortalProduct = () => {
     <>
       <Head>
         <title>Seller Product - LilOren</title>
+        <meta
+          data-rh="true"
+          name="viewport"
+          content="initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=no, width=device-width"
+        />
+        <meta data-rh="true" property="site_name" content="LilOren" />
+        <meta
+          data-rh="true"
+          name="description"
+          content="Mal online terbesar Indonesia, tempat berkumpulnya toko / online shop terpercaya se Indonesia. Jual beli online semakin aman dan nyaman di LilOren."
+        ></meta>
+        <link rel="icon" href={withBasePath('favicon.ico')} />
       </Head>
       <div className={`${styles.sellerPortalProduct}`}>
         <section className={`flex flex-col w-[65vw] px-5 pb-5 bg-white`}>

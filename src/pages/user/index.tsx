@@ -1,7 +1,10 @@
+import { withBasePath } from '@/lib/nextUtils';
+import { authClient } from '@/service/auth/AuthClient';
 import AsyncButton from '@/components/AsyncButton/AsyncButton';
 import BackButton from '@/components/BackButton/BackButton';
 import UserPresentation from '@/components/UserPresentation/UserPresentation';
 import UserSettingsLayout from '@/components/UserSettingsLayout/UserSettingsLayout';
+import EditEmailForm from '@/components/EditEmailForm/EditEmailForm';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -17,8 +20,7 @@ import axiosInstance from '@/lib/axiosInstance';
 import imageUploadder from '@/lib/imageUploadder';
 import { useUser } from '@/store/user/useUser';
 import { Utils } from '@/utils';
-import axios from 'axios';
-import { ArrowLeft, Heart, KeyRound, Store, Mail } from 'lucide-react';
+import { ArrowLeft, Heart, KeyRound, Store, Mail, LogOut } from 'lucide-react';
 import Head from 'next/head';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
@@ -32,7 +34,6 @@ import {
 import { ToastContent } from 'react-toastify';
 import { NextPageWithLayout } from '../_app';
 import styles from './User.module.scss';
-import { withBasePath } from '@/lib/nextUtils';
 
 const User: NextPageWithLayout = () => {
   const router = useRouter();
@@ -48,6 +49,20 @@ const User: NextPageWithLayout = () => {
   const [userTempImg, setTempUserImg] = useState<File>();
   const [userImg, setUserImg] = useState<string>('');
   const [loadingUploadImage, setLoadingUploadImage] = useState<boolean>(false);
+  const [isChangePassOpen, setIsChangePassOpen] = useState<boolean>(false);
+  const [isChangeWishlistLoading, setIsChangeWishlistLoading] =
+    useState<boolean>(false);
+  const [isChangeAddressLoading, setIsChangeAddressLoading] =
+    useState<boolean>(false);
+  const [isChangeOpenLoading, setIsChangeOpenLoading] =
+    useState<boolean>(false);
+  const [otp, setOtp] = useState<string>('');
+  const [newPassword, setNewPassword] = useState<string>('');
+  const [isChangePassLoading, setIsChangePassLoading] =
+    useState<boolean>(false);
+
+  const [userEmail, setUserEmail] = useState(user_details.email);
+
   const handleAddPhoto = async (e: ChangeEvent<HTMLInputElement>) => {
     setLoadingUploadImage(true);
     if (e.target.files !== null) {
@@ -82,38 +97,10 @@ const User: NextPageWithLayout = () => {
 
   const handleLogout = async () => {
     setLoadingLogout(true);
-    await axios({
-      method: 'POST',
-      url: 'http://localhost/vm1/api/auth/logout',
-      withCredentials: true,
-    });
-    setTimeout(() => {
-      router.push('/');
-      setLoadingLogout(true);
-    }, 200);
+    await authClient.logout();
+    router.reload();
+    setLoadingLogout(true);
   };
-
-  useEffect(() => {
-    if (status === '' || status === null) {
-      fetchUserDetails();
-    }
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  }, [fetchUserDetails, status]);
-
-  const [isChangePassOpen, setIsChangePassOpen] = useState<boolean>(false);
-  const [isChangeWishlistLoading, setIsChangeWishlistLoading] =
-    useState<boolean>(false);
-  const [isChangeAddressLoading, setIsChangeAddressLoading] =
-    useState<boolean>(false);
-  const [isChangeOpenLoading, setIsChangeOpenLoading] =
-    useState<boolean>(false);
-  const [otp, setOtp] = useState<string>('');
-  const [newPassword, setNewPassword] = useState<string>('');
-  const [isChangePassLoading, setIsChangePassLoading] =
-    useState<boolean>(false);
 
   const handleOpenAddress = () => {
     setIsChangeAddressLoading(true);
@@ -200,6 +187,19 @@ const User: NextPageWithLayout = () => {
     }
   }
 
+  useEffect(() => {
+    if (status === '' || status === null) {
+      fetchUserDetails();
+      setUserEmail(user_details.email);
+    }
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+    fetchUserDetails();
+    setUserEmail(user_details.email);
+  }, [fetchUserDetails, status]);
+
   return (
     <>
       <Head>
@@ -220,6 +220,7 @@ const User: NextPageWithLayout = () => {
           name="description"
           content="Mal online terbesar Indonesia, tempat berkumpulnya toko / online shop terpercaya se Indonesia. Jual beli online semakin aman dan nyaman di LilOren."
         ></meta>
+        <link rel="icon" href={withBasePath('favicon.ico')} />
       </Head>
       <div className="lg:flex lg:justify-center lg:items-center w-[100vw] bg-white">
         <div className="bg-accent flex flex-col justify-start h-[calc(100vh-52px)] lg:w-[75vw] lg:p-4 lg:bg-transparent lg:hidden">
@@ -232,7 +233,7 @@ const User: NextPageWithLayout = () => {
               <UserSetting
                 title={'My Address'}
                 icon={<Store />}
-                description={'Set the grocery delivery address'}
+                description={'Set the shop delivery address'}
                 onClick={() => handleOpenAddress()}
                 loading={isChangeAddressLoading}
               />
@@ -258,46 +259,103 @@ const User: NextPageWithLayout = () => {
               />
             </ul>
           </div>
-          <div className="lilOren__user__logout w-full flex justify-center items-center pt-[17px] lg:hidden">
-            {loadingLogout ? (
-              <AsyncButton isLoading={true}>{'Logout'}</AsyncButton>
+          <div className="h-[10px] bg-transparent"></div>
+          <ul className="lilOren__user__account__setting__list bg-white">
+            <UserSetting
+              title={'Logout'}
+              icon={<LogOut />}
+              onClick={handleLogout}
+              loading={loadingLogout}
+              description={''}
+            />
+          </ul>
+        </div>
+      </div>
+      <div className="relative hidden lg:flex flex-row gap-4">
+        <div className="flex flex-col w-fit">
+          <div className="p-2 border-[1px] shadow-md rounded-lg w-fit m-3">
+            <img
+              src={`${
+                user_details.profile_picture_url
+                  ? user_details.profile_picture_url
+                  : withBasePath('/blank-profile.webp')
+              }`}
+              alt={'user__profpic'}
+              className={'h-[200px] w-[200px]'}
+              loading="lazy"
+            />
+
+            <label
+              className="flex flex-col justify-center items-center h-[200px] w-[200px] gap-2 duration-500 before:ease-in-out after:ease-in-out hover:text-white s lg:h-[50px] lg:w-[200px] cursor-pointer top-0 mt-2 rounded-lg"
+              htmlFor={`user-profile`}
+            >
+              {loadingUploadImage ? (
+                <AsyncButton
+                  isLoading={true}
+                  variant={'outline'}
+                  className="w-full"
+                >
+                  {'Change Password'}
+                </AsyncButton>
+              ) : (
+                <p className="w-full border-[1px] border-muted-foreground/50 rounded-lg py-3 text-center text-[14px] text-muted-foreground font-semibold">
+                  {'Chooose Photo'}
+                </p>
+              )}
+            </label>
+            <input
+              accept="image/png, image/jpeg, image/jpg"
+              onChange={(e) => {
+                handleAddPhoto(e);
+                e.target.value = '';
+              }}
+              type="file"
+              id={`user-profile`}
+              hidden
+            />
+          </div>
+          <div className="button w-full px-3 ">
+            {isChangeOpenLoading ? (
+              <AsyncButton
+                isLoading={true}
+                variant={'outline'}
+                className="w-full"
+              >
+                <KeyRound className="mr-4" /> {'Change Password'}
+              </AsyncButton>
             ) : (
-              <Button variant={'outline'} onClick={() => handleLogout()}>
-                {'Logout'}
+              <Button
+                className="w-full font-bold text-muted-foreground border-[1px] border-muted-foreground/50"
+                variant={'outline'}
+                onClick={handleOpenChangePassword}
+              >
+                <KeyRound className="mr-4" /> {'Change Password'}
               </Button>
             )}
           </div>
         </div>
-      </div>
-      <div className="relative hidden lg:block">
-        <img
-          src={`${
-            user_details.profile_picture_url
-              ? user_details.profile_picture_url
-              : withBasePath('/blank-profile.webp')
-          }`}
-          alt={'user__profpic'}
-          className={'h-[200px] w-[200px]'}
-          loading="lazy"
-        />
-        <label
-          className="border-2 flex flex-col justify-center items-center h-[200px] w-[200px] gap-2 duration-500 before:ease-in-out after:ease-in-out hover:text-white s lg:h-[50px] lg:w-[200px] cursor-pointer top-0 mt-2 rounded-lg"
-          htmlFor={`user-profile`}
-        >
-          <p className="w-full text-center text-[14px] text-muted-foreground font-semibold">
-            {'Chooose Photo'}
-          </p>
-        </label>
-        <input
-          accept="image/png, image/jpeg, image/jpg"
-          onChange={(e) => {
-            handleAddPhoto(e);
-            e.target.value = '';
-          }}
-          type="file"
-          id={`user-profile`}
-          hidden
-        />
+        <div className="w-full p-3 text-muted-foreground">
+          <div className="title text-muted-foreground font-semibold mb-3 mt-2">
+            {'Profile Info'}
+          </div>
+          <div className="name flex flex-row gap-8 items-center mb-4 justify-normal">
+            <span className="text-[16px] text-muted-foreground w-[100px]">
+              {'Username'}
+            </span>
+            <span className="text-[16px] text-muted-foreground">
+              {user_details.username}
+            </span>
+          </div>
+          <div className="name flex flex-row gap-8 items-center mb-4 justify-normal">
+            <span className="text-[16px] text-muted-foreground w-[100px]">
+              {'Email'}
+            </span>
+            <span className="text-[16px] text-muted-foreground">
+              {user_details.email}
+            </span>
+            <EditEmailForm userEmail={userEmail} setUserEmail={setUserEmail} />
+          </div>
+        </div>
       </div>
       <AlertDialog open={isChangePassOpen} onOpenChange={setIsChangePassOpen}>
         <AlertDialogContent>

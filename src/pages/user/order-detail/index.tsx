@@ -1,5 +1,8 @@
 import React, { ReactElement, useCallback, useEffect, useState } from 'react';
+import Head from 'next/head';
 import { NextPageWithLayout } from '@/pages/_app';
+import { Utils } from '@/utils';
+import { withBasePath } from '@/lib/nextUtils';
 import Layout from '@/components/Layout/Layout';
 import axiosInstance from '@/lib/axiosInstance';
 import { IOrderItem } from '@/interface/orderDetailPage';
@@ -8,8 +11,6 @@ import PaginationNav from '@/components/PaginationNav/PaginationNav';
 import { useSearchParams } from 'next/navigation';
 import DotsLoading from '@/components/DotsLoading/DotsLoading';
 import OrderDetailLayout from '@/components/OrderDetailLayout/OrderDetailLayout';
-import { Utils } from '@/utils';
-import Head from 'next/head';
 
 const OrderDetailPage: NextPageWithLayout = () => {
   const searchParams = useSearchParams();
@@ -78,6 +79,18 @@ const OrderDetailPage: NextPageWithLayout = () => {
     <>
       <Head>
         <title>Order Detail - LilOren</title>
+        <meta
+          data-rh="true"
+          name="viewport"
+          content="initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=no, width=device-width"
+        />
+        <meta data-rh="true" property="site_name" content="LilOren" />
+        <meta
+          data-rh="true"
+          name="description"
+          content="Mal online terbesar Indonesia, tempat berkumpulnya toko / online shop terpercaya se Indonesia. Jual beli online semakin aman dan nyaman di LilOren."
+        ></meta>
+        <link rel="icon" href={withBasePath('favicon.ico')} />
       </Head>
       <section className="w-full bg-white">
         <div

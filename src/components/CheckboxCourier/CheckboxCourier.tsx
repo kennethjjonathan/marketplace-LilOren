@@ -2,6 +2,7 @@ import React, { Dispatch, useEffect, useState } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { withBasePath } from '@/lib/nextUtils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ControllerRenderProps, useForm } from 'react-hook-form';
 import { ToastContent } from 'react-toastify';
@@ -159,6 +160,7 @@ const CheckboxCourier = ({
           content={'LilOren is an e-commerce for everything you need'}
         />
         <meta name="og:type" content="website" />
+        <link rel="icon" href={withBasePath('favicon.ico')} />
       </Head>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
