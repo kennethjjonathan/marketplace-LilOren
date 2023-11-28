@@ -1,12 +1,4 @@
 import React, { useState } from 'react';
-import {
-  ClientSafeProvider,
-  LiteralUnion,
-  getProviders,
-  signIn,
-} from 'next-auth/react';
-import { GetServerSideProps } from 'next';
-import { BuiltInProviderType } from 'next-auth/providers/index';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
