@@ -1,3 +1,9 @@
+import React, { useEffect } from 'react';
+import { cn } from '@/lib/utils';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { ShoppingCart, Store, User2 } from 'lucide-react';
+import { authClient } from '@/service/auth/AuthClient';
 import ButtonWithIcon from '@/components/ButtonWithIcon/ButtonWithIcon';
 import CartInHome from '@/components/CartInHome/CartInHome';
 import EmptyCart from '@/components/EmptyCart/EmptyCart';
@@ -10,15 +16,10 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu';
-import { cn } from '@/lib/utils';
-import { authClient } from '@/service/auth/AuthClient';
 import { useHome } from '@/store/home/useHome';
 import { useUser } from '@/store/user/useUser';
-import { ShoppingCart, Store, User2 } from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import React, { useEffect } from 'react';
 import styles from './Navigation.module.scss';
+
 type DropdownItem = {
   title: string;
   href?: string;
