@@ -4,6 +4,7 @@ import { Button } from '../ui/button';
 import { IProductVariant } from '@/interface/productPage';
 import { Utils } from '@/utils';
 import HeartWishlistButton from '../HeartWishlistButton/HeartWishlistButton';
+import { useUser } from '@/store/user/useUser';
 
 interface ProductPageLayoutProps {
   quantity: number | '';
@@ -14,6 +15,7 @@ interface ProductPageLayoutProps {
   isAddLoading: boolean;
   product_code: string;
   is_in_wishlist: boolean;
+  shop_name: string;
 }
 
 const ProductPageLayout = ({
@@ -25,9 +27,12 @@ const ProductPageLayout = ({
   isAddLoading,
   product_code,
   is_in_wishlist,
+  shop_name,
 }: ProductPageLayoutProps) => {
   const [isMaxValid, setIsMaxValid] = useState<boolean>(true);
   const [isInWishlist, setIsInWishlist] = useState<boolean>(is_in_wishlist);
+  const fetchUserDetails = useUser.use.fetchUserDetails();
+  const user_details = useUser.use.user_details();
   function handleVariantChange() {
     setIsMaxValid(true);
     if (variant === undefined) {
@@ -68,8 +73,15 @@ const ProductPageLayout = ({
     }
   }
   useEffect(() => handleVariantChange(), [variant]);
+  useEffect(() => {
+    fetchUserDetails();
+  }, []);
   return (
-    <div className="bg-primary-foreground w-full sticky z-30 bottom-0 left-0 flex justify-center">
+    <div
+      className={`bg-primary-foreground w-full sticky z-30 bottom-0 left-0 flex justify-center ${
+        user_details.shop_name === shop_name ? 'hidden' : 'block'
+      }`}
+    >
       <div className="w-full md:w-[75vw] p-2 pb-3 flex items-center gap-2 lg:justify-between">
         <div className="hidden sm:flex flex-col items-start justify-center min-h-fit w-4/5">
           {variant === undefined ? (
