@@ -19,6 +19,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Modal from '@/components/Modal/Modal';
 import AsyncButton from '@/components/AsyncButton/AsyncButton';
@@ -26,6 +36,7 @@ import DotsLoading from '@/components/DotsLoading/DotsLoading';
 import SellerOnboardingLayout from '@/components/SellerOnboardingLayout/SellerOnboardingLayout';
 import { useUser } from '@/store/user/useUser';
 import styles from './SellerOnboardingForm.module.scss';
+import { UserAddressClient } from '@/service/userAddress/userAddressClient';
 
 export interface IShopInfoFormData {
   shop_name: string;
@@ -58,12 +69,6 @@ const SellerOnboardingForm = () => {
   const [loadingFetchUserDetails, setLoadingFetchUserDetails] =
     useState<boolean>(false);
 
-  const fetchUserDetails = () => {
-    setTimeout(() => {
-      setLoadingFetchUserDetails(false);
-    }, 500);
-  };
-
   const handleChange = (e: ChangeEvent<HTMLInputElement>, key: string) => {
     setShopInfoFormData({ ...shopInfoFormData, [key]: e.target.value });
   };
@@ -83,6 +88,11 @@ const SellerOnboardingForm = () => {
     }
     setIsDataValid({ ...isDataValid, [key]: true });
     return true;
+  };
+
+  const handleEditAddress = (addressId: string) => {
+    setShowEditAddress(false);
+    setAddress(addressId);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -111,10 +121,18 @@ const SellerOnboardingForm = () => {
     setShowEditAddress(false);
   };
 
+  const fetchDefault = async () => {
+    const response = await UserAddressClient.getUserAddresses();
+    const data: IUserAddress[] = response?.data as IUserAddress[];
+    setSelectedAddress(user_default_address);
+  };
+
   useEffect(() => {
     setLoadingFetchUserDetails(true);
-    fetchUserDetails();
+    fetchDefault();
     fetchUserAddresses();
+    setSelectedAddress(user_default_address);
+    setLoadingFetchUserDetails(false);
   }, []);
 
   return (
@@ -162,6 +180,55 @@ const SellerOnboardingForm = () => {
             <Label className="font-light w-full md:text-base">
               {SHOP_ADDRESS}
               <span className="text-primary">{' *'}</span>
+              <Dialog open={showEditAddress} onOpenChange={setShowEditAddress}>
+                <DialogTrigger asChild>
+                  <Button
+                    onClick={() => setShowEditAddress(true)}
+                    variant="link"
+                  >
+                    Edit
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Select Address</DialogTitle>
+                    <DialogDescription>
+                      Make changes to your address here. Click save when
+                      you&apos;re done.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <Select onValueChange={(e) => handleChangeAddress(e)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a Address" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup className="h-fit overflow-y-scroll">
+                        <SelectLabel>{'Address'}</SelectLabel>
+                        {user_addresses.map((address) => (
+                          <SelectItem
+                            className="text-left"
+                            key={`key:${address.address}`}
+                            value={String(address.id)}
+                          >
+                            {address.address}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  <DialogFooter>
+                    <Button
+                      disabled={shopInfoFormData.address_id === ''}
+                      onClick={() =>
+                        handleEditAddress(shopInfoFormData.address_id)
+                      }
+                      type="button"
+                    >
+                      Save changes
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </Label>
             <div className="detail address text-[14px]">
               <div className="">
@@ -169,13 +236,6 @@ const SellerOnboardingForm = () => {
                 <p>{selectedAddress.address}</p>
                 <p>{selectedAddress.postal_code}</p>
               </div>
-              <Button
-                className="pl-0"
-                variant={'link'}
-                onClick={() => setShowEditAddress(true)}
-              >
-                {'Edit'}
-              </Button>
             </div>
           </div>
           {loadingPost ? (
@@ -220,57 +280,6 @@ const SellerOnboardingForm = () => {
           )}
         </form>
       )}
-      <Modal
-        title={'Edit Address'}
-        isVisible={showEditAddress}
-        onClose={() => setShowEditAddress(false)}
-        position="center"
-      >
-        <div className="Edit Address bg-white lg:w-[50vw] w-full rounded-xl pt-6 lg:h-[30vh] h-[50vh] px-4 flex flex-col gap-4 justify-between">
-          {/* Address */}
-          <div className="">
-            <p className="Edit Address Title mb-4">{'Edit Address'}</p>
-            <Label className="font-light md:text-base">{SHOP_ADDRESS}</Label>
-            <Select onValueChange={(e) => handleChangeAddress(e)}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select a Address" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup className="h-fit overflow-y-scroll">
-                  <SelectLabel>{'Address'}</SelectLabel>
-                  {user_addresses.map((address) => (
-                    <SelectItem
-                      className="text-left"
-                      key={`key:${address.address}`}
-                      value={String(address.id)}
-                    >
-                      {address.address}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="hidden lg:flex flex-row w-full justify-end items-center pb-5">
-            <Button
-              disabled={shopInfoFormData.address_id === ''}
-              onClick={() => setAddress(shopInfoFormData.address_id)}
-              className={'bottom-0 w-[200px]'}
-            >
-              {'Save'}
-            </Button>
-          </div>
-          <div className="h-[60px] bg-white w-full pr-8 flex justify-center items-center text-ellipsis whitespace-nowrap overflow-hidden fixed bottom-0 lg:hidden">
-            <Button
-              disabled={shopInfoFormData.address_id === ''}
-              onClick={() => setAddress(shopInfoFormData.address_id)}
-              className={'bottom-0 w-full'}
-            >
-              {'Save'}
-            </Button>
-          </div>
-        </div>
-      </Modal>
     </div>
   );
 };

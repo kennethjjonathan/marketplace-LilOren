@@ -1,12 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import Image from 'next/image';
 import { Checkbox } from '@/components/ui/checkbox';
-import LikeButton from '@/components/LikeButton/LikeButton';
 import TrashButton from '@/components/TrashButton/TrashButton';
 import CartQuantityController from '@/components/CartQuantityController/CartQuantityController';
 import { IProduct } from '@/interface/product';
 import { useCart } from '@/store/cart/useCart';
-import { CartClient } from '@/service/cart/CartClient';
 import { ICartCheckedRequest } from '@/service/cart/CartService';
 import { Utils } from '@/utils';
 import { ICart } from '@/pages/user/cart';
@@ -14,11 +12,15 @@ import { ICart } from '@/pages/user/cart';
 interface CartCardProductProps {
   product: IProduct;
   index: number;
+  setIsDeleteCart: Dispatch<SetStateAction<boolean>>;
 }
 
-const CartCardProduct = ({ product, index }: CartCardProductProps) => {
+const CartCardProduct = ({
+  product,
+  index,
+  setIsDeleteCart,
+}: CartCardProductProps) => {
   const [quantity, setQuantity] = useState<number>(product.quantity!);
-  const [isLiked, setIsLiked] = useState<boolean>(false);
   const putIsCheckedCart = useCart.use.putIsCheckedCart();
   const cartItems = useCart.use.cartItems();
   const setCart = useCart.use.setCartItems();
@@ -105,9 +107,7 @@ const CartCardProduct = ({ product, index }: CartCardProductProps) => {
       </div>
       <div className="w-full flex flex-row gap-4 lg:gap-8 justify-end">
         <div className="flex flex-row gap-2 items-center">
-          <LikeButton isLiked={isLiked} setIsLiked={setIsLiked} />
-          <div className="h-[75%] border-r-2 mr-1"></div>
-          <TrashButton product={product} />
+          <TrashButton setIsDeleteCart={setIsDeleteCart} product={product} />
         </div>
         <div className="flex items-center gap-5">
           <CartQuantityController

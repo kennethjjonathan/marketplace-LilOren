@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { Trash2 } from 'lucide-react';
 import {
   AlertDialog,
@@ -17,10 +17,12 @@ import { ToastContent } from 'react-toastify';
 
 interface TrashButtonProps {
   product: IProduct;
+  setIsDeleteCart: Dispatch<SetStateAction<boolean>>;
 }
 
-const TrashButton = ({ product }: TrashButtonProps) => {
+const TrashButton = ({ product, setIsDeleteCart }: TrashButtonProps) => {
   const handleDeleteCart = async (cart_id: number) => {
+    setIsDeleteCart(true);
     const response = await CartClient.deleteCart(cart_id);
     const error = response.error;
     const message = response.message;
@@ -33,6 +35,7 @@ const TrashButton = ({ product }: TrashButtonProps) => {
         'light',
       );
     }
+    setIsDeleteCart(false);
   };
   return (
     <AlertDialog>
