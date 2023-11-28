@@ -1,6 +1,7 @@
 import { ReactElement, useEffect } from 'react';
 import Head from 'next/head';
 import { NextPageWithLayout } from '@/pages/_app';
+import { withBasePath } from '@/lib/nextUtils';
 import SellerLayout from '@/components/SellerLayout/SellerLayout';
 import { useUser } from '@/store/user/useUser';
 
@@ -27,6 +28,7 @@ const SellerHome: NextPageWithLayout = () => {
           content={'LilOren is an e-commerce for everything you need'}
         />
         <meta name="og:type" content="website" />
+        <link rel="icon" href={withBasePath('favicon.ico')} />
       </Head>
     </div>
   );

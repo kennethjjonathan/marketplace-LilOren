@@ -210,6 +210,7 @@ const User: NextPageWithLayout = () => {
           name="description"
           content="Mal online terbesar Indonesia, tempat berkumpulnya toko / online shop terpercaya se Indonesia. Jual beli online semakin aman dan nyaman di LilOren."
         ></meta>
+        <link rel="icon" href={withBasePath('favicon.ico')} />
       </Head>
       <div className="lg:flex lg:justify-center lg:items-center w-[100vw] bg-white">
         <div className="bg-accent flex flex-col justify-start h-[calc(100vh-52px)] lg:w-[75vw] lg:p-4 lg:bg-transparent lg:hidden">

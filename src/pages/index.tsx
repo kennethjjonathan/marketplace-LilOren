@@ -1,13 +1,14 @@
+import { ReactElement } from 'react';
+import { GetServerSideProps } from 'next';
+import Head from 'next/head';
+import { NextPageWithLayout } from './_app';
+import { IRecommendedProduct, ITopCategory } from '@/store/home/useHome';
+import { HomeClient } from '@/service/home/HomeClient';
+import { withBasePath } from '@/lib/nextUtils';
 import HomeCategoryList from '@/components/HomeCategoryList/HomeCategoryList';
 import Layout from '@/components/Layout/Layout';
 import PromotionCarousel from '@/components/PromotionCarousel/PromotionCarousel';
 import RecommendedProductCard from '@/components/RecommendedProductCard/RecommendedProductCard';
-import { HomeClient } from '@/service/home/HomeClient';
-import { IRecommendedProduct, ITopCategory } from '@/store/home/useHome';
-import { GetServerSideProps } from 'next';
-import { ReactElement } from 'react';
-import { NextPageWithLayout } from './_app';
-import Head from 'next/head';
 
 type Props = {
   products?: IRecommendedProduct[];
@@ -32,6 +33,7 @@ const Home: NextPageWithLayout<Props> = ({ products, categories }: Props) => {
           content={'LilOren is an e-commerce for everything you need'}
         />
         <meta name="og:type" content="website" />
+        <link rel="icon" href={withBasePath('favicon.ico')} />
       </Head>
       <div className="flex flex-col justify-center items-center w-full bg-primary-foreground">
         <main className="w-full flex flex-col justify-center items-center">
