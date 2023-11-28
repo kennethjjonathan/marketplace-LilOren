@@ -137,7 +137,7 @@ const Navigation: React.FC = () => {
                   <NavigationMenuTrigger>
                     <div className="flex md:flex-row md:gap-3 items-center">
                       <ButtonWithIcon
-                        href="/user?status=Info"
+                        href={`/seller/portal/order`}
                         variant={'ghost'}
                       >
                         <Store />
@@ -158,7 +158,7 @@ const Navigation: React.FC = () => {
                       </p>
                       <ButtonWithIcon
                         variant={'default'}
-                        href={'/seller/portal'}
+                        href={'/seller/portal/order'}
                       >
                         {'Check my shop'}
                       </ButtonWithIcon>
@@ -169,12 +169,15 @@ const Navigation: React.FC = () => {
                 <NavigationMenuItem>
                   <NavigationMenuTrigger>
                     <div className="flex md:flex-row md:gap-3 items-center">
-                      <Button variant={'ghost'}>
+                      <ButtonWithIcon
+                        variant={'ghost'}
+                        href={'/seller/onboarding'}
+                      >
                         <Store />
                         <p className="hidden md:hidden lg:block font-light pl-3">
                           {'Shop'}
                         </p>
-                      </Button>
+                      </ButtonWithIcon>
                     </div>
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
@@ -196,16 +199,18 @@ const Navigation: React.FC = () => {
               )}
             </div>
             {/* My Shop Mobile */}
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className="border-0 rounded-full" variant="outline">
-                  <Store />
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
-                {user_details.is_seller ? <SellerShop /> : <NoShop />}
-              </DialogContent>
-            </Dialog>
+            <div className="lg:hidden">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="border-0 rounded-full" variant="outline">
+                    <Store />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  {user_details.is_seller ? <SellerShop /> : <NoShop />}
+                </DialogContent>
+              </Dialog>
+            </div>
             {/* My Account */}
             <NavigationMenuItem>
               {/* check if user is logged in or not */}
