@@ -4,6 +4,7 @@ import { IUserDetails } from '@/interface/user';
 import { useUser } from '@/store/user/useUser';
 import EditEmailForm from '@/components/EditEmailForm/EditEmailForm';
 import DotsLoading from '@/components/DotsLoading/DotsLoading';
+import FallbackImage from '@/components/FallbackImage/FallbackImage';
 import styles from './UserPresentation.module.scss';
 
 const UserPresentation = () => {
@@ -20,7 +21,7 @@ const UserPresentation = () => {
     <DotsLoading />
   ) : (
     <div className={styles.liloren__user__presentation}>
-      <img
+      <FallbackImage
         src={`${
           user_details.profile_picture_url
             ? user_details.profile_picture_url
@@ -28,7 +29,8 @@ const UserPresentation = () => {
         }`}
         alt={'user__profpic'}
         className={'rounded-full h-[64px] w-[64px]'}
-        loading="lazy"
+        width={64}
+        height={64}
       />
       <UserInfo
         user_details={user_details}

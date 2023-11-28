@@ -5,6 +5,7 @@ import { Star } from 'lucide-react';
 import { Utils } from '@/utils';
 import { ISellerProduct } from '@/interface/sellerPage';
 import styles from './SellerProductCard.module.scss';
+import FallbackImage from '../FallbackImage/FallbackImage';
 
 interface SellerProductCardProps {
   product: ISellerProduct;
@@ -22,7 +23,7 @@ const SellerProductCard = ({ product, shop_name }: SellerProductCardProps) => {
                 <div className={styles.image}>
                   <Link href={`/products/${product.product_code}`}>
                     <div className={`img_container block w-[100%]`}></div>
-                    <Image
+                    <FallbackImage
                       src={product.thumbnail_url}
                       width={500}
                       height={500}
