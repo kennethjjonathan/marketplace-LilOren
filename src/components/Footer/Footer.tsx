@@ -8,7 +8,7 @@ const Footer = () => {
   return (
     <div className="w-full bg-white mt-5">
       <div className="flex flex-col lg:hidden">
-        <div className="need-help contact-us flex flex-row justify-center items-center gap-2">
+        <div className="need-help contact-us flex flex-row justify-center items-center gap-2 mt-5">
           <Image
             src={withBasePath('headphone.svg')}
             width={50}
