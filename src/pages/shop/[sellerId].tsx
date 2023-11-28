@@ -114,6 +114,7 @@ const SellerPage = ({ sellerPage }: SellerPageProps) => {
       } else {
         params.set('category_name', category);
       }
+      setSelectedCategory(category);
       params.set('page', currentPage.toString());
       router.replace(`${pathname}?${params.toString()}`);
       fetchSellerDetails(seller_details.shop_name, `${params.toString()}`);
@@ -184,7 +185,7 @@ const SellerPage = ({ sellerPage }: SellerPageProps) => {
 
     fetchSellerDetails(sellerPage.shop_name, `${params.toString()}`);
     handleScroll(tabsRef.current);
-  }, [activeFilter, sort_by, sort_desc, selectedCategory]);
+  }, [activeFilter, sort_by, sort_desc, selectedCategory, category_name]);
 
   const handleScroll = (ref: any) => {
     window.scrollTo({
@@ -266,9 +267,6 @@ const SellerPage = ({ sellerPage }: SellerPageProps) => {
               </Button>
             </div>
           </div>
-          {/* <Button variant={'outline'} className="ml-0 border-0">
-            <p className="font-bold">Category: {selectedCategory}</p>
-          </Button> */}
           <div className={`${showTab2 ? 'block' : 'hidden'}`}>
             <Select
               onValueChange={(value) => handleChangeCategory(value, 'change')}
@@ -296,7 +294,8 @@ const SellerPage = ({ sellerPage }: SellerPageProps) => {
               </SelectContent>
             </Select>
           </div>
-
+          {/* )} */}
+          {/* </div> */}
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
 
@@ -347,8 +346,9 @@ const SellerPage = ({ sellerPage }: SellerPageProps) => {
           </div>
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
+
         <div className="w-full md:flex md:flex-col justify-center items-center bg-primary-foreground">
-          {/* BEST SELLING PRODUCTS */}
+          {/* BEST SELLING PRODUCTS MOBILE*/}
           <div className={`${(showTab1 || showTab2) && 'hidden'}`}>
             <div
               className={`flex-row justify-between items-center w-full md:w-[75vw] my-3 flex`}
@@ -360,6 +360,39 @@ const SellerPage = ({ sellerPage }: SellerPageProps) => {
               >
                 {'BEST SELLING PRODUCTS'}
               </p>
+
+              {/* For Mobile */}
+              <Button
+                variant={'link'}
+                onClick={() => handleSeeAllBestSellerProduct()}
+                className={`font-bold md:hidden ${
+                  showTab1 || showTab2 ? 'hidden' : 'block'
+                } `}
+              >
+                {'See All >'}
+              </Button>
+            </div>
+
+            <div
+              className={`md:hidden w-full md:w-[75vw] grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 ${
+                showTab1 || showTab2 ? 'hidden' : 'grid'
+              } `}
+            >
+              {seller_details.best_seller.map((product, index) => (
+                <SellerProductCard
+                  key={`key:${product.product_name},${index.toString()}`}
+                  shop_name={sellerPage.shop_name}
+                  product={product}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* BEST SELLING PRODUCTS DESKTOP */}
+          <div className={`'hidden md:block'}`}>
+            <div
+              className={`flex-row justify-between items-center w-full md:w-[75vw] my-3 flex`}
+            >
               <p
                 className={`font-bold pl-3 lg:p-0 text-[12px] md:text-[14px] lg:text-[16px] lg:pl-2 hidden md:block`}
               >
@@ -373,32 +406,9 @@ const SellerPage = ({ sellerPage }: SellerPageProps) => {
               >
                 {'See All >'}
               </Button>
-              {/* For Mobile */}
-              <Button
-                variant={'link'}
-                onClick={() => handleSeeAllBestSellerProduct()}
-                className={`font-bold md:hidden ${
-                  showTab1 || showTab2 ? 'hidden' : 'block'
-                } `}
-              >
-                {'See All >'}
-              </Button>
             </div>
             <div
               className={`w-full md:w-[75vw] grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 hidden md:grid`}
-            >
-              {seller_details.best_seller.map((product, index) => (
-                <SellerProductCard
-                  key={`key:${product.product_name},${index.toString()}`}
-                  shop_name={sellerPage.shop_name}
-                  product={product}
-                />
-              ))}
-            </div>
-            <div
-              className={`md:hidden w-full md:w-[75vw] grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 ${
-                showTab1 || showTab2 ? 'hidden' : 'grid'
-              } `}
             >
               {seller_details.best_seller.map((product, index) => (
                 <SellerProductCard
