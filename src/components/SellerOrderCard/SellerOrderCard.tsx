@@ -4,7 +4,9 @@ import SellerOrderCourier from '@/components/SellerOrder/SellerOrderCourier';
 import SellerOrderProductInfo from '@/components/SellerOrder/SellerOrderProductInfo';
 import SellerOrderDeliveryFormModal from '@/components/SellerOrderDeliveryFormModal/SellerOrderDeliveryFormModal';
 import { Button } from '@/components/ui/button';
+import CONSTANTS from '@/constants/constants';
 import { IOrderData } from '@/interface/sellerOrder';
+import axiosInstance from '@/lib/axiosInstance';
 import { SellerOrderClient } from '@/service/sellerOrder/SellerOrderClient';
 import { useSeller } from '@/store/seller/useSeller';
 import { Utils } from '@/utils';
@@ -27,6 +29,32 @@ const SellerOrderCard = ({
   const setSellerChangeStatus = useSeller.use.setSellerChangeStatus();
 
   const handleEditOrder = async (orderStatus: string, orderId: number) => {
+    if (orderStatus === 'DELIVER') {
+      setLoadingButton(true);
+      try {
+        const response = await axiosInstance({
+          method: 'PUT',
+          url: `${CONSTANTS.BASEURL}/orders/seller/${orderId}/arrive`,
+        });
+        if (response.status !== 200) {
+          Utils.notify(
+            'failed to process to delivered' as ToastContent,
+            'error',
+            'colored',
+          );
+        }
+      } catch (error) {
+        Utils.notify(
+          'success process to delivered' as ToastContent,
+          'success',
+          'colored',
+        );
+      } finally {
+        setLoadingButton(false);
+        setSellerChangeStatus('ARRIVE');
+      }
+    }
+
     if (orderStatus === 'NEW') {
       setLoadingButton(true);
       const response = await SellerOrderClient.putOrderStatusToProcess(orderId);
@@ -45,8 +73,36 @@ const SellerOrderCard = ({
       }
       setLoadingButton(false);
       setSellerChangeStatus('PROCESS');
-    } else {
+    }
+
+    if (orderStatus === 'PROCESS') {
       setShowEstDays(true);
+    }
+  };
+
+  const handleCancelOrder = async (orderId: number) => {
+    try {
+      setLoadingButton(true);
+      const response = await axiosInstance({
+        method: 'PUT',
+        url: `${CONSTANTS.BASEURL}/orders/seller/${orderId}/reject`,
+      });
+      if (response.status !== 200) {
+        Utils.notify(
+          'failed to reject order' as ToastContent,
+          'error',
+          'colored',
+        );
+      }
+    } catch (error) {
+      Utils.notify(
+        'success to reject order' as ToastContent,
+        'success',
+        'colored',
+      );
+    } finally {
+      setLoadingButton(false);
+      setSellerChangeStatus('CANCEL');
     }
   };
 
@@ -56,6 +112,8 @@ const SellerOrderCard = ({
       action = 'Process Order';
     } else if (order_status === 'PROCESS') {
       action = 'Process To Ship';
+    } else if (order_status === 'DELIVER') {
+      action = 'Confirm Delivered';
     }
     return action;
   };
@@ -135,15 +193,32 @@ const SellerOrderCard = ({
           {loadingButton ? (
             <AsyncButton isLoading={true}>{'Processing'}</AsyncButton>
           ) : (
-            <Button
-              className={` text-[12px] h-[30px] lg:h-[40px] ${
-                order_data.status === 'PROCESS' ? 'bg-yellow-500' : 'bg-primary'
-              }`}
-              variant={'default'}
-              onClick={() => handleEditOrder(order_data.status, order_data.id)}
-            >
-              {handleGetAction(order_data.status)}
-            </Button>
+            <div className="flex gap-3">
+              <Button
+                className={` text-[12px] h-[30px] lg:h-[40px] bg-red-500 ${
+                  order_data.status !== 'NEW' && 'hidden'
+                }`}
+                variant={'default'}
+                onClick={() => handleCancelOrder(order_data.id)}
+              >
+                {'Reject Order'}
+              </Button>
+              <Button
+                className={` text-[12px] h-[30px] lg:h-[40px] ${
+                  order_data.status === 'PROCESS'
+                    ? 'bg-yellow-500'
+                    : order_data.status === 'DELIVER'
+                      ? 'bg-blue-500'
+                      : 'bg-primary'
+                }`}
+                variant={'default'}
+                onClick={() =>
+                  handleEditOrder(order_data.status, order_data.id)
+                }
+              >
+                {handleGetAction(order_data.status)}
+              </Button>
+            </div>
           )}
         </div>
       )}

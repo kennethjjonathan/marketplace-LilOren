@@ -14,7 +14,15 @@ const SellerOrderCourier = ({ order_data }: SellerOrderCourierProps) => {
       </div>
       {order_data.eta !== '0001-01-01' && (
         <div className="flex flex-col py-3">
-          <p className="font-bold text-[12px]">Est Date</p>
+          {order_data.status === 'ARRIVE' && (
+            <p className="font-bold text-[12px]">Arrive Date</p>
+          )}
+          {order_data.status === 'DELIVER' && (
+            <p className="font-bold text-[12px]">Est Date</p>
+          )}
+          {order_data.status === 'RECEIVE' && (
+            <p className="font-bold text-[12px]">Received</p>
+          )}
           <p className="est days detail text-[12px]">{`${Utils.getDate(
             order_data.eta,
           )}`}</p>

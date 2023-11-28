@@ -1,11 +1,11 @@
 import CONSTANTS from '@/constants/constants';
-import { ISellerOrdersParams, SellerOrderService } from './SellerOrderService';
+import { SellerOrderService } from './SellerOrderService';
 import { Utils } from '@/utils';
 import { ToastContent } from 'react-toastify';
 
 export class SellerOrderClient {
-  static getSellerOrders = async (params: ISellerOrdersParams) => {
-    const response = await SellerOrderService.get(`/orders/seller`, params);
+  static getSellerOrders = async (params: string) => {
+    const response = await SellerOrderService.get(`/orders/seller?${params}`);
     if (response?.error) {
       Utils.notify(
         'failed to get seller order' as ToastContent,
