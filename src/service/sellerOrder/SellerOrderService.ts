@@ -17,12 +17,11 @@ interface ISellerOrderRequestData {
 }
 
 export class SellerOrderService {
-  static get = async (url: string, params: ISellerOrdersParams) => {
+  static get = async (url: string) => {
     try {
       const response = await axiosInstance({
         method: 'GET',
         url: url,
-        params: params,
       });
       if (response.status === 200) {
         const responseAPI: ISellerOrderResponse = {

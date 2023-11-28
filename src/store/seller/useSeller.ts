@@ -12,7 +12,9 @@ type State = {
 };
 
 type Actions = {
-  fetchSellerOrders: (params: ISellerOrdersParams) => void;
+  // fetchSellerOrders: (params: ISellerOrdersParams) => void;
+  fetchSellerOrders: (params: string) => void;
+
   setSellerChangeStatus: (current_page: string) => void;
 };
 
@@ -25,7 +27,7 @@ const useSellerBase = create<State & Actions>((set) => ({
   loading_fetch_seller_orders: false,
   is_seller_change_status: false,
   seller_current_page: '',
-  fetchSellerOrders: async (params: ISellerOrdersParams) => {
+  fetchSellerOrders: async (params: string) => {
     set(() => ({ loading_fetch_seller_orders: true }));
     const response = await SellerOrderClient.getSellerOrders(params);
     const data: ISellerOrder = response?.data!;

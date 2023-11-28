@@ -70,16 +70,16 @@ const SellerPortalOrder: NextPageWithLayout = () => {
   const router = useRouter();
 
   const handleChangeStatus = useCallback(async () => {
-    const params =
-      status === '' || status === null
-        ? {
-            page: 1,
-          }
-        : {
-            status: status,
-            page: 1,
-          };
-    fetchSellerOrders(params);
+    const param = new URLSearchParams(searchParams);
+    setCurrentPage(1);
+    if (status === '' || status === null) {
+      param.set('page', '1');
+    } else {
+      param.set('status', status);
+      param.set('page', '1');
+    }
+    router.replace(`/seller/portal/order?${param.toString()}`);
+    fetchSellerOrders(param.toString());
     window.scrollTo({
       top: 0,
       behavior: 'smooth',
@@ -87,16 +87,15 @@ const SellerPortalOrder: NextPageWithLayout = () => {
   }, [status, fetchSellerOrders]);
 
   const handleChangePage = useCallback(() => {
-    const params =
-      status === '' || status === null
-        ? {
-            page: currentPage,
-          }
-        : {
-            status: status,
-            page: currentPage,
-          };
-    fetchSellerOrders(params);
+    const param = new URLSearchParams(searchParams);
+    if (status === '' || status === null) {
+      param.set('page', currentPage.toString());
+    } else {
+      param.set('page', currentPage.toString());
+      param.set('status', status);
+    }
+    router.replace(`/seller/portal/order?${param.toString()}`);
+    fetchSellerOrders(param.toString());
     window.scrollTo({
       top: 0,
       behavior: 'smooth',
