@@ -158,35 +158,6 @@ const User: NextPageWithLayout = () => {
     }
   }
 
-  const [isEmailModalOpen, setIsEmailModalOpen] = useState<boolean>(false);
-  const [email, setEmail] = useState<string>('');
-  const [isEmailLoading, setIsEmailLoading] = useState<boolean>(false);
-
-  function handleCloseEmailModal() {
-    setEmail('');
-    setIsEmailModalOpen(false);
-  }
-
-  async function handleChangeEmail() {
-    const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/gi;
-    if (!emailRegex.test(email)) {
-      Utils.notify('Please enter a valid email', 'info', 'colored');
-      return;
-    }
-    setIsEmailLoading(true);
-    try {
-      const reqBody = { email: email };
-      await axiosInstance.post('/auth/change-email', reqBody);
-      handleCloseEmailModal();
-      fetchUserDetails();
-      Utils.notify('Changing email was successful', 'success', 'colored');
-    } catch (error) {
-      Utils.handleGeneralError(error);
-    } finally {
-      setIsEmailLoading(false);
-    }
-  }
-
   useEffect(() => {
     if (status === '' || status === null) {
       fetchUserDetails();
@@ -250,12 +221,6 @@ const User: NextPageWithLayout = () => {
                 description={'Change your password'}
                 onClick={handleOpenChangePassword}
                 loading={isChangeOpenLoading}
-              />
-              <UserSetting
-                title={'Change Email'}
-                icon={<Mail />}
-                description={'Change email'}
-                onClick={() => setIsEmailModalOpen(true)}
               />
             </ul>
           </div>
@@ -399,38 +364,6 @@ const User: NextPageWithLayout = () => {
                 isLoading={isChangePassLoading}
               >
                 Change Password
-              </AsyncButton>
-            </div>
-          </div>
-        </AlertDialogContent>
-      </AlertDialog>
-      <AlertDialog open={isEmailModalOpen} onOpenChange={setIsEmailModalOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Change Email</AlertDialogTitle>
-          </AlertDialogHeader>
-          <div className="w-full space-y-3">
-            <div className="w-full space-y-2">
-              <Label htmlFor="change-email-input">
-                Please enter your new email
-              </Label>
-              <Input
-                id="change-email-input"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div className="w-full flex justify-end items-center gap-3">
-              <Button onClick={handleCloseEmailModal} variant={'outline'}>
-                Cancel
-              </Button>
-              <AsyncButton
-                onClick={handleChangeEmail}
-                variant={'default'}
-                isLoading={isEmailLoading}
-              >
-                Change Email
               </AsyncButton>
             </div>
           </div>
